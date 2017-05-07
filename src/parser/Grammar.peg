@@ -1,0 +1,52 @@
+<?php
+
+namespace Smuuf\Primi;
+
+use hafriedlander\Peg\Parser;
+
+class CompiledParser extends Parser\Packrat {
+
+/*!* Primi language
+
+StringLiteral: /("(.|\n)*?"|'(.|\n)*?')/
+NumberLiteral: /-?\d+(\.\d+)?/
+BoolLiteral: "true" | "false"
+
+Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral
+VariableCore: /([a-zA-Z_][a-zA-Z0-9_]*)/
+Variable: ( ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore ) ) ( "[" > dereference:Value > "]" )*
+
+ArrayItem: ( key:Expression > ":" )? > value:Expression )
+ArrayStructure: "[" > ( > items:ArrayItem ( > "," > items:ArrayItem )* )? > "]"
+
+Value: skip:Literal | skip:Variable | skip:ArrayStructure
+
+AddOperator: "+" | "-"
+MultiplyOperator: "*" | "/"
+AssignmentOperator: "=" | "+=" | "-=" | "*=" | "/="
+ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
+UnaryOperator: "++" | "--"
+
+Expression: skip:Assignment | skip:Comparison | skip:Addition
+Comparison: left:Addition > op:ComparisonOperator > right:Addition
+Assignment: left:Variable > op:AssignmentOperator > right:Expression
+Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
+Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
+Operand: ( "(" > skip:Expression > ")" ) | skip:Value
+
+IfStatement: "if" > "(" > left:Expression > ")" > ( right:Block ) >
+WhileStatement: "while" > "(" > left:Expression > ")" > ( right:Block ) >
+ForeachStatement: "foreach" > "(" > left:Expression > "as" > item:VariableCore > ")" > ( right:Block ) >
+BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement
+CommandStatements: skip:EchoStatement
+EchoStatement: "echo" > subject:Expression
+
+Statement: ( skip:BlockStatements SPACE ";"? ) | ( ( skip:CommandStatements | skip:Expression ) SPACE ";" )
+Block: "{" > skip:Program > "}"
+
+SPACE: /([\s\n]*)/
+Program: > ( SPACE Statement SPACE )+ >
+
+*/
+
+}
