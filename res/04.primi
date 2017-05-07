@@ -1,0 +1,8 @@
+a = 4 / (2 - 1) * 100;
+hovno = 153 * 2;
+c = "zaplaťte pouze " + a + " Kč za skvělou " + hovno;
+while (hovno > 10) {
+	g = g + 1;
+	hovno = hovno d- 1d;
+	echo g + "\n";
+};
