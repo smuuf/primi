@@ -1,0 +1,10 @@
+function fibb(a, b, limit) {
+	if (b > limit) {
+		return;
+	}
+	result = a + b;
+	echo result + "\n";
+	fibb(b, result, limit);
+}
+
+fibb(1, 0, 20000000);

@@ -6,7 +6,7 @@ use hafriedlander\Peg\Parser;
 
 class CompiledParser extends Parser\Packrat {
 
-/*!* Primi language
+/*!* Primi
 
 StringLiteral: /("(.|\n)*?"|'(.|\n)*?')/
 NumberLiteral: /-?\d+(\.\d+)?/
@@ -32,14 +32,20 @@ Comparison: left:Addition > op:ComparisonOperator > right:Addition
 Assignment: left:Variable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
-Operand: ( "(" > skip:Expression > ")" ) | skip:Value
+Operand: ( "(" > skip:Expression > ")" ) | skip:FunctionCall | skip:Value
 
+FunctionCall: function:VariableCore > "(" > args:FunctionCallArgumentList? > ")"
+FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*
+
+FunctionDeclarationArgumentList: skip:VariableCore ( > "," > skip:VariableCore )*
+FunctionDeclaration: "function" [ function:VariableCore > "(" > args:FunctionDeclarationArgumentList? > ")" > body:Block
 IfStatement: "if" > "(" > left:Expression > ")" > ( right:Block ) >
 WhileStatement: "while" > "(" > left:Expression > ")" > ( right:Block ) >
 ForeachStatement: "foreach" > "(" > left:Expression > "as" > item:VariableCore > ")" > ( right:Block ) >
-BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement
-CommandStatements: skip:EchoStatement
-EchoStatement: "echo" > subject:Expression
+BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDeclaration
+CommandStatements: skip:EchoStatement | skip:ReturnStatement
+EchoStatement: "echo" [ subject:Expression
+ReturnStatement: "return" ( [ subject:Expression )?
 
 Statement: ( skip:BlockStatements SPACE ";"? ) | ( ( skip:CommandStatements | skip:Expression ) SPACE ";" )
 Block: "{" > skip:Program > "}"

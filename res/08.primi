@@ -1,0 +1,9 @@
+function add(x, y) {
+	c = 10;
+	return x + y + c;
+}
+function sub(x, y) {
+	return x - y;
+}
+a = 1 + add(sub(4, 3), 3);
+echo a + "\n";

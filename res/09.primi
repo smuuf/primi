@@ -1,0 +1,60 @@
+function remove_dia(text) {
+	result = tmp = "";
+	foreach (text as c) {
+		tmp = c;
+		if (c == "á") { tmp = "a"; }
+		if (c == "č") { tmp = "c"; }
+		if (c == "ď") { tmp = "d"; }
+		if (c == "é") { tmp = "e"; }
+		if (c == "ě") { tmp = "e"; }
+		if (c == "í") { tmp = "i"; }
+		if (c == "ň") { tmp = "n"; }
+		if (c == "ó") { tmp = "o"; }
+		if (c == "ř") { tmp = "r"; }
+		if (c == "š") { tmp = "s"; }
+		if (c == "ť") { tmp = "t"; }
+		if (c == "ú") { tmp = "u"; }
+		if (c == "ů") { tmp = "u"; }
+		if (c == "ý") { tmp = "y"; }
+		if (c == "ž") { tmp = "z"; }
+		result = result + tmp;
+	}
+	return result;
+}
+
+echo remove_dia("běž do píče týýýý zmrdééé.");
+
+function add(x, y) {
+	c = 10;
+	return x + y + c;
+}
+
+function sub(x, y) {
+	return x - y;
+	a = 4;
+	if (a < 30) {
+		if (a < 30) {
+			b = a;
+		};
+		b = add(a, x);
+		a = 1 + 3 + 5 * (78 - 12 * a);
+
+		if (b > 9899) {
+			c = 1;
+		};
+
+	};
+}
+
+a = 1 + add(sub(4, 3), 3);
+echo a + "\n";
+
+a = 4 / (2 - 1) * 100;
+hovno = 153 * 2;
+c = "zaplaťte pouze " + a + " Kč za skvělou " + hovno;
+while (hovno > 10) {
+	g = g + 1;
+	remove_dia("běž do píče týýýý zmrdééé. číslo ");
+	hovno = hovno * d - 1 * d;
+	echo g + "\n";
+};
