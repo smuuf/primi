@@ -1,20 +1,20 @@
 {
-    "name": "smuuf/primi",
-    "description": "Primi language.",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Premysl Karbula",
-            "email": "premavansmuuf@gmail.com"
-        }
-    ],
-    "autoload": {
-        "classmap": ["vendor/"]
-    },
-    "require": {
-        "hafriedlander/php-peg": "dev-master"
-    },
-    "require-dev": {
-        "smuuf/koloader": "dev-master"
-    }
+	"name": "smuuf/primi",
+	"description": "Primi language.",
+	"type": "project",
+	"authors": [
+		{
+			"name": "Premysl Karbula",
+			"email": "premavansmuuf@gmail.com"
+		}
+	],
+	"autoload":{
+		 "classmap": ["src/"]
+	},
+	"require": {
+		"combyna/php-peg": "dev-master"
+	},
+	"require-dev": {
+		"smuuf/koloader": "dev-master"
+	}
 }
