@@ -12,7 +12,9 @@
         "classmap": ["vendor/"]
     },
     "require": {
-        "hafriedlander/php-peg": "dev-master",
+        "hafriedlander/php-peg": "dev-master"
+    },
+    "require-dev": {
         "smuuf/koloader": "dev-master"
     }
 }
