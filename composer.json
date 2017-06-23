@@ -12,9 +12,18 @@
 		 "classmap": ["src/"]
 	},
 	"require": {
+		"cweagans/composer-patches": "~1.0",
 		"combyna/php-peg": "dev-master"
 	},
 	"require-dev": {
-		"smuuf/koloader": "dev-master"
+		"smuuf/koloader": "dev-master",
+		"smuuf/phpcb": "dev-master"
+	},
+	"extra": {
+		"patches": {
+			"combyna/php-peg": {
+				"Larger buffer for Packrat parser to avoid undefined index errors": "./patches/packrat-parser.patch"
+			}
+		}
 	}
 }
