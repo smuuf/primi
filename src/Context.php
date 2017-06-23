@@ -6,10 +6,16 @@ use \Smuuf\Primi\Structures\Func;
 
 class Context extends \Smuuf\Primi\Object {
 
-	private $container = [
+	const EMPTY_CONTAINER = [
 		'variables' => [],
 		'functions' => [],
 	];
+
+	private $container = self::EMPTY_CONTAINER;
+
+	public function reset() {
+		$this->container = self::EMPTY_CONTAINER;
+	}
 
 	// Variables.
 
