@@ -18,7 +18,7 @@ class HandlerFactory extends \Smuuf\Primi\Object {
 			throw new \LogicException("'$name' handler not found.");
 		}
 
-		return $class;
+		return self::$cache[$class] = $class;
 
 	}
 
