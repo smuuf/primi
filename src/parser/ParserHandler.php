@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\HandlerFactory;
+
 use hafriedlander\Peg\Parser;
 
 class ParserHandler extends CompiledParser {
@@ -88,6 +90,17 @@ class ParserHandler extends CompiledParser {
 
 		if (isset($node['skip'])) {
 			return self::reduceAST($node['skip'], $aggressive);
+		}
+
+		// Allow each type of handler handle its own reduction.
+		if (
+			isset($node['name'])
+			&& ($handler = HandlerFactory::get($node['name'], false))
+			&& is_subclass_of($handler, \Smuuf\Primi\Handlers\IReducer::class)
+		) {
+			if ($reduced = $handler::reduce($node)) {
+				return self::reduceAST($reduced, $aggressive);
+			}
 		}
 
 		foreach ($node as $k => &$v) {

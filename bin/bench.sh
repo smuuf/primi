@@ -37,4 +37,4 @@ printf \
 "- AVG  : "`php -r "echo $complextime / $iterations;";`" s \n"\
 
 nowdate=`date +"%d.%m.%Y %H:%M"`
-echo "$nowdate,$iterations,$simpletime,"`php -r "echo $simpletime / $iterations;"`"$complextime,"`php -r "echo $complextime / $iterations;"`",$comment" >> "bench_progress.csv"
+echo "$nowdate,$iterations,$simpletime,"`php -r "echo $simpletime / $iterations;"`",$complextime,"`php -r "echo $complextime / $iterations;"`",$comment" >> "bench_progress.csv"

@@ -5,7 +5,7 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class Variable extends \Smuuf\Primi\Object implements IHandler {
+class Variable extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
@@ -40,6 +40,16 @@ class Variable extends \Smuuf\Primi\Object implements IHandler {
 		};
 
 		return $value;
+
+	}
+
+	public static function reduce(array $node) {
+
+		if (isset($node['post']) || isset($node['pre']) || isset($node['dereference'])) {
+			return;
+		}
+
+		return $node['core'];
 
 	}
 

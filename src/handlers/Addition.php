@@ -11,34 +11,29 @@ use \Smuuf\Primi\Context;
  * operands: List of operand nodes.
  * ops: List of nodes acting as operators between the operands.
  */
-class Addition extends \Smuuf\Primi\Object implements IHandler {
+class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
-
-		// Handle situation with solo operands (which wouldn't be represented as array).
-		// Do it by placing solo operands into arrays.
-		if (isset($node['operands']['name'])) {
-			$node['operands'] = [$node['operands']];
-		}
 
 		// Do the same with operators.
 		if (isset($node['ops']['name'])) {
 			$node['ops'] = [$node['ops']];
 		}
 
-		// Handle the first operand.
-		// (array_shift reindexes the array, so we need do this a bit low-lewel.)
-		$first = reset($node['operands']);
-		unset($node['operands'][0]);
-		$handler = HandlerFactory::get($first['name']);
-		$result = $handler::handle($first, $context);
-
 		// Go through each of the operands and build the final result value combining the operand's value with the
 		// so-far-result. The operator determining the operands's effect on the result always has the "n-1" index.
+		$first = true;
 		foreach ($node['operands'] as $index => $operandNode) {
 
 			$handler = HandlerFactory::get($operandNode['name']);
-			$tmp = $handler::handle($operandNode, $context);
+
+			if ($first) {
+				$result = $handler::handle($operandNode, $context);
+				$first = false;
+				continue;
+			} else {
+				$tmp = $handler::handle($operandNode, $context);
+			}
 
 			// Extract the text of the assigned operator node.
 			$op = $node['ops'][$index - 1]['text'];
@@ -67,6 +62,16 @@ class Addition extends \Smuuf\Primi\Object implements IHandler {
 		}
 
 		return $result;
+
+	}
+
+	public static function reduce(array $node) {
+
+		// No need to represent this kind of node as Addition when there's only one operand.
+		// Take the only operand here and subtitute the Addition node with it.
+		if (isset($node['operands']['name'])) {
+			return $node['operands'];
+		}
 
 	}
 
