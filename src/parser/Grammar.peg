@@ -11,8 +11,9 @@ class CompiledParser extends Parser\Packrat {
 StringLiteral: /("(.|\n)*?"|'(.|\n)*?')/
 NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
+RegexLiteral: "/" /([^\\\/]|\\\/)+/ "/"
 
-Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral
+Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:RegexLiteral
 VariableCore: /([a-zA-Z_][a-zA-Z0-9_]*)/
 Variable: ( ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore ) ) ( "[" > dereference:Value > "]" )*
 
@@ -38,10 +39,10 @@ FunctionCall: function:VariableCore > "(" > args:FunctionCallArgumentList? > ")"
 FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*
 
 FunctionDeclarationArgumentList: skip:VariableCore ( > "," > skip:VariableCore )*
-FunctionDeclaration: "function" [ function:VariableCore > "(" > args:FunctionDeclarationArgumentList? > ")" > body:Block
-IfStatement: "if" > "(" > left:Expression > ")" > ( right:Block ) >
-WhileStatement: "while" > "(" > left:Expression > ")" > ( right:Block ) >
-ForeachStatement: "foreach" > "(" > left:Expression > "as" > item:VariableCore > ")" > ( right:Block ) >
+FunctionDeclaration: "function" [ function:VariableCore SPACE "(" > args:FunctionDeclarationArgumentList? > ")" SPACE body:Block
+IfStatement: "if" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
+WhileStatement: "while" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
+ForeachStatement: "foreach" SPACE "(" > left:Expression SPACE "as" SPACE item:VariableCore SPACE ")" SPACE ( right:Block ) >
 BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDeclaration
 CommandStatements: skip:EchoStatement | skip:ReturnStatement
 EchoStatement: "echo" [ subject:Expression
