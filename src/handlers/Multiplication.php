@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -41,6 +42,15 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler {
 
 			// Extract the text of the assigned operator node.
 			$op = $node['ops'][$index - 1]['text'];
+
+			if (!is_numeric($result) || !is_numeric($tmp)) {
+				throw new ErrorException(sprintf(
+					"Trying to %s non-numeric values: '%s' and '%s'",
+					$op === '*' ? 'multiply' : 'divide',
+					$result,
+					$tmp
+				), $node);
+			}
 
 			if ($op === '*') {
 				$result *= $tmp;

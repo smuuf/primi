@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -51,6 +52,15 @@ class Addition extends \Smuuf\Primi\Object implements IHandler {
 				}
 
 			} else {
+
+				if (!is_numeric($result) || !is_numeric($tmp)) {
+					throw new ErrorException(sprintf(
+						"Trying to subtract non-numeric values: '%s' and '%s'",
+						$result,
+						$tmp
+					));
+				}
+
 				$result -= $tmp;
 			}
 
