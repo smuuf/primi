@@ -28,7 +28,13 @@ class Context extends \Smuuf\Primi\Object {
 	}
 
 	public function getVariable(string $name) {
-		return $this->container['variables'][$name] ?? null;
+
+		if (!array_key_exists($name, $this->container['variables'])) {
+			throw new UndefinedVariableException($name);
+		}
+
+		return $this->container['variables'][$name];
+
 	}
 
 	public function getVariables() {

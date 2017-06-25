@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi;
 
-class ReturnException extends \RuntimeException {
+class ReturnException extends InternalException {
 
 	/** @var mixed **/
 	protected $return;
