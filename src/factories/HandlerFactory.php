@@ -8,17 +8,16 @@ class HandlerFactory extends \Smuuf\Primi\Object {
 
 	public static function get($name) {
 
-		$class = __NAMESPACE__ . "\\Handlers\\$name";
-
-		if (isset(self::$cache[$class])) {
-			return self::$cache[$class];
+		if (isset(self::$cache[$name])) {
+			return self::$cache[$name];
 		}
 
+		$class = __NAMESPACE__ . "\\Handlers\\$name";
 		if (!is_subclass_of($class, __NAMESPACE__ . '\Handlers\IHandler')) {
 			throw new \LogicException("'$name' handler not found.");
 		}
 
-		return self::$cache[$class] = $class;
+		return self::$cache[$name] = $class;
 
 	}
 

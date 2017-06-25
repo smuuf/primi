@@ -41,7 +41,7 @@ class ParserHandler extends CompiledParser {
 
 	}
 
-	public function run():array {
+	public function run(): array {
 
 		$result = $this->match_Program();
 		if ($result['text'] !== $this->source) {
@@ -65,7 +65,7 @@ class ParserHandler extends CompiledParser {
 
 	}
 
-	protected static function getPositionTupleEstimate(string $source, int $position):array {
+	protected static function getPositionTupleEstimate(string $source, int $position): array {
 
 		$part = mb_substr($source, 0, $position);
 
@@ -82,7 +82,7 @@ class ParserHandler extends CompiledParser {
 	 * 2) Node's elements contains nested nodes, reduce them too.
 	 * 3) Aggressive mode is enabled, remove unnecessary elements created by PHP-PEG parser.
 	 */
-	protected static function reduceAST(array $node, $aggressive = false):array {
+	protected static function reduceAST(array $node, $aggressive = false): array {
 
 		static $aggresivelyRemove = ['_matchrule'];
 
