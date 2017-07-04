@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 // Composer's autoload.
@@ -7,12 +8,13 @@ require __DIR__ . "/vendor/autoload.php";
 $loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/temp/");
 $loader->addDirectory(__DIR__ . "/src")->register();
 
+if (empty($argv[1])) {
+	die("Input file not specified.");
+}
+
+// Load source, create "VM" context and create the interpreter.
 $source = file_get_contents($argv[1]);
-
-// Context.
 $context = new \Smuuf\Primi\Context;
-
-// Interpreter
 $interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
 
 try {
@@ -23,7 +25,7 @@ try {
 
 	// Run interpreter
 	$interpreter->run($source);
-	//var_dump($context->getVariables());
+	var_dump($context->getVariables());
 
 } catch (\Smuuf\Primi\ErrorException $e) {
 
