@@ -4,12 +4,12 @@ namespace Smuuf\Primi;
 
 class Interpreter extends \Smuuf\Primi\Object {
 
-	private $tempDir = false;
+	private $tempDir;
 	private $context;
 
 	public function __construct(Context $context = null, string $tempDir = null) {
 
-		$this->tempDir = $tempDir;
+		$this->tempDir = $tempDir ?: false;
 		$this->context = $context ?: new Context;
 
 	}
@@ -32,12 +32,16 @@ class Interpreter extends \Smuuf\Primi\Object {
 
 	public function getSyntaxTree(string $source):array {
 
-		if ($ast = $this->loadCachedAST($source)) {
+		if ($this->tempDir && $ast = $this->loadCachedAST($source)) {
 			return $ast;
 		}
 
 		$parser = new ParserHandler($source);
 		$ast = $parser->run();
+
+		if (!$this->tempDir) {
+			return $ast;
+		}
 
 		$this->storeCachedAST($ast, $source);
 		return $ast;

@@ -2,60 +2,35 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\ISupportsUnary;
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
 class UnaryOperator extends \Smuuf\Primi\Object implements IHandler {
 
-	public static function handle(array $parentNode, Context $context) {
+	public static function handle(array $node, Context $context) {
 
-		$variableName = $parentNode['core']['text'];
+		$variableName = $node['core']['text'];
 		$value = $context->getVariable($variableName);
+		$unaryNode = $node['pre'] ?? $node['post'] ?? false;
 
-		if (isset($parentNode['pre'])) {
-
-			if ($parentNode['pre']['text'] === "++") {
-				$context->setVariable($variableName, $value + 1);
-				return true;
-			}
-
-			if ($parentNode['pre']['text'] === "--") {
-				$context->setVariable($variableName, $value - 1);
-				return true;
-			}
-
-		} elseif (isset($parentNode['post'])) {
-
-			if ($parentNode['post']['text'] === "++") {
-				$context->setVariable($variableName, $value + 1);
-				return true;
-			}
-
-			if ($parentNode['post']['text'] === "--") {
-				$context->setVariable($variableName, $value - 1);
-				return true;
-			}
-
+		if ($unaryNode && !$value instanceof ISupportsUnary) {
+			throw new ErrorException(sprintf(
+				"Cannot perform unary operation on '%s'",
+				$value::TYPE
+			), $node);
 		}
 
-	}
-
-	public static function getReturnValue(array $parentNode, $originalValue) {
-
-		if (isset($parentNode['pre'])) {
-
-			if ($parentNode['pre']['text'] === "++") {
-				return $originalValue + 1;
-			}
-
-			if ($parentNode['pre']['text'] === "--") {
-				return $originalValue - 1;
-			}
-
+		if ($unaryNode) {
+			$operator = $unaryNode['text'];
+			$newValue = $value->doUnary($operator);
+			$context->setVariable($variableName, $newValue);
+			return isset($node['pre']) ? $newValue : $value;
 		}
 
-		// Post-operators always return the original value.
-		return $originalValue;
+		return false;
 
 	}
 

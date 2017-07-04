@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -23,17 +24,17 @@ class Comparison extends \Smuuf\Primi\Object implements IHandler {
 
 		switch ($node['op']['text']) {
 			case "==":
-				return $leftReturn == $rightReturn;
+				return new BoolValue($leftReturn == $rightReturn);
 			case "!=":
-				return $leftReturn != $rightReturn;
+				return new BoolValue($leftReturn != $rightReturn);
 			case ">":
-				return $leftReturn > $rightReturn;
+				return new BoolValue($leftReturn > $rightReturn);
 			case "<":
-				return $leftReturn < $rightReturn;
+				return new BoolValue($leftReturn < $rightReturn);
 			case ">=":
-				return $leftReturn >= $rightReturn;
+				return new BoolValue($leftReturn >= $rightReturn);
 			case "<=":
-				return $leftReturn <= $rightReturn;
+				return new BoolValue($leftReturn <= $rightReturn);
 		}
 
 	}

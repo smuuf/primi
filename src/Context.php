@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\Func;
 
 class Context extends \Smuuf\Primi\Object {
@@ -19,7 +20,7 @@ class Context extends \Smuuf\Primi\Object {
 
 	// Variables.
 
-	public function setVariable(string $name, $value) {
+	public function setVariable(string $name, Value $value) {
 		$this->container['variables'][$name] = $value;
 	}
 

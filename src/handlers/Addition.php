@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\ISupportsAddition;
+use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
@@ -38,25 +40,22 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			// Extract the text of the assigned operator node.
 			$op = $node['ops'][$index - 1]['text'];
 
-			if ($op === '+') {
+			try {
 
-				if (is_numeric($result) && is_numeric($tmp)) {
-					$result += $tmp;
+				if ($result instanceof ISupportsAddition && $tmp instanceof ISupportsAddition) {
+					$result = $result->doAddition($op, $tmp);
 				} else {
-					$result .= $tmp;
+					throw new UnsupportedOperationException;
 				}
 
-			} else {
+			} catch (UnsupportedOperationException $e) {
 
-				if (!is_numeric($result) || !is_numeric($tmp)) {
-					throw new ErrorException(sprintf(
-						"Trying to subtract non-numeric values: '%s' and '%s'",
-						$result,
-						$tmp
-					));
-				}
+				throw new ErrorException(sprintf(
+					"Cannot add/substract: '%s' and '%s'",
+					$result::TYPE,
+					$tmp::TYPE
+				), $node);
 
-				$result -= $tmp;
 			}
 
 		}

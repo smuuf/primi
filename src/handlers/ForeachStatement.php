@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -19,29 +20,22 @@ class ForeachStatement extends \Smuuf\Primi\Object implements IHandler {
 		$leftHandler = HandlerFactory::get($node['left']['name']);
 		$subject = $leftHandler::handle($node['left'], $context);
 
-		if (!is_array($subject) && !is_string($subject)) {
+		if (!is_array($subject) && !$subject instanceof ISupportsIteration) {
 			throw new \Smuuf\Primi\ErrorException("Cannot iterate over '{$node['left']['text']}' variable which is not an array");
+		}
+
+		if ($subject instanceof ISupportsIteration) {
+			$subject = $subject->getIterator();
 		}
 
 		$elementVariableName = $node['item']['text'];
 		$blockHandler = HandlerFactory::get($node['right']['name']);
-
-		if (is_string($subject)) {
-			$subject = self::utfSplit($subject);
-		}
 
 		foreach ($subject as $i) {
 			$context->setVariable($elementVariableName, $i);
 			$blockHandler::handle($node['right'], $context);
 		}
 
-	}
-
-	private static function utfSplit($str = '', $len = 1) {
-		preg_match_all("/./u", $str, $arr);
-		$arr = array_chunk($arr[0], $len);
-		$arr = array_map('implode', $arr);
-		return $arr;
 	}
 
 }

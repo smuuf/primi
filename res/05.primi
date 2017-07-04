@@ -1,4 +1,5 @@
-h = 100000;
+h = 5;
+echo h;
 while (h--) {
- a = 1;
+ echo h;
 }

@@ -2,27 +2,22 @@
 
 namespace Smuuf\Primi;
 
-class ErrorException extends \RuntimeException {
+class ErrorException extends InternalException {
 
 	public function __construct($msg, $line = false, $pos = false) {
 
 		if (is_array($line)) {
 			$msg = sprintf(
-				'%s @ "%s".',
+				"%s @ code: %s",
 				$msg,
 				$line['text']
 			);
 		} elseif ($line !== false && $pos !== false) {
 			$msg = sprintf(
-				'%s @ line %s, position %s.',
+				'%s @ line %s, position %s',
 				$msg,
 				$line,
 				$pos
-			);
-		} else {
-			$msg = sprintf(
-				'%s.',
-				$msg
 			);
 		}
 

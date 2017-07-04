@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 
 class StringLiteral extends \Smuuf\Primi\Object implements IHandler {
@@ -15,16 +16,7 @@ class StringLiteral extends \Smuuf\Primi\Object implements IHandler {
 		// so do this a little more directly.
 		$string = mb_substr($content, 1, mb_strlen($content) - 2);
 
-		return self::expandSequences($string);
-
-	}
-
-	protected static function expandSequences(string $string) {
-
-		// Out strings support escape sequences.
-
-		$string = str_replace('\n', "\n", $string);
-		return $string;
+		return Value::build(Value::TYPE_STRING, $string);
 
 	}
 

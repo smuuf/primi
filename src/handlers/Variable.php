@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\ISupportsUnary;
+
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -9,12 +11,12 @@ class Variable extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
+		if ($unaryResult = UnaryOperator::handle($node, $context)) {
+			return $unaryResult;
+		}
+
 		$handler = HandlerFactory::get($node['core']['name']);
 		$value = $handler::handle($node['core'], $context);
-
-		if (UnaryOperator::handle($node, $context)) {
-			return UnaryOperator::getReturnValue($node, $value);
-		};
 
 		if (isset($node['dereference'])) {
 
@@ -45,10 +47,12 @@ class Variable extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function reduce(array $node) {
 
+		// If this node has any unary operator or dereference, don't reduce it.
 		if (isset($node['post']) || isset($node['pre']) || isset($node['dereference'])) {
 			return;
 		}
 
+		// Otherwise reduce it to just the core node.
 		return $node['core'];
 
 	}
