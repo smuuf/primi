@@ -326,10 +326,10 @@ function match_ArrayItem ($stack = array()) {
 }
 
 
-/* ArrayStructure: "[" > ( > items:ArrayItem ( > "," > items:ArrayItem )* )? > "]" */
-protected $match_ArrayStructure_typestack = array('ArrayStructure');
-function match_ArrayStructure ($stack = array()) {
-	$matchrule = "ArrayStructure"; $result = $this->construct($matchrule, $matchrule, null);
+/* ArrayDefinition: "[" > ( > items:ArrayItem ( > "," > items:ArrayItem )* )? > "]" */
+protected $match_ArrayDefinition_typestack = array('ArrayDefinition');
+function match_ArrayDefinition ($stack = array()) {
+	$matchrule = "ArrayDefinition"; $result = $this->construct($matchrule, $matchrule, null);
 	$_71 = NULL;
 	do {
 		if (substr($this->string,$this->pos,1) == '[') {
@@ -401,7 +401,7 @@ function match_ArrayStructure ($stack = array()) {
 }
 
 
-/* Value: skip:Literal | skip:Variable | skip:ArrayStructure */
+/* Value: skip:Literal | skip:Variable | skip:ArrayDefinition */
 protected $match_Value_typestack = array('Value');
 function match_Value ($stack = array()) {
 	$matchrule = "Value"; $result = $this->construct($matchrule, $matchrule, null);
@@ -429,7 +429,7 @@ function match_Value ($stack = array()) {
 			}
 			$result = $res_75;
 			$this->pos = $pos_75;
-			$matcher = 'match_'.'ArrayStructure'; $key = $matcher; $pos = $this->pos;
+			$matcher = 'match_'.'ArrayDefinition'; $key = $matcher; $pos = $this->pos;
 			$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 			if ($subres !== FALSE) {
 				$this->store( $result, $subres, "skip" );
@@ -1091,10 +1091,10 @@ function match_FunctionCallArgumentList ($stack = array()) {
 }
 
 
-/* FunctionDeclarationArgumentList: skip:VariableCore ( > "," > skip:VariableCore )* */
-protected $match_FunctionDeclarationArgumentList_typestack = array('FunctionDeclarationArgumentList');
-function match_FunctionDeclarationArgumentList ($stack = array()) {
-	$matchrule = "FunctionDeclarationArgumentList"; $result = $this->construct($matchrule, $matchrule, null);
+/* FunctionDefinitionArgumentList: skip:VariableCore ( > "," > skip:VariableCore )* */
+protected $match_FunctionDefinitionArgumentList_typestack = array('FunctionDefinitionArgumentList');
+function match_FunctionDefinitionArgumentList ($stack = array()) {
+	$matchrule = "FunctionDefinitionArgumentList"; $result = $this->construct($matchrule, $matchrule, null);
 	$_216 = NULL;
 	do {
 		$matcher = 'match_'.'VariableCore'; $key = $matcher; $pos = $this->pos;
@@ -1140,10 +1140,10 @@ function match_FunctionDeclarationArgumentList ($stack = array()) {
 }
 
 
-/* FunctionDeclaration: "function" [ function:VariableCore SPACE "(" > args:FunctionDeclarationArgumentList? > ")" SPACE body:Block */
-protected $match_FunctionDeclaration_typestack = array('FunctionDeclaration');
-function match_FunctionDeclaration ($stack = array()) {
-	$matchrule = "FunctionDeclaration"; $result = $this->construct($matchrule, $matchrule, null);
+/* FunctionDefinition: "function" [ function:VariableCore SPACE "(" > args:FunctionDefinitionArgumentList? > ")" SPACE body:Block */
+protected $match_FunctionDefinition_typestack = array('FunctionDefinition');
+function match_FunctionDefinition ($stack = array()) {
+	$matchrule = "FunctionDefinition"; $result = $this->construct($matchrule, $matchrule, null);
 	$_229 = NULL;
 	do {
 		if (( $subres = $this->literal( 'function' ) ) !== FALSE) { $result["text"] .= $subres; }
@@ -1168,7 +1168,7 @@ function match_FunctionDeclaration ($stack = array()) {
 		if (( $subres = $this->whitespace(  ) ) !== FALSE) { $result["text"] .= $subres; }
 		$res_224 = $result;
 		$pos_224 = $this->pos;
-		$matcher = 'match_'.'FunctionDeclarationArgumentList'; $key = $matcher; $pos = $this->pos;
+		$matcher = 'match_'.'FunctionDefinitionArgumentList'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 		if ($subres !== FALSE) {
 			$this->store( $result, $subres, "args" );
@@ -1387,7 +1387,7 @@ function match_ForeachStatement ($stack = array()) {
 }
 
 
-/* BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDeclaration */
+/* BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDefinition */
 protected $match_BlockStatements_typestack = array('BlockStatements');
 function match_BlockStatements ($stack = array()) {
 	$matchrule = "BlockStatements"; $result = $this->construct($matchrule, $matchrule, null);
@@ -1427,7 +1427,7 @@ function match_BlockStatements ($stack = array()) {
 				}
 				$result = $res_281;
 				$this->pos = $pos_281;
-				$matcher = 'match_'.'FunctionDeclaration'; $key = $matcher; $pos = $this->pos;
+				$matcher = 'match_'.'FunctionDefinition'; $key = $matcher; $pos = $this->pos;
 				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 				if ($subres !== FALSE) {
 					$this->store( $result, $subres, "skip" );

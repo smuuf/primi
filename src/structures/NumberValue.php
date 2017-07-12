@@ -33,7 +33,7 @@ class NumberValue extends Value implements
 		if ($op === "+") {
 
 			if ($operand instanceof StringValue && !self::isNumericInt($operand->value)) {
-				return Value::build(Value::TYPE_STRING, $this->value . $operand->value);
+				return new StringValue($this->value . $operand->value);
 			}
 
 			return new self($this->value + $operand->value);

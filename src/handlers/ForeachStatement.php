@@ -20,18 +20,16 @@ class ForeachStatement extends \Smuuf\Primi\Object implements IHandler {
 		$leftHandler = HandlerFactory::get($node['left']['name']);
 		$subject = $leftHandler::handle($node['left'], $context);
 
-		if (!is_array($subject) && !$subject instanceof ISupportsIteration) {
-			throw new \Smuuf\Primi\ErrorException("Cannot iterate over '{$node['left']['text']}' variable which is not an array");
+		if (!$subject instanceof ISupportsIteration) {
+			throw new \Smuuf\Primi\ErrorException("Cannot iterate over '{$node['left']['text']}' variable");
 		}
 
-		if ($subject instanceof ISupportsIteration) {
-			$subject = $subject->getIterator();
-		}
+		$iterator = $subject->getIterator();
 
 		$elementVariableName = $node['item']['text'];
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
-		foreach ($subject as $i) {
+		foreach ($iterator as $i) {
 			$context->setVariable($elementVariableName, $i);
 			$blockHandler::handle($node['right'], $context);
 		}

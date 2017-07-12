@@ -21,7 +21,7 @@ class StringValue extends Value implements ISupportsAddition, ISupportsIteration
 		if ($op === "+") {
 
 			if ($operand instanceof NumberValue && NumberValue::isNumericInt($this->value)) {
-				return Value::build(Value::TYPE_NUMBER, $this->value + $operand->value);
+				return new NumberValue($this->value + $operand->value);
 			}
 
 			return new self($this->value . $operand->value);
@@ -54,7 +54,7 @@ class StringValue extends Value implements ISupportsAddition, ISupportsIteration
 
 	}
 
-	public function getIterator() {
+	public function getIterator(): \Iterator {
 		return $this->splitCache ?: $this->splitCache = self::utfSplit($this->value);
 	}
 

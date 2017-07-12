@@ -2,10 +2,12 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Structures\ArrayValue;
+use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class ArrayStructure extends \Smuuf\Primi\Object implements IHandler {
+class ArrayDefinition extends \Smuuf\Primi\Object implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
@@ -15,6 +17,11 @@ class ArrayStructure extends \Smuuf\Primi\Object implements IHandler {
 
 		$result = [];
 		$indexCounter = 0;
+
+		if (isset($node['items']['name'])) {
+			$node['items'] = [$node['items']];
+		}
+
 		foreach ($node['items'] as $itemNode) {
 
 			// Key doesn't have to be defined.
@@ -22,11 +29,11 @@ class ArrayStructure extends \Smuuf\Primi\Object implements IHandler {
 
 				// But if it is defined for this item, use it.
 				$keyHandler = HandlerFactory::get($itemNode['key']['name']);
-				$key = $keyHandler::handle($itemNode['key'], $context);
+				$key = $keyHandler::handle($itemNode['key'], $context)->getPhpValue();
 
 				// And if it is a numeric integer, use it as a base for the index counter
 				// we would have used if the key was not provided.
-				if (self::isNumericInt($key)) {
+				if (NumberValue::isNumericInt($key)) {
 					$indexCounter = $key + 1;
 				}
 
@@ -44,12 +51,8 @@ class ArrayStructure extends \Smuuf\Primi\Object implements IHandler {
 
 		}
 
-		return $result;
+		return new ArrayValue($result);
 
-	}
-
-	protected static function isNumericInt($input) {
-		return (string) (int) $input === (string) $input;
 	}
 
 }

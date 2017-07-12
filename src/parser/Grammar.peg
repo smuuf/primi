@@ -18,9 +18,9 @@ VariableCore: /([a-zA-Z_][a-zA-Z0-9_]*)/
 Variable: ( ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore ) ) ( "[" > dereference:Value > "]" )*
 
 ArrayItem: ( key:Expression > ":" )? > value:Expression )
-ArrayStructure: "[" > ( > items:ArrayItem ( > "," > items:ArrayItem )* )? > "]"
+ArrayDefinition: "[" > ( > items:ArrayItem ( > "," > items:ArrayItem )* )? > "]"
 
-Value: skip:Literal | skip:Variable | skip:ArrayStructure
+Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
@@ -38,12 +38,12 @@ Operand: ( "(" > skip:Expression > ")" ) | skip:FunctionCall | skip:Value
 FunctionCall: function:VariableCore > "(" > args:FunctionCallArgumentList? > ")"
 FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*
 
-FunctionDeclarationArgumentList: skip:VariableCore ( > "," > skip:VariableCore )*
-FunctionDeclaration: "function" [ function:VariableCore SPACE "(" > args:FunctionDeclarationArgumentList? > ")" SPACE body:Block
+FunctionDefinitionArgumentList: skip:VariableCore ( > "," > skip:VariableCore )*
+FunctionDefinition: "function" [ function:VariableCore SPACE "(" > args:FunctionDefinitionArgumentList? > ")" SPACE body:Block
 IfStatement: "if" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
 WhileStatement: "while" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
 ForeachStatement: "foreach" SPACE "(" > left:Expression SPACE "as" SPACE item:VariableCore SPACE ")" SPACE ( right:Block ) >
-BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDeclaration
+BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDefinition
 CommandStatements: skip:EchoStatement | skip:ReturnStatement
 EchoStatement: "echo" [ subject:Expression
 ReturnStatement: "return" ( [ subject:Expression )?

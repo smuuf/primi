@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Context;
 
 class StringLiteral extends \Smuuf\Primi\Object implements IHandler {
@@ -16,7 +16,7 @@ class StringLiteral extends \Smuuf\Primi\Object implements IHandler {
 		// so do this a little more directly.
 		$string = mb_substr($content, 1, mb_strlen($content) - 2);
 
-		return Value::build(Value::TYPE_STRING, $string);
+		return new StringValue($string);
 
 	}
 
