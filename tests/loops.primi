@@ -1,0 +1,11 @@
+y = 0;
+foreach ([1, 2, 3, 4, 5.6] as x) {
+    y = y + x;
+}
+
+n = "";
+length = 0;
+foreach ("some long string with numbers 123" as m) {
+    length++;
+    n = n + m;
+}

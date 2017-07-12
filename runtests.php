@@ -8,9 +8,14 @@ require __DIR__ . "/vendor/autoload.php";
 $loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/temp/");
 $loader->addDirectory(__DIR__ . "/src")->register();
 
+set_error_handler(function ($severity, $message, $file, $line) {
+	throw new \ErrorException($message, 0, $severity, $file, $line);
+});
+
 $success = true;
 foreach (glob(__DIR__ . "/tests/*.primi") as $file) {
-	info("Running test '$file' ... ", false);
+	$name = basename($file);
+	info("Running test '$name' ... ", false);
 	$success &= run_test($file);
 }
 
@@ -29,7 +34,7 @@ function run_test($file): bool {
 
 		$vars = $context->getVariables();
 		array_walk($vars, function($x, $k) {
-			printf("%s:%s:%s\n", $k, get_class($x), $x->getPhpValue());
+			printf("%s:%s:%s\n", $k, get_class($x), return_string_value($x->getPhpValue()));
 		});
 
 	$output = ob_get_clean();
@@ -64,4 +69,17 @@ function info(string $string, $nl = true, $block = "█") {
 
 function normalize(string $string) {
 	return preg_replace('~\r\n?~', "\n", $string);
+}
+
+function return_string_value($value) {
+	if (is_array($value)) {
+		$return = "[";
+		foreach ($value as $key => $item) {
+			$return .= sprintf("%s:%s,", $key, return_string_value($item->getPhpValue()));
+		}
+		$return = rtrim($return, ',') . "]";
+	} else {
+		$return = (string) $value;
+	}
+	return $return;
 }

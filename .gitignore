@@ -1,5 +1,7 @@
 composer.lock
 
+last_*.out
+
 temp/**
 vendor/**
 .vscode/**

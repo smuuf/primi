@@ -1,4 +1,4 @@
-d = [1: "abc", 3: "xyz", "a", "abc": "fuck yeah", 2: d, 789: "xyz", "nokey", "kokot": "fuck yeah"];
+d = [1: "abc", 3: "xyz", "a", "abc": "fuck yeah", 2: "bbb", 789: "xyz", "nokey", "kokot": "fuck yeah"];
 xyz = "ahojky";
 echo xyz + "\n";
 foreach (d as b) {

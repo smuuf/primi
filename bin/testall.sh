@@ -1,6 +1,6 @@
 #!/bin/bash
 
-files=`find . res/ -iname "*.primi"`
+files=`find res/ -iname "*.primi"`
 
 for i in $files
 do
