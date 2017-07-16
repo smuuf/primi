@@ -1,5 +1,4 @@
 h = 5;
-echo h;
 while (h--) {
- echo h;
+ x = h;
 }

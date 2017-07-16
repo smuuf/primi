@@ -9,4 +9,3 @@ foreach (string as c) {
 	if (c == "í") { tmp = "i"; }
 	result = result + tmp;
 }
-echo result;
