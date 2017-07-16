@@ -1,9 +1,26 @@
 function add(x, y) {
-	c = 10;
+	c = 2;
 	return x + y + c;
 }
 function sub(x, y) {
 	return x - y;
 }
 a = 1 + add(sub(4, 3), 3);
-echo a + "\n";
+a + "\n";
+function nested(a) {
+	return add(a, sub(2,3));
+}
+
+function doublenested(x) {
+	nested(x);
+	c = 0;
+	while (c < 4) {
+		if (add(1, x) > 400) {
+			x = sub(7, x);
+		}
+		c++;
+	}
+}
+
+nested(4);
+doublenested(nested(4));

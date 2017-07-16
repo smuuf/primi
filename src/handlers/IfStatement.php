@@ -20,7 +20,8 @@ class IfStatement extends \Smuuf\Primi\Object implements IHandler {
 
 		// If the result of the left hand equals to truthy value,
 		// execute the code branch stored in the right-hand node.
-		if ($return) {
+
+		if ($return->getPhpValue()) {
 			$rightHandler = HandlerFactory::get($node['right']['name']);
 			$rightHandler::handle($node['right'], $context);
 		}

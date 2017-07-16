@@ -42,7 +42,7 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			try {
 
 				if ($result instanceof ISupportsMultiplication && $tmp instanceof ISupportsMultiplication) {
-					$result = $result->doMultiplication($op, $tmp);
+					return $result->doMultiplication($op, $tmp);
 				} else {
 					throw new UnsupportedOperationException;
 				}
@@ -58,8 +58,6 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			}
 
 		}
-
-		return $result;
 
 	}
 

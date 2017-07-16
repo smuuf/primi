@@ -10,27 +10,8 @@ abstract class Value extends \Smuuf\Primi\Object {
 	const TYPE_ARRAY = 0x04;
 	const TYPE_REGEX = 0x05;
 
-	/** @var Number **/
+	/** @var mixed Value **/
 	protected $value;
-
-	public static function build(string $type, $value) {
-
-		switch ($type) {
-			case self::TYPE_NUMBER:
-				return new NumberValue($value);
-			case self::TYPE_STRING:
-				return new StringValue($value);
-			case self::TYPE_BOOL:
-				return new BoolValue($value);
-			case self::TYPE_ARRAY:
-				return new ArrayValue($value);
-			case self::TYPE_REGEX:
-				return new RegexValue($value);
-			default:
-				throw new \RuntimeException("Cannot build value of unknown type '$type'.");
-		}
-
-	}
 
 	public function getPhpValue() {
 		return $this->value;

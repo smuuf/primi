@@ -43,7 +43,7 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			try {
 
 				if ($result instanceof ISupportsAddition && $tmp instanceof ISupportsAddition) {
-					$result = $result->doAddition($op, $tmp);
+					return $result->doAddition($op, $tmp);
 				} else {
 					throw new UnsupportedOperationException;
 				}
@@ -59,8 +59,6 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			}
 
 		}
-
-		return $result;
 
 	}
 

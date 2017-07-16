@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ISupportsMultiplication;
+use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsUnary;
 
@@ -11,7 +12,7 @@ use \Smuuf\Primi\UnsupportedOperationException;
 class NumberValue extends Value implements
 	ISupportsAddition,
 	ISupportsMultiplication,
-	ISupportsUnary
+	ISupportsUnary,
 {
 
 	const TYPE = "number";
@@ -28,37 +29,37 @@ class NumberValue extends Value implements
 		return \preg_match('#\d+(\.\d+)?#', (string) $input);
 	}
 
-	public function doAddition(string $op, ISupportsAddition $operand) {
+	public function doAddition(string $op, ISupportsAddition $rightOperand) {
 
 		if ($op === "+") {
 
-			if ($operand instanceof StringValue && !self::isNumericInt($operand->value)) {
-				return new StringValue($this->value . $operand->value);
+			if ($rightOperand instanceof StringValue && !self::isNumericInt($rightOperand->value)) {
+				return new StringValue($this->value . $rightOperand->value);
 			}
 
-			return new self($this->value + $operand->value);
+			return new self($this->value + $rightOperand->value);
 
 		} else {
 
-			if ($operand instanceof StringValue) {
+			if ($rightOperand instanceof StringValue) {
 				throw new UnsupportedOperationException;
 			}
 
-			return new self($this->value - $operand->value);
+			return new self($this->value - $rightOperand->value);
 
 		}
 
 	}
 
-	public function doMultiplication(string $op, ISupportsMultiplication $operand) {
+	public function doMultiplication(string $op, ISupportsMultiplication $rightOperand) {
 
 		if ($op === "*") {
-			if (self::isNumeric($this->value) && self::isNumeric($operand->value)) {
-				return new self($this->value * $operand->value);
+			if (self::isNumeric($this->value) && self::isNumeric($rightOperand->value)) {
+				return new self($this->value * $rightOperand->value);
 			}
 		} else {
-			if (self::isNumeric($this->value) && self::isNumeric($operand->value)) {
-				return new self($this->value / $operand->value);
+			if (self::isNumeric($this->value) && self::isNumeric($rightOperand->value)) {
+				return new self($this->value / $rightOperand->value);
 			}
 		}
 
