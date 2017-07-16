@@ -1,0 +1,13 @@
+a:Smuuf\Primi\Structures\StringValue:abcdefg
+b:Smuuf\Primi\Structures\StringValue:abc123defg
+c:Smuuf\Primi\Structures\StringValue:xyz456čaukomňauko
+i:Smuuf\Primi\Structures\RegexValue:/[c-e]/u
+i_2:Smuuf\Primi\Structures\RegexValue:/[ce]/u
+j:Smuuf\Primi\Structures\RegexValue:/[0-9]+/u
+k:Smuuf\Primi\Structures\RegexValue:/[čau](ko)+mňau/u
+xa:Smuuf\Primi\Structures\StringValue:abfg
+xa_2:Smuuf\Primi\Structures\StringValue:abdfg
+xb:Smuuf\Primi\Structures\StringValue:ab123fg
+xb_2:Smuuf\Primi\Structures\StringValue:ab123dfg
+xc:Smuuf\Primi\Structures\StringValue:xyzčaukomňauko
+xc_k:Smuuf\Primi\Structures\StringValue:xyz456čako

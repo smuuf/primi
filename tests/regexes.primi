@@ -1,0 +1,15 @@
+a = "abcdefg";
+b = "abc123defg";
+c = "xyz456čaukomňauko";
+
+i = /[c-e]/;
+i_2 = /[ce]/;
+j = /[0-9]+/;
+k = /[čau](ko)+mňau/;
+
+xa = a - i;
+xa_2 = a - i_2;
+xb = b - i;
+xb_2 = b - i_2;
+xc = c - j;
+xc_k = c - k;
