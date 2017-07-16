@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\StringValue;
+use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Context;
 
 class StringLiteral extends \Smuuf\Primi\Object implements IHandler {
@@ -14,9 +15,13 @@ class StringLiteral extends \Smuuf\Primi\Object implements IHandler {
 		// Trim quotes from the start and the end using substr().
 		// Using trim("\"'", ...) would make `"abc'"` into `abc` instead of `abc'`,
 		// so do this a little more directly.
-		$string = mb_substr($content, 1, mb_strlen($content) - 2);
+		$value = mb_substr($content, 1, mb_strlen($content) - 2);
 
-		return new StringValue($string);
+		if (NumberValue::isNumeric($value)) {
+			return new NumberValue($value);
+		}
+
+		return new StringValue($value);
 
 	}
 

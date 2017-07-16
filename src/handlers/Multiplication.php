@@ -41,8 +41,12 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 			try {
 
-				if ($result instanceof ISupportsMultiplication && $tmp instanceof ISupportsMultiplication) {
-					return $result->doMultiplication($op, $tmp);
+				if ($result instanceof ISupportsMultiplication || $result instanceof ISupportsDivision) {
+					if ($op === "*") {
+						$result = $result->doMultiplication($tmp);
+					} else {
+						$result = $result->doDivision($tmp);
+					}
 				} else {
 					throw new UnsupportedOperationException;
 				}
@@ -50,7 +54,8 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			} catch (UnsupportedOperationException $e) {
 
 				throw new ErrorException(sprintf(
-					"Cannot multiply/divide: '%s' and '%s'",
+					"Cannot %s: '%s' and '%s'",
+					$op ===  "*" ? "multiply" : "divide",
 					$result::TYPE,
 					$tmp::TYPE
 				), $node);
@@ -58,6 +63,8 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			}
 
 		}
+
+		return $result;
 
 	}
 

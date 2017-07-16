@@ -6,9 +6,15 @@ use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsAddition;
+use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsIteration;
 
-class StringValue extends Value implements ISupportsAddition, ISupportsIteration, ISupportsMultiplication, ISupportsComparison {
+class StringValue extends Value implements
+	ISupportsAddition,
+	ISupportsSubtraction,
+	ISupportsIteration,
+	ISupportsComparison
+{
 
 	const TYPE = "string";
 	protected $splitCache;
@@ -17,41 +23,17 @@ class StringValue extends Value implements ISupportsAddition, ISupportsIteration
 		$this->value = self::expandSequences($value);
 	}
 
-	public function doAddition(string $op, ISupportsAddition $operand) {
-
-		if ($op === "+") {
-
-			if ($operand instanceof NumberValue && NumberValue::isNumericInt($this->value)) {
-				return new NumberValue($this->value + $operand->value);
-			}
-
-			return new self($this->value . $operand->value);
-
-		} else {
-
-			if ($operand instanceof NumberValue) {
-				throw new UnsupportedOperationException;
-			}
-
-			return new self(str_replace($operand->value, null, $this->value));
-
-		}
-
+	public function doAddition(ISupportsAddition $rightOperand) {
+		return new self($this->value . $rightOperand->value);
 	}
 
-	public function doMultiplication(string $op, ISupportsMultiplication $operand) {
+	public function doSubtraction(ISupportsSubtraction $rightOperand) {
 
-		if ($op === "*") {
-			if (NumberValue::isNumeric($this->value) && NumberValue::isNumeric($operand->value)) {
-				return new NumberValue($this->value * $operand->value);
-			}
-		} else {
-			if (NumberValue::isNumeric($this->value) && NumberValue::isNumeric($operand->value)) {
-				return new NumberValue($this->value / $operand->value);
-			}
+		if ($rightOperand instanceof NumberValue) {
+			throw new UnsupportedOperationException;
 		}
 
-		throw new UnsupportedOperationException;
+		return new self(str_replace($rightOperand->value, null, $this->value));
 
 	}
 

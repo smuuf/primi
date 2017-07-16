@@ -5,13 +5,17 @@ namespace Smuuf\Primi\Structures;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
+use \Smuuf\Primi\ISupportsSubtraction;
+use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ISupportsUnary;
 
 use \Smuuf\Primi\UnsupportedOperationException;
 
 class NumberValue extends Value implements
 	ISupportsAddition,
+	ISupportsSubtraction,
 	ISupportsMultiplication,
+	ISupportsDivision,
 	ISupportsUnary,
 	ISupportsComparison
 {
@@ -27,42 +31,46 @@ class NumberValue extends Value implements
 	}
 
 	public static function isNumeric($input) {
-		return \preg_match('#\d+(\.\d+)?#', (string) $input);
+		return \preg_match('#^\d+(\.\d+)?$#', (string) $input);
 	}
 
-	public function doAddition(string $op, ISupportsAddition $rightOperand) {
+	public function doAddition(ISupportsAddition $rightOperand) {
 
-		if ($op === "+") {
-
-			if ($rightOperand instanceof StringValue && !self::isNumericInt($rightOperand->value)) {
-				return new StringValue($this->value . $rightOperand->value);
-			}
-
-			return new self($this->value + $rightOperand->value);
-
-		} else {
-
-			if ($rightOperand instanceof StringValue) {
-				throw new UnsupportedOperationException;
-			}
-
-			return new self($this->value - $rightOperand->value);
-
+		if ($rightOperand instanceof StringValue && !self::isNumericInt($rightOperand->value)) {
+			return new StringValue($this->value . $rightOperand->value);
 		}
+
+		return new self($this->value + $rightOperand->value);
 
 	}
 
-	public function doMultiplication(string $op, ISupportsMultiplication $rightOperand) {
+	public function doSubtraction(ISupportsSubtraction $rightOperand) {
 
-		if ($op === "*") {
-			if (self::isNumeric($this->value) && self::isNumeric($rightOperand->value)) {
-				return new self($this->value * $rightOperand->value);
-			}
-		} else {
-			if (self::isNumeric($this->value) && self::isNumeric($rightOperand->value)) {
-				return new self($this->value / $rightOperand->value);
-			}
+		if ($rightOperand instanceof StringValue) {
+			throw new UnsupportedOperationException;
 		}
+
+		return new self($this->value - $rightOperand->value);
+
+	}
+
+	public function doMultiplication(ISupportsMultiplication $rightOperand) {
+
+		if (!$rightOperand instanceof self) {
+			throw new UnsupportedOperationException;
+		}
+
+		return new self($this->value * $rightOperand->value);
+
+	}
+
+	public function doDivision(ISupportsDivision $rightOperand) {
+
+		if (!$rightOperand instanceof self) {
+			throw new UnsupportedOperationException;
+		}
+
+		return new self($this->value / $rightOperand->value);
 
 	}
 

@@ -4,6 +4,6 @@ namespace Smuuf\Primi;
 
 interface ISupportsMultiplication {
 
-	public function doMultiplication(string $operator, ISupportsMultiplication $operand);
+	public function doMultiplication(ISupportsMultiplication $operand);
 
 }

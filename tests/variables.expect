@@ -2,7 +2,7 @@ a:Smuuf\Primi\Structures\NumberValue:1
 b:Smuuf\Primi\Structures\NumberValue:1234567890
 c:Smuuf\Primi\Structures\NumberValue:1234567890
 d:Smuuf\Primi\Structures\NumberValue:0
-e:Smuuf\Primi\Structures\StringValue:2
+e:Smuuf\Primi\Structures\NumberValue:2
 f:Smuuf\Primi\Structures\StringValue:x
 g:Smuuf\Primi\Structures\StringValue:xyz
 i:Smuuf\Primi\Structures\StringValue:this is some whole very long sentence.

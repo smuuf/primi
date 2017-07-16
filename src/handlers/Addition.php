@@ -42,8 +42,12 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 			try {
 
-				if ($result instanceof ISupportsAddition && $tmp instanceof ISupportsAddition) {
-					return $result->doAddition($op, $tmp);
+				if ($result instanceof ISupportsAddition || $result instanceof ISupportsSubtraction) {
+					if ($op === "+") {
+						$result = $result->doAddition($tmp);
+					} else {
+						$result = $result->doSubtraction($tmp);
+					}
 				} else {
 					throw new UnsupportedOperationException;
 				}
@@ -51,7 +55,8 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			} catch (UnsupportedOperationException $e) {
 
 				throw new ErrorException(sprintf(
-					"Cannot add/substract: '%s' and '%s'",
+					"Cannot %s: '%s' and '%s'",
+					$op === "+" ? "add" : "subtract",
 					$result::TYPE,
 					$tmp::TYPE
 				), $node);
@@ -59,6 +64,8 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			}
 
 		}
+
+		return $result;
 
 	}
 
