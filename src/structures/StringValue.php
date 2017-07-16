@@ -41,9 +41,17 @@ class StringValue extends Value implements
 
 		switch ($op) {
 			case "==":
-				return new BoolValue($this->value === $rightOperand->getPhpValue());
+
+				if ($rightOperand instanceof RegexValue) {
+					$result = \preg_match($rightOperand->value, $this->value);
+				} else {
+					$result = $this->value === $rightOperand->value;
+				}
+
+				return new BoolValue($result);
+
 			case "!=":
-				return new BoolValue($this->value !== $rightOperand->getPhpValue());
+				return new BoolValue($this->value !== $rightOperand->value);
 			default:
 				throw new UnsupportedOperationException;
 		}

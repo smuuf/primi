@@ -88,17 +88,17 @@ class NumberValue extends Value implements
 
 		switch ($op) {
 			case "==":
-				return new BoolValue($this->value == $rightOperand->getPhpValue());
+				return new BoolValue($this->value == $rightOperand->value);
 			case "!=":
-				return new BoolValue($this->value != $rightOperand->getPhpValue());
+				return new BoolValue($this->value != $rightOperand->value);
 			case ">":
-				return new BoolValue($this->value > $rightOperand->getPhpValue());
+				return new BoolValue($this->value > $rightOperand->value);
 			case "<":
-				return new BoolValue($this->value < $rightOperand->getPhpValue());
+				return new BoolValue($this->value < $rightOperand->value);
 			case ">=":
-				return new BoolValue($this->value >= $rightOperand->getPhpValue());
+				return new BoolValue($this->value >= $rightOperand->value);
 			case "<=":
-				return new BoolValue($this->value <= $rightOperand->getPhpValue());
+				return new BoolValue($this->value <= $rightOperand->value);
 			default:
 				throw new UnsupportedOperationException;
 		}

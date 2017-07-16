@@ -1,5 +1,5 @@
 a = /[a-z]\/[a-z]/;
-b = "ahojky mňauky";
+b = "ahojkymňauky";
 if (b == a) {
     c = 1;
 }
