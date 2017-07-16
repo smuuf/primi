@@ -25,7 +25,17 @@ class Context extends \Smuuf\Primi\Object {
 	}
 
 	public function setVariables(array $pairs) {
-		$this->container['variables'] = array_merge($this->container['variables'], $pairs);
+
+		foreach ($pairs as $name => $value) {
+
+			if (!$value instanceof Value) {
+				$value = Value::buildAutomatic($value);
+			}
+
+			$this->setVariable($name, $value);
+
+		}
+
 	}
 
 	public function getVariable(string $name) {
@@ -49,7 +59,11 @@ class Context extends \Smuuf\Primi\Object {
 	}
 
 	public function setFunctions(array $pairs) {
-		$this->container['functions'] = array_merge($this->container['functions'], $pairs);
+
+		foreach ($pairs as $name => $value) {
+			$this->setFunction($name, $value);
+		}
+
 	}
 
 	public function getFunction(string $name) {

@@ -13,6 +13,19 @@ abstract class Value extends \Smuuf\Primi\Object {
 	/** @var mixed Value **/
 	protected $value;
 
+	public static function buildAutomatic($value) {
+
+		switch (true) {
+			case NumberValue::isNumeric($value):
+				return new NumberValue($value);
+			case is_bool($value):
+				return new BoolValue($value);
+			default:
+				return new StringValue($value);
+		}
+
+	}
+
 	public function getPhpValue() {
 		return $this->value;
 	}
