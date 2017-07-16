@@ -29,7 +29,7 @@ class Variable extends \Smuuf\Primi\Object implements IHandler, IReducer {
 			foreach ($node['dereference'] as $keyNode) {
 
 				if (!$value instanceof ISupportsDereference) {
-					throw new \Smuuf\Primi\ErrorException("Value does not support dereference key", $context);
+					throw new \Smuuf\Primi\ErrorException("Value does not support dereference key", $node);
 				}
 
 				$handler = HandlerFactory::get($keyNode['name']);

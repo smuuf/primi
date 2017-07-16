@@ -30,11 +30,11 @@ class Func extends \Smuuf\Primi\Object {
 
 		if (count($this->args) !== count($args)) {
 			throw new ErrorException(sprintf(
-					"Wrong number of arguments passed to the '%s' function (%s instead of %s)",
-					$this->name,
-					count($args),
-					count($this->args)
-				));
+				"Wrong number of arguments passed to the '%s' function (%s instead of %s)",
+				$this->name,
+				count($args),
+				count($this->args)
+			));
 		}
 
 		// Create new context (scope) for the function, so it doesn't operate in the global scope (and thus it won't

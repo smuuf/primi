@@ -13,7 +13,7 @@ class VariableCore extends \Smuuf\Primi\Object implements IHandler {
 		try {
 			return $context->getVariable($node['text']);
 		} catch (UndefinedVariableException $e) {
-			throw new ErrorException("Undefined variable '$node[text]'");
+			throw new ErrorException("Undefined variable '$node[text]'", $node);
 		}
 	}
 
