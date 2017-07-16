@@ -23,21 +23,25 @@ class StringValue extends Value implements
 		$this->value = self::expandSequences($value);
 	}
 
-	public function doAddition(ISupportsAddition $rightOperand) {
+	public function doAddition(Value $rightOperand) {
 		return new self($this->value . $rightOperand->value);
 	}
 
-	public function doSubtraction(ISupportsSubtraction $rightOperand) {
+	public function doSubtraction(Value $rightOperand) {
 
 		if ($rightOperand instanceof NumberValue) {
 			throw new UnsupportedOperationException;
+		}
+
+		if ($rightOperand instanceof RegexValue) {
+			return new self(preg_replace($rightOperand->value, null, $this->value));
 		}
 
 		return new self(str_replace($rightOperand->value, null, $this->value));
 
 	}
 
-	public function doComparison(string $op, ISupportsComparison $rightOperand) {
+	public function doComparison(string $op, Value $rightOperand) {
 
 		switch ($op) {
 			case "==":

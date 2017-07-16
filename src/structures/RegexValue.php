@@ -15,7 +15,7 @@ class RegexValue extends Value implements
 		$this->value = $regex . "u";
 	}
 
-	public function doComparison(string $operator, ISupportsComparison $rightOperand) {
+	public function doComparison(string $operator, Value $rightOperand) {
 
 		if ($op === "==") {
 			return new BoolValue(\preg_match($this->value, $rightOperand->value));

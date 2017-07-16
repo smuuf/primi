@@ -34,7 +34,7 @@ class NumberValue extends Value implements
 		return \preg_match('#^\d+(\.\d+)?$#', (string) $input);
 	}
 
-	public function doAddition(ISupportsAddition $rightOperand) {
+	public function doAddition(Value $rightOperand) {
 
 		if ($rightOperand instanceof StringValue && !self::isNumericInt($rightOperand->value)) {
 			return new StringValue($this->value . $rightOperand->value);
@@ -44,7 +44,7 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doSubtraction(ISupportsSubtraction $rightOperand) {
+	public function doSubtraction(Value $rightOperand) {
 
 		if ($rightOperand instanceof StringValue) {
 			throw new UnsupportedOperationException;
@@ -54,7 +54,7 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doMultiplication(ISupportsMultiplication $rightOperand) {
+	public function doMultiplication(Value $rightOperand) {
 
 		if (!$rightOperand instanceof self) {
 			throw new UnsupportedOperationException;
@@ -64,7 +64,7 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doDivision(ISupportsDivision $rightOperand) {
+	public function doDivision(Value $rightOperand) {
 
 		if (!$rightOperand instanceof self) {
 			throw new UnsupportedOperationException;
@@ -84,7 +84,7 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doComparison(string $op, ISupportsComparison $rightOperand) {
+	public function doComparison(string $op, Value $rightOperand) {
 
 		switch ($op) {
 			case "==":
