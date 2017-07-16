@@ -47,7 +47,10 @@ class ParserHandler extends CompiledParser {
 
 		$result = $this->match_Program();
 		if ($result['text'] !== $this->source) {
+
+			// $this->pos is an internal PEG Parser position counter.
 			$this->error('Syntax error', $this->pos);
+
 		}
 
 		return self::reduceAST($result, true);
@@ -63,7 +66,7 @@ class ParserHandler extends CompiledParser {
 			list($line, $pos) = self::getPositionTupleEstimate($this->source, $position);
 		}
 
-		throw new ErrorException($msg, $line, $pos);
+		throw new SyntaxErrorException($msg, $line, $pos);
 
 	}
 
