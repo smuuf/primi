@@ -13,6 +13,7 @@ class NumberValue extends Value implements
 	ISupportsAddition,
 	ISupportsMultiplication,
 	ISupportsUnary,
+	ISupportsComparison
 {
 
 	const TYPE = "number";
@@ -71,6 +72,27 @@ class NumberValue extends Value implements
 			return new self($this->value + 1);
 		} else {
 			return new self($this->value - 1);
+		}
+
+	}
+
+	public function doComparison(string $op, ISupportsComparison $rightOperand) {
+
+		switch ($op) {
+			case "==":
+				return new BoolValue($this->value == $rightOperand->getPhpValue());
+			case "!=":
+				return new BoolValue($this->value != $rightOperand->getPhpValue());
+			case ">":
+				return new BoolValue($this->value > $rightOperand->getPhpValue());
+			case "<":
+				return new BoolValue($this->value < $rightOperand->getPhpValue());
+			case ">=":
+				return new BoolValue($this->value >= $rightOperand->getPhpValue());
+			case "<=":
+				return new BoolValue($this->value <= $rightOperand->getPhpValue());
+			default:
+				throw new UnsupportedOperationException;
 		}
 
 	}

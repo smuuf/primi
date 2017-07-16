@@ -2,7 +2,9 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\BoolValue;
+use \Smuuf\Primi\UnsupportedOperationException;
+use \Smuuf\Primi\ISupportsComparison;
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -22,19 +24,24 @@ class Comparison extends \Smuuf\Primi\Object implements IHandler {
 		$rightHandler = HandlerFactory::get($node['right']['name']);
 		$rightReturn = $rightHandler::handle($node['right'], $context);
 
-		switch ($node['op']['text']) {
-			case "==":
-				return new BoolValue($leftReturn == $rightReturn);
-			case "!=":
-				return new BoolValue($leftReturn != $rightReturn);
-			case ">":
-				return new BoolValue($leftReturn > $rightReturn);
-			case "<":
-				return new BoolValue($leftReturn < $rightReturn);
-			case ">=":
-				return new BoolValue($leftReturn >= $rightReturn);
-			case "<=":
-				return new BoolValue($leftReturn <= $rightReturn);
+		$op = $node['op']['text'];
+
+		try {
+
+			if ($leftReturn instanceof ISupportsComparison && $rightReturn instanceof ISupportsComparison) {
+				return $leftReturn->doComparison($op, $rightReturn);
+			} else {
+				throw new UnsupportedOperationException;
+			}
+
+		} catch (UnsupportedOperationException $e) {
+
+			throw new ErrorException(sprintf(
+				"Cannot compare: '%s' and '%s'",
+				$leftReturn::TYPE,
+				$rightReturn::TYPE
+			), $node);
+
 		}
 
 	}

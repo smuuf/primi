@@ -3,11 +3,12 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\UnsupportedOperationException;
+use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsIteration;
 
-class StringValue extends Value implements ISupportsAddition, ISupportsIteration, ISupportsMultiplication {
+class StringValue extends Value implements ISupportsAddition, ISupportsIteration, ISupportsMultiplication, ISupportsComparison {
 
 	const TYPE = "string";
 	protected $splitCache;
@@ -54,6 +55,19 @@ class StringValue extends Value implements ISupportsAddition, ISupportsIteration
 
 	}
 
+	public function doComparison(string $op, ISupportsComparison $rightOperand) {
+
+		switch ($op) {
+			case "==":
+				return new BoolValue($this->value === $rightOperand->getPhpValue());
+			case "!=":
+				return new BoolValue($this->value !== $rightOperand->getPhpValue());
+			default:
+				throw new UnsupportedOperationException;
+		}
+
+	}
+
 	public function getIterator(): \Iterator {
 		return $this->splitCache ?: $this->splitCache = self::utfSplit($this->value);
 	}
@@ -67,7 +81,6 @@ class StringValue extends Value implements ISupportsAddition, ISupportsIteration
 		return $string;
 
 	}
-
 
 	private static function utfSplit($string) {
 		$strlen = mb_strlen($string);
