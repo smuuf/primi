@@ -24,7 +24,7 @@ class Func extends \Smuuf\Primi\Object {
 		$this->body = $body;
 	}
 
-	public function call(array $args, Context $callerContext) {
+	public function call(array $args, Context $callerContext, array $callerNode) {
 
 		$handler = HandlerFactory::get($this->body['name']);
 
@@ -34,7 +34,7 @@ class Func extends \Smuuf\Primi\Object {
 				$this->name,
 				count($args),
 				count($this->args)
-			));
+			), $callerNode);
 		}
 
 		// Create new context (scope) for the function, so it doesn't operate in the global scope (and thus it won't
