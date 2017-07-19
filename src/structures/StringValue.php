@@ -85,4 +85,30 @@ class StringValue extends Value implements
 		}
 	}
 
+	// Internal value methods.
+
+	public function callReplace(Value $search, self $replace = null): self {
+
+		if ($search instanceof ArrayValue) {
+			$from = array_keys($search->value);
+			$to = array_values(array_map(function($item) {
+				return $item->value;
+			}, $search->value));
+			return new self(str_replace($from, $to, $this->value));
+		}
+
+		if (!$replace) {
+			throw new \TypeError;
+		}
+
+		if ($search instanceof self) {
+			return new self(str_replace($search->value, $replace->value, $this->value));
+		} elseif ($search instanceof RegexValue) {
+			return new self(preg_replace($search->value, $replace->value, $this->value));
+		} else {
+			throw new \TypeError;
+		}
+
+	}
+
 }

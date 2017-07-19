@@ -13,7 +13,7 @@ use \Smuuf\Primi\Context;
  */
 class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 
-	public static function handle(array $node, Context $context) {
+	public static function handle(array $node, Context $context, \Smuuf\Primi\Structures\Value $value = null) {
 
 		$functionName = $node['function']['text'];
 
@@ -31,11 +31,41 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 			}
 		}
 
-		if (empty($function = $context->getFunction($functionName))) {
-			throw new \Smuuf\Primi\ErrorException("Function '$functionName' is not defined", $node);
-		}
+		// If a value object is provided, try to call the function upon it.
+		if ($value) {
 
-		return $function->call($argumentList, $context);
+			$methodName = sprintf("call%s", ucfirst($functionName));
+			if (!method_exists($value, $methodName)) {
+				throw new \Smuuf\Primi\ErrorException(sprintf(
+					"Method '%s' is not defined for value type '%s'.",
+					$functionName,
+					$value::TYPE
+				), $node);
+			}
+
+			try {
+				return $value->$methodName(...$argumentList);
+			} catch (\TypeError $e) {
+
+				// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
+				throw new \Smuuf\Primi\ErrorException(sprintf(
+					"Wrong type of argument passed to method '%s' of value '%s'.",
+					$functionName,
+					$value::TYPE
+				), $node);
+
+			}
+
+		} else {
+
+			// Standard function call.
+			if (empty($function = $context->getFunction($functionName))) {
+				throw new \Smuuf\Primi\ErrorException("Function '$functionName' is not defined", $node);
+			}
+
+			return $function->call($argumentList, $context, $node);
+
+		}
 
 	}
 

@@ -18,10 +18,11 @@ VariableCore: /([a-zA-Z_][a-zA-Z0-9_]*)/
 Variable: ( ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore ) ) ( "[" > dereference:Value > "]" )*
 
 ArrayItem: ( key:Expression > ":" )? > value:Expression )
-ArrayDefinition: "[" > ( > items:ArrayItem ( > "," > items:ArrayItem )* )? > "]"
+ArrayDefinition: "[" SPACE ( SPACE items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
 
-Value: skip:Literal | skip:Variable | skip:ArrayDefinition
+Value: ( core:Literal | core:Variable | core:ArrayDefinition ) ( ObjectResolutionOperator method:FunctionCall)?
 
+ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
 AssignmentOperator: "=" | "+=" | "-=" | "*=" | "/="

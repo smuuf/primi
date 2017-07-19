@@ -1,0 +1,13 @@
+a = "ahojkyacauky";
+b = a.replace("a", "xxx");
+c = "voleneasijakprase".replace("ne", "jo");
+d = c.replace("asi", "určitě");
+e = "abcdefghijklmn".replace(/[c-g]/, "_");
+
+_definitions = [
+    "á": "a",
+    "č": "c",
+    "ě": "e"
+];
+
+f = "rádoby čau".replace(_definitions);
