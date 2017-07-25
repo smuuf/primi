@@ -17,13 +17,13 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
-		// Do the same with operators.
-		if (isset($node['ops']['name'])) {
+		// Make sure the potentially multiple nodes are represented as being indexed.
+		if (!isset($node['ops'][0])) {
 			$node['ops'] = [$node['ops']];
 		}
 
 		// Go through each of the operands and build the final result value combining the operand's value with the
-		// so-far-result. The operator determining the operands's effect on the result always has the "n-1" index.
+		// result-so-far. The operator determining the operands's effect on the result has always n-1 index.
 		$first = true;
 		foreach ($node['operands'] as $index => $operandNode) {
 

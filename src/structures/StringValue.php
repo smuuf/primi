@@ -101,8 +101,8 @@ class StringValue extends Value implements
 			throw new \TypeError;
 		}
 
-		if ($search instanceof self) {
-			return new self(str_replace($search->value, $replace->value, $this->value));
+		if ($search instanceof self || $search instanceof NumberValue) {
+			return new self(str_replace((string) $search->value, $replace->value, $this->value));
 		} elseif ($search instanceof RegexValue) {
 			return new self(preg_replace($search->value, $replace->value, $this->value));
 		} else {

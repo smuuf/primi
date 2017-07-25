@@ -17,8 +17,8 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
-		// Do the same with operators.
-		if (isset($node['ops']['name'])) {
+		// Make sure the potentially multiple nodes are represented as being indexed.
+		if (!isset($node['ops'][0])) {
 			$node['ops'] = [$node['ops']];
 		}
 

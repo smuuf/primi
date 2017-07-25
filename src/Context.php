@@ -24,6 +24,11 @@ class Context extends \Smuuf\Primi\Object {
 		$this->container['variables'][$name] = $value;
 	}
 
+	/**
+	 * Set multiple variables to the context using an array as parameter.
+	 *
+	 * @param array Pairs.
+	 */
 	public function setVariables(array $pairs) {
 
 		foreach ($pairs as $name => $value) {
