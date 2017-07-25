@@ -5,7 +5,7 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class Value extends \Smuuf\Primi\Object implements IHandler, IReducer {
+class Operand extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
@@ -13,8 +13,16 @@ class Value extends \Smuuf\Primi\Object implements IHandler, IReducer {
 		$value = $handler::handle($node['core'], $context);
 
 		if (isset($node['method'])) {
-			$handler = HandlerFactory::get($node['method']['name']);
-			return $handler::handle($node['method'], $context, $value);
+
+			if (!isset($node['method'][0])) {
+				$node['method'] = [$node['method']];
+			}
+
+			foreach ($node['method'] as $single) {
+				$handler = HandlerFactory::get($single['name']);
+				$value = $handler::handle($single, $context, $value);
+			}
+
 		}
 
 		return $value;

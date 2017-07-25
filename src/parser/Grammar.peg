@@ -20,7 +20,7 @@ Variable: ( ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? cor
 ArrayItem: ( key:Expression > ":" )? > value:Expression )
 ArrayDefinition: "[" SPACE ( SPACE items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
 
-Value: ( core:Literal | core:Variable | core:ArrayDefinition ) ( ObjectResolutionOperator method:FunctionCall)?
+Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 
 ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
@@ -34,7 +34,7 @@ Comparison: left:Addition > op:ComparisonOperator > right:Addition
 Assignment: left:Variable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
-Operand: ( "(" > skip:Expression > ")" ) | skip:FunctionCall | skip:Value
+Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:Value ) ( ObjectResolutionOperator method:FunctionCall)*
 
 FunctionCall: function:VariableCore > "(" > args:FunctionCallArgumentList? > ")"
 FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*
