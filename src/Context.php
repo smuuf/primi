@@ -79,4 +79,11 @@ class Context extends \Smuuf\Primi\Object {
 		return $this->container['functions'];
 	}
 
+	// Debugging.
+
+	public function ___debug_zvals() {
+		$tmp = $this;
+		xdebug_debug_zval('tmp');
+	}
+
 }

@@ -53,7 +53,7 @@ function run_test($file): bool {
 		info("", true, "░");
 		file_put_contents($lastExpectedFile, $expected);
 		file_put_contents($lastActualFile, $output);
-		system("diff --unchanged-line-format='' --old-line-format='<(%dn) %L' --new-line-format='>(%dn) %L' $lastExpectedFile $lastActualFile");
+		system("diff --unchanged-line-format='' --old-line-format='EXP(%dn) %L' --new-line-format='GOT(%dn) %L' $lastExpectedFile $lastActualFile");
 		info("", true, "░");
 		return false;
 	} else {
@@ -78,6 +78,8 @@ function return_string_value($value) {
 			$return .= sprintf("%s:%s,", $key, return_string_value($item->getPhpValue()));
 		}
 		$return = rtrim($return, ',') . "]";
+	} elseif (is_bool($value)) {
+		$return = $value ? 1 : 0;
 	} else {
 		$return = (string) $value;
 	}

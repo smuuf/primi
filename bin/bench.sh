@@ -10,7 +10,7 @@ complextime=0
 iterations=100
 
 function timeit {
-    echo `{ time php index.php $1 > /dev/null; } 2>&1`
+    echo `{ time php primi.php $1 > /dev/null; } 2>&1`
 }
 
 for i in $(seq $iterations)
