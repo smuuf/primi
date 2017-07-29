@@ -3,3 +3,12 @@ b = [4,5,6];
 c = [a,b];
 d = [11:c, 22:a, 33:b];
 e = ["123456789123456789aaabbbcccdddeeefff": 987654321];
+f = [1,2,3,4,5].contains(3);
+g = [1,2,3,4,5].contains(6);
+h = [1,2,3,4,5].contains("ahoj");
+i = [1, 2, 3, 0: "ahoj",5].contains("ahoj");
+j = [1, 2, 3, 0: "ahoj",5].contains("neasi");
+
+k = [a[1], "foo", "somekey":"bar", "train"];
+l = k[0];
+m = k["somekey"];

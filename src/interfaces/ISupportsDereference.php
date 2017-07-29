@@ -2,8 +2,10 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Structures\Value;
+
 interface ISupportsDereference {
 
-	public function dereference($index);
+	public function dereference(Value $keyValue);
 
 }

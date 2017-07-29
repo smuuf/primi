@@ -15,12 +15,13 @@ RegexLiteral: "/" /([^\\\/]|\\\/)+/ "/"
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:RegexLiteral
 VariableCore: /([a-zA-Z_][a-zA-Z0-9_]*)/
-Variable: ( ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore ) ) ( "[" > dereference:Value > "]" )*
+Variable: ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore )
 
 ArrayItem: ( key:Expression > ":" )? > value:Expression )
 ArrayDefinition: "[" SPACE ( SPACE items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
+DereferencableValue: core:Value ( "[" > dereference:Value > "]" )*
 
 ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
@@ -34,7 +35,7 @@ Comparison: left:Addition > op:ComparisonOperator > right:Addition
 Assignment: left:Variable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
-Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:Value ) ( ObjectResolutionOperator method:FunctionCall)*
+Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator method:FunctionCall)*
 
 FunctionCall: function:VariableCore > "(" > args:FunctionCallArgumentList? > ")"
 FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*

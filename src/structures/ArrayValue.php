@@ -17,13 +17,25 @@ class ArrayValue extends Value implements ISupportsIteration, ISupportsDereferen
 		return new \ArrayIterator($this->value);
 	}
 
-	public function dereference($index) {
+	public function dereference(Value $index) {
 
-		if (!isset($this->value[$index])) {
+		$phpIndex = $index->value;
+
+		if (!isset($this->value[$phpIndex])) {
 			throw new \Smuuf\Primi\ErrorException("Undefined index '$index'");
 		}
 
-		return $this->value[$index];
+		return $this->value[$phpIndex];
+
+	}
+
+	public function callContains(Value $value) {
+
+		// I expect a bug here, since StringValues ought to be equal (how array_search() works) if all properties are
+		// equal. Strings can have a cached split buffer which could differ for the "same" internal strings (different
+		// objects containing the same string). We'll see, he he.
+
+		return new BoolValue(array_search($value, $this->value) !== false);
 
 	}
 
