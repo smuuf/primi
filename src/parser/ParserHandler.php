@@ -99,7 +99,7 @@ class ParserHandler extends CompiledParser {
 		if (
 			isset($node['name'])
 			&& ($handler = HandlerFactory::get($node['name'], false))
-			&& is_subclass_of($handler, \Smuuf\Primi\Handlers\IReducer::class)
+			&& \is_subclass_of($handler, \Smuuf\Primi\Handlers\IReducer::class)
 		) {
 			if ($reduced = $handler::reduce($node)) {
 				return self::reduceAST($reduced, $aggressive);
@@ -108,12 +108,12 @@ class ParserHandler extends CompiledParser {
 
 		foreach ($node as $k => &$v) {
 
-			if (is_array($v)) {
+			if (\is_array($v)) {
 				$v = self::reduceAST($v, $aggressive);
 			}
 
 			if (!$aggressive) continue;
-			if (in_array($k, $aggresivelyRemove, true)) {
+			if (\in_array($k, $aggresivelyRemove, true)) {
 				unset($node[$k]);
 			}
 

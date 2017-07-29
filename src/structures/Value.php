@@ -20,7 +20,7 @@ abstract class Value extends \Smuuf\Primi\Object {
 		switch (true) {
 			case NumberValue::isNumeric($value):
 				return new NumberValue($value);
-			case is_bool($value):
+			case \is_bool($value):
 				return new BoolValue($value);
 			default:
 				return new StringValue($value);

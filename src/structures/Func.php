@@ -28,12 +28,12 @@ class Func extends \Smuuf\Primi\Object {
 
 		$handler = HandlerFactory::get($this->body['name']);
 
-		if (count($this->args) !== count($args)) {
+		if (\count($this->args) !== \count($args)) {
 			throw new ErrorException(sprintf(
 				"Wrong number of arguments passed to the '%s' function (%s instead of %s)",
 				$this->name,
-				count($args),
-				count($this->args)
+				\count($args),
+				\count($this->args)
 			), $callerNode);
 		}
 
@@ -41,7 +41,7 @@ class Func extends \Smuuf\Primi\Object {
 		// modify the global context.
 		$context = new Context;
 
-		$args = array_combine($this->args, $args);
+		$args = \array_combine($this->args, $args);
 		$context->setFunctions($callerContext->getFunctions());
 		$context->setVariables($args);
 

@@ -34,10 +34,10 @@ class StringValue extends Value implements
 		}
 
 		if ($rightOperand instanceof RegexValue) {
-			return new self(preg_replace($rightOperand->value, null, $this->value));
+			return new self(\preg_replace($rightOperand->value, null, $this->value));
 		}
 
-		return new self(str_replace($rightOperand->value, null, $this->value));
+		return new self(\str_replace($rightOperand->value, null, $this->value));
 
 	}
 
@@ -71,17 +71,17 @@ class StringValue extends Value implements
 	protected static function expandSequences(string $string) {
 
 		// Primi strings support some escape sequences.
-		$string = str_replace('\n', "\n", $string);
+		$string = \str_replace('\n', "\n", $string);
 		return $string;
 
 	}
 
 	private static function utfSplit($string) {
-		$strlen = mb_strlen($string);
+		$strlen = \mb_strlen($string);
 		while ($strlen) {
-			yield new self(mb_substr($string, 0, 1, "UTF-8"));
-			$string = mb_substr($string, 1, $strlen, "UTF-8");
-			$strlen = mb_strlen($string);
+			yield new self(\mb_substr($string, 0, 1, "UTF-8"));
+			$string = \mb_substr($string, 1, $strlen, "UTF-8");
+			$strlen = \mb_strlen($string);
 		}
 	}
 
@@ -90,11 +90,11 @@ class StringValue extends Value implements
 	public function callReplace(Value $search, self $replace = null): self {
 
 		if ($search instanceof ArrayValue) {
-			$from = array_keys($search->value);
-			$to = array_values(array_map(function($item) {
+			$from = \array_keys($search->value);
+			$to = \array_values(\array_map(function($item) {
 				return $item->value;
 			}, $search->value));
-			return new self(str_replace($from, $to, $this->value));
+			return new self(\str_replace($from, $to, $this->value));
 		}
 
 		if (!$replace) {
@@ -102,9 +102,9 @@ class StringValue extends Value implements
 		}
 
 		if ($search instanceof self || $search instanceof NumberValue) {
-			return new self(str_replace((string) $search->value, $replace->value, $this->value));
+			return new self(\str_replace((string) $search->value, $replace->value, $this->value));
 		} elseif ($search instanceof RegexValue) {
-			return new self(preg_replace($search->value, $replace->value, $this->value));
+			return new self(\preg_replace($search->value, $replace->value, $this->value));
 		} else {
 			throw new \TypeError;
 		}

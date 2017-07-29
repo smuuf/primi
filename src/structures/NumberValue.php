@@ -108,19 +108,19 @@ class NumberValue extends Value implements
 	// Methods
 
 	public function callSin(): self {
-		return new self(sin($this->value));
+		return new self(\sin($this->value));
 	}
 
 	public function callCos(): self {
-		return new self(cos($this->value));
+		return new self(\cos($this->value));
 	}
 
 	public function callTan(): self {
-		return new self(tan($this->value));
+		return new self(\tan($this->value));
 	}
 
 	public function callAtan(): self {
-		return new self(atan($this->value));
+		return new self(\atan($this->value));
 	}
 
 }

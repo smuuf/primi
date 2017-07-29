@@ -17,17 +17,19 @@ class FunctionDefinition extends \Smuuf\Primi\Object implements IHandler {
 
 		$functionName = $node['function']['text'];
 
-		// Handle situation with solo arguments (which wouldn't be represented as array).
-		// Do it by placing solo arguments into arrays.
-		if (isset($node['args']['name'])) {
-			$node['args'] = [$node['args']];
-		}
-
 		$argumentList = [];
 		if (isset($node['args'])) {
+
+			// Handle situation with solo arguments (which wouldn't be represented as array).
+			// Do it by placing solo arguments into arrays.
+			if (!isset($node['args'][0])) {
+				$node['args'] = [$node['args']];
+			}
+
 			foreach ($node['args'] as $a) {
 				$argumentList[] = $a['text'];
 			}
+
 		}
 
 		$context->setFunction(

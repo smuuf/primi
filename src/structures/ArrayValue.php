@@ -35,7 +35,7 @@ class ArrayValue extends Value implements ISupportsIteration, ISupportsDereferen
 		// equal. Strings can have a cached split buffer which could differ for the "same" internal strings (different
 		// objects containing the same string). We'll see, he he.
 
-		return new BoolValue(array_search($value, $this->value) !== false);
+		return new BoolValue(\array_search($value, $this->value) !== false);
 
 	}
 

@@ -17,18 +17,20 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 
 		$functionName = $node['function']['text'];
 
-		// Handle situation with solo arguments (which wouldn't be represented as array).
-		// Do it by placing solo arguments into arrays.
-		if (isset($node['args']) && !isset($node['args'][0])) {
-			$node['args'] = [$node['args']];
-		}
-
 		$argumentList = [];
 		if (isset($node['args'])) {
+
+			// Handle situation with solo arguments (which wouldn't be represented as array).
+			// Do it by placing solo arguments into arrays.
+			if (!isset($node['args'][0])) {
+				$node['args'] = [$node['args']];
+			}
+
 			foreach ($node['args'] as $a) {
 				$handler = HandlerFactory::get($a['name']);
 				$argumentList[] = $handler::handle($a, $context);
 			}
+
 		}
 
 		// If a value object is provided, try to call the function upon it (we're calling the object's method).
