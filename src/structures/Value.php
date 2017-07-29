@@ -4,6 +4,8 @@ namespace Smuuf\Primi\Structures;
 
 abstract class Value extends \Smuuf\Primi\Object {
 
+	const TYPE = "__no_type__";
+
 	const TYPE_NUMBER = 0x01;
 	const TYPE_STRING = 0x02;
 	const TYPE_BOOL = 0x03;

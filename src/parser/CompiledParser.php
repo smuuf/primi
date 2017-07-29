@@ -6,6 +6,14 @@ use hafriedlander\Peg\Parser;
 
 class CompiledParser extends Parser\Packrat {
 
+    // Add these properties so PHPStan doesn't complain for undefined properties.
+
+    /** @var int **/
+    public $pos;
+
+    /** @var string **/
+    public $string;
+
 /* StringLiteral: /("(.|\n)*?"|'(.|\n)*?')/ */
 protected $match_StringLiteral_typestack = array('StringLiteral');
 function match_StringLiteral ($stack = array()) {

@@ -8,6 +8,7 @@ class HandlerFactory extends \Smuuf\Primi\Object {
 
 	public static function get($name, $strict = true) {
 
+		// Using caching should be faster than repeatedly building strings and checking classes and stuff.
 		if (isset(self::$cache[$name])) {
 			return self::$cache[$name];
 		}

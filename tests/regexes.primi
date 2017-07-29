@@ -2,6 +2,9 @@ a = "abcdefg";
 b = "abc123defg";
 c = "xyz456čaukomňauko";
 
+d = a == /[cde]d/;
+e = /[cde]d/ == a;
+
 i = /[c-e]/;
 i_2 = /[ce]/;
 j = /[0-9]+/;

@@ -17,7 +17,8 @@
 	},
 	"require-dev": {
 		"smuuf/koloader": "dev-master",
-		"smuuf/phpcb": "dev-master"
+		"smuuf/phpcb": "dev-master",
+		"phpstan/phpstan": "^0.8.0"
 	},
 	"extra": {
 		"patches": {

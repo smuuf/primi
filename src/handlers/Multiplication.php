@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\ISupportsMultiplication;
+use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
@@ -25,6 +26,7 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 		// Go through each of the operands and build the final result value combining the operand's value with the
 		// so-far-result. The operator determining the operands's effect on the result always has the "n-1" index.
 		$first = true;
+		$result = null;
 		foreach ($node['operands'] as $index => $operandNode) {
 
 			$handler = HandlerFactory::get($operandNode['name']);
