@@ -18,7 +18,7 @@ class ArrayDefinition extends \Smuuf\Primi\Object implements IHandler {
 		$result = [];
 		$indexCounter = 0;
 
-		if (isset($node['items']['name'])) {
+		if (!isset($node['items'][0])) {
 			$node['items'] = [$node['items']];
 		}
 

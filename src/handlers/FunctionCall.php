@@ -19,7 +19,7 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 
 		// Handle situation with solo arguments (which wouldn't be represented as array).
 		// Do it by placing solo arguments into arrays.
-		if (isset($node['args']['name'])) {
+		if (isset($node['args']) && !isset($node['args'][0])) {
 			$node['args'] = [$node['args']];
 		}
 
