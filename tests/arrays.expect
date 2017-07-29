@@ -11,3 +11,9 @@ j:Smuuf\Primi\Structures\BoolValue:0
 k:Smuuf\Primi\Structures\ArrayValue:[0:2,1:foo,somekey:bar,2:train]
 l:Smuuf\Primi\Structures\NumberValue:2
 m:Smuuf\Primi\Structures\StringValue:bar
+test:Smuuf\Primi\Structures\ArrayValue:[]
+nested:Smuuf\Primi\Structures\ArrayValue:[x:y,0:extra]
+test_result_1:Smuuf\Primi\Structures\ArrayValue:[]
+test_result_2:Smuuf\Primi\Structures\ArrayValue:[]
+nested_2:Smuuf\Primi\Structures\ArrayValue:[x:y,0:extra]
+test_result_3:Smuuf\Primi\Structures\ArrayValue:[]

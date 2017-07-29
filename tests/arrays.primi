@@ -12,3 +12,33 @@ j = [1, 2, 3, 0: "ahoj",5].contains("neasi");
 k = [a[1], "foo", "somekey":"bar", "train"];
 l = k[0];
 m = k["somekey"];
+
+test = [];
+nested = ["x": "y"];
+
+test.push(123); // test" should now contain 123 as the only item.
+test_result_1 = test; // test_result_1" should now be the SAME value object as test"
+
+// test" === test_result_1 and both should now contain 123 and 456
+test.push(456);
+
+// test" === test_result_1 === test_result_2
+test_result_2 = test;
+
+// test" === test_result_1 === test_result_2 === [123,456,["x":"y"]]
+test.push(nested);
+
+// test" === test_result_1 === test_result_2 === [123,456] and nested_2 = ["x":"y"];
+nested_2 = test.pop();
+
+// test" === test_result_1 === test_result_2 === [123,456]
+// nested_2 === ["x": "y", "extra"] === nested
+nested_2.push("extra");
+
+// test_result_3 === test_result_2 === test
+test_result_3 = test;
+
+test.pop();
+test.pop();
+// test === test_result_1 === test_result_2 should be now empty.
+

@@ -12,7 +12,7 @@ class ArrayDefinition extends \Smuuf\Primi\Object implements IHandler {
 	public static function handle(array $node, Context $context) {
 
 		if (!isset($node['items'])) {
-			return [];
+			return new ArrayValue([]);
 		}
 
 		$result = [];

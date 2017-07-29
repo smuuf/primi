@@ -15,7 +15,7 @@ class EchoStatement extends \Smuuf\Primi\Object implements IHandler {
 		if (is_scalar($value)) {
 			echo $value;
 		} else {
-			print_r($value);
+			var_dump($value);
 		}
 
 	}

@@ -13,6 +13,15 @@ class ArrayValue extends Value implements ISupportsIteration, ISupportsDereferen
 		$this->value = $arr;
 	}
 
+	public function __clone() {
+
+		// ArrayValue is really a PHP array of other Primi value objects, so we need to do deep copy.
+		array_walk($this->value, function(&$item) {
+			$item = clone $item;
+		});
+
+	}
+
 	public function getIterator(): \Iterator {
 		return new \ArrayIterator($this->value);
 	}
@@ -37,6 +46,17 @@ class ArrayValue extends Value implements ISupportsIteration, ISupportsDereferen
 
 		return new BoolValue(\array_search($value, $this->value) !== false);
 
+	}
+
+	public function callPush(Value $value) {
+
+		$this->value[] = $value;
+		return $value;
+
+	}
+
+	public function callPop() {
+		return array_pop($this->value);
 	}
 
 }
