@@ -18,3 +18,4 @@ xc = c - j;
 xc_k = c - k;
 
 l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".replace(/ann?o/, "FAIL");
+m = "\ahoj\n\vo\le" - /\\ahoj\s/;

@@ -66,7 +66,7 @@ function match_BoolLiteral ($stack = array()) {
 }
 
 
-/* RegexLiteral: "/" /([^\\\/]|\\\/)+/ "/" */
+/* RegexLiteral: "/" /(\\\/|[^\/])+/ "/" */
 protected $match_RegexLiteral_typestack = array('RegexLiteral');
 function match_RegexLiteral ($stack = array()) {
 	$matchrule = "RegexLiteral"; $result = $this->construct($matchrule, $matchrule, null);
@@ -77,7 +77,7 @@ function match_RegexLiteral ($stack = array()) {
 			$result["text"] .= '/';
 		}
 		else { $_10 = FALSE; break; }
-		if (( $subres = $this->rx( '/([^\\\\\/]|\\\\\/)+/' ) ) !== FALSE) { $result["text"] .= $subres; }
+		if (( $subres = $this->rx( '/(\\\\\/|[^\/])+/' ) ) !== FALSE) { $result["text"] .= $subres; }
 		else { $_10 = FALSE; break; }
 		if (substr($this->string,$this->pos,1) == '/') {
 			$this->pos += 1;
