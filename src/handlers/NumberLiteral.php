@@ -8,7 +8,16 @@ use \Smuuf\Primi\Context;
 class NumberLiteral extends \Smuuf\Primi\Object implements IHandler {
 
 	public static function handle(array $node, Context $context) {
-		return new NumberValue($node['text']);
+
+		$value = $node['text'];
+
+		$int = (int) $value;
+		if ($int >= PHP_INT_MAX || $int <= PHP_INT_MIN) {
+			throw new \Smuuf\Primi\ErrorException("Number overflow ({$value}).", $node);
+		}
+
+		return new NumberValue($value);
+
 	}
 
 }

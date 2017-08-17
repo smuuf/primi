@@ -62,7 +62,7 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 
 			// Standard function call.
 			if (empty($function = $context->getFunction($functionName))) {
-				throw new \Smuuf\Primi\ErrorException("Function '$functionName' is not defined", $node);
+				throw new \Smuuf\Primi\ErrorException("Calling '$functionName' undefined function.", $node);
 			}
 
 			return $function->call($argumentList, $context, $node);

@@ -47,7 +47,7 @@ try {
 
 } catch (\Smuuf\Primi\ErrorException $e) {
 
-	die($e->getMessage());
+	die($e->getMessage() . "\n");
 
 }
 

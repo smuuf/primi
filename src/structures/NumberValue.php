@@ -123,4 +123,14 @@ class NumberValue extends Value implements
 		return new self(\atan($this->value));
 	}
 
+	public function callRound(Value $precision): self {
+
+		if (!$precision instanceof NumberValue) {
+			throw new \TypeError;
+		}
+
+		return new self(\round($this->value, $precision->value));
+
+	}
+
 }
