@@ -14,13 +14,12 @@ abstract class WatchLifecycleContext {
 
 }
 
+/**
+ * Currently supports only classes without additional parent constructors/destructors.
+ */
 trait WatchLifecycle {
 
-    private static function hasParents($object) {
-        return count(class_parents($object)) === 0;
-    }
-
-	public function __construct() {
+    public function __construct() {
 
         $hash = self::getHash($this);
         $this->add($hash);
@@ -28,10 +27,6 @@ trait WatchLifecycle {
         $colorhash = self::truecolor($hash, $hash);
         $visual = $this->visualize();
         echo "+  $colorhash $visual\n";
-
-        if (self::hasParents($this) && method_exists(parent::class, '__construct')) {
-            parent::__construct();
-        }
 
 	}
 
@@ -43,10 +38,6 @@ trait WatchLifecycle {
 
         $colorhash = self::truecolor($hash, $hash);
         echo " - $colorhash $visual\n";
-
-        if (self::hasParents($this) && method_exists(parent::class, '__destruct')) {
-            parent::__destruct();
-        }
 
 	}
 
