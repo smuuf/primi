@@ -7,6 +7,8 @@ use \Smuuf\Primi\Structures\Func;
 
 class Context extends \Smuuf\Primi\Object {
 
+	// use WatchLifecycle;
+
 	const EMPTY_CONTAINER = [
 		'variables' => [],
 		'functions' => [],

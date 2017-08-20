@@ -2,6 +2,10 @@
 
 namespace Smuuf\Primi;
 
+/**
+ * Direct abstract syntax tree interpreter.
+ * @see https://en.wikipedia.org/wiki/Interpreter_(computing)#Abstract_Syntax_Tree_interpreters
+ */
 class Interpreter extends \Smuuf\Primi\Object {
 
 	private $tempDir;
