@@ -7,21 +7,19 @@ use \Smuuf\Primi\Context;
 
 class Operand extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
-	public static function handle(array $node, Context $context) {
+	public static function handle(array $node, Context $context, \Smuuf\Primi\Structures\Value $chain = null) {
 
 		$handler = HandlerFactory::get($node['core']['name']);
-		$value = $handler::handle($node['core'], $context);
 
-		if (isset($node['method'])) {
+		// Pass in the chained value, if it was given.
+		// This way we don't break up the chain when chaining methods / values.
+		$value = $handler::handle($node['core'], $context, $chain);
 
-			if (!isset($node['method'][0])) {
-				$node['method'] = [$node['method']];
-			}
+		if (isset($node['next'])) {
 
-			foreach ($node['method'] as $single) {
-				$handler = HandlerFactory::get($single['name']);
-				$value = $handler::handle($single, $context, $value);
-			}
+			$handler = HandlerFactory::get($node['next']['name']);
+			// This is the "next" node. We are chaining.
+			$value = $handler::handle($node['next'], $context, $value);
 
 		}
 
@@ -32,7 +30,7 @@ class Operand extends \Smuuf\Primi\Object implements IHandler, IReducer {
 	public static function reduce(array $node) {
 
 		// If this node has a value method call with it, don't reduce it.
-		if (isset($node['method'])) {
+		if (isset($node['method']) || isset($node['next'])) {
 			return;
 		}
 

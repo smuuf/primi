@@ -11,3 +11,8 @@ _definitions = [
 ];
 
 f = "rádoby čau".replace(_definitions);
+
+// Method chaining
+g = "vole".replace("v", "l").replace("o", "i") + "k";
+h = ("číslo je " + 000.cos()).replace(["č": "c", "í": "i"]);
+i = "kokot je " + "oo".replace("o", "e");

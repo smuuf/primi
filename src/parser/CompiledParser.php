@@ -972,7 +972,7 @@ function match_Multiplication ($stack = array()) {
 }
 
 
-/* Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator method:FunctionCall)* */
+/* Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator next:Operand )? */
 protected $match_Operand_typestack = array('Operand');
 function match_Operand ($stack = array()) {
 	$matchrule = "Operand"; $result = $this->construct($matchrule, $matchrule, null);
@@ -1044,31 +1044,28 @@ function match_Operand ($stack = array()) {
 		}
 		while(0);
 		if( $_191 === FALSE) { $_197 = FALSE; break; }
-		while (true) {
-			$res_196 = $result;
-			$pos_196 = $this->pos;
-			$_195 = NULL;
-			do {
-				$matcher = 'match_'.'ObjectResolutionOperator'; $key = $matcher; $pos = $this->pos;
-				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-				if ($subres !== FALSE) { $this->store( $result, $subres ); }
-				else { $_195 = FALSE; break; }
-				$matcher = 'match_'.'FunctionCall'; $key = $matcher; $pos = $this->pos;
-				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-				if ($subres !== FALSE) {
-					$this->store( $result, $subres, "method" );
-				}
-				else { $_195 = FALSE; break; }
-				$_195 = TRUE; break;
+		$res_196 = $result;
+		$pos_196 = $this->pos;
+		$_195 = NULL;
+		do {
+			$matcher = 'match_'.'ObjectResolutionOperator'; $key = $matcher; $pos = $this->pos;
+			$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
+			if ($subres !== FALSE) { $this->store( $result, $subres ); }
+			else { $_195 = FALSE; break; }
+			$matcher = 'match_'.'Operand'; $key = $matcher; $pos = $this->pos;
+			$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
+			if ($subres !== FALSE) {
+				$this->store( $result, $subres, "next" );
 			}
-			while(0);
-			if( $_195 === FALSE) {
-				$result = $res_196;
-				$this->pos = $pos_196;
-				unset( $res_196 );
-				unset( $pos_196 );
-				break;
-			}
+			else { $_195 = FALSE; break; }
+			$_195 = TRUE; break;
+		}
+		while(0);
+		if( $_195 === FALSE) {
+			$result = $res_196;
+			$this->pos = $pos_196;
+			unset( $res_196 );
+			unset( $pos_196 );
 		}
 		$_197 = TRUE; break;
 	}

@@ -43,7 +43,7 @@ Comparison: left:Addition > op:ComparisonOperator > right:Addition
 Assignment: left:Variable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
-Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator method:FunctionCall)*
+Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator next:Operand )?
 
 FunctionCall: function:VariableCore > "(" > args:FunctionCallArgumentList? > ")"
 FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*

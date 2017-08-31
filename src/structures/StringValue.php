@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ISupportsComparison;
-use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsIteration;
