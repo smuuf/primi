@@ -107,6 +107,14 @@ class NumberValue extends Value implements
 
 	// Methods
 
+	public function callSqrt(): self {
+		return new self(\sqrt($this->value));
+	}
+
+	public function callPow(NumberValue $power = null): self {
+		return new self($this->value ** ($power === null ? 2 : $power->value));
+	}
+
 	public function callSin(): self {
 		return new self(\sin($this->value));
 	}
@@ -123,14 +131,16 @@ class NumberValue extends Value implements
 		return new self(\atan($this->value));
 	}
 
-	public function callRound(Value $precision): self {
+	public function callCeil(): self {
+		return new self(\ceil($this->value));
+	}
 
-		if (!$precision instanceof NumberValue) {
-			throw new \TypeError;
-		}
+	public function callFloor(): self {
+		return new self(\floor($this->value));
+	}
 
-		return new self(\round($this->value, $precision->value));
-
+	public function callRound(self $precision = null): self {
+		return new self(\round($this->value, $precision ? $precision->value : 0));
 	}
 
 }
