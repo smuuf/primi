@@ -19,3 +19,4 @@ xc_k = c - k;
 
 l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".replace(/ann?o/, "FAIL");
 m = "\ahoj\n\vo\le" - /\\ahoj\s/;
+n = "a/b/c" - /\/b/; // Test proper handling of escaped regex delimiters.
