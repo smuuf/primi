@@ -1,0 +1,5 @@
+a = "ahoj 123, jak se máš? 123";
+b = a.first("j");
+c = a.last("a");
+d = a.first(12);
+e = a.last(23); // After multi-byte characters "áš"

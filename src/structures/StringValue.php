@@ -84,29 +84,60 @@ class StringValue extends Value implements
 		}
 	}
 
-	// Internal value methods.
+	// Methods
 
 	public function callReplace(Value $search, self $replace = null): self {
 
+		// Replacing using array of search-replace pairs.
 		if ($search instanceof ArrayValue) {
+
 			$from = \array_keys($search->value);
+
+			// Values in ArrayValues are stored as Value objects, so we need to extract the real PHP values from it.
 			$to = \array_values(\array_map(function($item) {
 				return $item->value;
 			}, $search->value));
+
 			return new self(\str_replace($from, $to, $this->value));
+
 		}
 
-		if (!$replace) {
+		if ($replace === null) {
 			throw new \TypeError;
 		}
 
 		if ($search instanceof self || $search instanceof NumberValue) {
+
+			// Handle both string/number values the same way.
 			return new self(\str_replace((string) $search->value, $replace->value, $this->value));
+
 		} elseif ($search instanceof RegexValue) {
 			return new self(\preg_replace($search->value, $replace->value, $this->value));
 		} else {
 			throw new \TypeError;
 		}
+
+	}
+
+	public function callFirst(Value $needle): NumberValue {
+
+		if (!$needle instanceof self && !$needle instanceof NumberValue) {
+			throw new \TypeError;
+		}
+
+		$pos = mb_strpos($this->value, (string) $needle->value);
+		return new NumberValue($pos === false ? -1 : $pos);
+
+	}
+
+	public function callLast(Value $needle): NumberValue {
+
+		if (!$needle instanceof self && !$needle instanceof NumberValue) {
+			throw new \TypeError;
+		}
+
+		$pos = mb_strrpos($this->value, (string) $needle->value);
+		return new NumberValue($pos === false ? -1 : $pos);
 
 	}
 
