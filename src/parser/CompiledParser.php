@@ -424,7 +424,7 @@ function match_Value ($stack = array()) {
 }
 
 
-/* DereferencableValue: core:Value ( "[" > dereference:Value > "]" )* */
+/* DereferencableValue: core:Value ( "[" > dereference:Expression > "]" )* */
 protected $match_DereferencableValue_typestack = array('DereferencableValue');
 function match_DereferencableValue ($stack = array()) {
 	$matchrule = "DereferencableValue"; $result = $this->construct($matchrule, $matchrule, null);
@@ -447,7 +447,7 @@ function match_DereferencableValue ($stack = array()) {
 				}
 				else { $_76 = FALSE; break; }
 				if (( $subres = $this->whitespace(  ) ) !== FALSE) { $result["text"] .= $subres; }
-				$matcher = 'match_'.'Value'; $key = $matcher; $pos = $this->pos;
+				$matcher = 'match_'.'Expression'; $key = $matcher; $pos = $this->pos;
 				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 				if ($subres !== FALSE) {
 					$this->store( $result, $subres, "dereference" );

@@ -42,3 +42,5 @@ test.pop();
 test.pop();
 // test === test_result_1 === test_result_2 should be now empty.
 
+n = ["a": "b", "c": "d"]["c"];
+o = ["x": "y", "c": "z"]["čaukoc" - "čauko"];

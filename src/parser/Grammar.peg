@@ -29,7 +29,7 @@ ArrayItem: ( key:Expression > ":" )? > value:Expression )
 ArrayDefinition: "[" SPACE ( items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
-DereferencableValue: core:Value ( "[" > dereference:Value > "]" )*
+DereferencableValue: core:Value ( "[" > dereference:Expression > "]" )*
 
 ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
