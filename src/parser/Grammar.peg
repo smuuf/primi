@@ -26,7 +26,7 @@ VariableCore: /([a-zA-Z_][a-zA-Z0-9_]*)/
 Variable: ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore )
 
 ArrayItem: ( key:Expression > ":" )? > value:Expression )
-ArrayDefinition: "[" SPACE ( SPACE items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
+ArrayDefinition: "[" SPACE ( items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 DereferencableValue: core:Value ( "[" > dereference:Value > "]" )*
@@ -59,7 +59,7 @@ EchoStatement: "echo" [ subject:Expression
 ReturnStatement: "return" ( [ subject:Expression )?
 
 Statement: ( skip:BlockStatements SPACE ";"? ) | ( ( skip:CommandStatements | skip:Expression ) SPACE ";" )
-Block: "{" > skip:Program > "}"
+Block: "{" SPACE ( skip:Program )? SPACE "}"
 
 SPACE: /([\s\n]*)/
 Program: > ( SPACE Statement SPACE )+ >

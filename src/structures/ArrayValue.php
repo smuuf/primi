@@ -31,7 +31,7 @@ class ArrayValue extends Value implements ISupportsIteration, ISupportsDereferen
 		$phpIndex = $index->value;
 
 		if (!isset($this->value[$phpIndex])) {
-			throw new \Smuuf\Primi\ErrorException("Undefined index '$index'");
+			throw new \Smuuf\Primi\ErrorException("Undefined index '$phpIndex'");
 		}
 
 		return $this->value[$phpIndex];
