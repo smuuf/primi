@@ -7,12 +7,14 @@ use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsIteration;
+use \Smuuf\Primi\ISupportsDereference;
 
 class StringValue extends Value implements
 	ISupportsAddition,
 	ISupportsSubtraction,
 	ISupportsIteration,
-	ISupportsComparison
+	ISupportsComparison,
+	ISupportsDereference
 {
 
 	const TYPE = "string";
@@ -58,6 +60,18 @@ class StringValue extends Value implements
 			default:
 				throw new UnsupportedOperationException;
 		}
+
+	}
+
+	public function dereference(Value $index) {
+
+		$phpIndex = $index->value;
+
+		if (!isset($this->value[$phpIndex])) {
+			throw new \Smuuf\Primi\ErrorException("Undefined index '$phpIndex'");
+		}
+
+		return $this->value[$phpIndex];
 
 	}
 
