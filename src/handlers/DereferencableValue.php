@@ -27,7 +27,7 @@ class DereferencableValue extends \Smuuf\Primi\Object implements IHandler, IRedu
 				if (!$value instanceof ISupportsDereference) {
 					throw new \Smuuf\Primi\ErrorException(sprintf(
 						"Value type '%s' does not support dereferencing.",
-						$value::ID
+						$value::TYPE
 					), $node);
 				}
 
