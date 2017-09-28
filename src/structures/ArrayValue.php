@@ -4,8 +4,13 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsDereference;
+use \Smuuf\Primi\ISupportsInsertion;
 
-class ArrayValue extends Value implements ISupportsIteration, ISupportsDereference {
+class ArrayValue extends Value implements
+	ISupportsIteration,
+	ISupportsDereference,
+	ISupportsInsertion
+{
 
 	const TYPE = "array";
 
@@ -36,6 +41,18 @@ class ArrayValue extends Value implements ISupportsIteration, ISupportsDereferen
 
 		return $this->value[$phpIndex];
 
+	}
+
+	public function insert(string $key, Value $value) {
+		if ($key === "") {
+			$this->value[] = $value;
+		} else {
+			$this->value[$key] = $value;
+		}
+	}
+
+	public function getInsertionProxy(string $key): InsertionProxy {
+		return new InsertionProxy($this, $key);
 	}
 
 	public function callContains(Value $value) {

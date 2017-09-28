@@ -4,7 +4,7 @@ namespace Smuuf\Primi;
 
 use hafriedlander\Peg\Parser;
 
-class CompiledParser extends Parser\Packrat {
+class CompiledParser extends Parser\Basic {
 
     // Add these properties so PHPStan doesn't complain for undefined properties.
 
@@ -22,14 +22,16 @@ BoolLiteral: "true" | "false"
 RegexLiteral: "/" /(\\\/|[^\/])+/ "/"
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:RegexLiteral
-VariableCore: /([a-zA-Z_][a-zA-Z0-9_]*)/
-Variable: ( core:VariableCore post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableCore )
+VariableName: /([a-zA-Z_][a-zA-Z0-9_]*)/
+Variable: ( core:VariableName post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableName )
 
 ArrayItem: ( key:Expression > ":" )? > value:Expression )
 ArrayDefinition: "[" SPACE ( items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 DereferencableValue: core:Value ( "[" > dereference:Expression > "]" )*
+VariableVector: core:Variable ( "[" > ( vector:Expression | vector:"" ) > "]" )+
+Mutable: skip:VariableVector | skip:VariableName
 
 ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
@@ -40,19 +42,19 @@ UnaryOperator: "++" | "--"
 
 Expression: skip:Assignment | skip:Comparison | skip:Addition
 Comparison: left:Addition > op:ComparisonOperator > right:Addition
-Assignment: left:Variable > op:AssignmentOperator > right:Expression
+Assignment: left: Mutable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
 Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator next:Operand )?
 
-FunctionCall: function:VariableCore > "(" > args:FunctionCallArgumentList? > ")"
+FunctionCall: function:VariableName > "(" > args:FunctionCallArgumentList? > ")"
 FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*
 
-FunctionDefinitionArgumentList: skip:VariableCore ( > "," > skip:VariableCore )*
-FunctionDefinition: "function" [ function:VariableCore SPACE "(" > args:FunctionDefinitionArgumentList? > ")" SPACE body:Block
+FunctionDefinitionArgumentList: skip:VariableName ( > "," > skip:VariableName )*
+FunctionDefinition: "function" [ function:VariableName SPACE "(" > args:FunctionDefinitionArgumentList? > ")" SPACE body:Block
 IfStatement: "if" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
 WhileStatement: "while" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
-ForeachStatement: "foreach" SPACE "(" > left:Expression SPACE "as" SPACE item:VariableCore SPACE ")" SPACE ( right:Block ) >
+ForeachStatement: "foreach" SPACE "(" > left:Expression SPACE "as" SPACE item:VariableName SPACE ")" SPACE ( right:Block ) >
 BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDefinition
 CommandStatements: skip:EchoStatement | skip:ReturnStatement
 EchoStatement: "echo" [ subject:Expression

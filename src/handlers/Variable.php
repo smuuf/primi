@@ -5,24 +5,19 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class Variable extends \Smuuf\Primi\Object implements IHandler, IReducer {
+class Variable extends \Smuuf\Primi\Object implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
-		if ($unaryResult = UnaryOperator::handle($node, $context)) {
-			return $unaryResult;
+		if (isset($node['pre']) || isset($node['post'])) {
+			return UnaryOperator::handle($node, $context);
 		}
 
-		$handler = HandlerFactory::get($node['core']['name']);
-		return $handler::handle($node['core'], $context);
+		$variableName = HandlerFactory
+			::get($node['core']['name'])
+			::handle($node['core'], $context);
 
-	}
-
-	public static function reduce(array $node) {
-
-		if (!isset($node['pre']) && !isset($node['post'])) {
-			return $node['core'];
-		}
+		return $context->getVariable($variableName);
 
 	}
 

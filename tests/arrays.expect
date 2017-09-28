@@ -19,3 +19,4 @@ nested_2:Smuuf\Primi\Structures\ArrayValue:[x:y,0:extra]
 test_result_3:Smuuf\Primi\Structures\ArrayValue:[]
 n:Smuuf\Primi\Structures\StringValue:d
 o:Smuuf\Primi\Structures\StringValue:z
+p:Smuuf\Primi\Structures\ArrayValue:[0:1,1:42,2:3]

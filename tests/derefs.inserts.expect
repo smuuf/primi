@@ -1,0 +1,5 @@
+a:Smuuf\Primi\Structures\ArrayValue:[0:1,1:2,2:4]
+b:Smuuf\Primi\Structures\ArrayValue:[0:[x:y],1:b,2:c]
+c:Smuuf\Primi\Structures\ArrayValue:[0:i,1:[1:a,42:yeah],2:k]
+d:Smuuf\Primi\Structures\ArrayValue:[0:first,1:second,2:[0:nested]]
+e:Smuuf\Primi\Structures\StringValue:xhojXy

@@ -18,11 +18,14 @@ class UnaryOperator extends \Smuuf\Primi\Object implements IHandler {
 
 		// Short circuit this method if there is no unary stuff to do.
 		if ($unaryNode === false) {
-			throw new InternalException("Handling unary operator without unary node.");
+			throw new InternalException("Handling unary operator without unary node");
 		}
 
-		$handler = HandlerFactory::get($node['core']['name']);
-		$value = $handler::handle($node['core'], $context)->getValue();
+		$variableName = HandlerFactory
+			::get($node['core']['name'])
+			::handle($node['core'], $context);
+
+		$value = $context->getVariable($variableName);
 
 		if (!$value instanceof ISupportsUnary) {
 			throw new ErrorException(sprintf(
@@ -34,6 +37,7 @@ class UnaryOperator extends \Smuuf\Primi\Object implements IHandler {
 		$operator = $unaryNode['text'];
 		$newValue = $value->doUnary($operator);
 		$context->setVariable($variableName, $newValue);
+
 		return isset($node['pre']) ? $newValue : $value;
 
 	}

@@ -8,12 +8,14 @@ use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsDereference;
+use \Smuuf\Primi\ISupportsInsertion;
 
 class StringValue extends Value implements
 	ISupportsAddition,
 	ISupportsSubtraction,
 	ISupportsIteration,
 	ISupportsComparison,
+	ISupportsInsertion,
 	ISupportsDereference
 {
 
@@ -65,7 +67,7 @@ class StringValue extends Value implements
 
 	public function dereference(Value $index) {
 
-		$phpIndex = $index->value;
+		$phpIndex = (string) $index->value;
 
 		if (!isset($this->value[$phpIndex])) {
 			throw new \Smuuf\Primi\ErrorException("Undefined index '$phpIndex'");
@@ -73,6 +75,23 @@ class StringValue extends Value implements
 
 		return $this->value[$phpIndex];
 
+	}
+
+	public function insert(string $key, Value $value) {
+
+		if (!$value instanceof self) {
+			throw new \TypeError;
+		}
+
+		if ($key === "") {
+			$this->value .= $value->value;
+		} else {
+			$this->value[$key] = $value->value;
+		}
+	}
+
+	public function getInsertionProxy(string $key): InsertionProxy {
+		return new InsertionProxy($this, $key);
 	}
 
 	public function getIterator(): \Iterator {
@@ -89,7 +108,7 @@ class StringValue extends Value implements
 
 	}
 
-	private static function utfSplit($string) {
+	private static function utfSplit(string $string) {
 		$strlen = \mb_strlen($string);
 		while ($strlen) {
 			yield new self(\mb_substr($string, 0, 1, "UTF-8"));
