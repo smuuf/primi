@@ -63,14 +63,20 @@ function run_test($file): bool {
 
 }
 
-function info(string $string, $nl = true, $block = "█") {
-	echo ($block ? "$block " : null) . $string . ($nl ? "\n" : null);
+function info(string $string, $newline = true, $block = "█") {
+	echo ($block ? "$block " : null) . $string . ($newline ? "\n" : null);
 }
 
+/**
+ * Noramlize WIN & LINUX new-lines to a single form.
+ */
 function normalize(string $string) {
 	return preg_replace('~\r\n?~', "\n", $string);
 }
 
+/**
+ * Serialize any supported value into a string form.
+ */
 function return_string_value($value) {
 	if (is_array($value)) {
 		$return = "[";

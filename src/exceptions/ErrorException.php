@@ -28,7 +28,7 @@ class ErrorException extends InternalException {
 
 		}
 
-		parent::__construct($msg);
+		parent::__construct("ERR: $msg");
 
 	}
 

@@ -2,17 +2,10 @@
 
 namespace Smuuf\Primi;
 
-class UndefinedVariableException extends InternalException {
-
-	/** @var mixed **/
-	protected $name;
+class UndefinedVariableException extends ErrorException {
 
 	public function __construct($name) {
-		$this->name = $name;
-	}
-
-	public function getName() {
-		return $this->name;
+		parent::__construct("Undefined variable '$name'");
 	}
 
 }
