@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
 
 /**
@@ -38,7 +39,7 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 
 			$methodName = sprintf("call%s", ucfirst($functionName));
 			if (!method_exists($value, $methodName)) {
-				throw new \Smuuf\Primi\ErrorException(sprintf(
+				throw new ErrorException(sprintf(
 					"Calling unsupported method '%s' on value type '%s'.",
 					$functionName,
 					$value::TYPE
@@ -50,7 +51,7 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 			} catch (\TypeError $e) {
 
 				// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
-				throw new \Smuuf\Primi\ErrorException(sprintf(
+				throw new ErrorException(sprintf(
 					"Wrong type of argument passed to method '%s' of value '%s'.",
 					$functionName,
 					$value::TYPE
@@ -62,7 +63,7 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 
 			// Standard function call.
 			if (empty($function = $context->getFunction($functionName))) {
-				throw new \Smuuf\Primi\ErrorException("Calling '$functionName' undefined function.", $node);
+				throw new ErrorException("Calling '$functionName' undefined function.", $node);
 			}
 
 			return $function->call($argumentList, $context, $node);

@@ -2,9 +2,11 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Structures\Value;
+
 use \Smuuf\Primi\ISupportsUnary;
 use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\InternalException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -16,11 +18,11 @@ class UnaryOperator extends \Smuuf\Primi\Object implements IHandler {
 
 		// Short circuit this method if there is no unary stuff to do.
 		if ($unaryNode === false) {
-			return false;
+			throw new InternalException("Handling unary operator without unary node.");
 		}
 
-		$variableName = $node['core']['text'];
-		$value = $context->getVariable($variableName);
+		$handler = HandlerFactory::get($node['core']['name']);
+		$value = $handler::handle($node['core'], $context)->getValue();
 
 		if (!$value instanceof ISupportsUnary) {
 			throw new ErrorException(sprintf(
