@@ -1,0 +1,8 @@
+text = "jelenovipivonelej";
+count = [];
+foreach (text as char) {
+    count[char] = 0;
+}
+foreach (text as char) {
+    count[char] = count[char] + 1;
+}

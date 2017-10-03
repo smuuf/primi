@@ -41,7 +41,7 @@ try {
 	// Run interpreter
 	$interpreter->run($source);
 	if ($config['print_context']) {
-		var_dump($context->getVariables());
+		print_r($context->getVariables());
 		die;
 	}
 
