@@ -2,6 +2,9 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\UndefinedIndexException;
+use \Smuuf\Primi\InternalUndefinedIndexException;
+
 use \Smuuf\Primi\ISupportsDereference;
 use \Smuuf\Primi\ISupportsInsertion;
 
@@ -30,20 +33,26 @@ class VariableVector extends \Smuuf\Primi\Object implements IHandler {
 		// Extract the last part of the vector, because it needs special treatment.
 		$lastPart = array_pop($node['vector']);
 
-		foreach ($node['vector'] as $part) {
+		try {
 
-			if (!$target instanceof ISupportsDereference) {
-				throw new ErrorException(sprintf(
-					"Value type '%s' does not support dereferencing.",
-					$target::TYPE
-				), $node);
+			foreach ($node['vector'] as $part) {
+
+				if (!$target instanceof ISupportsDereference) {
+					throw new ErrorException(sprintf(
+						"Value type '%s' does not support dereferencing.",
+						$target::TYPE
+					), $node);
+				}
+
+				$handler = HandlerFactory::get($part['name']);
+				$key = $handler::handle($part, $context);
+
+				$target = $target->dereference($key);
+
 			}
 
-			$handler = HandlerFactory::get($part['name']);
-			$key = $handler::handle($part, $context);
-
-			$target = $target->dereference($key);
-
+		} catch (InternalUndefinedIndexException $e) {
+			throw new UndefinedIndexException($e->getMessage(), $node);
 		}
 
 		// The last part of the chain must support insertion, because that's the value object we're actually later

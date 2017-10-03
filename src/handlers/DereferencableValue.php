@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\InternalUndefinedIndexException;
+use \Smuuf\Primi\UndefinedIndexException;
 use \Smuuf\Primi\ISupportsDereference;
 
 use \Smuuf\Primi\HandlerFactory;
@@ -22,19 +24,26 @@ class DereferencableValue extends \Smuuf\Primi\Object implements IHandler, IRedu
 				$node['dereference'] = [$node['dereference']];
 			}
 
-			foreach ($node['dereference'] as $keyNode) {
+			try {
 
-				if (!$value instanceof ISupportsDereference) {
-					throw new \Smuuf\Primi\ErrorException(sprintf(
-						"Value type '%s' does not support dereferencing.",
-						$value::TYPE
-					), $node);
+				foreach ($node['dereference'] as $keyNode) {
+
+					if (!$value instanceof ISupportsDereference) {
+						throw new \Smuuf\Primi\ErrorException(sprintf(
+							"Value type '%s' does not support dereferencing.",
+							$value::TYPE
+						), $node);
+					}
+
+					$handler = HandlerFactory::get($keyNode['name']);
+					$key = $handler::handle($keyNode, $context);
+
+					$value = $value->dereference($key);
+
 				}
 
-				$handler = HandlerFactory::get($keyNode['name']);
-				$key = $handler::handle($keyNode, $context);
-				$value = $value->dereference($key);
-
+			} catch (InternalUndefinedIndexException $e) {
+				throw new UndefinedIndexException($e->getMessage(), $node);
 			}
 
 		}

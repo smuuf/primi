@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\UndefinedVariableException;
+use \Smuuf\Primi\InternalUndefinedVariableException;
 use \Smuuf\Primi\Structures\Value;
 
 use \Smuuf\Primi\ISupportsUnary;
@@ -25,7 +27,11 @@ class UnaryOperator extends \Smuuf\Primi\Object implements IHandler {
 			::get($node['core']['name'])
 			::handle($node['core'], $context);
 
-		$value = $context->getVariable($variableName);
+		try {
+			$value = $context->getVariable($variableName);
+		} catch (InternalUndefinedVariableException $e) {
+			throw new UndefinedVariableException($e->getMessage(), $node);
+		}
 
 		if (!$value instanceof ISupportsUnary) {
 			throw new ErrorException(sprintf(

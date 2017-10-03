@@ -48,7 +48,7 @@ class Context extends \Smuuf\Primi\Object {
 	public function getVariable(string $name) {
 
 		if (!\array_key_exists($name, $this->container['variables'])) {
-			throw new UndefinedVariableException($name);
+			throw new InternalUndefinedVariableException($name);
 		}
 
 		return $this->container['variables'][$name];

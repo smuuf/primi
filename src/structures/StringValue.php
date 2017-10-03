@@ -70,7 +70,7 @@ class StringValue extends Value implements
 		$phpIndex = (string) $index->value;
 
 		if (!isset($this->value[$phpIndex])) {
-			throw new \Smuuf\Primi\ErrorException("Undefined index '$phpIndex'");
+			throw new \Smuuf\Primi\InternalUndefinedIndexException($phpIndex);
 		}
 
 		return $this->value[$phpIndex];
@@ -95,7 +95,7 @@ class StringValue extends Value implements
 	}
 
 	public function getIterator(): \Iterator {
-		return $this->splitCache ?: $this->splitCache = self::utfSplit($this->value);
+		return self::utfSplit($this->value);
 	}
 
 	// Helpers
