@@ -20,7 +20,6 @@ class StringValue extends Value implements
 {
 
 	const TYPE = "string";
-	protected $splitCache;
 
 	public function __construct(string $value) {
 		$this->value = self::expandSequences($value);
