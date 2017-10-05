@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+files=`find ../res/ -iname "*.primi"`
+
+for i in $files
+do
+    echo -e "█ $i"
+    ../primi $i
+done
