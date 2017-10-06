@@ -65,6 +65,10 @@ class ArrayValue extends Value implements
 
 	}
 
+	public function callCount() {
+		return new NumberValue(count($this->value));
+	}
+
 	public function callPush(Value $value) {
 
 		$this->value[] = $value;

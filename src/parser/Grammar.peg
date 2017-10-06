@@ -48,7 +48,7 @@ Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
 Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator next:Operand )?
 
 FunctionCall: function:VariableName > "(" > args:FunctionCallArgumentList? > ")"
-FunctionCallArgumentList: skip:Operand ( > "," > skip:Operand )*
+FunctionCallArgumentList: skip:Expression ( > "," > skip:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( > "," > skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName SPACE "(" > args:FunctionDefinitionArgumentList? > ")" SPACE body:Block
