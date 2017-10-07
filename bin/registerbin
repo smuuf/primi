@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+PTH=$(realpath ../primi)
+ADD="alias primi='$PTH'"
+
+if [[ -z $(grep "$ADD" ~/.bashrc) ]]; then
+	echo $ADD >> ~/.bashrc
+fi
+

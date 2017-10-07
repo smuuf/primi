@@ -10,7 +10,7 @@ $loader->addDirectory(__DIR__ . "/src")->register();
 
 array_shift($argv);
 if (empty($argv[0])) {
-	die("Input file not specified.");
+	die("Input file not specified.\n");
 }
 
 $config = parse_arguments($argv);
@@ -20,7 +20,7 @@ if ($config['input_is_code']) {
 } else {
 	$filepath = $config['input'];
 	if (!is_file($filepath)) {
-		die("Input file '$filepath' not found.");
+		die("Input file '$filepath' not found.\n");
 	}
 	$source = file_get_contents($filepath);
 }
