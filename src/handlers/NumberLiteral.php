@@ -11,7 +11,7 @@ class NumberLiteral extends \Smuuf\Primi\Object implements IHandler {
 
 		$value = $node['text'];
 
-		$int = (int) $value;
+		$int = $value;
 		if ($int >= PHP_INT_MAX || $int <= PHP_INT_MIN) {
 			throw new \Smuuf\Primi\ErrorException("Number overflow ({$value}).", $node);
 		}
