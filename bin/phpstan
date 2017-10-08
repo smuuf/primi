@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+../vendor/phpstan/phpstan/bin/phpstan analyze --level=7 ../src
+
