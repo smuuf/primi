@@ -36,7 +36,6 @@ class ParserHandler extends CompiledParser {
 	public function __construct($source) {
 
 		$source = preg_replace('#^(.*?)\/\/.*$#um', '$1', $source);
-		$source = trim($source);
 
 		parent::__construct($source);
 		$this->source = $source;
