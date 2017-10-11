@@ -151,6 +151,16 @@ class StringValue extends Value implements
 
 	}
 
+	public function callCount(Value $needle): NumberValue {
+
+		if (!$needle instanceof self && !$needle instanceof NumberValue) {
+			throw new \TypeError;
+		}
+
+		return new NumberValue(mb_substr_count($this->value, $needle->value));
+
+	}
+
 	public function callFirst(Value $needle): NumberValue {
 
 		if (!$needle instanceof self && !$needle instanceof NumberValue) {
