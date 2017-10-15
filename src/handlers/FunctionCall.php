@@ -37,8 +37,8 @@ class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
 		// If a value object is provided, try to call the function upon it (we're calling the object's method).
 		if ($value) {
 
-			$methodName = sprintf("call%s", ucfirst($functionName));
-			if (!method_exists($value, $methodName)) {
+			$methodName = \sprintf("call%s", ucfirst($functionName));
+			if (!\method_exists($value, $methodName)) {
 				throw new ErrorException(sprintf(
 					"Calling unsupported method '%s' on value type '%s'.",
 					$functionName,

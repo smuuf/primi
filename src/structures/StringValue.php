@@ -83,9 +83,16 @@ class StringValue extends Value implements
 		}
 
 		if ($key === "") {
+
+			// An empty key will cause the value to be appended to the end.
 			$this->value .= $value->value;
+
 		} else {
+
+			// If key is specified, PHP own rules for inserting into
+			// strings apply.
 			$this->value[$key] = $value->value;
+
 		}
 	}
 
@@ -102,12 +109,16 @@ class StringValue extends Value implements
 	protected static function expandSequences(string $string) {
 
 		// Primi strings support some escape sequences.
-		$string = \str_replace('\n', "\n", $string);
-		return $string;
+		return \str_replace('\n', "\n", $string);
 
 	}
 
-	private static function utfSplit(string $string) {
+	/**
+	 * Return a generator yielding each of this string's characters as
+	 * new one-character StringValue objects.
+	 */
+	private static function utfSplit(string $string): \Generator {
+
 		$strlen = \mb_strlen($string);
 		while ($strlen) {
 			yield new self(\mb_substr($string, 0, 1, "UTF-8"));

@@ -18,22 +18,23 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
-		// Make sure the potentially multiple nodes are represented as being indexed.
+		// Make sure even a single operand can be processed via foreach.
 		if (!isset($node['ops'][0])) {
 			$node['ops'] = [$node['ops']];
 		}
 
-		// Go through each of the operands and build the final result value combining the operand's value with the
-		// result-so-far. The operator determining the operands's effect on the result has always n-1 index.
-		$first = true;
-		$result = null;
+		// Go through each of the operands and continuously calculate the result value combining the operand's
+		// value with the result-so-far. The operator determining the operands's effect on the result has always
+		// the "n-1" index.
+		$first = \true;
+		$result = \null;
 		foreach ($node['operands'] as $index => $operandNode) {
 
 			$handler = HandlerFactory::get($operandNode['name']);
 
 			if ($first) {
 				$result = $handler::handle($operandNode, $context);
-				$first = false;
+				$first = \false;
 				continue;
 			} else {
 				$tmp = $handler::handle($operandNode, $context);
@@ -44,12 +45,10 @@ class Addition extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 			try {
 
-				if ($result instanceof ISupportsAddition || $result instanceof ISupportsSubtraction) {
-					if ($op === "+") {
-						$result = $result->doAddition($tmp);
-					} else {
-						$result = $result->doSubtraction($tmp);
-					}
+				if ($op === "+" && $result instanceof ISupportsAddition) {
+					$result = $result->doAddition($tmp);
+				} elseif ($op === "-" && $result instanceof ISupportsSubtraction) {
+					$result = $result->doSubtraction($tmp);
 				} else {
 					throw new UnsupportedOperationException;
 				}

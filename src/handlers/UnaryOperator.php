@@ -16,10 +16,10 @@ class UnaryOperator extends \Smuuf\Primi\Object implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
-		$unaryNode = $node['pre'] ?? $node['post'] ?? false;
+		$unaryNode = $node['pre'] ?? $node['post'] ?? \false;
 
 		// Short circuit this method if there is no unary stuff to do.
-		if ($unaryNode === false) {
+		if ($unaryNode === \false) {
 			throw new InternalException("Handling unary operator without unary node");
 		}
 

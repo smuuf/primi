@@ -21,8 +21,8 @@ class Assignment extends \Smuuf\Primi\Object implements IHandler {
 		$leftHandler = HandlerFactory::get($node['left']['name']);
 		$target = $leftHandler::handle($node['left'], $context);
 
-		switch (true) {
-			case is_string($target):
+		switch (\true) {
+			case \is_string($target):
 				// Store the return value into variable.
 				$context->setVariable($node['left']['text'], $return);
 			break;

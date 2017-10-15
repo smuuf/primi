@@ -18,7 +18,8 @@ class Operand extends \Smuuf\Primi\Object implements IHandler, IReducer {
 		if (isset($node['next'])) {
 
 			$handler = HandlerFactory::get($node['next']['name']);
-			// This is the "next" node. We are chaining.
+			// This is the "next" node and we are thus chaining - pass the
+			// value so far to the currently assigned handler.
 			$value = $handler::handle($node['next'], $context, $value);
 
 		}

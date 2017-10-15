@@ -10,7 +10,7 @@ class ReturnStatement extends \Smuuf\Primi\Object implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
-		$returnValue = null;
+		$returnValue = \null;
 
 		if (isset($node['subject'])) {
 			$handler = HandlerFactory::get($node['subject']['name']);

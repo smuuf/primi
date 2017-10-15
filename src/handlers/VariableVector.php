@@ -31,7 +31,7 @@ class VariableVector extends \Smuuf\Primi\Object implements IHandler {
 			::handle($node['core'], $context);
 
 		// Extract the last part of the vector, because it needs special treatment.
-		$lastPart = array_pop($node['vector']);
+		$lastPart = \array_pop($node['vector']);
 
 		try {
 

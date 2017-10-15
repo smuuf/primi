@@ -82,14 +82,16 @@ class ParserHandler extends CompiledParser {
 
 	/**
 	 * Go recursively through each of the node elements and if ...
-	 * 1) Node contains 'skip' element, replace the node with the contents of that 'skip' element.
-	 * 2) Node's elements contains nested nodes, reduce them too.
-	 * 3) Aggressive mode is enabled, remove unnecessary elements created by PHP-PEG parser.
+	 * 1) Node contains 'skip' element ---> replace the node with the contents of that 'skip' element.
+	 * 2) Node contains 'skip' element ---> replace the node with the contents of that 'skip' element.
+	 * 3) Node's elements contains nested nodes ---> reduce them too.
+	 * 4) Aggressive mode is enabled ---> remove unnecessary elements created by PHP-PEG parser itself.
 	 */
 	protected static function reduceAST(array $node, $aggressive = false): array {
 
 		static $aggresivelyRemove = ['_matchrule'];
 
+		// Case 1)
 		if (isset($node['skip'])) {
 			return self::reduceAST($node['skip'], $aggressive);
 		}

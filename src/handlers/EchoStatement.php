@@ -12,7 +12,7 @@ class EchoStatement extends \Smuuf\Primi\Object implements IHandler {
 		$handler = HandlerFactory::get($node['subject']['name']);
 		$value = $handler::handle($node['subject'], $context);
 
-		if (is_scalar($value)) {
+		if (\is_scalar($value)) {
 			echo $value;
 		} else {
 			print_r($value);

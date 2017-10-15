@@ -25,14 +25,14 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 		// Go through each of the operands and build the final result value combining the operand's value with the
 		// so-far-result. The operator determining the operands's effect on the result always has the "n-1" index.
-		$first = true;
-		$result = null;
+		$first = \true;
+		$result = \null;
 		foreach ($node['operands'] as $index => $operandNode) {
 
 			$handler = HandlerFactory::get($operandNode['name']);
 			if ($first) {
 				$result = $handler::handle($operandNode, $context);
-				$first = false;
+				$first = \false;
 				continue;
 			} else {
 				$tmp = $handler::handle($operandNode, $context);
@@ -43,12 +43,10 @@ class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
 
 			try {
 
-				if ($result instanceof ISupportsMultiplication || $result instanceof ISupportsDivision) {
-					if ($op === "*") {
-						$result = $result->doMultiplication($tmp);
-					} else {
-						$result = $result->doDivision($tmp);
-					}
+				if ($op === "*" && $result instanceof ISupportsMultiplication) {
+					$result = $result->doMultiplication($tmp);
+				} elseif ($op === "/" && $result instanceof ISupportsDivision) {
+					$result = $result->doDivision($tmp);
 				} else {
 					throw new UnsupportedOperationException;
 				}
