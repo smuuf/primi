@@ -7,7 +7,7 @@ $data = [false, 0, 1, 42, -1024, "ahoj", "0.1", "-4.2", "-1000000", "false", "75
 
 $bench->addBench(function() use ($data) {
 	foreach ($data as $x) {
-		$x = preg_match("#\d+#", $x);
+		preg_match("#\d+#", $x);
 	}
 });
 

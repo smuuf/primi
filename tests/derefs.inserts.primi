@@ -18,3 +18,6 @@ e = "ahoj";
 e[0] = "x";
 e[] = "ky";
 e[4] = "X";
+
+f = "something very supiš";
+f[] = "ko";

@@ -125,6 +125,7 @@ class StringValue extends Value implements
 			$string = \mb_substr($string, 1, $strlen, "UTF-8");
 			$strlen = \mb_strlen($string);
 		}
+
 	}
 
 	// Methods
@@ -160,6 +161,10 @@ class StringValue extends Value implements
 			throw new \TypeError;
 		}
 
+	}
+
+	public function callLength(): NumberValue {
+		return new NumberValue(mb_strlen($this->value));
 	}
 
 	public function callCount(Value $needle): NumberValue {
