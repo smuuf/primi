@@ -1,5 +1,6 @@
 last_*.out
-
-temp/**
 vendor/**
 .vscode/**
+
+temp/**
+!temp/.gitkeep
