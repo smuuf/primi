@@ -1,6 +1,0 @@
-d = [1: "abc", 3: "xyz", "a", "abc": "fuck yeah", 2: "bbb", 789: "xyz", "nokey", "kokot": "fuck yeah"];
-xyz = "ahojky";
-x = xyz + "\n";
-foreach (d as b) {
-	b + "\n";
-}

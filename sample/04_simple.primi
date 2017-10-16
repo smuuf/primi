@@ -1,0 +1,10 @@
+a = 4 / (2 - 1) * 100;
+damn = 153 * 2;
+
+c = "zaplaťte pouze " + a + " Kč za skvělou " + damn;
+g = 1;
+
+while (damn > 10) {
+	g = g + 1;
+	damn = damn - 1;
+};

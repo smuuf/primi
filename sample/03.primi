@@ -1,5 +1,6 @@
 a = 4;
 if (a < 30) {
+
 	if (a < 30) {
 		b = a;
 	};
@@ -10,4 +11,4 @@ if (a < 30) {
 		c = 1;
 	};
 
-};
+}; // Can have semicolon here.

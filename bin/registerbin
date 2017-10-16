@@ -7,5 +7,6 @@ ADD="alias primi='$PTH'"
 
 if [[ -z $(grep "$ADD" ~/.bashrc) ]]; then
 	echo $ADD >> ~/.bashrc
+	alias primi=$PTH
 fi
 

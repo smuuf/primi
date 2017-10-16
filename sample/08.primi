@@ -1,12 +1,16 @@
+
 function add(x, y) {
 	c = 2;
 	return x + y + c;
 }
+
 function sub(x, y) {
 	return x - y;
 }
+
 a = 1 + add(sub(4, 3), 3);
 a + "\n";
+
 function nested(a) {
 	return add(a, sub(2,3));
 }
