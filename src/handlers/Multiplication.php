@@ -14,7 +14,7 @@ use \Smuuf\Primi\Context;
  * operands: List of operand nodes.
  * ops: List of nodes acting as operators between the operands.
  */
-class Multiplication extends \Smuuf\Primi\Object implements IHandler, IReducer {
+class Multiplication extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 

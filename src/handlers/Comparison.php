@@ -14,7 +14,7 @@ use \Smuuf\Primi\Context;
  * left: A "+" or "-" sign signalling the 'side' of the first operand.
  * right: List of operand nodes.
  */
-class Comparison extends \Smuuf\Primi\Object implements IHandler {
+class Comparison extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 

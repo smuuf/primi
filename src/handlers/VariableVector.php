@@ -12,7 +12,7 @@ use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class VariableVector extends \Smuuf\Primi\Object implements IHandler {
+class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	/**
 	 * This handler returns a final part of the chain - a value object that's derived from the vector and which

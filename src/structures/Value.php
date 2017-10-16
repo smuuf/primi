@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-abstract class Value extends \Smuuf\Primi\Object {
+abstract class Value extends \Smuuf\Primi\StrictObject {
 
 	const TYPE = "__no_type__";
 

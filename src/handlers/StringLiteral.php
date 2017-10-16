@@ -6,7 +6,7 @@ use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Context;
 
-class StringLiteral extends \Smuuf\Primi\Object implements IHandler {
+class StringLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 

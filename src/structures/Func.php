@@ -7,7 +7,7 @@ use \Smuuf\Primi\ReturnException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
 
-class Func extends \Smuuf\Primi\Object {
+class Func extends \Smuuf\Primi\StrictObject {
 
 	/** @var string Function name for convenience. **/
 	protected $name;

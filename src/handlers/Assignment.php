@@ -10,7 +10,7 @@ use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class Assignment extends \Smuuf\Primi\Object implements IHandler {
+class Assignment extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 

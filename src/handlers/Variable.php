@@ -8,7 +8,7 @@ use \Smuuf\Primi\InternalUndefinedVariableException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class Variable extends \Smuuf\Primi\Object implements IHandler {
+class Variable extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 

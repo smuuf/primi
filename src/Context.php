@@ -5,7 +5,7 @@ namespace Smuuf\Primi;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\Func;
 
-class Context extends \Smuuf\Primi\Object {
+class Context extends \Smuuf\Primi\StrictObject {
 
 	// use WatchLifecycle;
 

@@ -5,7 +5,7 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class Operand extends \Smuuf\Primi\Object implements IHandler, IReducer {
+class Operand extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context, \Smuuf\Primi\Structures\Value $chain = null) {
 

@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi;
 
-class HandlerFactory extends \Smuuf\Primi\Object {
+class HandlerFactory extends \Smuuf\Primi\StrictObject {
 
 	protected static $cache = [];
 

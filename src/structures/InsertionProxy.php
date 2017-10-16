@@ -14,7 +14,7 @@ use \Smuuf\Primi\ISupportsInsertion;
  *
  * @see \Smuuf\Primi\Handlers\VariableVector
  */
-class InsertionProxy extends \Smuuf\Primi\Object {
+class InsertionProxy extends \Smuuf\Primi\StrictObject {
 
 	protected $target;
 	protected $key;

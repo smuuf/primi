@@ -10,7 +10,7 @@ use \Smuuf\Primi\Context;
  * left: A comparison expression node.
  * right: Node representing contents of code to execute while left-hand result is truthy.
  */
-class WhileStatement extends \Smuuf\Primi\Object implements IHandler {
+class WhileStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 

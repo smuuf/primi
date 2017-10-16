@@ -6,7 +6,7 @@ use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ReturnException;
 
-class ReturnStatement extends \Smuuf\Primi\Object implements IHandler {
+class ReturnStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 

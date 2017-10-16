@@ -12,7 +12,7 @@ use \Smuuf\Primi\Context;
  * args: List of arguments.
  * body: Node representing contents of code to execute as a function..
  */
-class FunctionCall extends \Smuuf\Primi\Object implements IHandler {
+class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context, \Smuuf\Primi\Structures\Value $value = null) {
 

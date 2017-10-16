@@ -9,7 +9,7 @@ use \Smuuf\Primi\ISupportsDereference;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
-class DereferencableValue extends \Smuuf\Primi\Object implements IHandler, IReducer {
+class DereferencableValue extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
