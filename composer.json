@@ -1,6 +1,6 @@
 {
 	"name": "smuuf/primi",
-	"description": "Primi language.",
+	"description": "A simple scripting language written in PHP & embeddable into PHP.",
 	"license": "MIT",
 	"type": "library",
 	"authors": [
