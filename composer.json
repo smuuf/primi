@@ -1,13 +1,18 @@
 {
 	"name": "smuuf/primi",
 	"description": "Primi language.",
-	"type": "project",
+	"license": "MIT",
+	"type": "library",
 	"authors": [
 		{
 			"name": "Premysl Karbula",
 			"email": "premavansmuuf@gmail.com"
 		}
 	],
+    "support": {
+        "issues": "https://github.com/smuuf/primi/issues",
+        "source": "https://github.com/smuuf/primi"
+    },
 	"autoload":{
 		 "classmap": ["src/"]
 	},
