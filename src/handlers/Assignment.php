@@ -21,6 +21,8 @@ class Assignment extends \Smuuf\Primi\StrictObject implements IHandler {
 		$leftHandler = HandlerFactory::get($node['left']['name']);
 		$target = $leftHandler::handle($node['left'], $context);
 
+		// TODO: Implement assignment operators other than "=".
+
 		switch (\true) {
 			case \is_string($target):
 				// Store the return value into variable.

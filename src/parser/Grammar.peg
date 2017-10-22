@@ -6,7 +6,7 @@ use hafriedlander\Peg\Parser;
 
 class CompiledParser extends Parser\Basic {
 
-    // Add these properties so PHPStan doesn't complain for undefined properties.
+    // Add these properties so PHPStan doesn't complain about undefined properties.
 
     /** @var int **/
     public $pos;
@@ -25,12 +25,12 @@ Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:Regex
 VariableName: /([a-zA-Z_][a-zA-Z0-9_]*)/
 Variable: ( core:VariableName post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableName )
 
-ArrayItem: ( key:Expression > ":" )? > value:Expression )
-ArrayDefinition: "[" SPACE ( items:ArrayItem ( SPACE "," SPACE items:ArrayItem )* )? SPACE "]"
+ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
+ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
-DereferencableValue: core:Value ( "[" > dereference:Expression > "]" )*
-VariableVector: core:Variable ( "[" > ( vector:Expression | vector:"" ) > "]" )+
+DereferencableValue: core:Value ( "[" __ dereference:Expression __ "]" )*
+VariableVector: core:Variable ( "[" __ ( vector:Expression | vector:"" ) __ "]" )+
 Mutable: skip:VariableVector | skip:VariableName
 
 ObjectResolutionOperator: "."
@@ -47,24 +47,24 @@ Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
 Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator next:Operand )?
 
-FunctionCall: function:VariableName > "(" > args:FunctionCallArgumentList? > ")"
-FunctionCallArgumentList: skip:Expression ( > "," > skip:Expression )*
+FunctionCall: function:VariableName "(" __ args:FunctionCallArgumentList? __ ")"
+FunctionCallArgumentList: skip:Expression ( __ "," __ skip:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( > "," > skip:VariableName )*
-FunctionDefinition: "function" [ function:VariableName SPACE "(" > args:FunctionDefinitionArgumentList? > ")" SPACE body:Block
-IfStatement: "if" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
-WhileStatement: "while" SPACE "(" > left:Expression > ")" SPACE ( right:Block ) >
-ForeachStatement: "foreach" SPACE "(" > left:Expression SPACE "as" SPACE item:VariableName SPACE ")" SPACE ( right:Block ) >
+FunctionDefinition: "function" [ function:VariableName __ "(" > args:FunctionDefinitionArgumentList? > ")" __ body:Block
+IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) >
+WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block ) >
+ForeachStatement: "foreach" __ "(" __ left:Expression __ "as" __ item:VariableName __ ")" __ ( right:Block )
 BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDefinition
 CommandStatements: skip:EchoStatement | skip:ReturnStatement
 EchoStatement: "echo" [ subject:Expression
 ReturnStatement: "return" ( [ subject:Expression )?
 
-Statement: ( skip:BlockStatements SPACE ";"? ) | ( ( skip:CommandStatements | skip:Expression ) SPACE ";" )
-Block: "{" SPACE ( skip:Program )? SPACE "}"
+Statement: ( skip:BlockStatements __ ";"? ) | ( ( skip:CommandStatements | skip:Expression ) __ ";" )
+Block: "{" __ ( skip:Program )? __ "}"
 
-SPACE: /([\s\n]*)/
-Program: > ( SPACE Statement SPACE )+ >
+__: /([\s\n]*)/
+Program: > ( __ Statement __ )+ >
 
 */
 
