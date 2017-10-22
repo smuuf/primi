@@ -22,39 +22,27 @@ $context = new \Smuuf\Primi\Context;
 $interpreter = new \Smuuf\Primi\Interpreter($context);
 
 try {
-    $interpreter->run('a = 1; b = a + 2; c = "some string"; d = c + " extra thing"');
-    print_r($context->getVariables());
+
+    // Let the interpreter run a source code.
+    $interpreter->run('a = 1; b = a + 2; c = "some string"; d = c + " extra thing";');
+
+    // Get defined variables from primary context and print them.
+    foreach ($context->getVariables() as $name => $value) {
+        printf("%s (%s) ... %s\n", $name, $value::TYPE, $value->getPhpValue());
+    }
+    
 } catch (\Smuuf\Primi\ErrorException $e) {
     die($e->getMessage());
 }
 
 ```
 
-Running this code will output:
+Running this code would output:
 
 ```
-Array
-(
-    [a] => Smuuf\Primi\Structures\NumberValue Object
-        (
-            [value:protected] => 1
-        )
-
-    [b] => Smuuf\Primi\Structures\NumberValue Object
-        (
-            [value:protected] => 3
-        )
-
-    [c] => Smuuf\Primi\Structures\StringValue Object
-        (
-            [value:protected] => some string
-        )
-
-    [d] => Smuuf\Primi\Structures\StringValue Object
-        (
-            [value:protected] => some string extra thing
-        )
-
-)
+a (number) ... 1
+b (number) ... 3
+c (string) ... some string
+d (string) ... some string extra thing
 
 ```
