@@ -179,23 +179,33 @@ class StringValue extends Value implements
 
 	public function callFirst(Value $needle): NumberValue {
 
+		// Under this we're dealing only with string and number values, so filter others out.
 		if (!$needle instanceof self && !$needle instanceof NumberValue) {
 			throw new \TypeError;
 		}
 
 		$pos = mb_strpos($this->value, (string) $needle->value);
-		return new NumberValue($pos === false ? -1 : $pos);
+		if ($pos !== false) {
+			return new NumberValue($pos);
+		} else {
+			return new BoolValue(false);
+		}
 
 	}
 
 	public function callLast(Value $needle): NumberValue {
 
+		// Under this we're dealing only with string and number values, so filter others out.
 		if (!$needle instanceof self && !$needle instanceof NumberValue) {
 			throw new \TypeError;
 		}
 
 		$pos = mb_strrpos($this->value, (string) $needle->value);
-		return new NumberValue($pos === false ? -1 : $pos);
+		if ($pos !== false) {
+			return new NumberValue($pos);
+		} else {
+			return new BoolValue(false);
+		}
 
 	}
 
