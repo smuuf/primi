@@ -10,7 +10,7 @@ $loader->addDirectory(__DIR__ . "/src")->register();
 
 array_shift($argv);
 if (empty($argv[0])) {
-	die("Input file not specified.\n");
+	die_with_help();
 }
 
 $config = parse_arguments($argv);
@@ -81,5 +81,21 @@ function parse_arguments(array $args): array {
 	}
 
 	return $config;
+
+}
+
+function die_with_help() {
+
+	$help = <<<HELP
+Primi language (CLI), Copyright (c) Premysl Karbula
+Usage: primi <options> <input>
+Options:
+  -t, --tree     Only print syntax tree and exit.
+  -s, --source   Treat <input> as string instead of a source file path.
+  -c, --context  Print contents of primary context after execution.
+
+HELP;
+
+	die($help);
 
 }
