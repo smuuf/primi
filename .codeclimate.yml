@@ -1,4 +1,4 @@
 version: "2"
 exclude_patterns:
   - "src/parser/"
-  - "!src/parser/CompiledParser.php"
+  - "!src/parser/ParserHandler.php"
