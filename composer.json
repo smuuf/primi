@@ -1,6 +1,6 @@
 {
 	"name": "smuuf/primi",
-	"description": "A simple scripting language written in PHP & embeddable into PHP.",
+	"description": "A scripting language written in PHP & embeddable into PHP.",
 	"license": "MIT",
 	"type": "library",
 	"authors": [
@@ -9,16 +9,16 @@
 			"email": "premavansmuuf@gmail.com"
 		}
 	],
-    "support": {
-        "issues": "https://github.com/smuuf/primi/issues",
-        "source": "https://github.com/smuuf/primi"
-    },
+	"support": {
+		"issues": "https://github.com/smuuf/primi/issues",
+		"source": "https://github.com/smuuf/primi"
+	},
 	"autoload":{
 		 "classmap": ["src/"]
 	},
 	"require": {
 		"cweagans/composer-patches": "~1.0",
-		"combyna/php-peg": "dev-master"
+		"combyna/php-peg": "2.0.1"
 	},
 	"require-dev": {
 		"smuuf/koloader": "dev-master",
