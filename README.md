@@ -57,7 +57,7 @@ d (string) ... some string extra thing
 
 Convenient Oneliner™:
 ```
-git clone https://github.com/smuuf/primi.git && cd primi && composer install && ./primi -s -c "a = 1 + 2 / 3;"
+git clone https://github.com/smuuf/primi.git && cd primi && composer install && chmod +x ./primi && ./primi -s -c "a = 1 + 2 / 3;"
 ```
 
 Extra/optional stuff:
