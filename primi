@@ -116,6 +116,6 @@ HELP;
 }
 
 function header_string(string $env = null) {
-	$env = $env ?: "($env)";
+	$env = $env ? "($env)" : null;
 	return "Primi language {$env}, Copyright (c) Premysl Karbula";
 }
