@@ -11,8 +11,10 @@ class Program extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		foreach ($node['nodes'] as $sub) {
 			$handler = HandlerFactory::get($sub['name']);
-			$handler::handle($sub, $context);
+			$returnValue = $handler::handle($sub, $context);
 		}
+
+		return $returnValue;
 
 	}
 

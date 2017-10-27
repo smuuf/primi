@@ -15,6 +15,19 @@ if (empty($argv[0])) {
 
 $config = parse_arguments($argv);
 
+// Load source, create "VM" context and create the interpreter.
+
+$context = new \Smuuf\Primi\Context;
+$interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
+
+// Get syntax tree.
+if ($config['repl']) {
+	echo header_string('REPL') . "\n";
+	$repl = new \Smuuf\Primi\Repl($interpreter);
+	$repl->start();
+	die;
+}
+
 if ($config['input_is_code']) {
 	$source = $config['input'];
 } else {
@@ -24,11 +37,6 @@ if ($config['input_is_code']) {
 	}
 	$source = file_get_contents($filepath);
 }
-
-// Load source, create "VM" context and create the interpreter.
-
-$context = new \Smuuf\Primi\Context;
-$interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
 
 try {
 
@@ -58,10 +66,15 @@ function parse_arguments(array $args): array {
 		'print_context' => false,
 		'input_is_code' => false,
 		'input' => false,
+		'repl' => false,
 	];
 
 	while ($a = array_shift($args)) {
 		switch ($a) {
+			case "-r":
+			case "--repl":
+				$config['repl'] = true;
+			break;
 			case "-t":
 			case "--tree":
 				$config['tree'] = true;
@@ -86,10 +99,12 @@ function parse_arguments(array $args): array {
 
 function die_with_help() {
 
+	$header = header_string('CLI');
 	$help = <<<HELP
-Primi language (CLI), Copyright (c) Premysl Karbula
+$header
 Usage: primi <options> <input>
 Options:
+  -r, --repl     Start REPL (read, eval, print, loop).
   -t, --tree     Only print syntax tree and exit.
   -s, --source   Treat <input> as string instead of a source file path.
   -c, --context  Print contents of primary context after execution.
@@ -98,4 +113,9 @@ HELP;
 
 	die($help);
 
+}
+
+function header_string(string $env = null) {
+	$env = $env ?: "($env)";
+	return "Primi language {$env}, Copyright (c) Premysl Karbula";
 }

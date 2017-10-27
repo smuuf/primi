@@ -30,7 +30,7 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 		// These are provided by the PHP-PEG itself, so we should be able to count on it.
 
 		$handler = HandlerFactory::get($ast['name']);
-		$handler::handle($ast, $this->context);
+		return $handler::handle($ast, $this->context);
 
 	}
 
