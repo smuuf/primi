@@ -10,7 +10,8 @@ class EchoStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 	public static function handle(array $node, Context $context) {
 
 		$handler = HandlerFactory::get($node['subject']['name']);
-		$value = $handler::handle($node['subject'], $context);
+		$returned = $handler::handle($node['subject'], $context);
+		$value = $returned->getPhpValue();
 
 		if (\is_scalar($value)) {
 			echo $value;
