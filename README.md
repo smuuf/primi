@@ -9,7 +9,9 @@ Travis CI | Code Climate
 [![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/fa9fcdf67a72b20c4af2/maintainability)](https://codeclimate.com/repos/59ed1c106d45230296000143/maintainability)
 
 # Installation
-## As a library
+You can either use *Primi* in your own projects `(a)` **or** you can use *Primi* as a standalone thing `(b)` - for developing it, debugging, or just playing with it.
+
+## a) As a library
 
 1. First, install Composer package: `composer require smuuf/primi`
 2. Then use it like this:
@@ -46,3 +48,26 @@ c (string) ... some string
 d (string) ... some string extra thing
 
 ```
+
+## b) Standalone installation
+
+1. Clone this repo.
+2. Install Composer dependencies.
+3. Run something with Primi CLI.
+
+Convenient Oneliner™:
+```
+git clone https://github.com/smuuf/primi.git && cd primi && composer install && ./primi -s -c "a = 1 + 2 / 3;"
+```
+
+Extra/optional stuff:
+- ***Register Primi binary*** for current user so `primi` will behave like a binary *(otherwise you'd need to write `./primi` and would have to be in the right directory)*:
+    ```
+    ./bin/registerbin
+    ```
+
+    *Note: This will add an alias in .bashrc for current user*
+- ***Run tests*** *(tests are located in `./tests/` directory)*:
+    ```
+    ./bin/runtests
+    ```
