@@ -60,11 +60,12 @@ CommandStatements: skip:EchoStatement | skip:ReturnStatement
 EchoStatement: "echo" [ subject:Expression
 ReturnStatement: "return" ( [ subject:Expression )?
 
-Statement: ( skip:BlockStatements __ ";"? ) | ( ( skip:CommandStatements | skip:Expression ) __ ";" )
+Statement: skip:BlockStatements | skip:CommandStatements | skip:Expression
 Block: "{" __ ( skip:Program )? __ "}"
 
 __: /([\s\n]*)/
-Program: > ( __ Statement __ )+ >
+SEP: ";" | __
+Program: __ Statement __ ( SEP __ Statement __ )* SEP? __
 
 */
 
