@@ -35,7 +35,7 @@ class ParserHandler extends CompiledParser {
 
 	public function __construct($source) {
 
-		$source = preg_replace('#^(.*?)\/\/.*$#um', '$1', $source);
+		$source = self::sanitizeSource($source);
 
 		parent::__construct($source);
 		$this->source = $source;
@@ -77,6 +77,18 @@ class ParserHandler extends CompiledParser {
 		$pos = mb_strlen(mb_strrchr($part, "\n"));
 
 		return [$line, $pos];
+
+	}
+
+	protected static function sanitizeSource(string $s) {
+
+		// Unify new-lines.
+		$s = preg_replace('#(\r\n)#u', "\n", $s);
+
+		// Remove comments.
+		$s = preg_replace('#^(.*?)\/\/.*$#um', '$1', $s);
+
+		return $s;
 
 	}
 
