@@ -32,7 +32,7 @@ try {
     foreach ($context->getVariables() as $name => $value) {
         printf("%s (%s) ... %s\n", $name, $value::TYPE, $value->getPhpValue());
     }
-    
+
 } catch (\Smuuf\Primi\ErrorException $e) {
     die($e->getMessage());
 }
@@ -61,13 +61,16 @@ git clone https://github.com/smuuf/primi.git && cd primi && composer install && 
 ```
 
 Extra/optional stuff:
-- ***Register Primi binary*** for current user so `primi` will behave like a binary *(otherwise you'd need to write `./primi` and would have to be in the right directory)*:
+- **Register Primi's CLI executable** for current user so typing `primi` will behave like a binary *(otherwise you'd need to write `./primi` and would have to be in the right directory)*:
     ```
     ./bin/registerbin
     ```
 
-    *Note: This will add an alias in .bashrc for current user*
-- ***Run tests*** *(tests are located in `./tests/` directory)*:
+    *Note: This will add an alias in .bashrc for current user.*
+- **Run tests** *(tests are located in `./tests/` directory)*:
     ```
     ./bin/runtests
     ```
+
+# REPL mode
+Primi provides a convenient *"sandbox"* [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) mode which can be launched via `primi -r` and later exited by entering `exit`.
