@@ -64,7 +64,7 @@ Statement: skip:BlockStatements | skip:CommandStatements | skip:Expression
 Block: "{" __ ( skip:Program )? __ "}"
 
 __: /([\s\n]*)/
-SEP: ";" | __
+SEP: ";" | /\n+/
 Program: __ Statement __ ( SEP __ Statement __ )* SEP? __
 
 */

@@ -1895,7 +1895,7 @@ function match___ ($stack = array()) {
 }
 
 
-/* SEP: ";" | __ */
+/* SEP: ";" | /\n+/ */
 protected $match_SEP_typestack = array('SEP');
 function match_SEP ($stack = array()) {
 	$matchrule = "SEP"; $result = $this->construct($matchrule, $matchrule, null);
@@ -1910,10 +1910,8 @@ function match_SEP ($stack = array()) {
 		}
 		$result = $res_352;
 		$this->pos = $pos_352;
-		$matcher = 'match_'.'__'; $key = $matcher; $pos = $this->pos;
-		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
-		if ($subres !== FALSE) {
-			$this->store( $result, $subres );
+		if (( $subres = $this->rx( '/\n+/' ) ) !== FALSE) {
+			$result["text"] .= $subres;
 			$_355 = TRUE; break;
 		}
 		$result = $res_352;
