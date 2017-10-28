@@ -28,7 +28,7 @@
 	"extra": {
 		"patches": {
 			"combyna/php-peg": {
-				"Larger buffer for Packrat parser to avoid undefined index errors": "./patches/packrat-parser.patch"
+				"Larger buffer for Packrat parser to avoid undefined index errors": "https://raw.githubusercontent.com/smuuf/primi/master/patches/packrat-parser.patch"
 			}
 		}
 	}
