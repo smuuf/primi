@@ -13,7 +13,7 @@ You can either use *Primi* in your own projects `(a)` **or** you can use *Primi*
 
 ## a) As a library
 
-1. First, install Composer package: `composer require smuuf/primi`
+1. First, install [Composer package](https://packagist.org/packages/smuuf/primi): `composer require smuuf/primi`
 2. Then use it like this:
 ```php
 <?php
