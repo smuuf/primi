@@ -4,12 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e45bf37040c4df2ba4eee7d1251d3872",
-    "content-hash": "6f24387b46f01ba08ed4db0ae9d7414c",
+    "content-hash": "c1b366f636c063f72023a3abfd871e00",
     "packages": [
         {
             "name": "combyna/php-peg",
-            "version": "dev-master",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/combyna/php-peg.git",
@@ -30,7 +29,7 @@
             "type": "library",
             "extra": {
                 "patches_applied": {
-                    "Larger buffer for Packrat parser to avoid undefined index errors": "./patches/packrat-parser.patch"
+                    "Larger buffer for Packrat parser to avoid undefined index errors": "https://raw.githubusercontent.com/smuuf/primi/master/patches/packrat-parser.patch"
                 }
             },
             "autoload": {
@@ -69,7 +68,7 @@
                 "parser",
                 "peg"
             ],
-            "time": "2017-03-03 20:58:19"
+            "time": "2017-03-03T20:58:19+00:00"
         },
         {
             "name": "cweagans/composer-patches",
@@ -113,7 +112,7 @@
                 }
             ],
             "description": "Provides a way to patch Composer packages.",
-            "time": "2017-08-30 16:41:23"
+            "time": "2017-08-30T16:41:23+00:00"
         }
     ],
     "packages-dev": [
@@ -158,7 +157,7 @@
             "keywords": [
                 "package versions"
             ],
-            "time": "2017-09-06 15:48:57"
+            "time": "2017-09-06T15:48:57+00:00"
         },
         {
             "name": "nette/bootstrap",
@@ -234,7 +233,7 @@
                 "configurator",
                 "nette"
             ],
-            "time": "2017-08-20 17:36:59"
+            "time": "2017-08-20T17:36:59+00:00"
         },
         {
             "name": "nette/di",
@@ -303,7 +302,7 @@
                 "nette",
                 "static"
             ],
-            "time": "2017-08-31 22:42:00"
+            "time": "2017-08-31T22:42:00+00:00"
         },
         {
             "name": "nette/finder",
@@ -359,7 +358,7 @@
             ],
             "description": "Nette Finder: Files Searching",
             "homepage": "https://nette.org",
-            "time": "2017-07-10 23:47:08"
+            "time": "2017-07-10T23:47:08+00:00"
         },
         {
             "name": "nette/neon",
@@ -413,7 +412,7 @@
             ],
             "description": "Nette NEON: parser & generator for Nette Object Notation",
             "homepage": "http://ne-on.org",
-            "time": "2017-07-11 18:29:08"
+            "time": "2017-07-11T18:29:08+00:00"
         },
         {
             "name": "nette/php-generator",
@@ -475,7 +474,7 @@
                 "php",
                 "scaffolding"
             ],
-            "time": "2017-07-11 19:07:13"
+            "time": "2017-07-11T19:07:13+00:00"
         },
         {
             "name": "nette/robot-loader",
@@ -540,7 +539,7 @@
                 "nette",
                 "trait"
             ],
-            "time": "2017-07-18 00:09:56"
+            "time": "2017-07-18T00:09:56+00:00"
         },
         {
             "name": "nette/utils",
@@ -619,7 +618,7 @@
                 "utility",
                 "validation"
             ],
-            "time": "2017-08-20 17:32:29"
+            "time": "2017-08-20T17:32:29+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -670,7 +669,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2017-09-02 17:10:46"
+            "time": "2017-09-02T17:10:46+00:00"
         },
         {
             "name": "ocramius/package-versions",
@@ -719,7 +718,7 @@
                 }
             ],
             "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "time": "2017-09-06 15:24:43"
+            "time": "2017-09-06T15:24:43+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -773,7 +772,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2017-09-06 17:15:07"
+            "time": "2017-09-06T17:15:07+00:00"
         },
         {
             "name": "psr/log",
@@ -820,7 +819,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         },
         {
             "name": "smuuf/koloader",
@@ -857,7 +856,7 @@
                 }
             ],
             "description": "A lightweight directory-sniffing autoloader with caching.",
-            "time": "2016-01-28 05:22:45"
+            "time": "2016-01-28T05:22:45+00:00"
         },
         {
             "name": "smuuf/phpcb",
@@ -887,7 +886,7 @@
                 }
             ],
             "description": "PHP Code Benchmark",
-            "time": "2017-10-05 22:41:27"
+            "time": "2017-10-05T22:41:27+00:00"
         },
         {
             "name": "symfony/console",
@@ -955,7 +954,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-02 06:42:24"
+            "time": "2017-10-02T06:42:24+00:00"
         },
         {
             "name": "symfony/debug",
@@ -1011,7 +1010,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-02 06:42:24"
+            "time": "2017-10-02T06:42:24+00:00"
         },
         {
             "name": "symfony/finder",
@@ -1060,20 +1059,20 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-02 06:42:24"
+            "time": "2017-10-02T06:42:24+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
+                "reference": "2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296",
+                "reference": "2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296",
                 "shasum": ""
             },
             "require": {
@@ -1085,7 +1084,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -1119,13 +1118,12 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-14 15:44:48"
+            "time": "2017-10-11T12:05:26+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "combyna/php-peg": 20,
         "smuuf/koloader": 20,
         "smuuf/phpcb": 20
     },

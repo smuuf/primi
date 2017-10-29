@@ -177,7 +177,7 @@ class StringValue extends Value implements
 
 	}
 
-	public function callFirst(Value $needle): NumberValue {
+	public function callFirst(Value $needle): Value {
 
 		// Under this we're dealing only with string and number values, so filter others out.
 		if (!$needle instanceof self && !$needle instanceof NumberValue) {
@@ -193,7 +193,7 @@ class StringValue extends Value implements
 
 	}
 
-	public function callLast(Value $needle): NumberValue {
+	public function callLast(Value $needle): Value {
 
 		// Under this we're dealing only with string and number values, so filter others out.
 		if (!$needle instanceof self && !$needle instanceof NumberValue) {

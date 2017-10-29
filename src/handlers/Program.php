@@ -14,7 +14,7 @@ class Program extends \Smuuf\Primi\StrictObject implements IHandler {
 			$returnValue = $handler::handle($sub, $context);
 		}
 
-		return $returnValue;
+		return $returnValue ?? null;
 
 	}
 
