@@ -8,7 +8,11 @@ const SRC_DIR = __DIR__ . "/../src";
 
 $coverage = false;
 if ($argv[1] ?? null === '--coverage') {
-	$coverage = true;
+	if (extension_loaded('xdebug')) {
+		$coverage = true;
+	} else {
+		info("Xdebug not available: Won't measure code coverage.");
+	}
 }
 
 // Autoloader.
