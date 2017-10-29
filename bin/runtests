@@ -4,19 +4,42 @@
 // Composer's autoload.
 require __DIR__ . "/../vendor/autoload.php";
 
+const SRC_DIR = __DIR__ . "/../src";
+
+$coverage = false;
+if ($argv[1] ?? null === '--coverage') {
+	$coverage = true;
+}
+
 // Autoloader.
 $loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/../temp/");
-$loader->addDirectory(__DIR__ . "/../src")->register();
+$loader->addDirectory(SRC_DIR)->register();
 
 set_error_handler(function ($severity, $message, $file, $line) {
 	throw new \ErrorException($message, 0, $severity, $file, $line);
 });
 
-$success = true;
-foreach (glob(__DIR__ . "/../tests/*.primi") as $file) {
-	$name = basename($file);
-	info("Running test '$name' ... ", false);
-	$success &= run_test($file);
+function run_tests(): int {
+
+	$success = true;
+	foreach (glob(__DIR__ . "/../tests/*.primi") as $file) {
+		$name = basename($file);
+		info("Running test '$name' ... ", false);
+		$success &= run_test($file);
+	}
+
+	return $success;
+
+}
+
+if ($coverage) {
+	start_coverage();
+}
+
+$success = run_tests();
+
+if ($coverage) {
+	info(sprintf("Total coverage: %d %%", get_coverage()));
 }
 
 exit((int) !$success);
@@ -90,4 +113,59 @@ function return_string_value($value) {
 		$return = (string) $value;
 	}
 	return $return;
+}
+
+function start_coverage() {
+	xdebug_start_code_coverage();
+}
+
+function get_coverage() {
+
+	$total = 0;
+	$ok = 0;
+
+	// Get a list of all files inside source directory.
+	$allFiles = find_all_files(SRC_DIR);
+
+	foreach (xdebug_get_code_coverage() as $file => $lines) {
+
+		// Skip files not in defined source directory.
+		if (!in_array($file, $allFiles, true)) {
+			continue;
+		}
+
+		// Gather total number of lines and number of lines marked as "ok" by xdebug coverage report.
+		$total += count(file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
+		$ok += array_count_values($lines)[1] ?? 0;
+
+	}
+
+	// Return the total code coverage percentage.
+	return $total ? round($ok / $total * 100, 2) : 0;
+
+}
+
+function find_all_files($dir): array {
+
+	$result = [];
+	$iterator = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)
+	);
+
+	foreach ($iterator as $node) {
+
+		$nodePath = $node->getRealPath();
+
+		if (is_file($nodePath)) {
+			$result[] = $nodePath;
+		} elseif (is_dir($nodePath)) {
+			foreach (find_all_files($nodePath) as $item) {
+				$result[] = $item;
+			}
+		}
+
+	}
+
+	return $result;
+
 }
