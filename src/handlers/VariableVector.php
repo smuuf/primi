@@ -66,7 +66,7 @@ class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		if ($lastPart['name'] === "vector") {
 
-			// "vector" signals the key name was empty - the value should be insetred at the end.
+			// "vector" signals the key name was empty - the value should be inserted at the end.
 			$key = "";
 
 		} else {

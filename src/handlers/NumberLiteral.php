@@ -12,7 +12,7 @@ class NumberLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
 		$value = $node['text'];
 
 		$int = $value;
-		if ($int >= PHP_INT_MAX || $int <= PHP_INT_MIN) {
+		if ($int >= \PHP_INT_MAX || $int <= \PHP_INT_MIN) {
 			throw new \Smuuf\Primi\ErrorException("Number overflow ({$value}).", $node);
 		}
 
