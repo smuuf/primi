@@ -8,4 +8,4 @@ install:
   - chmod +x ./primi ./bin/runtests ./bin/runsmoketests
 script:
   - ./bin/runsmoketests
-  - ./bin/runtests
+  - ./bin/runtests --coverage
