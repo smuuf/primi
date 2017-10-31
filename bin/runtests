@@ -120,7 +120,7 @@ function return_string_value($value) {
 }
 
 function start_coverage() {
-	xdebug_start_code_coverage();
+	xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 }
 
 function get_coverage() {
@@ -131,16 +131,25 @@ function get_coverage() {
 	// Get a list of all files inside source directory.
 	$allFiles = find_all_files(SRC_DIR);
 
-	foreach (xdebug_get_code_coverage() as $file => $lines) {
+	$coveredFiles = xdebug_get_code_coverage();
 
-		// Skip files not in defined source directory.
-		if (!in_array($file, $allFiles, true)) {
+	foreach ($allFiles as $file) {
+
+		if (!isset($coveredFiles[$file])) {
+			$total += count(file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
 			continue;
 		}
 
-		// Gather total number of lines and number of lines marked as "ok" by xdebug coverage report.
-		$total += count(file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
-		$ok += array_count_values($lines)[1] ?? 0;
+		$current = $coveredFiles[$file];
+		$fileTotal = count($current);
+
+		// Executed lines have index of 1, non-executable lines have -2.
+		// These two sum up and are calculated against the number of lines considered by Xdebug as relevant.
+		$fileOk = array_count_values($current)[1] ?? 0 + array_count_values($current)[-2];
+		info(sprintf("File $file, Coverage: %d / %d", $fileOk, $fileTotal));
+
+		$total += $fileTotal;
+		$ok += $fileOk;
 
 	}
 
