@@ -32,4 +32,25 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 		return $this->value;
 	}
 
+	/**
+	 * Throw new TypeException when the value does not match any of the types provided.
+	 * Use this when allowing only certain types of values in call*() methods.
+	 *
+	 * This is needed because of PHP's imperfect type-hinting system which does not support union types.
+	 *
+	 * @throws \TypeException
+	 */
+	protected static function allowTypes(Value $value, string ...$types) {
+
+		foreach ($types as $type) {
+			if ($value instanceof $type) {
+				return; // If any of the instanceof checks is true, the type is allowed.
+			}
+		}
+
+		// The value did not match any of the types provided.
+		throw new \TypeError;
+
+	}
+
 }

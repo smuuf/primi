@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ErrorException;
@@ -32,10 +31,10 @@ class Comparison extends \Smuuf\Primi\StrictObject implements IHandler {
 			if ($leftReturn instanceof ISupportsComparison && $rightReturn instanceof Value) {
 				return $leftReturn->doComparison($op, $rightReturn);
 			} else {
-				throw new UnsupportedOperationException;
+				throw new \TypeError;
 			}
 
-		} catch (UnsupportedOperationException $e) {
+		} catch (\TypeError $e) {
 
 			throw new ErrorException(sprintf(
 				"Cannot compare: '%s' and '%s'",

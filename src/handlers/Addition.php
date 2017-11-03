@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
-use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
@@ -50,10 +49,10 @@ class Addition extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 				} elseif ($op === "-" && $result instanceof ISupportsSubtraction) {
 					$result = $result->doSubtraction($tmp);
 				} else {
-					throw new UnsupportedOperationException;
+					throw new \TypeError;
 				}
 
-			} catch (UnsupportedOperationException $e) {
+			} catch (\TypeError $e) {
 
 				throw new ErrorException(sprintf(
 					"Cannot %s: '%s' and '%s'",

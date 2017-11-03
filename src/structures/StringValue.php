@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
@@ -26,24 +25,26 @@ class StringValue extends Value implements
 	}
 
 	public function doAddition(Value $rightOperand) {
+
+		self::allowTypes($rightOperand, self::class, NumberValue::class);
 		return new self($this->value . $rightOperand->value);
+
 	}
 
 	public function doSubtraction(Value $rightOperand) {
-
-		if ($rightOperand instanceof NumberValue) {
-			throw new UnsupportedOperationException;
-		}
 
 		if ($rightOperand instanceof RegexValue) {
 			return new self(\preg_replace($rightOperand->value, null, $this->value));
 		}
 
+		// Allow only string at this point (if the operand was a regex, we've already returned value).
+		self::allowTypes($rightOperand, self::class);
+
 		return new self(\str_replace($rightOperand->value, null, $this->value));
 
 	}
 
-	public function doComparison(string $op, Value $rightOperand) {
+	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
 		switch ($op) {
 			case "==":
@@ -59,13 +60,14 @@ class StringValue extends Value implements
 			case "!=":
 				return new BoolValue($this->value !== $rightOperand->value);
 			default:
-				throw new UnsupportedOperationException;
+				throw new \TypeError;
 		}
 
 	}
 
 	public function dereference(Value $index) {
 
+		self::allowTypes($rightOperand, self::class, NumberValue::class);
 		$phpIndex = (string) $index->value;
 
 		if (!isset($this->value[$phpIndex])) {
@@ -78,22 +80,17 @@ class StringValue extends Value implements
 
 	public function insert(string $key, Value $value) {
 
-		if (!$value instanceof self) {
-			throw new \TypeError;
-		}
+		// Allow only strings to be inserted.
+		self::allowTypes($value, self::class);
 
 		if ($key === "") {
-
 			// An empty key will cause the value to be appended to the end.
 			$this->value .= $value->value;
-
 		} else {
-
-			// If key is specified, PHP own rules for inserting into
-			// strings apply.
+			// If key is specified, PHP own rules for inserting into strings apply.
 			$this->value[$key] = $value->value;
-
 		}
+
 	}
 
 	public function getInsertionProxy(string $key): InsertionProxy {
@@ -169,9 +166,8 @@ class StringValue extends Value implements
 
 	public function callCount(Value $needle): NumberValue {
 
-		if (!$needle instanceof self && !$needle instanceof NumberValue) {
-			throw new \TypeError;
-		}
+		// Allow only some value types.
+		self::allowTypes($needle, self::class, NumberValue::class);
 
 		return new NumberValue(mb_substr_count($this->value, $needle->value));
 
@@ -179,10 +175,8 @@ class StringValue extends Value implements
 
 	public function callFirst(Value $needle): Value {
 
-		// Under this we're dealing only with string and number values, so filter others out.
-		if (!$needle instanceof self && !$needle instanceof NumberValue) {
-			throw new \TypeError;
-		}
+		// Allow only some value types.
+		self::allowTypes($needle, self::class, NumberValue::class);
 
 		$pos = mb_strpos($this->value, (string) $needle->value);
 		if ($pos !== false) {
@@ -195,10 +189,8 @@ class StringValue extends Value implements
 
 	public function callLast(Value $needle): Value {
 
-		// Under this we're dealing only with string and number values, so filter others out.
-		if (!$needle instanceof self && !$needle instanceof NumberValue) {
-			throw new \TypeError;
-		}
+		// Allow only some value types.
+		self::allowTypes($needle, self::class, NumberValue::class);
 
 		$pos = mb_strrpos($this->value, (string) $needle->value);
 		if ($pos !== false) {

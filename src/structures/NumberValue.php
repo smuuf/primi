@@ -9,8 +9,6 @@ use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ISupportsUnary;
 
-use \Smuuf\Primi\UnsupportedOperationException;
-
 class NumberValue extends Value implements
 	ISupportsAddition,
 	ISupportsSubtraction,
@@ -34,7 +32,9 @@ class NumberValue extends Value implements
 		return \preg_match('#^\d+(\.\d+)?$#', (string) $input);
 	}
 
-	public function doAddition(Value $rightOperand) {
+	public function doAddition(Value $rightOperand): Value {
+
+		self::allowTypes($rightOperand, self::class, StringValue::class);
 
 		if ($rightOperand instanceof StringValue && !self::isNumericInt($rightOperand->value)) {
 			return new StringValue($this->value . $rightOperand->value);
@@ -44,37 +44,21 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doSubtraction(Value $rightOperand) {
-
-		if ($rightOperand instanceof StringValue) {
-			throw new UnsupportedOperationException;
-		}
-
+	public function doSubtraction(Value $rightOperand): self {
+		self::allowTypes($rightOperand, self::class);
 		return new self($this->value - $rightOperand->value);
-
 	}
 
-	public function doMultiplication(Value $rightOperand) {
-
-		if (!$rightOperand instanceof self) {
-			throw new UnsupportedOperationException;
-		}
-
+	public function doMultiplication(Value $rightOperand): self {
+		self::allowTypes($rightOperand, self::class);
 		return new self($this->value * $rightOperand->value);
-
 	}
 
-	public function doDivision(Value $rightOperand) {
-
-		if (!$rightOperand instanceof self) {
-			throw new UnsupportedOperationException;
-		}
-
+	public function doDivision(Value $rightOperand): self {
 		return new self($this->value / $rightOperand->value);
-
 	}
 
-	public function doUnary(string $op) {
+	public function doUnary(string $op): self {
 
 		if ($op === "++") {
 			return new self($this->value + 1);
@@ -84,7 +68,7 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doComparison(string $op, Value $rightOperand) {
+	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
 		switch ($op) {
 			case "==":
@@ -100,7 +84,7 @@ class NumberValue extends Value implements
 			case "<=":
 				return new BoolValue($this->value <= $rightOperand->value);
 			default:
-				throw new UnsupportedOperationException;
+				throw new \TypeError;
 		}
 
 	}
@@ -111,7 +95,7 @@ class NumberValue extends Value implements
 		return new self(\sqrt($this->value));
 	}
 
-	public function callPow(NumberValue $power = null): self {
+	public function callPow(self $power = null): self {
 		return new self($this->value ** ($power === null ? 2 : $power->value));
 	}
 

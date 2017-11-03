@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsDivision;
-use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
@@ -48,10 +47,10 @@ class Multiplication extends \Smuuf\Primi\StrictObject implements IHandler, IRed
 				} elseif ($op === "/" && $result instanceof ISupportsDivision) {
 					$result = $result->doDivision($tmp);
 				} else {
-					throw new UnsupportedOperationException;
+					throw new \TypeError;
 				}
 
-			} catch (UnsupportedOperationException $e) {
+			} catch (\TypeError $e) {
 
 				throw new ErrorException(sprintf(
 					"Cannot %s: '%s' and '%s'",

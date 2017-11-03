@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\UnsupportedOperationException;
 use \Smuuf\Primi\ISupportsComparison;
 
 class RegexValue extends Value implements
@@ -15,13 +14,13 @@ class RegexValue extends Value implements
 		$this->value = $regex . "u";
 	}
 
-	public function doComparison(string $operator, Value $rightOperand) {
+	public function doComparison(string $operator, Value $rightOperand): BoolValue {
 
 		if ($operator === "==") {
 			return new BoolValue(\preg_match($this->value, $rightOperand->value));
 		}
 
-		throw new UnsupportedOperationException;
+		throw new \TypeError;
 
 	}
 
