@@ -1,10 +1,12 @@
 #!/bin/bash
 
+cd $(dirname $0)/..
+
 TIMEFORMAT=%R
 
 comment=$1
-simplefiles=$(find ./res -iname "*simple*.primi")
-complexfiles=$(find ./res -iname "*complex*.primi")
+simplefiles=$(find ./sample -iname "*simple*.primi")
+complexfiles=$(find ./sample -iname "*complex*.primi")
 simpletime=0
 complextime=0
 iterations=100
