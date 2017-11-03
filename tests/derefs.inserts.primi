@@ -19,5 +19,9 @@ e[0] = "x";
 e[] = "ky";
 e[4] = "X";
 
+e_test1 = e[0];
+e_test2 = e[1];
+e_test3 = e[2];
+
 f = "something very supiš";
 f[] = "ko";

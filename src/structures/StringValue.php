@@ -67,14 +67,14 @@ class StringValue extends Value implements
 
 	public function dereference(Value $index) {
 
-		self::allowTypes($rightOperand, self::class, NumberValue::class);
+		self::allowTypes($index, self::class, NumberValue::class);
 		$phpIndex = (string) $index->value;
 
 		if (!isset($this->value[$phpIndex])) {
 			throw new \Smuuf\Primi\InternalUndefinedIndexException($phpIndex);
 		}
 
-		return $this->value[$phpIndex];
+		return new self($this->value[$phpIndex]);
 
 	}
 
