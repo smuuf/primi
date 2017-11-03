@@ -6,7 +6,7 @@
 
 Travis CI | Code Climate
 --- | ---
-[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/fa9fcdf67a72b20c4af2/maintainability)](https://codeclimate.com/repos/59ed1c106d45230296000143/maintainability)
+[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability)
 
 # Installation
 You can either use *Primi* in your own projects `(a)` **or** you can use *Primi* as a standalone thing `(b)` - for developing it, debugging, or just playing with it.
