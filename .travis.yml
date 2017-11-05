@@ -5,7 +5,8 @@ php:
   - nightly
 install:
   - composer install --optimize-autoloader
-  - chmod +x ./primi ./bin/runtests ./bin/runsmoketests
+  - chmod +x ./primi ./bin/runtests ./bin/runsmoketests ./bin/runbench
 script:
   - ./bin/runsmoketests
   - ./bin/runtests --coverage
+  - ./bin/runbench

@@ -1,0 +1,166 @@
+
+a = 1 + 2;
+b = "1" + 2;
+c = 1 + "2";
+d = "x" + 1;
+e = 1 + "x";
+f = "x" + "1";
+g = "1" + "x";
+h = "abc" + "   def";
+i = "ahojahojahoj" - "ahoj";
+j = "1 2 3 haha 4 5 6" - "a";
+k = "tohle, s písmenem eř, je nejlepší věta evéř" - "ř";
+a = [1, 2, 3];
+b = [4,5,6];
+c = [a,b];
+d = [11:c, 22:a, 33:b];
+e = ["123456789123456789aaabbbcccdddeeefff": 987654321];
+f = [1,2,3,4,5].contains(3);
+g = [1,2,3,4,5].contains(6);
+h = [1,2,3,4,5].contains("ahoj");
+i = [1, 2, 3, 0: "ahoj",5].contains("ahoj");
+j = [1, 2, 3, 0: "ahoj",5].contains("neasi");
+k = [a[1], "foo", "somekey":"bar", "train"];
+l = k[0];
+m = k["somekey"];
+test = [];
+nested = ["x": "y"];
+test.push(123); // test" should now contain 123 as the only item.
+test_result_1 = test; // test_result_1" should now be the SAME value object as test"
+test.push(456);
+test_result_2 = test;
+test.push(nested);
+nested_2 = test.pop();
+nested_2.push("extra");
+test_result_3 = test;
+test.pop();
+test.pop();
+n = ["a": "b", "c": "d"]["c"];
+o = ["x": "y", "c": "z"]["čaukoc" - "čauko"];
+p = [1, 2, 3];
+p[1] = 42;
+a = [1, 2, 3];
+a[2] = 4;
+b = ["a", "b", "c"];
+b[0] = ["x": "y"];
+c = ["i", "j", "k"];
+c[1] = [1: "a", 42: "b"];
+c[1][42] = "yeah";
+d = [];
+d[] = "first";
+d[] = "second";
+d[] = [];
+d[2][] = "nested";
+e = "ahoj";
+e[0] = "x";
+e[] = "ky";
+e[4] = "X";
+e_test1 = e[0];
+e_test2 = e[1];
+e_test3 = e[2];
+f = "something very supiš";
+f[] = "ko";
+a = 0;
+function one() {
+    return 1;
+}
+function with_argument(arg) {
+    return arg / 4;
+}
+function no_return(a, b, c) {
+    a + 1; // Does not modify primary context.
+    b + 1;
+    c + 1;
+}
+no_return(a, 2, 3);
+x = with_argument(one() * 16);
+y = 0;
+foreach ([1, 2, 3, 4, 5.6] as x) {
+    y = y + x;
+}
+n = "";
+length = 0;
+foreach ("some long string with numbers 123" as m) {
+    length++;
+    n = n + m;
+}
+a = 1 * 2;
+b = "1" * 2;
+c = "1.4" * 2;
+d = 1 * "2";
+e = 1 * "2.4";
+f = 8 / 4;
+g = 4 / 16;
+h = 123 / a;
+i = 123 / b;
+j = (1 + (3 / (4 - 5)) + 2 / (37 * 2 / 8 - 42));
+k = 1 + 2 * 3 / 4 - 5 / 6 * 7 + 8;
+a = "abcdefg";
+b = "abc123defg";
+c = "xyz456čaukomňauko";
+d = a == /[cde]d/;
+e = /[cde]d/ == a;
+i = /[c-e]/;
+i_2 = /[ce]/;
+j = /[0-9]+/;
+k = /[čau](ko)+mňau/;
+xa = a - i;
+xa_2 = a - i_2;
+xb = b - i;
+xb_2 = b - i_2;
+xc = c - j;
+xc_k = c - k;
+l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".replace(/ann?o/, "FAIL");
+m = "\ahoj\n\vo\le" - /\\ahoj\s/;
+n = "a/b/c" - /\/b/; // Test proper handling of escaped regex delimiters.
+a = 4;
+b = 5;
+c = 6;
+d = 7;
+i = a++;
+j = b--;
+k = ++c;
+l = --d;
+e = 4.25;
+f = 5.25;
+g = 6.25;
+h = 7.25;
+m = e++;
+n = f--;
+o = ++g;
+p = --h;
+a = "ahojkyacauky";
+b = a.replace("a", "xxx");
+c = "voleneasijakprase".replace("ne", "jo");
+d = c.replace("asi", "určitě");
+e = "abcdefghijklmn".replace(/[c-g]/, "_");
+_definitions = [
+    "á": "a",
+    "č": "c",
+    "ě": "e"
+];
+f = "rádoby čau".replace(_definitions);
+g = "vole".replace("v", "l").replace("o", "i") + "k";
+h = ("číslo je " + 000.cos()).replace(["č": "c", "í": "i"]);
+i = "kokot je " + "oo".replace("o", "e");
+a_1 = 9.sqrt();
+b_1 = 3.pow();
+b_2 = 3.pow(2);
+b_3 = 3.pow(4);
+c = 0.cos();
+d = 0.sin();
+e = 1.3.ceil();
+f = 1.8.floor();
+g_1 = 1.6.round();
+g_2 = 1.5.round();
+g_3 = 1.49.round();
+a = 1;
+b = 1234567890;
+c = 0001234567890;
+d = 0;
+e = "2";
+f = "x";
+g = "xyz";
+i = "this is some whole very long sentence.";
+j = true;
+k = false;
