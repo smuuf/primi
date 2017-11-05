@@ -9,3 +9,4 @@ install:
 script:
   - ./bin/runsmoketests
   - ./bin/runtests --coverage
+  - ./bin/runbench
