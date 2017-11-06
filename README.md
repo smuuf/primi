@@ -9,11 +9,47 @@ Travis CI | Code Climate
 [![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability)
 
 # Installation
-You can either use *Primi* in your own projects `(a)` **or** you can use *Primi* as a standalone thing `(b)` - for developing it, debugging, or just playing with it.
+You can either use *Primi* as a **standalone package** `(a)` - for its development, making contributions, debugging it, or to just play with it. Or you can use *Primi* **in your own projects** `(b)` by installing it as a Composer dependency.
 
-## a) As a library
+## a) Standalone installation
 
-1. First, install [Composer package](https://packagist.org/packages/smuuf/primi): `composer require smuuf/primi`
+1. Clone this repo.
+    - `git clone https://github.com/smuuf/primi.git`
+2. Install Composer dependencies.
+    - `composer install`
+3. Run something with Primi CLI.
+    - `chmod +x ./primi && ./primi -s -c "a = 1 + 2 / 3;"`
+
+### Convenient installation Oneliner™:
+```
+git clone https://github.com/smuuf/primi.git && cd primi && composer install && chmod +x ./primi && ./primi -s -c "a = 1 + 2 / 3;"
+```
+
+### Extra stuff:
+- **Register Primi's CLI executable** for current user so typing `primi` will behave like a binary *(otherwise you'd need to write `./primi` and would have to be in the right directory)*:
+    ```
+    ./bin/registerbin
+    ```
+
+    *Note: This will add an alias in .bashrc for current user.*
+- **Run tests** *(tests are located inside `./tests/` directory)*:
+    ```
+    ./bin/runtests
+    ```
+- **Run smoke tests** *(runs all Primi scripts located inside `./sample/` directory)*:
+    ```
+    ./bin/runsmoketests
+    ```
+- **Rebuild parser** *(when you modify Primi's grammar definitions, you will want to rebuild the parser to reflect the changes)*:
+    ```
+    ./bin/buildparser
+    ```
+
+
+
+## b) As a library
+
+1. First, install [Primi Composer package](https://packagist.org/packages/smuuf/primi): `composer require smuuf/primi`
 2. Then use it like this:
 ```php
 <?php
@@ -49,30 +85,9 @@ d (string) ... some string extra thing
 
 ```
 
-## b) Standalone installation
-
-1. Clone this repo.
-2. Install Composer dependencies.
-3. Run something with Primi CLI.
-
-Convenient Oneliner™:
-```
-git clone https://github.com/smuuf/primi.git && cd primi && composer install && chmod +x ./primi && ./primi -s -c "a = 1 + 2 / 3;"
-```
-
-Extra/optional stuff:
-- **Register Primi's CLI executable** for current user so typing `primi` will behave like a binary *(otherwise you'd need to write `./primi` and would have to be in the right directory)*:
-    ```
-    ./bin/registerbin
-    ```
-
-    *Note: This will add an alias in .bashrc for current user.*
-- **Run tests** *(tests are located in `./tests/` directory)*:
-    ```
-    ./bin/runtests
-    ```
-
 # REPL mode
 Primi provides a convenient *"sandbox"* [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) mode which can be launched via `primi -r` and later exited by entering `exit`.
 
 ![REPL example usage](https://raw.githubusercontent.com/smuuf/primi/master/res/repl-sample.gif)
+
+In this mode, all statements are executed when entered and the result value of the last expression is returned.
