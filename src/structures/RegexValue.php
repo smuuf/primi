@@ -16,6 +16,8 @@ class RegexValue extends Value implements
 
 	public function doComparison(string $operator, Value $rightOperand): BoolValue {
 
+		self::allowTypes($rightOperand, StringValue::class, NumberValue::class);
+
 		if ($operator === "==") {
 			return new BoolValue(\preg_match($this->value, $rightOperand->value));
 		}

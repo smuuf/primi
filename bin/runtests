@@ -56,13 +56,23 @@ function run_test($file): bool {
 
 	ob_start();
 
-		// Run interpreter
-		$interpreter->run(file_get_contents($file));
+		try {
 
-		$vars = $context->getVariables();
-		array_walk($vars, function($x, $k) {
-			printf("%s:%s:%s\n", $k, get_class($x), return_string_value($x->getPhpValue()));
-		});
+			// Run interpreter
+			$interpreter->run(file_get_contents($file));
+
+		} catch (\Smuuf\Primi\ErrorException $e) {
+
+			printf("EX:%s\n", get_class($e));
+
+		} finally {
+
+			$vars = $context->getVariables();
+			array_walk($vars, function($x, $k) {
+				printf("%s:%s:%s\n", $k, get_class($x), return_string_value($x->getPhpValue()));
+			});
+
+		}
 
 	$output = ob_get_clean();
 
@@ -147,7 +157,7 @@ function get_coverage() {
 		// These two sum up and are calculated against the number of lines considered by Xdebug as relevant.
 		$fileOk = array_count_values($current)[1] ?? 0 + array_count_values($current)[-2];
 		info(sprintf("File $file, Coverage: %d / %d", $fileOk, $fileTotal));
-
+		file_put_contents(__DIR__ . '/../temp/cov_' . basename($file), print_r($current, true));
 		$total += $fileTotal;
 		$ok += $fileOk;
 
