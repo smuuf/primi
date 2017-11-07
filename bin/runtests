@@ -157,7 +157,10 @@ function get_coverage() {
 		// These two sum up and are calculated against the number of lines considered by Xdebug as relevant.
 		$fileOk = array_count_values($current)[1] ?? 0 + array_count_values($current)[-2];
 		info(sprintf("File $file, Coverage: %d / %d", $fileOk, $fileTotal));
-		file_put_contents(__DIR__ . '/../temp/cov_' . basename($file), print_r($current, true));
+
+		// Uncomment to debug coverage reporting.
+		//file_put_contents(__DIR__ . '/../temp/cov_' . basename($file), print_r($current, true));
+
 		$total += $fileTotal;
 		$ok += $fileOk;
 
