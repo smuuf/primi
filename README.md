@@ -9,7 +9,7 @@ Travis CI | Code Climate
 [![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability)
 
 # Installation
-You can either use *Primi* as a **standalone package** `(a)` - for its development, making contributions, debugging it, or to just play with it. Or you can use *Primi* **in your own projects** `(b)` by installing it as a Composer dependency.
+You can either use *Primi* as a **[standalone package](#a-standalone-installation)** `(a)` - for its development, making contributions, debugging it, or to just play with it. Or you can use *Primi* **[in your own projects](#b-as-a-library)** `(b)` by installing it as a Composer dependency.
 
 ## a) Standalone installation
 
