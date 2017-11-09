@@ -8,6 +8,11 @@ Travis CI | Code Climate
 --- | ---
 [![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability)
 
+# Rationale
+Primi *- as things sometimes go in life -* began as an answer to a practical problem: I needed some general-purpose *(ie. not too much domain-specific)* scripting language that my other app's users could use to write their simple custom logic. I needed some universally usable and **primi**tive scripting thing, with familiar syntax *(`PHP-like` x `C-like` x `JS-like`)* and one that could be safely executed inside pure PHP environment *(no external depedencies on v8js, v8 and whatnot - meaning Javascript is out of the game...)*.
+
+***Thus, Primi was (mostly as an experiment) created.***
+
 # Installation
 You can either use *Primi* as a **[standalone package](#a-standalone-installation)** `(a)` - for its development, making contributions, debugging it, or to just play with it. Or you can use *Primi* **[in your own projects](#b-as-a-library)** `(b)` by installing it as a Composer dependency.
 
