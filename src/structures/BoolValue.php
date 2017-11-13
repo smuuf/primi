@@ -2,12 +2,29 @@
 
 namespace Smuuf\Primi\Structures;
 
-class BoolValue extends Value {
+use \Smuuf\Primi\ISupportsComparison;
+
+class BoolValue extends Value implements ISupportsComparison {
 
 	const TYPE = "bool";
 
 	public function __construct(bool $value) {
 		$this->value = $value;
+	}
+
+	public function doComparison(string $op, Value $rightOperand): BoolValue {
+
+		self::allowTypes($rightOperand, self::class);
+
+		switch ($op) {
+			case "==":
+				return new BoolValue($this->value == $rightOperand->value);
+			case "!=":
+				return new BoolValue($this->value != $rightOperand->value);
+			default:
+				throw new \TypeError;
+		}
+
 	}
 
 }
