@@ -22,6 +22,10 @@ class RegexValue extends Value implements
 			return new BoolValue(\preg_match($this->value, $rightOperand->value));
 		}
 
+		if ($operator === "!=") {
+			return new BoolValue(!\preg_match($this->value, $rightOperand->value));
+		}
+
 		throw new \TypeError;
 
 	}

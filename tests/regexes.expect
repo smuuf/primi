@@ -3,6 +3,8 @@ b:Smuuf\Primi\Structures\StringValue:abc123defg
 c:Smuuf\Primi\Structures\StringValue:xyz456čaukomňauko
 d:Smuuf\Primi\Structures\BoolValue:1
 e:Smuuf\Primi\Structures\BoolValue:1
+e_2:Smuuf\Primi\Structures\BoolValue:1
+e_3:Smuuf\Primi\Structures\BoolValue:0
 i:Smuuf\Primi\Structures\RegexValue:/[c-e]/u
 i_2:Smuuf\Primi\Structures\RegexValue:/[ce]/u
 j:Smuuf\Primi\Structures\RegexValue:/[0-9]+/u

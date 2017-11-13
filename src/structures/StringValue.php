@@ -55,13 +55,21 @@ class StringValue extends Value implements
 					$result = $this->value === $rightOperand->value;
 				}
 
-				return new BoolValue($result);
-
+			break;
 			case "!=":
-				return new BoolValue($this->value !== $rightOperand->value);
+
+				if ($rightOperand instanceof RegexValue) {
+					$result = !\preg_match($rightOperand->value, $this->value);
+				} else {
+					$result = $this->value !== $rightOperand->value;
+				}
+
+			break;
 			default:
 				throw new \TypeError;
 		}
+
+		return new BoolValue($result);
 
 	}
 
