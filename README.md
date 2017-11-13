@@ -96,3 +96,7 @@ Primi provides a convenient *"sandbox"* [REPL](https://en.wikipedia.org/wiki/Rea
 ![REPL example usage](https://raw.githubusercontent.com/smuuf/primi/master/res/repl-sample.gif)
 
 In this mode, all statements are executed when entered and the result value of the last expression is returned.
+
+# Language reference
+The basics of the language syntax and data types are found here:
+https://github.com/smuuf/primi/blob/master/docs/language_reference.md
