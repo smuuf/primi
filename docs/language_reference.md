@@ -64,7 +64,7 @@ c = a == b; // true
 ```
 
 ### Array
-Arrays are untyped *(PHP-style)* containers that can accomodate multiple values of different *(or same)* types. Array index can be optionally defined for value; integer index starting from the lowest present index found is used by default.
+Arrays are untyped *(PHP-style)* containers that can accomodate multiple values of different *(or same)* types. Array index can be optionally defined for an array value. If index is not explicitly defined, integer index starting from the lowest present index found is used by default.
 
 Example usage:
 ```
