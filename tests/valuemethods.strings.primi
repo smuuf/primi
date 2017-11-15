@@ -13,3 +13,7 @@ g = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.
 // Count.
 h = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".count("a");
 i = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.".count("á");
+
+// Formatting.
+j = "{} can now {} strings, {1} rascal!".format("you", "format");
+k = "{3} {2} {1}".format(3, "2", 1);

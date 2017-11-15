@@ -8,6 +8,7 @@ use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsDereference;
 use \Smuuf\Primi\ISupportsInsertion;
+use \Smuuf\Primi\ErrorException;
 
 class StringValue extends Value implements
 	ISupportsAddition,
@@ -134,6 +135,47 @@ class StringValue extends Value implements
 	}
 
 	// Methods
+
+	public function callFormat(Value ...$items): self {
+
+		// Extract PHP values from passed in value objects, because later we will pass the values to sprintf().
+		array_walk($items, function(&$i) {
+			$i = $i->value;
+		});
+
+		$count = count($items);
+
+		// We need to count how many non-positional placeholders are currently used, so we know
+		// when to throw an error.
+		$used = 0;
+
+		// Convert {} syntax to a something sprintf() understands.
+		// {} will be converted to "%s"
+		// Positional {456} will be converted to "%456$s"
+		$prepared = preg_replace_callback("#\{(\d+)?\}#", function($match) use ($count, &$used) {
+
+			if (isset($match[1])) {
+				if ($match[1] > $count) {
+					throw new ErrorException(
+						sprintf("Position (%s) does not match the number of parameters (%s).", $match[1], $count)
+					);
+				}
+				return "%{$match[1]}\$s";
+			}
+
+			if (++$used > $count) {
+				throw new ErrorException(
+					sprintf("Too few parameters (%s) to fit placeholder (%s).", $count, $used)
+				);
+			}
+
+			return "%s";
+
+		}, $this->value);
+
+		return new self(sprintf($prepared, ...$items));
+
+	}
 
 	public function callReplace(Value $search, self $replace = null): self {
 
