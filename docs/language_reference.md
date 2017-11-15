@@ -96,8 +96,8 @@ Plethora of well known operators can be used to **define relationships** between
             - `+` Add two numbers.
             - `-` Subtract two numbers.
         - Strings:
-            - '+' Concatenate two strings.
-            - '-' Removes all occurences of the left side from the right side.
+            - `+` Concatenate two strings.
+            - `-` Removes all occurences of the left side from the right side.
     - Examples:
         ```
         a = 5 + "4" // (number) 9
