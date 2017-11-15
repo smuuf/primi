@@ -5,7 +5,7 @@ namespace Smuuf\Primi;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\Func;
 
-class Context extends \Smuuf\Primi\StrictObject {
+class Context extends \Smuuf\Primi\StrictObject implements IContext {
 
 	// use WatchLifecycle;
 
@@ -45,7 +45,7 @@ class Context extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public function getVariable(string $name) {
+	public function getVariable(string $name): Value {
 
 		if (!\array_key_exists($name, $this->container['variables'])) {
 			throw new InternalUndefinedVariableException($name);
@@ -55,7 +55,7 @@ class Context extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public function getVariables() {
+	public function getVariables(): array {
 		return $this->container['variables'];
 	}
 
@@ -73,11 +73,16 @@ class Context extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public function getFunction(string $name) {
-		return $this->container['functions'][$name] ?? null;
+	public function getFunction(string $name): Func {
+
+		if (!\array_key_exists($name, $this->container['functions'])) {
+			throw new InternalUndefinedFunctionException($name);
+		}
+
+		return $this->container['functions'][$name];
 	}
 
-	public function getFunctions() {
+	public function getFunctions(): array {
 		return $this->container['functions'];
 	}
 

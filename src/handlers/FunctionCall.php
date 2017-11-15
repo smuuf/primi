@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\InternalUndefinedFunctionException;
 use \Smuuf\Primi\Context;
 
 /**
@@ -61,8 +62,9 @@ class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		} else {
 
-			// Standard function call.
-			if (empty($function = $context->getFunction($functionName))) {
+			try {
+				$function = $context->getFunction($functionName);
+			} catch (InternalUndefinedFunctionException $e) {
 				throw new ErrorException("Calling '$functionName' undefined function.", $node);
 			}
 

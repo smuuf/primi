@@ -11,14 +11,14 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 	private $tempDir;
 	private $context;
 
-	public function __construct(Context $context = null, string $tempDir = null) {
+	public function __construct(IContext $context = null, string $tempDir = null) {
 
 		$this->tempDir = $tempDir ?: false;
 		$this->context = $context ?: new Context;
 
 	}
 
-	public function getContext() {
+	public function getContext(): IContext {
 		return $this->context;
 	}
 
@@ -34,7 +34,7 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public function getSyntaxTree(string $source):array {
+	public function getSyntaxTree(string $source): array {
 
 		if ($this->tempDir && $ast = $this->loadCachedAST($source)) {
 			return $ast;
@@ -68,7 +68,7 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 		file_put_contents($path, json_encode($ast));
 	}
 
-	private static function buildCachedPath(string $source, string $path) {
+	private static function buildCachedPath(string $source, string $path): string {
 		return $path . sprintf('/ast_cache_%s.json', md5($source));
 	}
 

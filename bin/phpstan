@@ -2,5 +2,5 @@
 
 cd $(dirname $0)
 
-../vendor/phpstan/phpstan/bin/phpstan analyze --level=7 ../src
+../vendor/phpstan/phpstan/bin/phpstan analyze --level=7 ../src -c ../phpstan.neon
 

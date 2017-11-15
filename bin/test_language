@@ -26,7 +26,7 @@ set_error_handler(function ($severity, $message, $file, $line) {
 function run_tests(): int {
 
 	$success = true;
-	foreach (glob(__DIR__ . "/../tests/*.primi") as $file) {
+	foreach (glob(__DIR__ . "/../tests/language/*.primi") as $file) {
 		$name = basename($file);
 		info("Running test '$name' ... ", false);
 		$success &= run_test($file);
