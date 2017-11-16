@@ -2,4 +2,8 @@
 
 cd $(dirname $0)
 
-./../vendor/bin/tester -C ../tests/unit
+if [[ "$1" == "--coverage" ]]; then
+        COV="--coverage ../temp/test_unit_coverage.html --coverage-src ../src/"
+fi
+
+./../vendor/bin/tester $COV -C ../tests/unit
