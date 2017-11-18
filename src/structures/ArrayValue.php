@@ -43,12 +43,16 @@ class ArrayValue extends Value implements
 
 	}
 
-	public function insert(string $key, Value $value) {
+	public function insert(string $key, Value $value): Value {
+
 		if ($key === "") {
 			$this->value[] = $value;
 		} else {
 			$this->value[$key] = $value;
 		}
+
+		return $this;
+
 	}
 
 	public function getInsertionProxy(string $key): InsertionProxy {

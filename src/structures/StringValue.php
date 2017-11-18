@@ -47,6 +47,8 @@ class StringValue extends Value implements
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
+		self::allowTypes($rightOperand, self::class, RegexValue::class);
+
 		switch ($op) {
 			case "==":
 
@@ -76,7 +78,9 @@ class StringValue extends Value implements
 
 	public function dereference(Value $index) {
 
+		// Can't do string type-hint within parameters because of interface type.
 		self::allowTypes($index, self::class, NumberValue::class);
+
 		$phpIndex = (string) $index->value;
 
 		if (!isset($this->value[$phpIndex])) {
@@ -87,9 +91,10 @@ class StringValue extends Value implements
 
 	}
 
-	public function insert(string $key, Value $value) {
+	public function insert(string $key, Value $value): Value {
 
 		// Allow only strings to be inserted.
+		// Can't do string type-hint within parameters because of interface type.
 		self::allowTypes($value, self::class);
 
 		if ($key === "") {
@@ -99,6 +104,8 @@ class StringValue extends Value implements
 			// If key is specified, PHP own rules for inserting into strings apply.
 			$this->value[$key] = $value->value;
 		}
+
+		return $this;
 
 	}
 

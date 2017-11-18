@@ -1,6 +1,6 @@
 last_*.out
 vendor/**
 .vscode/**
-
 temp/**
 !temp/.gitkeep
+/tests/unit/output/**

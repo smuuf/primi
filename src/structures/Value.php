@@ -18,10 +18,10 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 	public static function buildAutomatic($value) {
 
 		switch (true) {
-			case NumberValue::isNumeric($value):
-				return new NumberValue($value);
 			case \is_bool($value):
 				return new BoolValue($value);
+			case NumberValue::isNumeric($value):
+				return new NumberValue($value);
 			default:
 				return new StringValue($value);
 		}

@@ -29,7 +29,7 @@ class NumberValue extends Value implements
 	}
 
 	public static function isNumeric($input) {
-		return \preg_match('#^\d+(\.\d+)?$#', (string) $input);
+		return \preg_match('#^[+-]?\d+(\.\d+)?$#', (string) $input);
 	}
 
 	public function doAddition(Value $rightOperand): Value {
