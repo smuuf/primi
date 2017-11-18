@@ -4,9 +4,9 @@
   <p align="center">A scripting language <i><b>written in PHP</i></b> & <i><b>embeddable into PHP</b></i>.</p>
 </p>
 
-Travis CI | Code Climate
---- | ---
-[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability)
+Travis CI | Code Climate | Packagist
+--- | --- | ---
+[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability) | [![Total Downloads](https://poser.pugx.org/smuuf/primi/downloads)](https://packagist.org/packages/smuuf/primi) [![composer.lock](https://poser.pugx.org/smuuf/primi/composerlock)](https://packagist.org/packages/smuuf/primi)
 
 # Quick access
 - [Language reference (syntax help)](/docs/language_reference.md)

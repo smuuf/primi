@@ -97,7 +97,8 @@ Plethora of well known operators can be used to **define relationships** between
             - `-` Subtract two numbers.
         - Strings:
             - `+` Concatenate two strings.
-            - `-` Removes all occurences of the left side from the right side.
+            - `-` Removes all occurences of the right side from the left side.
+            - `-` **(when right side is a *Regex* value)** Removes all matches of the regex from the left side string.
     - Examples:
         ```
         a = 5 + "4" // (number) 9
