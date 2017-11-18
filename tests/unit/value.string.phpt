@@ -123,7 +123,7 @@ Assert::same("s", $string->dereference(new NumberValue(3))->getPhpValue());
 
 // Test error when dereferencing from undexined index.
 Assert::exception(function() use ($string) {
-    $string->dereference(new NumberValue(-5));
+    $string->dereference(new NumberValue(50));
 }, \Smuuf\Primi\InternalUndefinedIndexException::class);
 
 // Test that inserting does happen on the same instance of the value object.
