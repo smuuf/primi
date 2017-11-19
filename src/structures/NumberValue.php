@@ -67,7 +67,7 @@ class NumberValue extends Value implements
 
 		// Avoid division by zero.
 		if ($rightOperand->value == 0) {
-			throw new \ErrorException("Division by zero.");
+			throw new \Smuuf\Primi\ErrorException("Division by zero.");
 		}
 
 		return new self($this->value / $rightOperand->value);

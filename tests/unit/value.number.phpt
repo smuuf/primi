@@ -143,10 +143,10 @@ Assert::exception(function() use ($integer) {
 
 Assert::exception(function() use ($float) {
     $float->doDivision(new NumberValue("-0"));
-}, \ErrorException::class, '#Division.*zero#');
+}, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
 Assert::exception(function() use ($integer) {
     $integer->doDivision(new NumberValue(0));
-}, \ErrorException::class, '#Division.*zero#');
+}, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
 Assert::same(-0.46, $float->doDivision(new NumberValue("-5"))->getPhpValue());
 Assert::same(2.3, $float->doDivision(new NumberValue(1))->getPhpValue());
 Assert::same(-1.15, $float->doDivision(new NumberValue(-2))->getPhpValue());
