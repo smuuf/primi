@@ -20,23 +20,30 @@ class NumberValue extends Value implements
 
 	const TYPE = "number";
 
-	public function __construct($value) {
+	public function __construct(string $value) {
 		$this->value = self::isNumericInt($value) ? (int) $value : (float) $value;
 	}
 
-	public static function isNumericInt($input) {
+	public static function isNumericInt(string $input) {
+
+		// Trim any present sign, because it screws up the detection.
+		// "+1" _is_ int, but the equation below would wrongly return false, because
+		// it's casted to (int) and the sign disappears there -> false.
+		$input = ltrim($input, "+-");
+
 		return (string) (int) $input === (string) $input;
+
 	}
 
-	public static function isNumeric($input) {
-		return \preg_match('#^[+-]?\d+(\.\d+)?$#', (string) $input);
+	public static function isNumeric(string $input): bool {
+		return \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
 	}
 
 	public function doAddition(Value $rightOperand): Value {
 
 		self::allowTypes($rightOperand, self::class, StringValue::class);
 
-		if ($rightOperand instanceof StringValue && !self::isNumericInt($rightOperand->value)) {
+		if ($rightOperand instanceof StringValue && !self::isNumeric($rightOperand->value)) {
 			return new StringValue($this->value . $rightOperand->value);
 		}
 
@@ -55,15 +62,27 @@ class NumberValue extends Value implements
 	}
 
 	public function doDivision(Value $rightOperand): self {
+
+		self::allowTypes($rightOperand, self::class);
+
+		// Avoid division by zero.
+		if ($rightOperand->value == 0) {
+			throw new \ErrorException("Division by zero.");
+		}
+
 		return new self($this->value / $rightOperand->value);
+
 	}
 
 	public function doUnary(string $op): self {
 
-		if ($op === "++") {
-			return new self($this->value + 1);
-		} else {
-			return new self($this->value - 1);
+		switch ($op) {
+			case "++":
+				return new self($this->value + 1);
+			case "--":
+				return new self($this->value - 1);
+			default:
+				throw new \TypeError;
 		}
 
 	}
