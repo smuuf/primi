@@ -18,7 +18,7 @@ class HandlerFactory extends \Smuuf\Primi\StrictObject {
 		if (!\is_subclass_of($class, __NAMESPACE__ . '\Handlers\IHandler')) {
 
 			if (!$strict) {
-				return false;
+				return \false;
 			}
 
 			throw new \LogicException("'$name' handler not found.");

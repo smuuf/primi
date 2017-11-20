@@ -21,7 +21,7 @@ class ArrayValue extends Value implements
 	public function __clone() {
 
 		// ArrayValue is really a PHP array of other Primi value objects, so we need to do deep copy.
-		array_walk($this->value, function(&$item) {
+		\array_walk($this->value, function(&$item) {
 			$item = clone $item;
 		});
 
@@ -65,12 +65,12 @@ class ArrayValue extends Value implements
 		// equal. Strings can have a cached split buffer which could differ for the "same" internal strings (different
 		// objects containing the same string). We'll see, he he.
 
-		return new BoolValue(\array_search($value, $this->value) !== false);
+		return new BoolValue(\array_search($value, $this->value) !== \false);
 
 	}
 
 	public function callCount() {
-		return new NumberValue((string) count($this->value));
+		return new NumberValue((string) \count($this->value));
 	}
 
 	public function callPush(Value $value) {
@@ -81,7 +81,7 @@ class ArrayValue extends Value implements
 	}
 
 	public function callPop() {
-		return array_pop($this->value);
+		return \array_pop($this->value);
 	}
 
 }

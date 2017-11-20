@@ -26,7 +26,7 @@ class ParserHandler extends CompiledParser {
 	}
 
 	public function VariableCore__finalise(&$result) {
-		if (in_array($result['text'], self::RESERVED_WORDS)) {
+		if (\in_array($result['text'], self::RESERVED_WORDS)) {
 			$this->error(sprintf("Syntax error: '%s' is a reserved word", $result['text']), $this->pos);
 		}
 	}
@@ -52,16 +52,16 @@ class ParserHandler extends CompiledParser {
 
 		}
 
-		return self::reduceAST($result, true);
+		return self::reduceAST($result, \true);
 
 	}
 
-	protected function error($msg, $position = false) {
+	protected function error($msg, $position = \false) {
 
-		$line = false;
-		$pos = false;
+		$line = \false;
+		$pos = \false;
 
-		if ($position !== false) {
+		if ($position !== \false) {
 			list($line, $pos) = self::getPositionTupleEstimate($this->source, $position);
 		}
 
@@ -71,10 +71,10 @@ class ParserHandler extends CompiledParser {
 
 	protected static function getPositionTupleEstimate(string $source, int $position): array {
 
-		$part = mb_substr($source, 0, $position);
+		$part = \mb_substr($source, 0, $position);
 
-		$line = substr_count($part, "\n") + 1;
-		$pos = mb_strlen(mb_strrchr($part, "\n"));
+		$line = \substr_count($part, "\n") + 1;
+		$pos = \mb_strlen(mb_strrchr($part, "\n"));
 
 		return [$line, $pos];
 
@@ -83,10 +83,10 @@ class ParserHandler extends CompiledParser {
 	protected static function sanitizeSource(string $s) {
 
 		// Unify new-lines.
-		$s = preg_replace('#(\r\n)#u', "\n", $s);
+		$s = \preg_replace('#(\r\n)#u', "\n", $s);
 
 		// Remove comments.
-		$s = preg_replace('#^(.*?)\/\/.*$#um', '$1', $s);
+		$s = \preg_replace('#^(.*?)\/\/.*$#um', '$1', $s);
 
 		return $s;
 
@@ -111,7 +111,7 @@ class ParserHandler extends CompiledParser {
 		// Allow each type of handler handle its own reduction.
 		if (
 			isset($node['name'])
-			&& ($handler = HandlerFactory::get($node['name'], false))
+			&& ($handler = HandlerFactory::get($node['name'], \false))
 			&& \is_subclass_of($handler, \Smuuf\Primi\Handlers\IReducer::class)
 		) {
 			if ($reduced = $handler::reduce($node)) {
@@ -126,7 +126,7 @@ class ParserHandler extends CompiledParser {
 			}
 
 			if (!$aggressive) continue;
-			if (\in_array($k, $aggresivelyRemove, true)) {
+			if (\in_array($k, $aggresivelyRemove, \true)) {
 				unset($node[$k]);
 			}
 

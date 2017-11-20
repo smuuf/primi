@@ -146,11 +146,11 @@ class StringValue extends Value implements
 	public function callFormat(Value ...$items): self {
 
 		// Extract PHP values from passed in value objects, because later we will pass the values to sprintf().
-		array_walk($items, function(&$i) {
+		\array_walk($items, function(&$i) {
 			$i = $i->value;
 		});
 
-		$count = count($items);
+		$count = \count($items);
 
 		// We need to count how many non-positional placeholders are currently used, so we know
 		// when to throw an error.
@@ -159,7 +159,7 @@ class StringValue extends Value implements
 		// Convert {} syntax to a something sprintf() understands.
 		// {} will be converted to "%s"
 		// Positional {456} will be converted to "%456$s"
-		$prepared = preg_replace_callback("#\{(\d+)?\}#", function($match) use ($count, &$used) {
+		$prepared = \preg_replace_callback("#\{(\d+)?\}#", function($match) use ($count, &$used) {
 
 			if (isset($match[1])) {
 				if ($match[1] > $count) {
@@ -180,11 +180,11 @@ class StringValue extends Value implements
 
 		}, $this->value);
 
-		return new self(sprintf($prepared, ...$items));
+		return new self(\sprintf($prepared, ...$items));
 
 	}
 
-	public function callReplace(Value $search, self $replace = null): self {
+	public function callReplace(Value $search, self $replace = \null): self {
 
 		// Replacing using array of search-replace pairs.
 		if ($search instanceof ArrayValue) {
@@ -200,7 +200,7 @@ class StringValue extends Value implements
 
 		}
 
-		if ($replace === null) {
+		if ($replace === \null) {
 			throw new \TypeError;
 		}
 
@@ -218,7 +218,7 @@ class StringValue extends Value implements
 	}
 
 	public function callLength(): NumberValue {
-		return new NumberValue(mb_strlen($this->value));
+		return new NumberValue(\mb_strlen($this->value));
 	}
 
 	public function callCount(Value $needle): NumberValue {
@@ -226,7 +226,7 @@ class StringValue extends Value implements
 		// Allow only some value types.
 		self::allowTypes($needle, self::class, NumberValue::class);
 
-		return new NumberValue(mb_substr_count($this->value, $needle->value));
+		return new NumberValue(\mb_substr_count($this->value, $needle->value));
 
 	}
 
@@ -235,11 +235,11 @@ class StringValue extends Value implements
 		// Allow only some value types.
 		self::allowTypes($needle, self::class, NumberValue::class);
 
-		$pos = mb_strpos($this->value, (string) $needle->value);
-		if ($pos !== false) {
+		$pos = \mb_strpos($this->value, (string) $needle->value);
+		if ($pos !== \false) {
 			return new NumberValue($pos);
 		} else {
-			return new BoolValue(false);
+			return new BoolValue(\false);
 		}
 
 	}
@@ -249,11 +249,11 @@ class StringValue extends Value implements
 		// Allow only some value types.
 		self::allowTypes($needle, self::class, NumberValue::class);
 
-		$pos = mb_strrpos($this->value, (string) $needle->value);
-		if ($pos !== false) {
+		$pos = \mb_strrpos($this->value, (string) $needle->value);
+		if ($pos !== \false) {
 			return new NumberValue($pos);
 		} else {
-			return new BoolValue(false);
+			return new BoolValue(\false);
 		}
 
 	}

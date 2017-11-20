@@ -29,7 +29,7 @@ class NumberValue extends Value implements
 		// Trim any present sign, because it screws up the detection.
 		// "+1" _is_ int, but the equation below would wrongly return false, because
 		// it's casted to (int) and the sign disappears there -> false.
-		$input = ltrim($input, "+-");
+		$input = \ltrim($input, "+-");
 
 		return (string) (int) $input === (string) $input;
 
@@ -114,8 +114,8 @@ class NumberValue extends Value implements
 		return new self(\sqrt($this->value));
 	}
 
-	public function callPow(self $power = null): self {
-		return new self($this->value ** ($power === null ? 2 : $power->value));
+	public function callPow(self $power = \null): self {
+		return new self($this->value ** ($power === \null ? 2 : $power->value));
 	}
 
 	public function callSin(): self {
@@ -142,7 +142,7 @@ class NumberValue extends Value implements
 		return new self(\floor($this->value));
 	}
 
-	public function callRound(self $precision = null): self {
+	public function callRound(self $precision = \null): self {
 		return new self(\round($this->value, $precision ? $precision->value : 0));
 	}
 
