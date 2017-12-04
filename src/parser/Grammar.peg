@@ -45,7 +45,8 @@ Comparison: left:Addition > op:ComparisonOperator > right:Addition
 Assignment: left: Mutable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
-Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( ObjectResolutionOperator next:Operand )?
+Chain: ObjectResolutionOperator ( core:FunctionCall | core:VariableName ) ( chain:Chain )?
+Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( chain:Chain )?
 
 FunctionCall: function:VariableName "(" __ args:FunctionCallArgumentList? __ ")"
 FunctionCallArgumentList: skip:Expression ( __ "," __ skip:Expression )*

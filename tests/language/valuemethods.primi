@@ -16,3 +16,6 @@ f = "rádoby čau".replace(_definitions);
 g = "vole".replace("v", "l").replace("o", "i") + "k";
 h = ("číslo je " + 000.cos()).replace(["č": "c", "í": "i"]);
 i = "kokot je " + "oo".replace("o", "e");
+
+// Only first two "a"s should be replaced.
+j = "aaa".replace("aa", "c").replace("a", "x").replace("cx", "whatevs");
