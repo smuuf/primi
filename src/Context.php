@@ -29,7 +29,7 @@ class Context extends \Smuuf\Primi\StrictObject implements IContext {
 	/**
 	 * Set multiple variables to the context using an array as parameter.
 	 *
-	 * @param array Pairs.
+	 * @param array<string, Value> $pairs
 	 */
 	public function setVariables(array $pairs) {
 

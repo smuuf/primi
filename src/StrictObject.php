@@ -8,8 +8,6 @@ class StrictObject {
 	 * Used when trying to access undeclared or inaccessible property.
 	 *
 	 * @throws \LogicException
-	 * @param $name
-	 * @return mixed
 	 */
 	public function __get(string $name) {
 
@@ -24,9 +22,7 @@ class StrictObject {
 	/**
 	 * Used when trying to write to any undeclared or inaccessible property.
 	 *
-	 * @throws \LogicException
-	 * @param $name
-	 * @param $value
+	 * @throw \LogicException
 	 */
 	public function __set(string $name, $value) {
 
