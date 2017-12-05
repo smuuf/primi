@@ -57,10 +57,16 @@ trait WatchLifecycle {
 
 	}
 
+    /**
+     * Add this currently watched instance to global stack.
+     */
     private function add($hash) {
         WatchLifecycleContext::$stack[++WatchLifecycleContext::$stackCounter] = $hash;
     }
 
+    /**
+     * Remove this currently watched instance from global stack.
+     */
     private function remove($hash) {
         unset(WatchLifecycleContext::$stack[array_search($hash, WatchLifecycleContext::$stack, true)]);
     }
@@ -99,9 +105,9 @@ trait WatchLifecycle {
 
     private static function truecolor(string $hex, string $content) {
 
-        $r = self::hexnumpad(substr($hex, 0, 2) + 32);
-        $g = self::hexnumpad(substr($hex, 2, 2) + 32);
-        $b = self::hexnumpad(substr($hex, 4, 2) + 32);
+        $r = self::numpad(hexdec(substr($hex, 0, 2)) + 32);
+        $g = self::numpad(hexdec(substr($hex, 2, 2)) + 32);
+        $b = self::numpad(hexdec(substr($hex, 4, 2)) + 32);
 
         $out = sprintf("\x1b[38;2;%s;%s;%sm", $r, $g, $b);
         $out .= $content . "\033[0m"; // Reset colors.
@@ -112,8 +118,8 @@ trait WatchLifecycle {
     /**
      * Return int number as hex and ensure it's of length of 3, padded with zeroes.
      */
-    private static function hexnumpad(int $n) {
-        return str_pad(hexdec($n), 3, "0", STR_PAD_LEFT);
+    private static function numpad(int $n) {
+        return str_pad($n, 3, "0", STR_PAD_LEFT);
     }
 
 }
