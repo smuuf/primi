@@ -111,7 +111,7 @@ class ParserHandler extends CompiledParser {
 		// Allow each type of handler handle its own reduction.
 		if (
 			isset($node['name'])
-			&& ($handler = HandlerFactory::get($node['name'], \false))
+			&& ($handler = HandlerFactory::get($node['name']))
 			&& \is_subclass_of($handler, \Smuuf\Primi\Handlers\IReducer::class)
 		) {
 			if ($reduced = $handler::reduce($node)) {
