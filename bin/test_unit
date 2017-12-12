@@ -3,7 +3,7 @@
 cd $(dirname $0)
 
 if [[ "$1" == "--coverage" ]]; then
-        COV="-p phpdbg --coverage ../coverage.xml --coverage-src ../src/"
+        COV="-d memory_limit=-1 -p phpdbg --coverage ../coverage.xml --coverage-src ../src/"
 fi
 
 ./../vendor/bin/tester $COV -C ../tests

@@ -5,7 +5,14 @@ use \Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 foreach (glob(__DIR__ . "/tests/*.primi") as $file) {
+
 	run_test($file);
+
+	// Avoid excessive RAM usage when gathering code coverage.
+	// (PHPDBG is quite greedy.)
+	\Tester\CodeCoverage\Collector::flush();
+	gc_collect_cycles();
+
 }
 
 function run_test($file) {
@@ -16,23 +23,23 @@ function run_test($file) {
 
 	ob_start();
 
-		try {
+	try {
 
-			// Run interpreter
-			$interpreter->run(file_get_contents($file));
+		// Run interpreter
+		$interpreter->run(file_get_contents($file));
 
-		} catch (\Smuuf\Primi\ErrorException $e) {
+	} catch (\Smuuf\Primi\ErrorException $e) {
 
-			printf("EX:%s\n", get_class($e));
+		printf("EX:%s\n", get_class($e));
 
-		} finally {
+	} finally {
 
-			$vars = $context->getVariables();
-			array_walk($vars, function($x, $k) {
-				printf("%s:%s:%s\n", $k, get_class($x), return_string_value($x->getPhpValue()));
-			});
+		$vars = $context->getVariables();
+		array_walk($vars, function($x, $k) {
+			printf("%s:%s:%s\n", $k, get_class($x), return_string_value($x->getPhpValue()));
+		});
 
-		}
+	}
 
 	$output = normalize(ob_get_clean());
 	$expected = normalize(file_get_contents($outputFile));
