@@ -62,7 +62,7 @@ class ArrayValue extends Value implements
 	// Properties.
 
 	public function propLength(): NumberValue {
-		return new NumberValue(\count($this->value));
+		return new NumberValue((string) \count($this->value));
 	}
 
 	// Methods.

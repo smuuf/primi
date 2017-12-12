@@ -89,8 +89,12 @@ class Context extends \Smuuf\Primi\StrictObject implements IContext {
 	// Debugging.
 
 	public function ___debug_zvals() {
-		$tmp = $this;
-		xdebug_debug_zval('tmp');
+
+		if (extension_loaded('xdebug_debug_zval')) {
+			$tmp = $this;
+			xdebug_debug_zval('tmp');
+		}
+
 	}
 
 }
