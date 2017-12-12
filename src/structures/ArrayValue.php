@@ -59,6 +59,14 @@ class ArrayValue extends Value implements
 		return new InsertionProxy($this, $key);
 	}
 
+	// Properties.
+
+	public function propLength(): NumberValue {
+		return new NumberValue(\count($this->value));
+	}
+
+	// Methods.
+
 	public function callContains(Value $value) {
 
 		// I expect a bug here, since StringValues ought to be equal (how array_search() works) if all properties are
@@ -67,10 +75,6 @@ class ArrayValue extends Value implements
 
 		return new BoolValue(\array_search($value, $this->value) !== \false);
 
-	}
-
-	public function callCount() {
-		return new NumberValue((string) \count($this->value));
 	}
 
 	public function callPush(Value $value) {

@@ -16,7 +16,7 @@ class Operand extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 		// If there's chain, handle it.
 		if (isset($node['chain'])) {
 			$handler = HandlerFactory::get($node['chain']['name']);
-			return $handler::handle($node['chain'], $context, $value);
+			return $handler::chain($node['chain'], $context, $value);
 		}
 
 		return $value;

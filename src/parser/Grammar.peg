@@ -24,6 +24,7 @@ RegexLiteral: "/" /(\\\/|[^\/])+/ "/"
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:RegexLiteral
 VariableName: /([a-zA-Z_][a-zA-Z0-9_]*)/
 Variable: ( core:VariableName post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableName )
+PropertyGetter: core:VariableName
 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ "]"
@@ -45,11 +46,12 @@ Comparison: left:Addition > op:ComparisonOperator > right:Addition
 Assignment: left: Mutable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
-Chain: ObjectResolutionOperator ( core:FunctionCall | core:VariableName ) ( chain:Chain )?
+Chain: ObjectResolutionOperator ( core:MethodCall | core:PropertyGetter ) ( chain:Chain )?
 Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( chain:Chain )?
 
-FunctionCall: function:VariableName "(" __ args:FunctionCallArgumentList? __ ")"
-FunctionCallArgumentList: skip:Expression ( __ "," __ skip:Expression )*
+MethodCall: method:VariableName "(" __ args:ArgumentList? __ ")"
+FunctionCall: function:VariableName "(" __ args:ArgumentList? __ ")"
+ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( > "," > skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" > args:FunctionDefinitionArgumentList? > ")" __ body:Block

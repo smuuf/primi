@@ -11,66 +11,26 @@ use \Smuuf\Primi\Context;
  * Node fields:
  * function: Function name.
  * args: List of arguments.
- * body: Node representing contents of code to execute as a function..
  */
 class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 
-	public static function handle(array $node, Context $context, \Smuuf\Primi\Structures\Value $value = null) {
+	public static function handle(array $node, Context $context) {
 
 		$functionName = $node['function']['text'];
 
-		$argumentList = [];
+		$argList = [];
 		if (isset($node['args'])) {
-
-			// Handle situation with solo arguments (which wouldn't be represented as array).
-			// Do it by placing solo arguments into arrays.
-			if (!isset($node['args'][0])) {
-				$node['args'] = [$node['args']];
-			}
-
-			foreach ($node['args'] as $a) {
-				$handler = HandlerFactory::get($a['name']);
-				$argumentList[] = $handler::handle($a, $context);
-			}
-
+			$handler = HandlerFactory::get($node['args']['name']);
+			$argList = $handler::handle($node['args'], $context);
 		}
 
-		// If a value object is provided, try to call the function upon it (we're calling the object's method).
-		if ($value) {
-
-			$methodName = \sprintf("call%s", ucfirst($functionName));
-			if (!\method_exists($value, $methodName)) {
-				throw new ErrorException(sprintf(
-					"Calling unsupported method '%s' on value type '%s'.",
-					$functionName,
-					$value::TYPE
-				), $node);
-			}
-
-			try {
-				return $value->$methodName(...$argumentList);
-			} catch (\TypeError $e) {
-
-				// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
-				throw new ErrorException(sprintf(
-					"Wrong type of argument passed to method '%s' of value '%s'.",
-					$functionName,
-					$value::TYPE
-				), $node);
-
-			}
-
-		} else {
-
-			try {
-				$function = $context->getFunction($functionName);
-			} catch (InternalUndefinedFunctionException $e) {
-				throw new ErrorException("Calling '$functionName' undefined function.", $node);
-			}
-
-			return $function->call($argumentList, $context, $node);
-
+		try {
+			$function = $context->getFunction($functionName);
+		} catch (InternalUndefinedFunctionException $e) {
+			throw new ErrorException("Calling undefined function '$functionName'.", $node);
 		}
+
+		return $function->call($argList, $context, $node);
 
 	}
 

@@ -206,12 +206,12 @@ Assert::same(0, $string->callCount(new StringValue("xoxoxo"))->getPhpValue());
 Assert::same(0, $string->callCount(new NumberValue(1))->getPhpValue());
 
 // Test length.
-Assert::same(17, $string->callLength()->getPhpValue());
-Assert::same(1, $letterA->callLength()->getPhpValue());
+Assert::same(17, $string->propLength()->getPhpValue());
+Assert::same(1, $letterA->propLength()->getPhpValue());
 // Multibyte strings should report length correctly.
-Assert::same(17, $unicode->callLength()->getPhpValue());
+Assert::same(17, $unicode->propLength()->getPhpValue());
 // "\n" is expanded as newline - that's one character.
-Assert::same(5, $withNewline->callLength()->getPhpValue());
+Assert::same(5, $withNewline->propLength()->getPhpValue());
 
 // Test replacing.
 
