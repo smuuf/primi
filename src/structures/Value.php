@@ -20,7 +20,9 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 		switch (true) {
 			case \is_bool($value):
 				return new BoolValue($value);
-			case NumberValue::isNumeric($value):
+			case \is_array($value):
+				return new ArrayValue(array_map([self::class, 'buildAutomatic'], $value));
+			case NumberValue::isNumeric($value): // Must be after "is_array" case.
 				return new NumberValue($value);
 			default:
 				return new StringValue($value);
