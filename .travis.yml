@@ -1,13 +1,20 @@
 language: php
+env:
+  - CC_TEST_REPORTER_ID=b384d5db309b148e935aeb5681cd31acbf9327afde4eb55df57a1e84c0613732
 php:
   - '7.1'
   - '7.2'
   - nightly
 install:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - composer install --optimize-autoloader
-  - chmod +x ./primi ./bin/*
+  - chmod +x ./primi ./bin/* ./cc-test-reporter
+before_script:
+  - ./cc-test-reporter before-build
 script:
-  - ./bin/test
+  - ./bin/test --coverage
 after_script:
   - ./bin/phpstan
   - ./bin/bench
+  - ./cc-test-reporter format-coverage --output=./coverage.json --input-type=clover ./coverage.xml
+  - ./cc-test-reporter upload-coverage --input=./coverage.json

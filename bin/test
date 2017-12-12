@@ -12,7 +12,7 @@ function info() {
 }
 
 info "Language tests"
-./test_language $COV
+./test_language
 RESULT+=$?
 
 info "Smoke tests"

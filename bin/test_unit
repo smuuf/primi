@@ -3,7 +3,7 @@
 cd $(dirname $0)
 
 if [[ "$1" == "--coverage" ]]; then
-        COV="--coverage ../temp/test_unit_coverage.html --coverage-src ../src/"
+        COV="-p phpdbg --coverage ../coverage.xml --coverage-src ../src/"
 fi
 
 ./../vendor/bin/tester $COV -C ../tests/unit
