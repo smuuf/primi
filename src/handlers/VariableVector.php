@@ -11,6 +11,7 @@ use \Smuuf\Primi\ISupportsInsertion;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers;
 
 class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 
@@ -20,9 +21,7 @@ class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 	 */
 	public static function handle(array $node, Context $context) {
 
-		if (!isset($node['vector'][0])) {
-			$node['vector'] = [$node['vector']];
-		}
+		Helpers::ensureIndexed($node['vector']);
 
 		// Obtain the origin value.
 		// This is the value the vector of keys/indexes starts with.

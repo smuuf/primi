@@ -7,6 +7,7 @@ use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers;
 
 /**
  * Node fields:
@@ -17,10 +18,7 @@ class Multiplication extends \Smuuf\Primi\StrictObject implements IHandler, IRed
 
 	public static function handle(array $node, Context $context) {
 
-		// Make sure the potentially multiple nodes are represented as being indexed.
-		if (!isset($node['ops'][0])) {
-			$node['ops'] = [$node['ops']];
-		}
+		Helpers::ensureIndexed($node['ops']);
 
 		// Go through each of the operands and build the final result value combining the operand's value with the
 		// so-far-result. The operator determining the operands's effect on the result always has the "n-1" index.

@@ -8,6 +8,7 @@ use \Smuuf\Primi\ISupportsDereference;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers;
 
 class DereferencableValue extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
@@ -18,11 +19,7 @@ class DereferencableValue extends \Smuuf\Primi\StrictObject implements IHandler,
 
 		if (isset($node['dereference'])) {
 
-			// If there's only one "dereference", we want to represent it the same way
-			// as if there were more of them, so we can both process them the same way - via foreach.
-			if (!isset($node['dereference'][0])) {
-				$node['dereference'] = [$node['dereference']];
-			}
+			Helpers::ensureIndexed($node['dereference']);
 
 			try {
 

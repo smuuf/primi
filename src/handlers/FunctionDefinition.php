@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers;
 
 /**
  * Node fields:
@@ -20,11 +21,7 @@ class FunctionDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 		$argumentList = [];
 		if (isset($node['args'])) {
 
-			// Handle situation with solo arguments (which wouldn't be represented as array).
-			// Do it by placing solo arguments into arrays.
-			if (!isset($node['args'][0])) {
-				$node['args'] = [$node['args']];
-			}
+			Helpers::ensureIndexed($node['args']);
 
 			foreach ($node['args'] as $a) {
 				$argumentList[] = $a['text'];

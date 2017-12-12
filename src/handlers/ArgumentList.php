@@ -6,6 +6,7 @@ use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\InternalUndefinedFunctionException;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers;
 
 /**
  * Node fields:
@@ -21,9 +22,7 @@ class ArgumentList extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		if (isset($node['args'])) {
 
-			if (!isset($node['args'][0])) {
-				$node['args'] = [$node['args']];
-			}
+			Helpers::ensureIndexed($node['args']);
 
 			foreach ($node['args'] as $a) {
 				$handler = HandlerFactory::get($a['name']);
