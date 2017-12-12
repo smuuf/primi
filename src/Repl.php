@@ -2,6 +2,9 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Interpreter;
+use \Smuuf\Primi\IReadlineDriver;
+
 class Repl extends \Smuuf\Primi\StrictObject {
 
 	const HISTORY_FILE = '.primi_history';
@@ -13,9 +16,13 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	/** @var \Smuuf\Primi\Interpreter **/
 	protected $interpreter;
 
-	public function __construct(\Smuuf\Primi\Interpreter $interpreter) {
+	/** @var \Smuuf\Primi\IReadlineDriver **/
+	protected $driver;
+
+	public function __construct(Interpreter $interpreter, IReadlineDriver $driver = null) {
 
 		$this->interpreter = $interpreter;
+		$this->driver = $driver ?: new \Smuuf\Primi\Readline;
 		$this->historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 		$this->loadHistory();
 
@@ -27,7 +34,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 		while (true) {
 
-			$input = readline(self::PROMPT);
+			$input = $this->driver->readline(self::PROMPT);
 
 			// Ignore (skip) empty input.
 			if ($input == '') {
@@ -39,7 +46,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				break;
 			}
 
-			readline_add_history($input);
+			$this->driver->readlineAddHistory($input);
 
 			try {
 
@@ -63,7 +70,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	private function loadHistory() {
 
 		if (is_readable($this->historyFilePath)) {
-			readline_read_history($this->historyFilePath);
+			$this->driver->readlineReadHistory($this->historyFilePath);
 		}
 
 	}
@@ -71,7 +78,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	private function saveHistory() {
 
 		if (is_writable(dirname($this->historyFilePath))) {
-			readline_write_history($this->historyFilePath);
+			$this->driver->readlineWriteHistory($this->historyFilePath);
 		}
 
 	}
