@@ -3,7 +3,7 @@
 use \Tester\Assert;
 use \Smuuf\Primi\HandlerFactory;
 
-require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/../bootstrap.php';
 
 // Existing handler, strict mode.
 $h = HandlerFactory::get('program');

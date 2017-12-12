@@ -9,7 +9,7 @@ use \Smuuf\Primi\Structures\{
     BoolValue
 };
 
-require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/../bootstrap.php';
 
 $integer = new NumberValue("1");
 $posInteger = new NumberValue("+1");

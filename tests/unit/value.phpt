@@ -10,7 +10,7 @@ use \Smuuf\Primi\Structures\{
     BoolValue
 };
 
-require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/../bootstrap.php';
 
 Assert::same(NumberValue::TYPE, Value::buildAutomatic(1)::TYPE);
 Assert::same(NumberValue::TYPE, Value::buildAutomatic(-1)::TYPE);
@@ -25,4 +25,7 @@ Assert::same(StringValue::TYPE, Value::buildAutomatic("-1 squirrels")::TYPE);
 
 Assert::same(BoolValue::TYPE, Value::buildAutomatic(true)::TYPE);
 Assert::same(BoolValue::TYPE, Value::buildAutomatic(false)::TYPE);
+
+Assert::same(ArrayValue::TYPE, Value::buildAutomatic([])::TYPE);
+Assert::same(ArrayValue::TYPE, Value::buildAutomatic([1])::TYPE);
 

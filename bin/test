@@ -11,10 +11,6 @@ function info() {
     echo "███ $1"
 }
 
-info "Language tests"
-./test_language
-RESULT+=$?
-
 info "Smoke tests"
 ./test_smoke
 RESULT+=$?

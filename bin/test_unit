@@ -6,4 +6,4 @@ if [[ "$1" == "--coverage" ]]; then
         COV="-p phpdbg --coverage ../coverage.xml --coverage-src ../src/"
 fi
 
-./../vendor/bin/tester $COV -C ../tests/unit
+./../vendor/bin/tester $COV -C ../tests

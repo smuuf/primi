@@ -9,7 +9,7 @@ use \Smuuf\Primi\Structures\{
     BoolValue
 };
 
-require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/../bootstrap.php';
 
 $string = new StringValue("this is a string.");
 $letterA = new StringValue("a");
