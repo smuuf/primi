@@ -4,14 +4,18 @@ use \Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-foreach (glob(__DIR__ . "/tests/*.primi") as $file) {
+function test_dir(string $dir) {
 
-	run_test($file);
+	foreach (glob(__DIR__ . sprintf("/suites/%s/*.primi", $dir)) as $file) {
 
-	// Avoid excessive RAM usage when gathering code coverage.
-	// (PHPDBG is quite greedy.)
-	\Tester\CodeCoverage\Collector::flush();
-	gc_collect_cycles();
+		run_test($file);
+
+		// Avoid excessive RAM usage when gathering code coverage.
+		// (PHPDBG is quite greedy.)
+		\Tester\CodeCoverage\Collector::flush();
+		gc_collect_cycles();
+
+	}
 
 }
 
