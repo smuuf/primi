@@ -4,9 +4,17 @@
   <p align="center">A scripting language <i><b>written in PHP</i></b> & <i><b>embeddable into PHP</b></i>.</p>
 </p>
 
+<p align="center">
+  Primi is meant for PHP developers who want to <b>allow their clients to write their own custom logic</b>. Primi allows you <i>(the developer)</i> to <b>execute untrusted code</b> <i>(provided simply as a string)</i> inside a sandbox, safely separated from its surroundings.
+</p>
+
+---
+
 Travis CI | Code Climate | Packagist
 --- | --- | ---
-[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/test_coverage)](https://codeclimate.com/github/smuuf/primi/test_coverage) | [![Total Downloads](https://poser.pugx.org/smuuf/primi/downloads)](https://packagist.org/packages/smuuf/primi) [![composer.lock](https://poser.pugx.org/smuuf/primi/composerlock)](https://packagist.org/packages/smuuf/primi)
+[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/test_coverage)](https://codeclimate.com/github/smuuf/primi/test_coverage) | [![Latest Stable Version](https://poser.pugx.org/smuuf/primi/v/stable)](https://packagist.org/packages/smuuf/primi) [![License](https://poser.pugx.org/smuuf/primi/license)](https://packagist.org/packages/smuuf/primi) [![Total Downloads](https://poser.pugx.org/smuuf/primi/downloads)](https://packagist.org/packages/smuuf/primi)
+
+---
 
 # Quick access
 - [Language reference (syntax help)](/docs/language_reference.md)
