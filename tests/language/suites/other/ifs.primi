@@ -1,0 +1,23 @@
+a = 1;
+aa = 0;
+if (a) {
+    aa = 1;
+}
+
+b = 0;
+bb = 0;
+if (b) {
+    bb = 1;
+}
+
+c = true;
+cc = 0;
+if (c) {
+    cc = 1;
+}
+
+d = false;
+dd = 0;
+if (d) {
+    dd = 1;
+}
