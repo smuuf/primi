@@ -50,11 +50,7 @@ git clone https://github.com/smuuf/primi.git && cd primi && composer install && 
     *Note: This will add an alias in .bashrc for current user.*
 - **Run tests** *(tests are located inside `./tests/` directory)*:
     ```
-    ./bin/runtests
-    ```
-- **Run smoke tests** *(runs all Primi scripts located inside `./sample/` directory)*:
-    ```
-    ./bin/runsmoketests
+    ./bin/test
     ```
 - **Rebuild parser** *(when you modify Primi's grammar definitions, you will want to rebuild the parser to reflect the changes)*:
     ```
