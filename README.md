@@ -27,6 +27,10 @@ Primi *- as things sometimes go in life -* began as an answer to a practical pro
 # Installation
 You can either use *Primi* as a **[standalone package](#a-standalone-installation)** `(a)` - for its development, making contributions, debugging it, or to just play with it. Or you can use *Primi* **[in your own projects](#b-as-a-library)** `(b)` by installing it as a Composer dependency.
 
+#### You'll want either one of these:
+- `git clone https://github.com/smuuf/primi.git` *(standalone use)*
+- `composer require smuuf/primi` *(using Primi as a library in your own project)*
+
 ## a) Standalone installation
 
 1. Clone this repo.
@@ -59,7 +63,7 @@ git clone https://github.com/smuuf/primi.git && cd primi && composer install && 
 
 
 
-## b) As a library
+## b) Using Primi as a library
 
 1. First, install [Primi Composer package](https://packagist.org/packages/smuuf/primi): `composer require smuuf/primi`
 2. Then use it like this:
@@ -102,7 +106,7 @@ Primi provides a convenient *"sandbox"* [REPL](https://en.wikipedia.org/wiki/Rea
 
 ![REPL example usage](https://raw.githubusercontent.com/smuuf/primi/master/res/repl-sample.gif)
 
-In this mode, all statements are executed when entered and the result value of the last expression is returned.
+In this mode, all statements are executed when entered and the result value of the last expression is returned. REPL commands history is preserved between separate sessions *(history is stored in `~/.primi_history` file)*.
 
 # Language reference
 The basics of the language syntax and data types are found here:
