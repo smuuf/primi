@@ -31,31 +31,39 @@ class ArrayValue extends Value implements
 		return new \ArrayIterator($this->value);
 	}
 
-	public function dereference(Value $index) {
+	public function dereference(Value $key) {
 
-		$phpIndex = $index->value;
+		// Array keys can be string and numbers.
+		self::allowTypes($key, StringValue::class, NumberValue::class);
+		$phpKey = $key->value;
 
-		if (!isset($this->value[$phpIndex])) {
-			throw new \Smuuf\Primi\InternalUndefinedIndexException($phpIndex);
+		if (!isset($this->value[$phpKey])) {
+			throw new \Smuuf\Primi\InternalUndefinedIndexException($phpKey);
 		}
 
-		return $this->value[$phpIndex];
+		return $this->value[$phpKey];
 
 	}
 
-	public function insert(string $key, Value $value): Value {
+	public function insert(?Value $key, Value $value): Value {
 
-		if ($key === "") {
+		if ($key === null) {
+
 			$this->value[] = $value;
+
 		} else {
-			$this->value[$key] = $value;
+
+			// Array keys can be string and numbers.
+			self::allowTypes($key, StringValue::class, NumberValue::class);
+			$this->value[$key->value] = $value;
+
 		}
 
 		return $this;
 
 	}
 
-	public function getInsertionProxy(string $key): InsertionProxy {
+	public function getInsertionProxy(?Value $key): InsertionProxy {
 		return new InsertionProxy($this, $key);
 	}
 

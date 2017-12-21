@@ -78,8 +78,8 @@ class StringValue extends Value implements
 
 	public function dereference(Value $index) {
 
-		// Can't do string type-hint within parameters because of interface type.
-		self::allowTypes($index, self::class, NumberValue::class);
+		// Allow dereferencing only by numbers.
+		self::allowTypes($index, NumberValue::class);
 
 		$phpIndex = (string) $index->value;
 
@@ -91,26 +91,33 @@ class StringValue extends Value implements
 
 	}
 
-	public function insert(string $key, Value $value): Value {
+	public function insert(?Value $index, Value $value): Value {
 
 		// Allow only strings to be inserted.
-		// Can't do string type-hint within parameters because of interface type.
 		self::allowTypes($value, self::class);
 
-		if ($key === "") {
-			// An empty key will cause the value to be appended to the end.
+		if ($index === null) {
+
+			// An empty index will cause the value to be appended to the end.
 			$this->value .= $value->value;
+
 		} else {
-			// If key is specified, PHP own rules for inserting into strings apply.
-			$this->value[$key] = $value->value;
+
+			// Only numbers can be indexes in strings.
+			self::allowTypes($index, NumberValue::class);
+			$phpIndex = $index->value;
+
+			// If index is specified, PHP own rules for inserting into strings apply.
+			$this->value[$phpIndex] = $value->value;
+
 		}
 
 		return $this;
 
 	}
 
-	public function getInsertionProxy(string $key): InsertionProxy {
-		return new InsertionProxy($this, $key);
+	public function getInsertionProxy(?Value $index): InsertionProxy {
+		return new InsertionProxy($this, $index);
 	}
 
 	public function getIterator(): \Iterator {

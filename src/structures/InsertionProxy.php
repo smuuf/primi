@@ -19,7 +19,7 @@ class InsertionProxy extends \Smuuf\Primi\StrictObject {
 	protected $target;
 	protected $key;
 
-	public function __construct(ISupportsInsertion $target, string $key) {
+	public function __construct(ISupportsInsertion $target, ?Value $key) {
 		$this->target = $target;
 		$this->key = $key;
 	}

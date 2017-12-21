@@ -42,7 +42,7 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 	 *
 	 * @throws \TypeException
 	 */
-	protected static function allowTypes(Value $value, string ...$types) {
+	protected static function allowTypes(?Value $value, string ...$types) {
 
 		foreach ($types as $type) {
 			if ($value instanceof $type) {

@@ -7,8 +7,8 @@ use \Smuuf\Primi\Structures\InsertionProxy;
 
 interface ISupportsInsertion {
 
-	public function insert(string $key, Value $value): Value;
-	public function getInsertionProxy(string $key): InsertionProxy;
+	public function insert(?Value $key, Value $value): Value;
+	public function getInsertionProxy(?Value $key): InsertionProxy;
 
 }
 

@@ -65,14 +65,15 @@ class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		if ($lastPart['name'] === "vector") {
 
-			// "vector" signals the key name was empty - the value should be inserted at the end.
-			$key = "";
+			// "vector" node name signals the key name was empty - the value
+			// should be inserted at the end of the value structure.
+			$key = null;
 
 		} else {
 
 			// Determine the final new key for the value that will be insetred.
 			$handler = HandlerFactory::get($lastPart['name']);
-			$key = (string) $handler::handle($lastPart, $context)->getPhpValue();
+			$key = $handler::handle($lastPart, $context);
 
 		}
 
