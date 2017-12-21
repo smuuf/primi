@@ -89,6 +89,8 @@ class NumberValue extends Value implements
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
+		self::allowTypes($rightOperand, self::class, StringValue::class);
+
 		switch ($op) {
 			case "==":
 				return new BoolValue($this->value == $rightOperand->value);

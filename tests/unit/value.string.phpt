@@ -84,6 +84,21 @@ Assert::false(get_val($tmp));
 $tmp = $string->doComparison("!=", new StringValue("boii"));
 Assert::true(get_val($tmp));
 
+// Equality: Comparing string against a number.
+$tmp = $string->doComparison("==", new NumberValue(5));
+Assert::false(get_val($tmp));
+$tmp = (new StringValue("5"))->doComparison("==", new NumberValue(5));
+Assert::true(get_val($tmp));
+$tmp = (new StringValue("2.1"))->doComparison("==", new NumberValue(2.1));
+Assert::true(get_val($tmp));
+$tmp = (new StringValue("50"))->doComparison("==", new NumberValue(5));
+Assert::false(get_val($tmp));
+
+// Equality: This is weird, but probably valid (albeit pretty unexpected, maybe
+// a TO DO for future?). Number 2.0 is casted to "2" and "2.0" == "2" is false.
+$tmp = (new StringValue("2.0"))->doComparison("==", new NumberValue(2.0));
+Assert::false(get_val($tmp));
+
 // Equality: Comparing string against matching regex: True.
 $tmp = $string->doComparison("==", new RegexValue("/s[tr]+/"));
 Assert::true(get_val($tmp));
@@ -97,10 +112,8 @@ Assert::true(get_val($tmp));
 $tmp = $unicode->doComparison("!=", new RegexValue('/nuancé/'));
 Assert::true(get_val($tmp));
 
-// In/Equality: Comparing against unsupported value type.
-Assert::exception(function() use ($string) {
-	$string->doComparison("==", new NumberValue(5));
-}, \TypeError::class);
+
+
 Assert::exception(function() use ($string) {
 	$string->doComparison("!=", new BoolValue(false));
 }, \TypeError::class);

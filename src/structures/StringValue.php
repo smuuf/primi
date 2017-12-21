@@ -47,7 +47,12 @@ class StringValue extends Value implements
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		self::allowTypes($rightOperand, self::class, RegexValue::class);
+		self::allowTypes(
+			$rightOperand,
+			self::class,
+			RegexValue::class,
+			NumberValue::class
+		);
 
 		switch ($op) {
 			case "==":
@@ -55,7 +60,7 @@ class StringValue extends Value implements
 				if ($rightOperand instanceof RegexValue) {
 					$result = \preg_match($rightOperand->value, $this->value);
 				} else {
-					$result = $this->value === $rightOperand->value;
+					$result = $this->value === (string) $rightOperand->value;
 				}
 
 			break;
@@ -64,7 +69,7 @@ class StringValue extends Value implements
 				if ($rightOperand instanceof RegexValue) {
 					$result = !\preg_match($rightOperand->value, $this->value);
 				} else {
-					$result = $this->value !== $rightOperand->value;
+					$result = $this->value !== (string) $rightOperand->value;
 				}
 
 			break;
