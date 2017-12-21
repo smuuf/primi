@@ -67,7 +67,7 @@ class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 
 			// "vector" node name signals the key name was empty - the value
 			// should be inserted at the end of the value structure.
-			$key = null;
+			$key = \null;
 
 		} else {
 

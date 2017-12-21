@@ -47,7 +47,7 @@ class ArrayValue extends Value implements
 
 	public function insert(?Value $key, Value $value): Value {
 
-		if ($key === null) {
+		if ($key === \null) {
 
 			$this->value[] = $value;
 

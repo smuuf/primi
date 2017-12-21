@@ -35,13 +35,13 @@ class StringValue extends Value implements
 	public function doSubtraction(Value $rightOperand) {
 
 		if ($rightOperand instanceof RegexValue) {
-			return new self(\preg_replace($rightOperand->value, null, $this->value));
+			return new self(\preg_replace($rightOperand->value, \null, $this->value));
 		}
 
 		// Allow only string at this point (if the operand was a regex, we've already returned value).
 		self::allowTypes($rightOperand, self::class);
 
-		return new self(\str_replace($rightOperand->value, null, $this->value));
+		return new self(\str_replace($rightOperand->value, \null, $this->value));
 
 	}
 
@@ -96,7 +96,7 @@ class StringValue extends Value implements
 		// Allow only strings to be inserted.
 		self::allowTypes($value, self::class);
 
-		if ($index === null) {
+		if ($index === \null) {
 
 			// An empty index will cause the value to be appended to the end.
 			$this->value .= $value->value;
