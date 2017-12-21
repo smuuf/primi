@@ -16,8 +16,13 @@ $commands = [
 $driver = new class implements \Smuuf\Primi\IReadlineDriver {
 
 	public function readline(string $prompt): string {
+
         global $commands, $counter;
+
+		// Each call to this method will return the next item in the
+		// global $commands array. We're simulating user input.
 		return $commands[$counter++];
+
 	}
 
 	public function readlineAddHistory(string $item): void {

@@ -2,14 +2,19 @@
 
 use \Tester\Assert;
 use \Smuuf\Primi\Structures\{
-    StringValue,
-    NumberValue,
-    RegexValue,
-    ArrayValue,
-    BoolValue
+	StringValue,
+	NumberValue,
+	RegexValue,
+	ArrayValue,
+	BoolValue,
+	Value
 };
 
 require __DIR__ . '/../bootstrap.php';
+
+function get_val(Value $v) {
+	return $v->getPhpValue();
+}
 
 $string = new StringValue("this is a string.");
 $letterA = new StringValue("a");
@@ -17,98 +22,94 @@ $unicode = new StringValue("ťhiš íš á ŠTřing.");
 $withNewline = new StringValue('a \n b');
 
 // Test sequence expanding...
-Assert::same(2, count(explode("\n", $withNewline->getPhpValue())));
+Assert::same(2, count(explode("\n", get_val($withNewline))));
 
 // Test adding and subtracting...
 
 // Concatenate two strings (the same string).
 Assert::same(
-    "this is a string.this is a string.",
-    $string->doAddition($string)->getPhpValue()
+	"this is a string.this is a string.",
+	get_val($string->doAddition($string))
 );
 
 // Subtracting string from string (letter "a").
 $noA = $string->doSubtraction($letterA);
 Assert::same(
-    "this is  string.",
-    $noA->getPhpValue()
+	"this is  string.",
+	get_val($noA)
 );
 
 // Subtract regex matching all whitespace.
 $regexWhitespace = new RegexValue("/\s+/");
 $noSpaces = $noA->doSubtraction($regexWhitespace);
 Assert::same(
-    "thisisstring.",
-    $noSpaces->getPhpValue()
+	"thisisstring.",
+	get_val($noSpaces)
 );
 
 // Subtracting wrong value type results in type error.
 Assert::exception(function() use ($string) {
-    $string->doSubtraction(new NumberValue(1));
+	$string->doSubtraction(new NumberValue(1));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
-    $string->doSubtraction(new BoolValue(true));
+	$string->doSubtraction(new BoolValue(true));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
-    $string->doSubtraction(new ArrayValue([]));
+	$string->doSubtraction(new ArrayValue([]));
 }, \TypeError::class);
 
 // Adding wrong value type results in type error.
 Assert::exception(function() use ($string) {
-    $string->doAddition(new BoolValue(false));
+	$string->doAddition(new BoolValue(false));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
-    $string->doAddition(new RegexValue("/[abc]+/"));
+	$string->doAddition(new RegexValue("/[abc]+/"));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
-    $string->doAddition(new ArrayValue([]));
+	$string->doAddition(new ArrayValue([]));
 }, \TypeError::class);
 
 // Test comparison operators...
 
-function extract_bool_value(BoolValue $b) {
-    return $b->getPhpValue();
-}
-
 // Equality: Two different instances containing the same "string": True.
 $tmp = $string->doComparison("==", new StringValue("this is a string."));
-Assert::true(extract_bool_value($tmp));
+Assert::true(get_val($tmp));
 // Inequality: Two different instances containing the same "string": False.
 $tmp = $string->doComparison("!=", new StringValue("this is a string."));
-Assert::false(extract_bool_value($tmp));
+Assert::false(get_val($tmp));
 // Equality: Two different instances containing different "string": False.
 $tmp = $string->doComparison("==", new StringValue("dayum"));
-Assert::false(extract_bool_value($tmp));
+Assert::false(get_val($tmp));
 // Inequality: Two different instances containing different string": True.
 $tmp = $string->doComparison("!=", new StringValue("boii"));
-Assert::true(extract_bool_value($tmp));
+Assert::true(get_val($tmp));
 
 // Equality: Comparing string against matching regex: True.
 $tmp = $string->doComparison("==", new RegexValue("/s[tr]+/"));
-Assert::true(extract_bool_value($tmp));
+Assert::true(get_val($tmp));
 // Inequality: Comparing string against non-matching regex: False.
 $tmp = $string->doComparison("!=", new RegexValue("/\d+/"));
-Assert::true(extract_bool_value($tmp));
+Assert::true(get_val($tmp));
 // Equality: Comparing Unicode string against matching regex: True.
 $tmp = $unicode->doComparison("==", new RegexValue('/Š[Tř]{2}i/'));
-Assert::true(extract_bool_value($tmp));
+Assert::true(get_val($tmp));
 // Inquality: Comparing Unicode string against non-matching regex: True.
 $tmp = $unicode->doComparison("!=", new RegexValue('/nuancé/'));
-Assert::true(extract_bool_value($tmp));
+Assert::true(get_val($tmp));
 
 // In/Equality: Comparing against unsupported value type.
 Assert::exception(function() use ($string) {
-    $string->doComparison("==", new NumberValue(5));
+	$string->doComparison("==", new NumberValue(5));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
-    $string->doComparison("!=", new BoolValue(false));
+	$string->doComparison("!=", new BoolValue(false));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
-    $string->doComparison("==", new ArrayValue([]));
+	$string->doComparison("==", new ArrayValue([]));
 }, \TypeError::class);
 // Test that completely bogus operator throws error.
 Assert::exception(function() use ($string) {
-    $string->doComparison("@==!", new StringValue("wtf"));
+	$string->doComparison("@==!", new StringValue("wtf"));
 }, \TypeError::class);
 
 // Test dereferencing and insertion...
@@ -118,37 +119,37 @@ $dereferenced1 = $string->dereference(new NumberValue(0));
 Assert::notSame($string, $dereferenced1);
 
 // Test return values of dereferencing.
-Assert::same("t", $string->dereference(new NumberValue(0))->getPhpValue());
-Assert::same("s", $string->dereference(new NumberValue(3))->getPhpValue());
+Assert::same("t", get_val($string->dereference(new NumberValue(0))));
+Assert::same("s", get_val($string->dereference(new NumberValue(3))));
 
 // Test error when dereferencing from undexined index.
 Assert::exception(function() use ($string) {
-    $string->dereference(new NumberValue(50));
+	$string->dereference(new NumberValue(50));
 }, \Smuuf\Primi\InternalUndefinedIndexException::class);
 
 // Test that inserting does happen on the same instance of the value object.
 $copy = clone $string;
-Assert::same($copy, $copy->insert(0, new StringValue("x")));
+Assert::same($copy, $copy->insert(new NumberValue(0), new StringValue("x")));
 // Test classic insertion.
-$copy->insert(2, new StringValue("u"));
-Assert::same("xhus is a string.", $copy->getPhpValue());
+$copy->insert(new NumberValue(2), new StringValue("u"));
+Assert::same("xhus is a string.", get_val($copy));
 // Test insertion without specifying index - Single letter.
-$copy->insert("", new StringValue("A"));
-Assert::same("xhus is a string.A", $copy->getPhpValue());
+$copy->insert(null, new StringValue("A"));
+Assert::same("xhus is a string.A", get_val($copy));
 // Test insertion without specifying index - Multiple letters.
-$copy->insert("", new StringValue("BBB"));
-Assert::same("xhus is a string.ABBB", $copy->getPhpValue());
+$copy->insert(null, new StringValue("BBB"));
+Assert::same("xhus is a string.ABBB", get_val($copy));
 
 // Test creating insertion proxy and commiting it.
-$proxy = $copy->getInsertionProxy(4);
+$proxy = $copy->getInsertionProxy(new NumberValue(4));
 $proxy->commit(new StringValue("O"));
-Assert::same("xhusOis a string.ABBB", $copy->getPhpValue());
+Assert::same("xhusOis a string.ABBB", get_val($copy));
 
 // Test iteration of strings.
 $sourceString = "abc\ndef";
 $iterable = new StringValue($sourceString);
 foreach ($iterable->getIterator() as $index => $x) {
-    Assert::same($sourceString[$index], $x->getPhpValue());
+	Assert::same($sourceString[$index], get_val($x));
 }
 
 // Test methods...
@@ -156,87 +157,87 @@ foreach ($iterable->getIterator() as $index => $x) {
 // Test classic formatting
 $template = new StringValue("1:{},2:{},3:{},4:{}");
 $result = $template->callFormat(
-    new StringValue("FIRST"),
-    new StringValue("SECOND"),
-    new StringValue("THIRD"),
-    new StringValue("FOURTH")
+	new StringValue("FIRST"),
+	new StringValue("SECOND"),
+	new StringValue("THIRD"),
+	new StringValue("FOURTH")
 );
-Assert::same("1:FIRST,2:SECOND,3:THIRD,4:FOURTH", $result->getPhpValue());
+Assert::same("1:FIRST,2:SECOND,3:THIRD,4:FOURTH", get_val($result));
 
 // Test formatting with positions.
 $template = new StringValue("1:{},2:{2},3:{1},4:{}");
 $result = $template->callFormat(
-    new StringValue("FIRST"),
-    new StringValue("SECOND"),
-    new StringValue("THIRD"),
-    new StringValue("FOURTH")
+	new StringValue("FIRST"),
+	new StringValue("SECOND"),
+	new StringValue("THIRD"),
+	new StringValue("FOURTH")
 );
-Assert::same("1:FIRST,2:SECOND,3:FIRST,4:SECOND", $result->getPhpValue());
+Assert::same("1:FIRST,2:SECOND,3:FIRST,4:SECOND", get_val($result));
 
 // Test too-few-parameters.
 Assert::exception(function() {
-    $template = new StringValue("1:{},2:{},3:{},4:{}");
-    $result = $template->callFormat(
-        new StringValue("FIRST"),
-        new StringValue("SECOND")
-    );
+	$template = new StringValue("1:{},2:{},3:{},4:{}");
+	$result = $template->callFormat(
+		new StringValue("FIRST"),
+		new StringValue("SECOND")
+	);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test too-few-parameters with positions.
 Assert::exception(function() {
-    $template = new StringValue("1:{},2:{1},3:{1},4:{}");
-    $result = $template->callFormat(
-        new StringValue("FIRST")
-    );
+	$template = new StringValue("1:{},2:{1},3:{1},4:{}");
+	$result = $template->callFormat(
+		new StringValue("FIRST")
+	);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test placeholder index being too high for passed parameters.
 Assert::exception(function() {
-    $template = new StringValue("1:{},2:{1000}");
-    $result = $template->callFormat(
-        new StringValue("FIRST"),
-        new StringValue("SECOND")
-    );
+	$template = new StringValue("1:{},2:{1000}");
+	$result = $template->callFormat(
+		new StringValue("FIRST"),
+		new StringValue("SECOND")
+	);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test count.
-Assert::same(3, $string->callCount(new StringValue("i"))->getPhpValue());
-Assert::same(2, $string->callCount(new StringValue("is"))->getPhpValue());
-Assert::same(0, $string->callCount(new StringValue("xoxoxo"))->getPhpValue());
-Assert::same(0, $string->callCount(new NumberValue(1))->getPhpValue());
+Assert::same(3, get_val($string->callCount(new StringValue("i"))));
+Assert::same(2, get_val($string->callCount(new StringValue("is"))));
+Assert::same(0, get_val($string->callCount(new StringValue("xoxoxo"))));
+Assert::same(0, get_val($string->callCount(new NumberValue(1))));
 
 // Test length.
-Assert::same(17, $string->propLength()->getPhpValue());
-Assert::same(1, $letterA->propLength()->getPhpValue());
+Assert::same(17, get_val($string->propLength()));
+Assert::same(1, get_val($letterA->propLength()));
 // Multibyte strings should report length correctly.
-Assert::same(17, $unicode->propLength()->getPhpValue());
+Assert::same(17, get_val($unicode->propLength()));
 // "\n" is expanded as newline - that's one character.
-Assert::same(5, $withNewline->propLength()->getPhpValue());
+Assert::same(5, get_val($withNewline->propLength()));
 
 // Test replacing.
 
 // Test replacing with array of needle-replacement.
 $pairs = new ArrayValue([
-    "is" => new StringValue("A"),
-    "i" => new StringValue("B"),
-    "." => new StringValue("ščř"),
+	"is" => new StringValue("A"),
+	"i" => new StringValue("B"),
+	"." => new StringValue("ščř"),
 ]);
 $result = $string->callReplace($pairs);
-Assert::same("thA A a strBngščř", $result->getPhpValue());
+Assert::same("thA A a strBngščř", get_val($result));
 // Replacing ordinary strings.
 $result = $string->callReplace(new StringValue("is"), new StringValue("yes!"));
-Assert::same("thyes! yes! a string.", $result->getPhpValue());
+Assert::same("thyes! yes! a string.", get_val($result));
 // Replacing with regex needle.
 $result = $string->callReplace(new RegexValue('(i?s|\s)'), new StringValue("no!"));
-Assert::same("thno!no!no!no!ano!no!tring.", $result->getPhpValue());
+Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 
 // Test first/last occurence search.
-Assert::same(2, $string->callFirst(new StringValue("is"))->getPhpValue());
-Assert::same(5, $string->callLast(new StringValue("is"))->getPhpValue());
+Assert::same(2, get_val($string->callFirst(new StringValue("is"))));
+Assert::same(5, get_val($string->callLast(new StringValue("is"))));
 
 // First: False when it does not appear in the string.
-Assert::false($string->callFirst(new StringValue("aaa"))->getPhpValue());
+Assert::false(get_val($string->callFirst(new StringValue("aaa"))));
 // Last: False when it does not appear in the string.
-Assert::false($string->callLast(new StringValue("aaa"))->getPhpValue());
+Assert::false(get_val($string->callLast(new StringValue("aaa"))));
 
 

@@ -2,11 +2,11 @@
 
 use \Tester\Assert;
 use \Smuuf\Primi\Structures\{
-    StringValue,
-    NumberValue,
-    RegexValue,
-    ArrayValue,
-    BoolValue
+	StringValue,
+	NumberValue,
+	RegexValue,
+	ArrayValue,
+	BoolValue
 };
 
 require __DIR__ . '/../bootstrap.php';
@@ -86,13 +86,13 @@ Assert::type(StringValue::class, $word2);
 
 // Addition with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
-    $integer->doAddition(new ArrayValue([]));
+	$integer->doAddition(new ArrayValue([]));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doAddition(new BoolValue(true));
+	$integer->doAddition(new BoolValue(true));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doAddition(new RegexValue("/[abc]/"));
+	$integer->doAddition(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
 // Test subtraction.
@@ -105,16 +105,16 @@ Assert::same(124, $integer->doSubtraction(new NumberValue(-123))->getPhpValue())
 
 // Subtaction with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
-    $integer->doSubtraction(new StringValue("1"));
+	$integer->doSubtraction(new StringValue("1"));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doSubtraction(new ArrayValue([]));
+	$integer->doSubtraction(new ArrayValue([]));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doSubtraction(new BoolValue(false));
+	$integer->doSubtraction(new BoolValue(false));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doSubtraction(new RegexValue("/[abc]/"));
+	$integer->doSubtraction(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
 // Test multiplication.
@@ -127,25 +127,25 @@ Assert::same(-282.9, $float->doMultiplication(new NumberValue(-123))->getPhpValu
 
 // Subtaction with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
-    $integer->doMultiplication(new StringValue("1"));
+	$integer->doMultiplication(new StringValue("1"));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doMultiplication(new ArrayValue([]));
+	$integer->doMultiplication(new ArrayValue([]));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doMultiplication(new BoolValue(false));
+	$integer->doMultiplication(new BoolValue(false));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doMultiplication(new RegexValue("/[abc]/"));
+	$integer->doMultiplication(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
 // Test division.
 
 Assert::exception(function() use ($float) {
-    $float->doDivision(new NumberValue("-0"));
+	$float->doDivision(new NumberValue("-0"));
 }, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
 Assert::exception(function() use ($integer) {
-    $integer->doDivision(new NumberValue(0));
+	$integer->doDivision(new NumberValue(0));
 }, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
 Assert::same(-0.46, $float->doDivision(new NumberValue("-5"))->getPhpValue());
 Assert::same(2.3, $float->doDivision(new NumberValue(1))->getPhpValue());
@@ -153,16 +153,16 @@ Assert::same(-1.15, $float->doDivision(new NumberValue(-2))->getPhpValue());
 
 // Subtaction with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
-    $integer->doDivision(new StringValue("1"));
+	$integer->doDivision(new StringValue("1"));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doDivision(new ArrayValue([]));
+	$integer->doDivision(new ArrayValue([]));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doDivision(new BoolValue(false));
+	$integer->doDivision(new BoolValue(false));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
-    $integer->doDivision(new RegexValue("/[abc]/"));
+	$integer->doDivision(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
 // Test unary.
@@ -173,13 +173,13 @@ Assert::same(2, $integer->doUnary("++")->getPhpValue());
 Assert::same(0, $integer->doUnary("--")->getPhpValue());
 // Some bogust unary operator throws error.
 Assert::exception(function() use ($integer) {
-    $integer->doUnary("!@=");
+	$integer->doUnary("!@=");
 }, \TypeError::class);
 
 // Test comparison operators...
 
 function extract_bool_value(BoolValue $b) {
-    return $b->getPhpValue();
+	return $b->getPhpValue();
 }
 
 $tmp = $integer->doComparison("==", new NumberValue("-1"));

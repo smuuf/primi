@@ -2,12 +2,12 @@
 
 use \Tester\Assert;
 use \Smuuf\Primi\Structures\{
-    Value,
-    StringValue,
-    NumberValue,
-    RegexValue,
-    ArrayValue,
-    BoolValue
+	Value,
+	StringValue,
+	NumberValue,
+	RegexValue,
+	ArrayValue,
+	BoolValue
 };
 
 require __DIR__ . '/../bootstrap.php';
