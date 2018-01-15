@@ -1,17 +1,17 @@
 a = 0;
 
 function one() {
-    return 1;
+	return 1;
 }
 
 function with_argument(arg) {
-    return arg / 4;
+	return arg / 4;
 }
 
 function no_return(a, b, c) {
-    a + 1; // Does not modify primary context.
-    b + 1;
-    c + 1;
+	a + 1; // Does not modify primary context.
+	b + 1;
+	c + 1;
 }
 
 no_return(a, 2, 3);

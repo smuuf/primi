@@ -1,11 +1,11 @@
-a:Smuuf\Primi\Structures\StringValue:ahojkyacauky
-b:Smuuf\Primi\Structures\StringValue:xxxhojkyxxxcxxxuky
-c:Smuuf\Primi\Structures\StringValue:volejoasijakprase
-d:Smuuf\Primi\Structures\StringValue:volejourčitějakprase
-e:Smuuf\Primi\Structures\StringValue:ab_____hijklmn
-_definitions:Smuuf\Primi\Structures\ArrayValue:[á:a,č:c,ě:e]
-f:Smuuf\Primi\Structures\StringValue:radoby cau
-g:Smuuf\Primi\Structures\StringValue:lilek
-h:Smuuf\Primi\Structures\StringValue:cislo je 1
-i:Smuuf\Primi\Structures\StringValue:kokot je ee
-j:Smuuf\Primi\Structures\StringValue:whatevs
+a:StringValue:ahojkyacauky
+b:StringValue:xxxhojkyxxxcxxxuky
+c:StringValue:volejoasijakprase
+d:StringValue:volejourčitějakprase
+e:StringValue:ab_____hijklmn
+_definitions:ArrayValue:[á:a,č:c,ě:e]
+f:StringValue:radoby cau
+g:StringValue:lilek
+h:StringValue:cislo je 1
+i:StringValue:kokot je ee
+j:StringValue:whatevs
