@@ -9,8 +9,10 @@ use \Smuuf\Primi\Context;
 
 class FuncValue extends Value {
 
-	/** @var string Function name for convenience. **/
-	protected $name;
+	const TYPE = "function";
+
+	/** @var string Function name is stored - in 'value' property - only for convenience. **/
+	protected $value;
 
 	/** @var array List of variable names used as arguments. **/
 	protected $args;
@@ -19,7 +21,7 @@ class FuncValue extends Value {
 	protected $body;
 
 	public function __construct(string $name, array $args, array $body) {
-		$this->name = $name;
+		$this->value = $name;
 		$this->args = $args;
 		$this->body = $body;
 	}
@@ -31,7 +33,7 @@ class FuncValue extends Value {
 		if (\count($this->args) !== \count($args)) {
 			throw new ErrorException(sprintf(
 				"Wrong number of arguments passed to the '%s' function (%s instead of %s)",
-				$this->name,
+				$this->value,
 				\count($args),
 				\count($this->args)
 			), $callerNode);
