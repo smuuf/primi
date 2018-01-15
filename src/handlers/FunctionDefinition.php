@@ -29,9 +29,9 @@ class FunctionDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		}
 
-		$context->setFunction(
+		$context->setVariable(
 			$functionName,
-			new \Smuuf\Primi\Structures\Func(
+			new \Smuuf\Primi\Structures\FuncValue(
 				$functionName,
 				$argumentList,
 				$node['body']

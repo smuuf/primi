@@ -3,7 +3,7 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\Func;
+use \Smuuf\Primi\Structures\FuncValue;
 
 class Context extends \Smuuf\Primi\StrictObject implements IContext {
 
@@ -57,33 +57,6 @@ class Context extends \Smuuf\Primi\StrictObject implements IContext {
 
 	public function getVariables(): array {
 		return $this->container['variables'];
-	}
-
-	// Functions.
-
-	public function setFunction(string $name, Func $function) {
-		$this->container['functions'][$name] = $function;
-	}
-
-	public function setFunctions(array $pairs) {
-
-		foreach ($pairs as $name => $value) {
-			$this->setFunction($name, $value);
-		}
-
-	}
-
-	public function getFunction(string $name): Func {
-
-		if (!\array_key_exists($name, $this->container['functions'])) {
-			throw new InternalUndefinedFunctionException($name);
-		}
-
-		return $this->container['functions'][$name];
-	}
-
-	public function getFunctions(): array {
-		return $this->container['functions'];
 	}
 
 	// Debugging.

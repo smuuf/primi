@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\InternalUndefinedFunctionException;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers;
 

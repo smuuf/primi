@@ -7,7 +7,7 @@ use \Smuuf\Primi\ReturnException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
 
-class Func extends \Smuuf\Primi\StrictObject {
+class FuncValue extends Value {
 
 	/** @var string Function name for convenience. **/
 	protected $name;
@@ -42,7 +42,7 @@ class Func extends \Smuuf\Primi\StrictObject {
 		$context = new Context;
 
 		$args = \array_combine($this->args, $args);
-		$context->setFunctions($callerContext->getFunctions());
+		$context->setVariables($callerContext->getVariables());
 		$context->setVariables($args);
 
 		// Run the function body and expect a ReturnException with the return value.
