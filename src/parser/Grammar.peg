@@ -27,7 +27,7 @@ Variable: ( core:VariableName post:UnaryOperator? ) | ( pre:UnaryOperator? core:
 PropertyGetter: core:VariableName
 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
-ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ "]"
+ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 DereferencableValue: core:Value ( "[" __ dereference:Expression __ "]" )*
