@@ -12,6 +12,10 @@ class BoolValue extends Value implements ISupportsComparison {
 		$this->value = $value;
 	}
 
+	public function getStringValue(): string {
+		return $this->value ? 'true' : 'false';
+	}
+
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
 		self::allowTypes($rightOperand, self::class);

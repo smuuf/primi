@@ -24,6 +24,10 @@ class NumberValue extends Value implements
 		$this->value = self::isNumericInt($value) ? (int) $value : (float) $value;
 	}
 
+	public function getStringValue(): string {
+		return (string) $this->value;
+	}
+
 	public static function isNumericInt(string $input) {
 
 		// Trim any present sign, because it screws up the detection.

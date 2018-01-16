@@ -28,6 +28,8 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 		return $this->value;
 	}
 
+	abstract public function getStringValue(): string;
+
 	/**
 	 * Throw new TypeException when the value does not match any of the types provided.
 	 * Use this when allowing only certain types of values in call*() methods.

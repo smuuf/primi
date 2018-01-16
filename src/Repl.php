@@ -54,7 +54,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				// This way users won't have to put it in there themselves.
 				$result = $i->run("$input;");
 				if ($result instanceof \Smuuf\Primi\Structures\Value) {
-					echo $result->getPhpValue() . "\n";
+					echo $result->getStringValue() . "\n";
 				}
 
 			} catch (\Smuuf\Primi\ErrorException $e) {

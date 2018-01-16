@@ -27,6 +27,21 @@ class ArrayValue extends Value implements
 
 	}
 
+	public function getStringValue(): string {
+		return self::convertToString($this->value);
+	}
+
+	private static function convertToString($value): string {
+
+		$return = "[";
+		foreach ($value as $key => $item) {
+			$return .= sprintf("%s: %s, ", $key, $item->getStringValue());
+		}
+
+		return rtrim($return, ', ') . "]";;
+
+	}
+
 	public function getIterator(): \Iterator {
 		return new \ArrayIterator($this->value);
 	}

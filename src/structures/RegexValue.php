@@ -14,6 +14,10 @@ class RegexValue extends Value implements
 		$this->value = $regex . "u";
 	}
 
+	public function getStringValue(): string {
+		return $this->value;
+	}
+
 	public function doComparison(string $operator, Value $rightOperand): BoolValue {
 
 		self::allowTypes($rightOperand, StringValue::class, NumberValue::class);

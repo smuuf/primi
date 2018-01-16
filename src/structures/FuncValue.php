@@ -26,6 +26,10 @@ class FuncValue extends Value {
 		$this->body = $body;
 	}
 
+	public function getStringValue(): string {
+		return $this->value;
+	}
+
 	public function call(array $args, Context $callerContext, array $callerNode) {
 
 		$handler = HandlerFactory::get($this->body['name']);

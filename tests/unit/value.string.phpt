@@ -252,5 +252,3 @@ Assert::same(5, get_val($string->callLast(new StringValue("is"))));
 Assert::false(get_val($string->callFirst(new StringValue("aaa"))));
 // Last: False when it does not appear in the string.
 Assert::false(get_val($string->callLast(new StringValue("aaa"))));
-
-

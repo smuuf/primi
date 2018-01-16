@@ -25,6 +25,15 @@ class StringValue extends Value implements
 		$this->value = self::expandSequences($value);
 	}
 
+	public function getStringValue(): string {
+
+		// We are about to put double-quotes around the return value,
+		// so let's "escape" double-quotes present in the string value.
+		$escaped = str_replace('"', '\"', $this->value);
+		return "\"$escaped\"";
+
+	}
+
 	public function doAddition(Value $rightOperand) {
 
 		self::allowTypes($rightOperand, self::class, NumberValue::class);
