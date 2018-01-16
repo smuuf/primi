@@ -1,11 +1,11 @@
-a:Smuuf\Primi\Structures\NumberValue:3
-b:Smuuf\Primi\Structures\NumberValue:3
-c:Smuuf\Primi\Structures\NumberValue:3
-d:Smuuf\Primi\Structures\StringValue:x1
-e:Smuuf\Primi\Structures\StringValue:1x
-f:Smuuf\Primi\Structures\StringValue:x1
-g:Smuuf\Primi\Structures\StringValue:1x
-h:Smuuf\Primi\Structures\StringValue:abc   def
-i:Smuuf\Primi\Structures\StringValue:
-j:Smuuf\Primi\Structures\StringValue:1 2 3 hh 4 5 6
-k:Smuuf\Primi\Structures\StringValue:tohle, s písmenem e, je nejlepší věta evé
+a:NumberValue:3
+b:NumberValue:3
+c:NumberValue:3
+d:StringValue:x1
+e:StringValue:1x
+f:StringValue:x1
+g:StringValue:1x
+h:StringValue:abc   def
+i:StringValue:
+j:StringValue:1 2 3 hh 4 5 6
+k:StringValue:tohle, s písmenem e, je nejlepší věta evé

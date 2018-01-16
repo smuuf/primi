@@ -17,4 +17,8 @@ abstract class Helpers extends \Smuuf\Primi\StrictObject {
 
 	}
 
+	public static function hash(...$args): string {
+		return md5(json_encode($args));
+	}
+
 }

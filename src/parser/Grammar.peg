@@ -4,15 +4,15 @@ namespace Smuuf\Primi;
 
 use hafriedlander\Peg\Parser;
 
-class CompiledParser extends Parser\Basic {
+class CompiledParser extends Parser\Packrat {
 
-    // Add these properties so PHPStan doesn't complain about undefined properties.
+	// Add these properties so PHPStan doesn't complain about undefined properties.
 
-    /** @var int **/
-    public $pos;
+	/** @var int **/
+	public $pos;
 
-    /** @var string **/
-    public $string;
+	/** @var string **/
+	public $string;
 
 /*!* Primi
 
@@ -25,13 +25,14 @@ Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:Regex
 VariableName: /([a-zA-Z_][a-zA-Z0-9_]*)/
 Variable: ( core:VariableName post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableName )
 PropertyGetter: core:VariableName
+AnonymousFunction: "function" > "(" > args:FunctionDefinitionArgumentList? > ")" > body:Block | "(" > args:FunctionDefinitionArgumentList? > ")" > "=>" > body:Block
 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
-ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ "]"
+ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 DereferencableValue: core:Value ( "[" __ dereference:Expression __ "]" )*
-VariableVector: core:Variable ( "[" __ ( vector:Expression | vector:"" ) __ "]" )+
+VariableVector: core:Variable ( "[" > ( vector:Expression | vector:"" ) > "]" )+
 Mutable: skip:VariableVector | skip:VariableName
 
 ObjectResolutionOperator: "."
@@ -41,22 +42,22 @@ AssignmentOperator: "="
 ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
 UnaryOperator: "++" | "--"
 
-Expression: skip:Assignment | skip:Comparison | skip:Addition
+Expression: skip:AnonymousFunction | skip:Assignment | skip:Comparison | skip:Addition
 Comparison: left:Addition > op:ComparisonOperator > right:Addition
-Assignment: left: Mutable > op:AssignmentOperator > right:Expression
+Assignment: left:Mutable > op:AssignmentOperator > right:Expression
 Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
 Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
 Chain: ObjectResolutionOperator ( core:MethodCall | core:PropertyGetter ) ( chain:Chain )?
-Operand: ( ( "(" > core:Expression > ")" ) | core:FunctionCall | core:DereferencableValue ) ( chain:Chain )?
+Operand: ( core:FunctionCall | "(" > core:Expression > ")" | core:DereferencableValue ) ( chain:Chain )?
 
 MethodCall: method:VariableName "(" __ args:ArgumentList? __ ")"
-FunctionCall: function:VariableName "(" __ args:ArgumentList? __ ")"
+FunctionCall: ( variable:VariableName | "(" > value:Expression > ")" ) "(" __ args:ArgumentList? __ ")"
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
-FunctionDefinitionArgumentList: skip:VariableName ( > "," > skip:VariableName )*
-FunctionDefinition: "function" [ function:VariableName __ "(" > args:FunctionDefinitionArgumentList? > ")" __ body:Block
-IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) >
-WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block ) >
+FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
+FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block
+IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block )
+WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 ForeachStatement: "foreach" __ "(" __ left:Expression __ "as" __ item:VariableName __ ")" __ ( right:Block )
 BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDefinition
 CommandStatements: skip:EchoStatement | skip:ReturnStatement
@@ -66,10 +67,17 @@ ReturnStatement: "return" ( [ subject:Expression )?
 Statement: skip:BlockStatements | skip:CommandStatements | skip:Expression
 Block: "{" __ ( skip:Program )? __ "}"
 
-__: /([\s\n]*)/
+# Matches any optional whitespace or newline.
+__: / [\s\n]* /
+
+# Matches newline, takes care of optional // comments at EOL.
 NL: /(\/\/[^\n]*)?\n/
+
+# Statement separator: Newline or semicolon.
 SEP: NL | ";"
-Program: ( __ Statement? > SEP )+ __
+
+# "!/$/" Ensures we won't try to find statements at EOF.
+Program: ( !/$/ __ Statement? > SEP )+ __
 
 */
 

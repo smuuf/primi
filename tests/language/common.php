@@ -40,7 +40,7 @@ function run_test($file) {
 
 		$vars = $context->getVariables();
 		array_walk($vars, function($x, $k) {
-			printf("%s:%s:%s\n", $k, get_class($x), return_string_value($x->getPhpValue()));
+			printf("%s:%s:%s\n", $k, main_class($x), return_string_value($x->getPhpValue()));
 		});
 
 	}
@@ -72,4 +72,8 @@ function return_string_value($value) {
 
 	return $return;
 
+}
+
+function main_class($instance) {
+	return basename(str_replace('\\', '/', get_class($instance)));
 }

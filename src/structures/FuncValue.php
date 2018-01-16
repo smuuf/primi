@@ -7,10 +7,12 @@ use \Smuuf\Primi\ReturnException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
 
-class Func extends \Smuuf\Primi\StrictObject {
+class FuncValue extends Value {
 
-	/** @var string Function name for convenience. **/
-	protected $name;
+	const TYPE = "function";
+
+	/** @var string Function name is stored - in 'value' property - only for convenience. **/
+	protected $value;
 
 	/** @var array List of variable names used as arguments. **/
 	protected $args;
@@ -19,7 +21,7 @@ class Func extends \Smuuf\Primi\StrictObject {
 	protected $body;
 
 	public function __construct(string $name, array $args, array $body) {
-		$this->name = $name;
+		$this->value = $name;
 		$this->args = $args;
 		$this->body = $body;
 	}
@@ -31,7 +33,7 @@ class Func extends \Smuuf\Primi\StrictObject {
 		if (\count($this->args) !== \count($args)) {
 			throw new ErrorException(sprintf(
 				"Wrong number of arguments passed to the '%s' function (%s instead of %s)",
-				$this->name,
+				$this->value,
 				\count($args),
 				\count($this->args)
 			), $callerNode);
@@ -42,7 +44,7 @@ class Func extends \Smuuf\Primi\StrictObject {
 		$context = new Context;
 
 		$args = \array_combine($this->args, $args);
-		$context->setFunctions($callerContext->getFunctions());
+		$context->setVariables($callerContext->getVariables());
 		$context->setVariables($args);
 
 		// Run the function body and expect a ReturnException with the return value.

@@ -72,36 +72,36 @@ require __DIR__ . '/../bootstrap.php';
 		$context = new \Smuuf\Primi\Context;
 
 		// Pool of functions is empty.
-		Assert::type('array', $v = $context->getFunctions());
+		Assert::type('array', $v = $context->getVariables());
 		Assert::falsey($v);
 
-		$funcA = new \Smuuf\Primi\Structures\Func('func_a', [], []);
-		$context->setFunction('func_a', $funcA);
+		$funcA = new \Smuuf\Primi\Structures\FuncValue('func_a', [], []);
+		$context->setVariable('func_a', $funcA);
 
 		// The returned function instance Context returned is the same object as inserted.
-		Assert::same($funcA, $context->getFunction('func_a'));
+		Assert::same($funcA, $context->getVariable('func_a'));
 
 		// Pool of variables is not empty.
-		Assert::truthy($context->getFunctions());
+		Assert::truthy($context->getVariables());
 
 		$multi = [
-			'func_b' => ($funcB = new \Smuuf\Primi\Structures\Func('func_b', [], [])),
-			'func_c' => ($funcC = new \Smuuf\Primi\Structures\Func('func_c', [], []))
+			'func_b' => ($funcB = new \Smuuf\Primi\Structures\FuncValue('func_b', [], [])),
+			'func_c' => ($funcC = new \Smuuf\Primi\Structures\FuncValue('func_c', [], []))
 		];
 
-		$context->setFunctions($multi);
+		$context->setVariables($multi);
 
 		// Test that all funciables are present (and in correct order).
 		Assert::same([
 			'func_a'=> $funcA,
 			'func_b'=> $funcB,
 			'func_c'=> $funcC,
-		], $context->getFunctions());
+		], $context->getVariables());
 
 		// Test accessing undefined function.
 		Assert::exception(function() use ($context) {
-			$context->getFunction('some_undefined_function');
-		}, \Smuuf\Primi\InternalUndefinedFunctionException::class);
+			$context->getVariable('some_undefined_function');
+		}, \Smuuf\Primi\InternalUndefinedVariableException::class);
 
 	}
 

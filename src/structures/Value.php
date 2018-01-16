@@ -6,12 +6,6 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 
 	const TYPE = "__no_type__";
 
-	const TYPE_NUMBER = 0x01;
-	const TYPE_STRING = 0x02;
-	const TYPE_BOOL = 0x03;
-	const TYPE_ARRAY = 0x04;
-	const TYPE_REGEX = 0x05;
-
 	/** @var mixed Value **/
 	protected $value;
 

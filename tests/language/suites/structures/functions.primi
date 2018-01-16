@@ -1,18 +1,56 @@
 a = 0;
 
 function one() {
-    return 1;
+	return 1;
 }
 
 function with_argument(arg) {
-    return arg / 4;
+	return arg / 4;
 }
 
 function no_return(a, b, c) {
-    a + 1; // Does not modify primary context.
-    b + 1;
-    c + 1;
+	a + 1; // Does not modify primary context.
+	b + 1;
+	c + 1;
 }
 
 no_return(a, 2, 3);
 x = with_argument(one() * 16);
+
+// Anonymous function, full syntax.
+anon = function(x, y, z) {
+	return x(1) + y + z;
+};
+
+result = anon(function(number) {
+	return number * 3;
+}, 4, 5);
+
+// Anonymous function, short syntax.
+anon_short = (i) => {
+	if (i == 0) {
+		return 1;
+	}
+	return 2;
+};
+
+result_2 = anon_short(1);
+result_3 = anon(anon_short, 10, 100);
+
+// Some example from the internet.
+censor = (words) => {
+	filtered = [];
+	foreach (words as word) {
+		if (word.length != 4) {
+			filtered.push(word);
+		}
+	}
+	return filtered;
+}
+
+censored = censor([
+	'haha',
+	'very_safe',
+	'voldemort',
+	'damn',
+]);

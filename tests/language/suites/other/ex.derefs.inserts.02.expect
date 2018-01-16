@@ -1,2 +1,2 @@
 EX:Smuuf\Primi\ErrorException
-a:Smuuf\Primi\Structures\RegexValue:/abc[def]/u
+a:RegexValue:/abc[def]/u

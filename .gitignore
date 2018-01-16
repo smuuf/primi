@@ -3,4 +3,5 @@ vendor/**
 .vscode/**
 temp/**
 !temp/.gitkeep
-/tests/unit/output/**
+/tests/**/output/*.actual
+/tests/**/output/*.expected

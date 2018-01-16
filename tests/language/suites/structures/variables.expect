@@ -1,10 +1,10 @@
-a:Smuuf\Primi\Structures\NumberValue:1
-b:Smuuf\Primi\Structures\NumberValue:1234567890
-c:Smuuf\Primi\Structures\NumberValue:1234567890
-d:Smuuf\Primi\Structures\NumberValue:0
-e:Smuuf\Primi\Structures\NumberValue:2
-f:Smuuf\Primi\Structures\StringValue:x
-g:Smuuf\Primi\Structures\StringValue:xyz
-i:Smuuf\Primi\Structures\StringValue:this is some whole very long sentence.
-j:Smuuf\Primi\Structures\BoolValue:1
-k:Smuuf\Primi\Structures\BoolValue:0
+a:NumberValue:1
+b:NumberValue:1234567890
+c:NumberValue:1234567890
+d:NumberValue:0
+e:NumberValue:2
+f:StringValue:x
+g:StringValue:xyz
+i:StringValue:this is some whole very long sentence.
+j:BoolValue:1
+k:BoolValue:0

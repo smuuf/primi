@@ -12,30 +12,27 @@ use \Smuuf\Primi\Helpers;
  * args: List of arguments.
  * body: Node representing contents of code to execute as a function..
  */
-class FunctionDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
+class AnonymousFunction extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
-
-		$functionName = $node['function']['text'];
 
 		$argumentList = [];
 		if (isset($node['args'])) {
 
 			Helpers::ensureIndexed($node['args']);
-
 			foreach ($node['args'] as $a) {
 				$argumentList[] = $a['text'];
 			}
 
 		}
 
-		$context->setVariable(
-			$functionName,
-			new \Smuuf\Primi\Structures\FuncValue(
-				$functionName,
-				$argumentList,
-				$node['body']
-			)
+		// Build convenient hash to ease identification amongst other functions.
+		$name = substr(Helpers::hash($argumentList, $node['body']), 0, 16);
+
+		return new \Smuuf\Primi\Structures\FuncValue(
+			$name,
+			$argumentList,
+			$node['body']
 		);
 
 	}
