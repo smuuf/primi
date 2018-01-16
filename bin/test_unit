@@ -7,4 +7,4 @@ if [[ "$1" == "--coverage" ]]; then
         COV="-d memory_limit=-1 --coverage ../coverage.xml --coverage-src ../src/"
 fi
 
-./../vendor/bin/tester $COV -C ../tests
+./../vendor/nette/tester/src/tester $COV -C ../tests
