@@ -1,6 +1,4 @@
 language: php
-env:
-  - CC_TEST_REPORTER_ID=b384d5db309b148e935aeb5681cd31acbf9327afde4eb55df57a1e84c0613732
 php:
   - '7.1'
   - '7.2'
