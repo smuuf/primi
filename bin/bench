@@ -2,32 +2,41 @@
 
 cd $(dirname $0)/..
 
+# Time format for 'time' command.
 TIMEFORMAT=%R
 
-comment=$1
+iterations=100
+echo "Iterations: $iterations"
+
+echo "Removing existing AST cache ..."
+rm ./temp/ast*.json 2>/dev/null
+rm bench.out 2>/dev/null
+
 simplefiles=$(find ./sample -iname "bench*.primi")
 simpletime=0
-iterations=100
 
 function timeit {
-    echo `{ time php primi.php $1 > /dev/null; } 2>&1`
+    echo `{ time ./primi $1 >> bench.out; } 2>&1`
 }
 
+echo "Running benchmark ..."
 for i in $(seq $iterations)
 do
+    echo -n "($i / $iterations) "
     for f in $simplefiles
     do
+        echo -n "$f ... "
         tmp=$(timeit $f)
-        simpletime=$(php -r "echo $simpletime + $tmp;");
+        echo "$tmp s";
+        simpletime=$(perl -e "printf('%.2f', $simpletime + $tmp);")
     done
 done
 
 printf \
-"Iterations: $iterations""\n"\
-"Benchmark:\n"\
+"Results:\n"\
 "- Total: $simpletime"" s \n"\
-"- AVG  : "`php -r "echo $simpletime / $iterations;";`" s \n"\
+"- AVG  : "`perl -e "printf('%.2f', $simpletime / $iterations);"`" s \n"
 
 nowdate=`date +"%d.%m.%Y %H:%M"`
-average=`php -r "echo $simpletime / $iterations;"`
+average=`perl -e "printf('%.2f', $simpletime / $iterations);"`
 echo "$nowdate,$iterations,$simpletime,$average" >> "bench_progress.csv"
