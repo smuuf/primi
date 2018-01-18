@@ -17,12 +17,13 @@ Primi is built with a familiar PHP/JS/C-like syntax. **Statements are separated 
     ```
 
 ## Data types
-Primi has 5 basic data types:
+Primi has 6 data types:
 - Bool
 - Number
 - String
 - Regex
 - Array
+- Function
 
 ### Bool
 This basic type represents a primitive boolean "truth" value. Possible values are `true` and `false`.
@@ -32,6 +33,9 @@ Example usage:
 a = true;
 b = 1 == 2; // false
 c = b == false; // true
+d = c == "hello"; // ERR: Cannot compare: 'bool' and 'string' @ code: c == "hello"
+e = "hello" == /[0-9]/; // false
+f = "hello" == /l{2}/; // true
 ```
 
 ### Number
@@ -70,6 +74,46 @@ Example usage:
 ```
 a = ["abc", 123, 4: true, false, /[A-Z]+/];
 // Resulting array: [0: "abc", 1: 123, 4: true, 5: false, 6: /[A-Z]+/]
+```
+
+### Functions
+Function is a value type that represents *a "unit" of some self-contained logic*. In Primi they have their own type and are treated as first-class citizens: they can be **stored inside variables** and **passed around** as such. Direct invocation of an anonymous function is supported, provided that the anonymous function's definition is enclosed in parentheses. A function *does capture* its surrounding variables.
+
+Example usage:
+```
+
+// Traditional definition.
+function sub(a, b) {
+    return a - b;
+}
+
+// A variable "sub" that holds the "sub()" function is now defined in current scope.
+sub(1, 2); // Returns -1
+
+// Storing a function value into a variable.
+// Note: This is equivalent to the previous definition.
+sub_2 = function(a, b) {
+    return a - b;
+};
+
+// A variable "sub_2" that holds the "sub_2()" function is now defined in current scope.
+sub_2(1, 2); // Returns -1
+
+// Creating a function with alternative, short syntax.
+// Note: This is equivalent all of the previous definitions.
+sub_3 = (a, b) => {
+    return a - b;
+};
+
+// A variable "sub_3" that holds the "sub_3()" function is now defined in current scope.
+sub_3(1, 2); // Returns -1
+
+// Creating and using an anonymous function directly.
+// Using an alternative, short syntax.
+((a, b) => {
+    return a - b;
+})(1, 2); // Returns -1
+
 ```
 
 ## Operators
