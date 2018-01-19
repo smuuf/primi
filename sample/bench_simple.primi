@@ -1,0 +1,11 @@
+// Average Execution Time (Xdebug OFF, cached AST)
+// 2018/01/19 ... 0.34804 s
+fun = (x) => { return x + 1; }
+
+c = 0;
+result = -10000;
+while (c++ <= 10000) {
+    result = result + fun(c);
+}
+
+echo "{}\n".format(result);
