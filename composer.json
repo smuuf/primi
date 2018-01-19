@@ -17,7 +17,6 @@
 		 "classmap": ["src/"]
 	},
 	"require": {
-		"cweagans/composer-patches": "~1.0",
 		"combyna/php-peg": "2.0.1"
 	},
 	"require-dev": {
@@ -26,11 +25,10 @@
 		"nette/tester": "^2.0",
 		"phpstan/phpstan": "^0.9.1"
 	},
-	"extra": {
-		"patches": {
-			"combyna/php-peg": {
-				"Larger buffer for Packrat parser to avoid undefined index errors": "https://raw.githubusercontent.com/smuuf/primi/master/patches/packrat-parser.patch"
-			}
-		}
-	}
+	"repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:smuuf/php-peg.git"
+        }
+	]
 }

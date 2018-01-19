@@ -4,19 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "06d1aa46d5ddd25737039592d5d71b11",
+    "content-hash": "ba619aed20f826276a6955a8fcb33319",
     "packages": [
         {
             "name": "combyna/php-peg",
             "version": "2.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/combyna/php-peg.git",
+                "url": "https://github.com/smuuf/php-peg.git",
                 "reference": "69c265b8e4d28fc1054b541e06893bb8fe05e192"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/combyna/php-peg/zipball/69c265b8e4d28fc1054b541e06893bb8fe05e192",
+                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/69c265b8e4d28fc1054b541e06893bb8fe05e192",
                 "reference": "69c265b8e4d28fc1054b541e06893bb8fe05e192",
                 "shasum": ""
             },
@@ -69,50 +69,6 @@
                 "peg"
             ],
             "time": "2017-03-03T20:58:19+00:00"
-        },
-        {
-            "name": "cweagans/composer-patches",
-            "version": "1.6.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cweagans/composer-patches.git",
-                "reference": "462e65061606dc6149349535d4322241515d1b16"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cweagans/composer-patches/zipball/462e65061606dc6149349535d4322241515d1b16",
-                "reference": "462e65061606dc6149349535d4322241515d1b16",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.0",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "composer/composer": "~1.0",
-                "phpunit/phpunit": "~4.6"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "cweagans\\Composer\\Patches"
-            },
-            "autoload": {
-                "psr-4": {
-                    "cweagans\\Composer\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Cameron Eagans",
-                    "email": "me@cweagans.net"
-                }
-            ],
-            "description": "Provides a way to patch Composer packages.",
-            "time": "2017-12-07T16:16:31+00:00"
         }
     ],
     "packages-dev": [
