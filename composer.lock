@@ -4,40 +4,37 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba619aed20f826276a6955a8fcb33319",
+    "content-hash": "9bfb4c09cfaab98dd996db57d0b81a6a",
     "packages": [
         {
             "name": "combyna/php-peg",
-            "version": "2.0.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smuuf/php-peg.git",
-                "reference": "69c265b8e4d28fc1054b541e06893bb8fe05e192"
+                "reference": "0660405dede24c582006cfe78716d0f68fe6df0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/69c265b8e4d28fc1054b541e06893bb8fe05e192",
-                "reference": "69c265b8e4d28fc1054b541e06893bb8fe05e192",
+                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/0660405dede24c582006cfe78716d0f68fe6df0e",
+                "reference": "0660405dede24c582006cfe78716d0f68fe6df0e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5"
+            },
             "bin": [
                 "bin/peg"
             ],
             "type": "library",
-            "extra": {
-                "patches_applied": {
-                    "Larger buffer for Packrat parser to avoid undefined index errors": "https://raw.githubusercontent.com/smuuf/primi/master/patches/packrat-parser.patch"
-                }
-            },
             "autoload": {
                 "psr-0": {
                     "hafriedlander\\Peg": "lib"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT",
                 "GPL-2.0",
@@ -64,11 +61,14 @@
             "homepage": "https://github.com/combyna/php-peg",
             "keywords": [
                 "DSL",
+                "PEG",
                 "compiler",
-                "parser",
-                "peg"
+                "parser"
             ],
-            "time": "2017-03-03T20:58:19+00:00"
+            "support": {
+                "source": "https://github.com/smuuf/php-peg/tree/master"
+            },
+            "time": "2018-01-19T01:21:31+00:00"
         }
     ],
     "packages-dev": [
@@ -1085,6 +1085,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "combyna/php-peg": 20,
         "smuuf/koloader": 20,
         "smuuf/phpcb": 20
     },

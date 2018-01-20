@@ -17,7 +17,7 @@
 		 "classmap": ["src/"]
 	},
 	"require": {
-		"combyna/php-peg": "2.0.1"
+		"combyna/php-peg": "dev-master"
 	},
 	"require-dev": {
 		"smuuf/koloader": "dev-master",
@@ -26,9 +26,9 @@
 		"phpstan/phpstan": "^0.9.1"
 	},
 	"repositories": [
-        {
-            "type": "vcs",
-            "url":  "git@github.com:smuuf/php-peg.git"
-        }
+		{
+			"type": "vcs",
+			"url":  "https://github.com/smuuf/php-peg.git"
+		}
 	]
 }
