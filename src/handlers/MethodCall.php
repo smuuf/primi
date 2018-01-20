@@ -24,17 +24,17 @@ class MethodCall extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$argList = $handler::handle($node['args'], $context);
 		}
 
-		$methodName = \sprintf("call%s", \ucfirst($methodName));
-		if (!\method_exists($subject, $methodName)) {
+		$valueMethod = \sprintf("call%s", \ucfirst($methodName));
+		if (!\method_exists($subject, $valueMethod)) {
 			throw new ErrorException(sprintf(
 				"Calling undefined method '%s' on value '%s'.",
-				$methodName,
+				$valueMethod,
 				$subject::TYPE
 			), $node);
 		}
 
 		try {
-			return $subject->$methodName(...$argList);
+			return $subject->$valueMethod(...$argList);
 		} catch (\TypeError $e) {
 
 			// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
