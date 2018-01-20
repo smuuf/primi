@@ -30,17 +30,24 @@ class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 			$handler = HandlerFactory::get($valueNode['name']);
 			$function = $handler::handle($valueNode, $context);
 		} else {
-			print_r($node);
-			throw new InternalException("Wrong reference to a function.");
+			throw new InternalException("Bad reference to a function.");
 		}
 
-		$argList = [];
+		// Prevent calling a non-function value.
+		if (!$function instanceof \Smuuf\Primi\Structures\FuncValue) {
+			throw new ErrorException(
+				sprintf("Trying to call a non-function '%s'.", $function::TYPE),
+				$node
+			);
+		}
+
+		$arguments = [];
 		if (isset($node['args'])) {
 			$handler = HandlerFactory::get($node['args']['name']);
-			$argList = $handler::handle($node['args'], $context);
+			$arguments = $handler::handle($node['args'], $context);
 		}
 
-		return $function->call($argList, $context, $node);
+		return $function->call($arguments, $context, $node);
 
 	}
 

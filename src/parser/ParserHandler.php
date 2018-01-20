@@ -3,8 +3,7 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\HandlerFactory;
-
-use hafriedlander\Peg\Parser;
+use \hafriedlander\Peg\Parser;
 
 class ParserHandler extends CompiledParser {
 
