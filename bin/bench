@@ -5,10 +5,10 @@ cd $(dirname $0)/..
 # Time format for 'time' command.
 TIMEFORMAT=%R
 
-iterations=100
+iterations=10
 echo "Iterations: $iterations"
 
-echo "Removing existing AST cache ..."
+echo "Clearing AST cache ..."
 rm ./temp/ast*.json 2>/dev/null
 rm bench.out 2>/dev/null
 
@@ -22,7 +22,7 @@ function timeit {
 echo "Running benchmark ..."
 for i in $(seq $iterations)
 do
-    echo -n "($i / $iterations) "
+    echo "█ ($i / $iterations) "
     for f in $simplefiles
     do
         echo -n "$f ... "
