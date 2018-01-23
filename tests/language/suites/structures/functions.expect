@@ -3,10 +3,10 @@ one:FuncValue:one
 with_argument:FuncValue:with_argument
 no_return:FuncValue:no_return
 x:NumberValue:4
-anon:FuncValue:d7ea047049b09f32
+anon:FuncValue:0ff824c55a13d451
 result:NumberValue:12
-anon_short:FuncValue:f052b43a83b0369d
+anon_short:FuncValue:3e035b330cecf1a0
 result_2:NumberValue:2
 result_3:NumberValue:112
-censor:FuncValue:219b3a3d78791a0f
+censor:FuncValue:25e4b03bf4fbc725
 censored:ArrayValue:[0:very_safe,1:voldemort]

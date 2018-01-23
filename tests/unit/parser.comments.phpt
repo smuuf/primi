@@ -51,29 +51,44 @@ function get_ast_array_simple(string $text) {
 	return array(
 		'name' => 'Program',
 		'text' => $text . "\n", // \n is added by ParserHandler::sanitizeSource()
+		'offset' => 0,
 		'nodes' =>
 		array(
 			0 =>
 			array(
 				'name' => 'Assignment',
 				'text' => 'a = 1',
+				'offset' => 0,
 				'left' =>
 				array(
 					'name' => 'VariableName',
 					'text' => 'a',
+					'offset' => 0,
+					'line' => 1,
+					'pos' => 0,
 				),
 				'op' =>
 				array(
 					'name' => 'AssignmentOperator',
 					'text' => '=',
+					'offset' => 2,
+					'line' => 1,
+					'pos' => 2,
 				),
 				'right' =>
 				array(
 					'name' => 'NumberLiteral',
 					'text' => '1',
+					'offset' => 4,
+					'line' => 1,
+					'pos' => 4,
 				),
+				'line' => 1,
+				'pos' => 0,
 			),
 		),
+		'line' => 1,
+		'pos' => 0,
 	); // thx to var_export();
 
 }

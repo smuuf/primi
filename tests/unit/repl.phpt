@@ -52,9 +52,9 @@ $buffer = ob_get_clean();
 
 // This is expected output. This will be compared with actual output down below.
 $expected = "
-ERR: Undefined variable 'a' @ code: a
+ERR: Undefined variable 'a' @ line 1, position 0, code: a
 1
-ERR: Undefined variable 'b' @ code: b
+ERR: Undefined variable 'b' @ line 1, position 0, code: b
 1
 ";
 

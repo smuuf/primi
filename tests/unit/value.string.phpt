@@ -21,10 +21,15 @@ $letterA = new StringValue("a");
 $unicode = new StringValue("ťhiš íš á ŠTřing.");
 $withNewline = new StringValue('a \n b');
 
+//
 // Test sequence expanding...
+//
+
 Assert::same(2, count(explode("\n", get_val($withNewline))));
 
+//
 // Test adding and subtracting...
+//
 
 // Concatenate two strings (the same string).
 Assert::same(
@@ -69,7 +74,9 @@ Assert::exception(function() use ($string) {
 	$string->doAddition(new ArrayValue([]));
 }, \TypeError::class);
 
+//
 // Test comparison operators...
+//
 
 // Equality: Two different instances containing the same "string": True.
 $tmp = $string->doComparison("==", new StringValue("this is a string."));
@@ -112,8 +119,6 @@ Assert::true(get_val($tmp));
 $tmp = $unicode->doComparison("!=", new RegexValue('/nuancé/'));
 Assert::true(get_val($tmp));
 
-
-
 Assert::exception(function() use ($string) {
 	$string->doComparison("!=", new BoolValue(false));
 }, \TypeError::class);
@@ -125,7 +130,9 @@ Assert::exception(function() use ($string) {
 	$string->doComparison("@==!", new StringValue("wtf"));
 }, \TypeError::class);
 
+//
 // Test dereferencing and insertion...
+//
 
 // Dereferencing returns new instance.
 $dereferenced1 = $string->dereference(new NumberValue(0));
@@ -165,7 +172,9 @@ foreach ($iterable->getIterator() as $index => $x) {
 	Assert::same($sourceString[$index], get_val($x));
 }
 
+//
 // Test methods...
+//
 
 // Test classic formatting
 $template = new StringValue("1:{},2:{},3:{},4:{}");
@@ -252,3 +261,18 @@ Assert::same(5, get_val($string->callLast(new StringValue("is"))));
 Assert::false(get_val($string->callFirst(new StringValue("aaa"))));
 // Last: False when it does not appear in the string.
 Assert::false(get_val($string->callLast(new StringValue("aaa"))));
+
+// Test splitting.
+$string = new StringValue("hello,how,are,you");
+$result = [];
+foreach (get_val($string->callSplit(new StringValue(","))) as $item) {
+	$result[] = get_val($item);
+}
+Assert::same(["hello", "how", "are", "you"], $result);
+
+$string = new StringValue("well, this ... IS ... awkward!");
+$result = [];
+foreach (get_val($string->callSplit(new RegexValue("/[,\s\.]+/"))) as $item) {
+	$result[] = get_val($item);
+}
+Assert::same(["well", "this", "IS", "awkward!"], $result);
