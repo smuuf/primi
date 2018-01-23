@@ -11,13 +11,8 @@ class EchoStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		$handler = HandlerFactory::get($node['subject']['name']);
 		$returned = $handler::handle($node['subject'], $context);
-		$value = $returned->getPhpValue();
 
-		if (\is_scalar($value)) {
-			echo $value;
-		} else {
-			print_r($value);
-		}
+		echo $returned->getStringValue();
 
 	}
 
