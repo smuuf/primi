@@ -16,7 +16,10 @@ class CompiledParser extends Parser\Packrat {
 
 /*!* Primi
 
-StringLiteral: /("(.|\n)*?"|'(.|\n)*?')/
+# Previous StringLiteral regex causing PREG_JIT_STACKLIMIT_ERROR
+# StringLiteral: /"(.|\n)*?"|'(.|\n)*?'/
+
+StringLiteral: / (?:".*?(?<!\\)")|(?:'.*?(?<!\\)') /s
 NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
 RegexLiteral: "/" /(\\\/|[^\/])+/ "/"
