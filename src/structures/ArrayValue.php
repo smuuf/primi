@@ -35,6 +35,7 @@ class ArrayValue extends Value implements
 
 		$return = "[";
 		foreach ($value as $key => $item) {
+			$key = is_numeric($key) ? $key : "\"$key\"";
 			$return .= sprintf("%s: %s, ", $key, $item->getStringValue());
 		}
 
