@@ -244,6 +244,25 @@ class StringValue extends Value implements
 
 	}
 
+	public function callSplit(Value $delimiter): ArrayValue {
+
+		// Allow only some value types.
+		self::allowTypes($delimiter, self::class, RegexValue::class);
+
+		if ($delimiter instanceof RegexValue) {
+			$splat = preg_split($delimiter->value, $this->value);
+		}
+
+		if ($delimiter instanceof self) {
+			$splat = explode($delimiter->value, $this->value);
+		}
+
+		return new ArrayValue(array_map(function($part) {
+			return new self($part);
+		}, $splat));
+
+	}
+
 	public function callCount(Value $needle): NumberValue {
 
 		// Allow only some value types.
