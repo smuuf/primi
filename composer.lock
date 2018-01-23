@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/smuuf/php-peg.git",
-                "reference": "0660405dede24c582006cfe78716d0f68fe6df0e"
+                "reference": "69742598afa701a023b0a4157aa97b6216831702"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/0660405dede24c582006cfe78716d0f68fe6df0e",
-                "reference": "0660405dede24c582006cfe78716d0f68fe6df0e",
+                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/69742598afa701a023b0a4157aa97b6216831702",
+                "reference": "69742598afa701a023b0a4157aa97b6216831702",
                 "shasum": ""
             },
             "require": {
@@ -68,22 +68,22 @@
             "support": {
                 "source": "https://github.com/smuuf/php-peg/tree/master"
             },
-            "time": "2018-01-19T01:21:31+00:00"
+            "time": "2018-01-23T00:31:35+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "jean85/pretty-package-versions",
-            "version": "1.0.3",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Jean85/pretty-package-versions.git",
-                "reference": "3c8487fdd6c750ff3f10c32ddfdd2a7803c1d461"
+                "reference": "d457344b6a035ef99236bdda4729ad7eeb233f54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/3c8487fdd6c750ff3f10c32ddfdd2a7803c1d461",
-                "reference": "3c8487fdd6c750ff3f10c32ddfdd2a7803c1d461",
+                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/d457344b6a035ef99236bdda4729ad7eeb233f54",
+                "reference": "d457344b6a035ef99236bdda4729ad7eeb233f54",
                 "shasum": ""
             },
             "require": {
@@ -94,6 +94,11 @@
                 "phpunit/phpunit": "^6.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Jean85\\": "src/"
@@ -111,9 +116,12 @@
             ],
             "description": "A wrapper for ocramius/pretty-package-versions to get pretty versions strings",
             "keywords": [
-                "package versions"
+                "composer",
+                "package",
+                "release",
+                "versions"
             ],
-            "time": "2017-11-30T22:02:29+00:00"
+            "time": "2018-01-21T13:54:22+00:00"
         },
         {
             "name": "nette/bootstrap",
