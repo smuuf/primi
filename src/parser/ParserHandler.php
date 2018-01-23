@@ -51,7 +51,7 @@ class ParserHandler extends CompiledParser {
 
 		}
 
-		return self::reduceAST($result, \true);
+		return self::processAST($result, $this->source);
 
 	}
 
@@ -61,21 +61,10 @@ class ParserHandler extends CompiledParser {
 		$pos = \false;
 
 		if ($position !== \false) {
-			list($line, $pos) = self::getPositionTupleEstimate($this->source, $position);
+			list($line, $pos) = Helpers::getPositionEstimate($this->source, $position);
 		}
 
 		throw new SyntaxErrorException($msg, $line, $pos);
-
-	}
-
-	protected static function getPositionTupleEstimate(string $source, int $position): array {
-
-		$part = \mb_substr($source, 0, $position);
-
-		$line = \substr_count($part, "\n") + 1;
-		$pos = \mb_strlen(mb_strrchr($part, "\n"));
-
-		return [$line, $pos];
 
 	}
 
@@ -87,6 +76,15 @@ class ParserHandler extends CompiledParser {
 		// Ensure newline at the end (parser needs this to be able to correctly
 		// parse comments in one line source codes.)
 		return rtrim($s) . "\n";
+
+	}
+
+	protected static function processAST(array $ast, string $source): array {
+
+		$ast = self::reduceAST($ast, \true);
+		$ast = self::addPositions($ast, $source);
+
+		return $ast;
 
 	}
 
@@ -128,6 +126,26 @@ class ParserHandler extends CompiledParser {
 				unset($node[$k]);
 			}
 
+		}
+
+		return $node;
+
+	}
+
+	protected static function addPositions(array $node, string $source): array {
+
+		if (isset($node['offset'])) {
+
+			list($line, $pos) = Helpers::getPositionEstimate($source, $node['offset']);
+			$node['line'] = $line;
+			$node['pos'] = $pos;
+
+		}
+
+		foreach ($node as $k => &$v) {
+			if (\is_array($v)) {
+				$v = self::addPositions($v, $source);
+			}
 		}
 
 		return $node;
