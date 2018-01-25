@@ -19,23 +19,25 @@ class CompiledParser extends Parser\Packrat {
 # Previous StringLiteral regex causing PREG_JIT_STACKLIMIT_ERROR
 # StringLiteral: /"(.|\n)*?"|'(.|\n)*?'/
 
+# Carefully crafted (or stolen somewhere) string matching regex which supports
+# both " and ' quotes, doesn't cause JIT stack overflow and supports escaped quotes.
 StringLiteral: / (?:".*?(?<!\\)")|(?:'.*?(?<!\\)') /s
 NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
 RegexLiteral: "/" /(\\\/|[^\/])+/ "/"
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:RegexLiteral
-VariableName: /([a-zA-Z_][a-zA-Z0-9_]*)/
+VariableName: / ([a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: ( core:VariableName post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableName )
 PropertyGetter: core:VariableName
-AnonymousFunction: "function" > "(" > args:FunctionDefinitionArgumentList? > ")" > body:Block | "(" > args:FunctionDefinitionArgumentList? > ")" > "=>" > body:Block
+AnonymousFunction: "function" __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ args:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 DereferencableValue: core:Value ( "[" __ dereference:Expression __ "]" )*
-VariableVector: core:Variable ( "[" > ( vector:Expression | vector:"" ) > "]" )+
+VariableVector: core:Variable ( "[" __ ( vector:Expression | vector:"" ) __ "]" )+
 Mutable: skip:VariableVector | skip:VariableName
 
 ObjectResolutionOperator: "."
@@ -46,15 +48,15 @@ ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
 UnaryOperator: "++" | "--"
 
 Expression: skip:AnonymousFunction | skip:Assignment | skip:Comparison | skip:Addition
-Comparison: left:Addition > op:ComparisonOperator > right:Addition
-Assignment: left:Mutable > op:AssignmentOperator > right:Expression
-Addition: operands:Multiplication ( > ops:AddOperator > operands:Multiplication)*
-Multiplication: operands:Operand ( > ops:MultiplyOperator > operands:Operand)*
+Comparison: left:Addition __ op:ComparisonOperator __ right:Addition
+Assignment: left:Mutable __ op:AssignmentOperator __ right:Expression
+Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication)*
+Multiplication: operands:Operand ( __ ops:MultiplyOperator __ operands:Operand)*
 Chain: ObjectResolutionOperator ( core:MethodCall | core:PropertyGetter ) ( chain:Chain )?
-Operand: ( core:FunctionCall | "(" > core:Expression > ")" | core:DereferencableValue ) ( chain:Chain )?
+Operand: ( core:FunctionCall | "(" __ core:Expression __ ")" | core:DereferencableValue ) ( chain:Chain )?
 
 MethodCall: method:VariableName "(" __ args:ArgumentList? __ ")"
-FunctionCall: ( variable:VariableName | "(" > value:Expression > ")" ) "(" __ args:ArgumentList? __ ")"
+FunctionCall: ( variable:VariableName | "(" __ value:Expression __ ")" ) "(" __ args:ArgumentList? __ ")"
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
@@ -74,7 +76,7 @@ Block: "{" __ ( skip:Program )? __ "}"
 __: / [\s\n]* /
 
 # Matches newline, takes care of optional // comments at EOL.
-NL: /(\/\/[^\n]*)?\n/
+NL: / (?:\/\/[^\n]*)?\n /
 
 # Statement separator: Newline or semicolon.
 SEP: NL | ";"
