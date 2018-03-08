@@ -199,7 +199,7 @@ class StringValue extends Value implements
 
 			if (++$used > $count) {
 				throw new ErrorException(
-					sprintf("Too few parameters (%s) to fit placeholder (%s).", $count, $used)
+					sprintf("Not enough parameters (%s) to match placeholder count (%s).", $count, $used)
 				);
 			}
 

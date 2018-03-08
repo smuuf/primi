@@ -1,6 +1,6 @@
 {
 	"name": "smuuf/primi",
-	"description": "A scripting language written in PHP & embeddable into PHP.",
+	"description": "A scripting language written in PHP & executable within PHP.",
 	"license": "MIT",
 	"type": "library",
 	"authors": [
@@ -17,18 +17,12 @@
 		 "classmap": ["src/"]
 	},
 	"require": {
-		"combyna/php-peg": "dev-master"
+		"smuuf/php-peg": "^2.1"
 	},
 	"require-dev": {
 		"smuuf/koloader": "dev-master",
 		"smuuf/phpcb": "dev-master",
 		"nette/tester": "^2.0",
 		"phpstan/phpstan": "^0.9.1"
-	},
-	"repositories": [
-		{
-			"type": "vcs",
-			"url":  "https://github.com/smuuf/php-peg.git"
-		}
-	]
+	}
 }
