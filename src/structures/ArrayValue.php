@@ -39,7 +39,7 @@ class ArrayValue extends Value implements
 			$return .= sprintf("%s: %s, ", $key, $item->getStringValue());
 		}
 
-		return rtrim($return, ', ') . "]";;
+		return rtrim($return, ', ') . "]";
 
 	}
 

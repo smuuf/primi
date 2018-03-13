@@ -1,7 +1,0 @@
-diff --git a/lib/hafriedlander/Peg/Parser/Packrat.php b/lib/hafriedlander/Peg/Parser/Packrat.php
-index 6615425..95bfb02 100644
---- a/lib/hafriedlander/Peg/Parser/Packrat.php
-+++ b/lib/hafriedlander/Peg/Parser/Packrat.php
-@@ -21 +21 @@ class Packrat extends Basic {
--		$this->packstatebase = str_repeat( "\xFF", strlen( $string )*3 ) ;
-+		$this->packstatebase = str_repeat( "\xFF", strlen( $string )*4 ) ;

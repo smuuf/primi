@@ -132,6 +132,10 @@ class ParserHandler extends CompiledParser {
 
 	}
 
+	/**
+	 * Recursively iterate the node and its children and add information about
+	 * the node's offset (line & position) for later (e.g. error messages).
+	 */
 	protected static function addPositions(array $node, string $source): array {
 
 		if (isset($node['offset'])) {
