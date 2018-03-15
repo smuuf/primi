@@ -23,6 +23,10 @@ class StringValue extends Value implements
 
 	const TYPE = "string";
 
+	protected static $libraries = [
+		StringLibrary::class,
+	];
+
 	public function __construct(string $value) {
 		$this->value = self::expandSequences($value);
 	}
