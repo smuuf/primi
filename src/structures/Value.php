@@ -15,7 +15,7 @@ abstract class Value extends ValueFriends {
 	public static function registerLibrary(string $libraryClass) {
 
 		if (!is_subclass_of($libraryClass, \Smuuf\Primi\Library::class)) {
-			throw new \LogicException("Cannot register '$libraryClass' which does not extend '\Smuuf\Primi\Library'.");
+			throw new \LogicException("Unable to register '$libraryClass' which does not extend '\Smuuf\Primi\Library'.");
 		}
 
 		array_unshift(static::$libraries, $libraryClass);

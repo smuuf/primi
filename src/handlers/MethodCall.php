@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Helpers;
 use \Smuuf\Primi\InternalUndefinedMethodException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
@@ -25,26 +26,7 @@ class MethodCall extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$argList = $handler::handle($node['args'], $context);
 		}
 
-		try {
-			return $subject->call($methodName, $argList);
-		} catch (\TypeError $e) {
-
-			// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
-			throw new ErrorException(sprintf(
-				"Wrong arguments passed to method '%s' of '%s'.",
-				$methodName,
-				$subject::TYPE
-			), $node);
-
-		} catch (InternalUndefinedMethodException $e) {
-
-			throw new ErrorException(sprintf(
-				"Calling undefined method '%s' on '%s'.",
-				$methodName,
-				$subject::TYPE
-			), $node);
-
-		}
+		return Helpers::invokeValueMethod($subject, $methodName, $argList, $node);
 
 	}
 
