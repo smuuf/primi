@@ -178,55 +178,65 @@ foreach ($iterable->getIterator() as $index => $x) {
 
 // Test classic formatting
 $template = new StringValue("1:{},2:{},3:{},4:{}");
-$result = $template->callFormat(
-	new StringValue("FIRST"),
-	new StringValue("SECOND"),
-	new StringValue("THIRD"),
-	new StringValue("FOURTH")
+$result = $template->call(
+	'format', [
+		new StringValue("FIRST"),
+		new StringValue("SECOND"),
+		new StringValue("THIRD"),
+		new StringValue("FOURTH"),
+	]
 );
 Assert::same("1:FIRST,2:SECOND,3:THIRD,4:FOURTH", get_val($result));
 
 // Test formatting with positions.
 $template = new StringValue("1:{},2:{2},3:{1},4:{}");
-$result = $template->callFormat(
-	new StringValue("FIRST"),
-	new StringValue("SECOND"),
-	new StringValue("THIRD"),
-	new StringValue("FOURTH")
+$result = $template->call(
+	'format', [
+		new StringValue("FIRST"),
+		new StringValue("SECOND"),
+		new StringValue("THIRD"),
+		new StringValue("FOURTH"),
+	]
 );
 Assert::same("1:FIRST,2:SECOND,3:FIRST,4:SECOND", get_val($result));
 
 // Test too-few-parameters.
 Assert::exception(function() {
 	$template = new StringValue("1:{},2:{},3:{},4:{}");
-	$result = $template->callFormat(
-		new StringValue("FIRST"),
-		new StringValue("SECOND")
+	$result = $template->call(
+		'format', [
+			new StringValue("FIRST"),
+			new StringValue("SECOND"),
+		]
 	);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test too-few-parameters with positions.
 Assert::exception(function() {
 	$template = new StringValue("1:{},2:{1},3:{1},4:{}");
-	$result = $template->callFormat(
-		new StringValue("FIRST")
+	$result = $template->call(
+		'format', [
+			new StringValue("FIRST"),
+		]
 	);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test placeholder index being too high for passed parameters.
 Assert::exception(function() {
 	$template = new StringValue("1:{},2:{1000}");
-	$result = $template->callFormat(
-		new StringValue("FIRST"),
-		new StringValue("SECOND")
+	$result = $template->call(
+		'format', [
+			new StringValue("FIRST"),
+			new StringValue("SECOND"),
+		]
 	);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test count.
-Assert::same(3, get_val($string->callCount(new StringValue("i"))));
-Assert::same(2, get_val($string->callCount(new StringValue("is"))));
-Assert::same(0, get_val($string->callCount(new StringValue("xoxoxo"))));
-Assert::same(0, get_val($string->callCount(new NumberValue(1))));
+Assert::same(3, get_val($string->call('count', [new StringValue("i")])));
+Assert::same(2, get_val($string->call('count', [new StringValue("is")])));
+Assert::same(0, get_val($string->call('count', [new StringValue("xoxoxo")])));
+Assert::same(0, get_val($string->call('count', [new NumberValue(1)])));
 
 // Test length.
 Assert::same(17, get_val($string->propLength()));
@@ -244,35 +254,35 @@ $pairs = new ArrayValue([
 	"i" => new StringValue("B"),
 	"." => new StringValue("ščř"),
 ]);
-$result = $string->callReplace($pairs);
+$result = $string->call('replace', [$pairs]);
 Assert::same("thA A a strBngščř", get_val($result));
 // Replacing ordinary strings.
-$result = $string->callReplace(new StringValue("is"), new StringValue("yes!"));
+$result = $string->call('replace', [new StringValue("is"), new StringValue("yes!")]);
 Assert::same("thyes! yes! a string.", get_val($result));
 // Replacing with regex needle.
-$result = $string->callReplace(new RegexValue('(i?s|\s)'), new StringValue("no!"));
+$result = $string->call('replace', [new RegexValue('(i?s|\s)'), new StringValue("no!")]);
 Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 
 // Test first/last occurence search.
-Assert::same(2, get_val($string->callFirst(new StringValue("is"))));
-Assert::same(5, get_val($string->callLast(new StringValue("is"))));
+Assert::same(2, get_val($string->call('first', [new StringValue("is")])));
+Assert::same(5, get_val($string->call('last', [new StringValue("is")])));
 
 // First: False when it does not appear in the string.
-Assert::false(get_val($string->callFirst(new StringValue("aaa"))));
+Assert::false(get_val($string->call('first', [new StringValue("aaa")])));
 // Last: False when it does not appear in the string.
-Assert::false(get_val($string->callLast(new StringValue("aaa"))));
+Assert::false(get_val($string->call('last', [new StringValue("aaa")])));
 
 // Test splitting.
 $string = new StringValue("hello,how,are,you");
 $result = [];
-foreach (get_val($string->callSplit(new StringValue(","))) as $item) {
+foreach (get_val($string->call('split', [new StringValue(",")])) as $item) {
 	$result[] = get_val($item);
 }
 Assert::same(["hello", "how", "are", "you"], $result);
 
 $string = new StringValue("well, this ... IS ... awkward!");
 $result = [];
-foreach (get_val($string->callSplit(new RegexValue("/[,\s\.]+/"))) as $item) {
+foreach (get_val($string->call('split', [new RegexValue("/[,\s\.]+/")])) as $item) {
 	$result[] = get_val($item);
 }
 Assert::same(["well", "this", "IS", "awkward!"], $result);

@@ -47,7 +47,7 @@ class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 			$arguments = $handler::handle($node['args'], $context);
 		}
 
-		return $function->call($arguments, $context, $node);
+		return $function->invoke($arguments, $context, $node);
 
 	}
 

@@ -24,19 +24,19 @@ $someKey = new StringValue("some_key");
 // Test behaviour of empty array.
 $arr = new ArrayValue([]);
 Assert::same(0, get_val($arr->propLength()));
-Assert::same(false, get_val($arr->callContains($something)));
+Assert::same(false, get_val($arr->call('contains', [$something])));
 
 // Push an item into the array and test stuff.
-$arr->callPush($anything);
+$arr->call('push', [$anything]);
 Assert::same(1, get_val($arr->propLength()));
-Assert::same(false, get_val($arr->callContains($something)));
-Assert::same(true, get_val($arr->callContains($anything)));
+Assert::same(false, get_val($arr->call('contains', [$something])));
+Assert::same(true, get_val($arr->call('contains', [$anything])));
 
 // Pop an item form the array and test stuff.
-$arr->callPop();
+$arr->call('pop');
 Assert::same(0, get_val($arr->propLength()));
-Assert::same(false, get_val($arr->callContains($something)));
-Assert::same(false, get_val($arr->callContains($anything)));
+Assert::same(false, get_val($arr->call('contains', [$something])));
+Assert::same(false, get_val($arr->call('contains', [$anything])));
 
 // Test proper exception when accessing non-existing key.
 Assert::exception(function() use ($arr) {
@@ -46,10 +46,10 @@ Assert::exception(function() use ($arr) {
 // Test working with insertion proxy.
 $proxy = $arr->getInsertionProxy($someKey);
 Assert::same(0, get_val($arr->propLength()));
-Assert::same(false, get_val($arr->callContains($anything)));
+Assert::same(false, get_val($arr->call('contains', [$anything])));
 $proxy->commit($anything);
 Assert::same(1, get_val($arr->propLength()));
-Assert::same(true, get_val($arr->callContains($anything)));
+Assert::same(true, get_val($arr->call('contains', [$anything])));
 
 // Test getting and iterating array object iterator.
 $result = [];

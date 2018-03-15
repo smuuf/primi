@@ -30,7 +30,7 @@ class FuncValue extends Value {
 		return $this->value;
 	}
 
-	public function call(array $args, Context $callerContext, array $callerNode) {
+	public function invoke(array $args, Context $callerContext, array $callerNode) {
 
 		$handler = HandlerFactory::get($this->body['name']);
 

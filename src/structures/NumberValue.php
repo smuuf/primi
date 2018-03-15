@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Stl\NumberLibrary;
+
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
@@ -19,6 +21,10 @@ class NumberValue extends Value implements
 {
 
 	const TYPE = "number";
+
+	protected static $libraries = [
+		NumberLibrary::class,
+	];
 
 	public function __construct(string $value) {
 		$this->value = self::isNumericInt($value) ? (int) $value : (float) $value;
@@ -112,44 +118,6 @@ class NumberValue extends Value implements
 				throw new \TypeError;
 		}
 
-	}
-
-	// Methods
-
-	public function callSqrt(): self {
-		return new self(\sqrt($this->value));
-	}
-
-	public function callPow(self $power = \null): self {
-		return new self($this->value ** ($power === \null ? 2 : $power->value));
-	}
-
-	public function callSin(): self {
-		return new self(\sin($this->value));
-	}
-
-	public function callCos(): self {
-		return new self(\cos($this->value));
-	}
-
-	public function callTan(): self {
-		return new self(\tan($this->value));
-	}
-
-	public function callAtan(): self {
-		return new self(\atan($this->value));
-	}
-
-	public function callCeil(): self {
-		return new self(\ceil($this->value));
-	}
-
-	public function callFloor(): self {
-		return new self(\floor($this->value));
-	}
-
-	public function callRound(self $precision = \null): self {
-		return new self(\round($this->value, $precision ? $precision->value : 0));
 	}
 
 }

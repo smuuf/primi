@@ -2,12 +2,25 @@
 
 namespace Smuuf\Primi\Structures;
 
-abstract class Value extends \Smuuf\Primi\StrictObject {
+use \Smuuf\Primi\ValueFriends;
+use \Smuuf\Primi\InternalUndefinedMethodException;
+
+abstract class Value extends ValueFriends {
 
 	const TYPE = "__no_type__";
 
-	/** @var mixed Value **/
-	protected $value;
+	/** @var array Array of prioritized libraries used to call methods on values. **/
+	protected static $libraries = [];
+
+	public static function registerLibrary(string $libraryClass) {
+
+		if (!is_subclass_of($libraryClass, \Smuuf\Primi\Library::class)) {
+			throw new \LogicException("Cannot register '$libraryClass' which does not extend '\Smuuf\Primi\Library'.");
+		}
+
+		array_unshift(static::$libraries, $libraryClass);
+
+	}
 
 	public static function buildAutomatic($value) {
 
@@ -28,6 +41,22 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 		return $this->value;
 	}
 
+	/**
+	 * Call a method on this value.
+	 * Engine uses this method as proxy to all value methods.
+	 */
+	public function call(string $method, array $args = []): Value {
+
+		foreach (static::$libraries as $lib) {
+			if (\method_exists($lib, $method)) {
+				return $lib::{$method}($this, ...$args);
+			}
+		}
+
+		throw new InternalUndefinedMethodException;
+
+	}
+
 	abstract public function getStringValue(): string;
 
 	/**
@@ -38,7 +67,7 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 	 *
 	 * @throws \TypeException
 	 */
-	protected static function allowTypes(?Value $value, string ...$types) {
+	public static function allowTypes(?Value $value, string ...$types) {
 
 		foreach ($types as $type) {
 			if ($value instanceof $type) {
