@@ -47,11 +47,30 @@ abstract class Helpers extends \Smuuf\Primi\StrictObject {
 	 * This method also provides the necessary stuffing around such invocation,
 	 * such as catching different possible exceptions.
 	 */
-	public static function invokeValueMethod(Value $subject, string $method, array $args = [], array $node): Value {
+	public static function invokeValueMethod(Value $subject, string $method, array $args = [], array $node = []): Value {
 
 		try {
 
 			return $subject->call($method, $args);
+
+		} catch (\ArgumentCountError $e) {
+
+			// If we have the counts of expected/passed arguments available,
+			// add that information to the error message.
+			if ($expectedCounts = self::parseArgumentCountError($e)) {
+				$extraMsg = sprintf(
+					" (%d instead of %d)",
+					$expectedCounts[0],
+					$expectedCounts[1]
+				);
+			}
+
+			throw new ErrorException(sprintf(
+				"Too few arguments passed to the '%s' method of '%s'%s.",
+				$method,
+				$subject::TYPE,
+				$extraMsg
+			), $node);
 
 		} catch (\TypeError $e) {
 
@@ -62,29 +81,6 @@ abstract class Helpers extends \Smuuf\Primi\StrictObject {
 				$subject::TYPE
 			), $node);
 
-		} catch (\ArgumentCountError $e) {
-
-			$msg = $e->getMessage();
-
-			// ArgumentCountError exception does not provide these numbers itself,
-			// so we have to extract it from the internal PHP exception message.
-			if (preg_match('#(?<passed>\d+)\s+passed.*(?<expected>\d+)\s+expected#', $msg, $m)) {
-
-				// Also, because of how calling Primi value methods work, we
-				// need to subtract 1 from these numbers. (first argument is
-				// the value - upon which the method is called - itself).
-				$passed = $m['passed'] - 1;
-				$expected = $m['expected'] - 1;
-				$extraMsg = sprintf(" (%d instead of %d)", $passed, $expected);
-
-			}
-
-			throw new ErrorException(sprintf(
-				"Too few arguments passed to the '%s' method of '%s'%s.",
-				$method,
-				$subject::TYPE,
-				$extraMsg
-			), $node);
 
 		} catch (InternalUndefinedMethodException $e) {
 
@@ -95,6 +91,29 @@ abstract class Helpers extends \Smuuf\Primi\StrictObject {
 			), $node);
 
 		}
+
+	}
+
+	/**
+	 * Parse \ArgumentCountError's message and return a tuple of integers
+	 * representing:
+	 * 1. Number of arguments passed.
+	 * 2. Number of arguments expected.
+	 */
+	protected static function parseArgumentCountError(\ArgumentCountError $e): array {
+
+		$msg = $e->getMessage();
+
+		// ArgumentCountError exception does not provide these numbers itself,
+		// so we have to extract it from the internal PHP exception message.
+		if (!preg_match('#(?<passed>\d+)\s+passed.*(?<expected>\d+)\s+expected#', $msg, $m)) {
+			return [];
+		}
+
+		// Also, because of how calling Primi value methods work, we need to
+		// subtract 1 from these numbers. (first argument is the value - upon
+		// which the method is called - itself).
+		return [$m['passed'] - 1, $m['expected'] - 1];
 
 	}
 
