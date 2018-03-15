@@ -27,20 +27,20 @@ $posZeroFloat = new NumberValue("+0.0");
 $negZeroFloat = new NumberValue("-0.0");
 
 // Test that various input correcly decide which is int and which is float.
-Assert::type('int', $integer->getPhpValue());
-Assert::type('int', $posInteger->getPhpValue());
-Assert::type('int', $negInteger->getPhpValue());
-Assert::type('float', $integeryFloat->getPhpValue());
-Assert::type('float', $posIntegeryFloat->getPhpValue());
-Assert::type('float', $negIntegeryFloat->getPhpValue());
-Assert::type('float', $float->getPhpValue());
-Assert::type('float', $posFloat->getPhpValue());
-Assert::type('float', $negFloat->getPhpValue());
-Assert::type('int', $zero->getPhpValue());
-Assert::type('int', $posZero->getPhpValue());
-Assert::type('int', $negZero->getPhpValue());
-Assert::type('float', $posZeroFloat->getPhpValue());
-Assert::type('float', $negZeroFloat->getPhpValue());
+Assert::type('int', $integer->getInternalValue());
+Assert::type('int', $posInteger->getInternalValue());
+Assert::type('int', $negInteger->getInternalValue());
+Assert::type('float', $integeryFloat->getInternalValue());
+Assert::type('float', $posIntegeryFloat->getInternalValue());
+Assert::type('float', $negIntegeryFloat->getInternalValue());
+Assert::type('float', $float->getInternalValue());
+Assert::type('float', $posFloat->getInternalValue());
+Assert::type('float', $negFloat->getInternalValue());
+Assert::type('int', $zero->getInternalValue());
+Assert::type('int', $posZero->getInternalValue());
+Assert::type('int', $negZero->getInternalValue());
+Assert::type('float', $posZeroFloat->getInternalValue());
+Assert::type('float', $negZeroFloat->getInternalValue());
 
 // Test correct detection of "numeric" string.
 Assert::true(NumberValue::isNumeric("1"));
@@ -59,27 +59,27 @@ Assert::false(NumberValue::isNumeric("+-1"));
 // Test addition.
 
 // Addition with a negative 0 constructed from string.
-Assert::same(1, $integer->doAddition(new NumberValue("-0"))->getPhpValue());
+Assert::same(1, $integer->doAddition(new NumberValue("-0"))->getInternalValue());
 // Addition with a negative 5 constructed from string.
-Assert::same(-4, $integer->doAddition(new NumberValue("-5"))->getPhpValue());
+Assert::same(-4, $integer->doAddition(new NumberValue("-5"))->getInternalValue());
 // Addition with a proper zero Number value.
-Assert::same(1, $integer->doAddition(new NumberValue(0))->getPhpValue());
+Assert::same(1, $integer->doAddition(new NumberValue(0))->getInternalValue());
 // Addition with a proper Number one.
-Assert::same(2, $integer->doAddition(new NumberValue(1))->getPhpValue());
+Assert::same(2, $integer->doAddition(new NumberValue(1))->getInternalValue());
 // Addition with a proper negative Number.
-Assert::same(-122, $integer->doAddition(new NumberValue(-123))->getPhpValue());
+Assert::same(-122, $integer->doAddition(new NumberValue(-123))->getInternalValue());
 
 // String values that are numeric will be added like numbers.
-Assert::same(1, $integer->doAddition(new StringValue("-0"))->getPhpValue());
-Assert::same(-4, $integer->doAddition(new StringValue("-5"))->getPhpValue());
-Assert::same(2.2, $integer->doAddition(new StringValue("+1.2"))->getPhpValue());
-Assert::same(-1.2, $integer->doAddition(new StringValue("-2.2"))->getPhpValue());
+Assert::same(1, $integer->doAddition(new StringValue("-0"))->getInternalValue());
+Assert::same(-4, $integer->doAddition(new StringValue("-5"))->getInternalValue());
+Assert::same(2.2, $integer->doAddition(new StringValue("+1.2"))->getInternalValue());
+Assert::same(-1.2, $integer->doAddition(new StringValue("-2.2"))->getInternalValue());
 
 // String values that are not numeric will result in concatenation instead of addition.
 $word1 = $integer->doAddition(new StringValue("a word"));
 $word2 = $integer->doAddition(new StringValue("-1 owls"));
-Assert::same("1a word", $word1->getPhpValue());
-Assert::same("1-1 owls", $word2->getPhpValue());
+Assert::same("1a word", $word1->getInternalValue());
+Assert::same("1-1 owls", $word2->getInternalValue());
 // The result of number+string is a string value.
 Assert::type(StringValue::class, $word1);
 Assert::type(StringValue::class, $word2);
@@ -97,11 +97,11 @@ Assert::exception(function() use ($integer) {
 
 // Test subtraction.
 
-Assert::same(1, $integer->doSubtraction(new NumberValue("-0"))->getPhpValue());
-Assert::same(6, $integer->doSubtraction(new NumberValue("-5"))->getPhpValue());
-Assert::same(1, $integer->doSubtraction(new NumberValue(0))->getPhpValue());
-Assert::same(0, $integer->doSubtraction(new NumberValue(1))->getPhpValue());
-Assert::same(124, $integer->doSubtraction(new NumberValue(-123))->getPhpValue());
+Assert::same(1, $integer->doSubtraction(new NumberValue("-0"))->getInternalValue());
+Assert::same(6, $integer->doSubtraction(new NumberValue("-5"))->getInternalValue());
+Assert::same(1, $integer->doSubtraction(new NumberValue(0))->getInternalValue());
+Assert::same(0, $integer->doSubtraction(new NumberValue(1))->getInternalValue());
+Assert::same(124, $integer->doSubtraction(new NumberValue(-123))->getInternalValue());
 
 // Subtaction with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
@@ -119,11 +119,11 @@ Assert::exception(function() use ($integer) {
 
 // Test multiplication.
 
-Assert::same(0, $float->doMultiplication(new NumberValue("-0"))->getPhpValue());
-Assert::same(-11.5, $float->doMultiplication(new NumberValue("-5"))->getPhpValue());
-Assert::same(0, $float->doMultiplication(new NumberValue(0))->getPhpValue());
-Assert::same(2.3, $float->doMultiplication(new NumberValue(1))->getPhpValue());
-Assert::same(-282.9, $float->doMultiplication(new NumberValue(-123))->getPhpValue());
+Assert::same(0, $float->doMultiplication(new NumberValue("-0"))->getInternalValue());
+Assert::same(-11.5, $float->doMultiplication(new NumberValue("-5"))->getInternalValue());
+Assert::same(0, $float->doMultiplication(new NumberValue(0))->getInternalValue());
+Assert::same(2.3, $float->doMultiplication(new NumberValue(1))->getInternalValue());
+Assert::same(-282.9, $float->doMultiplication(new NumberValue(-123))->getInternalValue());
 
 // Subtaction with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
@@ -147,9 +147,9 @@ Assert::exception(function() use ($float) {
 Assert::exception(function() use ($integer) {
 	$integer->doDivision(new NumberValue(0));
 }, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
-Assert::same(-0.46, $float->doDivision(new NumberValue("-5"))->getPhpValue());
-Assert::same(2.3, $float->doDivision(new NumberValue(1))->getPhpValue());
-Assert::same(-1.15, $float->doDivision(new NumberValue(-2))->getPhpValue());
+Assert::same(-0.46, $float->doDivision(new NumberValue("-5"))->getInternalValue());
+Assert::same(2.3, $float->doDivision(new NumberValue(1))->getInternalValue());
+Assert::same(-1.15, $float->doDivision(new NumberValue(-2))->getInternalValue());
 
 // Subtaction with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
@@ -168,9 +168,9 @@ Assert::exception(function() use ($integer) {
 // Test unary.
 
 // Unary addition returns new value.
-Assert::same(2, $integer->doUnary("++")->getPhpValue());
+Assert::same(2, $integer->doUnary("++")->getInternalValue());
 // Unary subtract returns new value.
-Assert::same(0, $integer->doUnary("--")->getPhpValue());
+Assert::same(0, $integer->doUnary("--")->getInternalValue());
 // Some bogust unary operator throws error.
 Assert::exception(function() use ($integer) {
 	$integer->doUnary("!@=");
@@ -179,7 +179,7 @@ Assert::exception(function() use ($integer) {
 // Test comparison operators...
 
 function extract_bool_value(BoolValue $b) {
-	return $b->getPhpValue();
+	return $b->getInternalValue();
 }
 
 $tmp = $integer->doComparison("==", new NumberValue("-1"));

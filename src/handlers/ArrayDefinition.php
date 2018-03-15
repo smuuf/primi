@@ -28,7 +28,7 @@ class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 
 				// But if it is defined for this item, use it.
 				$keyHandler = HandlerFactory::get($itemNode['key']['name']);
-				$key = $keyHandler::handle($itemNode['key'], $context)->getPhpValue();
+				$key = $keyHandler::handle($itemNode['key'], $context)->getInternalValue();
 
 				// And if it is a numeric integer, use it as a base for the index counter
 				// we would have used if the key was not provided.

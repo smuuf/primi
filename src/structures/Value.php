@@ -24,7 +24,7 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public function getPhpValue() {
+	public function getInternalValue() {
 		return $this->value;
 	}
 

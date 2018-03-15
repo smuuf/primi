@@ -40,7 +40,7 @@ function run_test($file) {
 
 		$vars = $context->getVariables();
 		array_walk($vars, function($x, $k) {
-			printf("%s:%s:%s\n", $k, main_class($x), return_string_value($x->getPhpValue()));
+			printf("%s:%s:%s\n", $k, main_class($x), return_string_value($x->getInternalValue()));
 		});
 
 	}
@@ -61,7 +61,7 @@ function return_string_value($value) {
 	if (is_array($value)) {
 		$return = "[";
 		foreach ($value as $key => $item) {
-			$return .= sprintf("%s:%s,", $key, return_string_value($item->getPhpValue()));
+			$return .= sprintf("%s:%s,", $key, return_string_value($item->getInternalValue()));
 		}
 		$return = rtrim($return, ',') . "]";
 	} elseif (is_bool($value)) {

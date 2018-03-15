@@ -18,7 +18,7 @@ class WhileStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 		$conditionHandler = HandlerFactory::get($node['left']['name']);
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
-		while ($conditionHandler::handle($node['left'], $context)->getPhpValue()) {
+		while ($conditionHandler::handle($node['left'], $context)->getInternalValue()) {
 			$blockHandler::handle($node['right'], $context);
 		}
 

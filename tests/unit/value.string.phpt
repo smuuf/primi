@@ -13,7 +13,7 @@ use \Smuuf\Primi\Structures\{
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(Value $v) {
-	return $v->getPhpValue();
+	return $v->getInternalValue();
 }
 
 $string = new StringValue("this is a string.");
