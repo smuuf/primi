@@ -13,7 +13,7 @@ use \Smuuf\Primi\ErrorException;
 
 abstract class StringLibrary extends Library {
 
-	public static function format(StringValue $self, Value ...$items): StringValue {
+	public static function format(StringValue $self, Value ...$items) {
 
 		// Extract PHP values from passed in value objects, because later we will pass the values to sprintf().
 		\array_walk($items, function(&$i) {
@@ -54,7 +54,7 @@ abstract class StringLibrary extends Library {
 
 	}
 
-	public static function replace(StringValue $self, Value $search, StringValue $replace = \null): StringValue {
+	public static function replace(StringValue $self, Value $search, StringValue $replace = \null) {
 
 		// Replacing using array of search-replace pairs.
 		if ($search instanceof ArrayValue) {
