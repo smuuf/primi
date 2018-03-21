@@ -208,3 +208,45 @@ Assert::false(extract_bool_value($tmp));
 
 $tmp = $float->doComparison("<=", new NumberValue("2.31"));
 Assert::true(extract_bool_value($tmp));
+
+//
+// Methods-
+//
+
+$tmp = $integer->call('sqrt')->getInternalValue();
+Assert::type('int', $tmp);
+$tmp = $integer->call('pow', [new NumberValue(4)])->getInternalValue();
+Assert::type('int', $tmp);
+$tmp = $integer->call('sin')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $integer->call('cos')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $integer->call('tan')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $integer->call('atan')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $integer->call('ceil')->getInternalValue();
+Assert::type('int', $tmp);
+$tmp = $integer->call('floor')->getInternalValue();
+Assert::type('int', $tmp);
+$tmp = $integer->call('round')->getInternalValue();
+Assert::type('int', $tmp);
+
+$tmp = $float->call('sqrt')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $float->call('pow', [new NumberValue(4)])->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $float->call('sin')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $float->call('cos')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $float->call('tan')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $float->call('atan')->getInternalValue();
+Assert::type('float', $tmp);
+$tmp = $float->call('ceil')->getInternalValue();
+Assert::type('int', $tmp);
+$tmp = $float->call('floor')->getInternalValue();
+Assert::type('int', $tmp);
+$tmp = $float->call('round')->getInternalValue();
+Assert::type('int', $tmp);
