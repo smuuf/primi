@@ -128,6 +128,7 @@ class ParserHandler extends CompiledParser {
 				}
 
 			}
+
 		}
 
 		unset($node['_matchrule']);

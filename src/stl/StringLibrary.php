@@ -61,7 +61,8 @@ abstract class StringLibrary extends Library {
 
 			$from = \array_keys($search->value);
 
-			// Values in ArrayValues are stored as Value objects, so we need to extract the real PHP values from it.
+			// Values in ArrayValues are stored as Value objects,
+			// so we need to extract the real PHP values from it.
 			$to = \array_values(\array_map(function($item) {
 				return $item->value;
 			}, $search->value));

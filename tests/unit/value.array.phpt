@@ -60,7 +60,4 @@ Assert::same(["anything"], $result);
 
 // Test deep clone of array object (all inner objects ought to be cloned too).
 $cloned = clone $arr;
-Assert::notSame(
-	$cloned->dereference($someKey),
-	$arr->dereference($someKey)
-);
+Assert::notSame($cloned->dereference($someKey), $arr->dereference($someKey));

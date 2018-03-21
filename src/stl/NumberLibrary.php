@@ -8,6 +8,18 @@ use \Smuuf\Primi\ErrorException;
 
 abstract class NumberLibrary extends Library {
 
+	public static function round(NumberValue $self, NumberValue $precision = \null) {
+		return new NumberValue(\round($self->value, $precision ? $precision->value : 0));
+	}
+
+	public static function ceil(NumberValue $self) {
+		return new NumberValue(\ceil($self->value));
+	}
+
+	public static function floor(NumberValue $self) {
+		return new NumberValue(\floor($self->value));
+	}
+
 	public static function sqrt(NumberValue $self) {
 		return new NumberValue(\sqrt($self->value));
 	}
@@ -30,18 +42,6 @@ abstract class NumberLibrary extends Library {
 
 	public static function atan(NumberValue $self) {
 		return new NumberValue(\atan($self->value));
-	}
-
-	public static function ceil(NumberValue $self) {
-		return new NumberValue(\ceil($self->value));
-	}
-
-	public static function floor(NumberValue $self) {
-		return new NumberValue(\floor($self->value));
-	}
-
-	public static function round(NumberValue $self, NumberValue $precision = \null) {
-		return new NumberValue(\round($self->value, $precision ? $precision->value : 0));
 	}
 
 }
