@@ -20,25 +20,29 @@ class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 		// Function can be referenced by:
 		// a) its name (fn stored in variable or defined globally (still technically a variable),
 		// b) its value (a "function value" directly).
-		if ($name = $node['variable']['text'] ?? false) {
+
+		if (isset($node['variable']['text'])) {
+
+			$name = $node['variable']['text'];
+
 			try {
-				$function = $context->getVariable($name);
+				$fn = $context->getVariable($name);
 			} catch (InternalUndefinedVariableException $e) {
-				throw new ErrorException("Calling undefined function '$name'.", $node);
+				throw new ErrorException("Calling undefined function '$name'", $node);
 			}
-		} elseif ($valueNode = $node['value'] ?? false) {
-			$handler = HandlerFactory::get($valueNode['name']);
-			$function = $handler::handle($valueNode, $context);
+
+		} elseif (isset($node['value'])) {
+
+			$handler = HandlerFactory::get($node['value']['name']);
+			$fn = $handler::handle($node['value'], $context);
+
 		} else {
 			throw new InternalException("Bad reference to a function.");
 		}
 
 		// Prevent calling a non-function value.
-		if (!$function instanceof \Smuuf\Primi\Structures\FuncValue) {
-			throw new ErrorException(
-				sprintf("Trying to call a non-function '%s'.", $function::TYPE),
-				$node
-			);
+		if (!$fn instanceof \Smuuf\Primi\Structures\FuncValue) {
+			throw new ErrorException(sprintf("Trying to call a non-function '%s'.", $fn::TYPE), $node);
 		}
 
 		$arguments = [];
@@ -47,7 +51,7 @@ class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 			$arguments = $handler::handle($node['args'], $context);
 		}
 
-		return $function->invoke($arguments, $context, $node);
+		return $fn->invoke($arguments, $context, $node);
 
 	}
 

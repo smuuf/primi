@@ -55,40 +55,21 @@ abstract class Helpers extends \Smuuf\Primi\StrictObject {
 
 		} catch (\ArgumentCountError $e) {
 
-			// If we have the counts of expected/passed arguments available,
+			// We have the counts of expected/passed arguments available,
 			// add that information to the error message.
-			if ($expectedCounts = self::parseArgumentCountError($e)) {
-				$extraMsg = sprintf(
-					" (%d instead of %d)",
-					$expectedCounts[0],
-					$expectedCounts[1]
-				);
-			}
+			$expectedCounts = self::parseArgumentCountError($e);
+			$counts = sprintf(" (%d instead of %d)", $expectedCounts[0], $expectedCounts[1]);
 
-			throw new ErrorException(sprintf(
-				"Too few arguments passed to the '%s' method of '%s'%s.",
-				$method,
-				$subject::TYPE,
-				$extraMsg
-			), $node);
+			throw new ErrorException(sprintf("Too few arguments passed to the '%s' method of '%s'%s.", $method, $subject::TYPE, $counts), $node);
 
 		} catch (\TypeError $e) {
 
 			// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
-			throw new ErrorException(sprintf(
-				"Wrong arguments passed to method '%s' of '%s'.",
-				$method,
-				$subject::TYPE
-			), $node);
-
+			throw new ErrorException(sprintf("Wrong arguments passed to method '%s' of '%s'.", $method, $subject::TYPE), $node);
 
 		} catch (InternalUndefinedMethodException $e) {
 
-			throw new ErrorException(sprintf(
-				"Calling undefined method '%s' on '%s'.",
-				$method,
-				$subject::TYPE
-			), $node);
+			throw new ErrorException(sprintf("Calling undefined method '%s' on '%s'.", $method, $subject::TYPE), $node);
 
 		}
 
