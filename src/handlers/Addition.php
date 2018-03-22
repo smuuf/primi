@@ -30,6 +30,7 @@ class Addition extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 			$handler = HandlerFactory::get($operandNode['name']);
 
+			// Get the first, initial result.
 			if ($first) {
 				$result = $handler::handle($operandNode, $context);
 				$first = \false;

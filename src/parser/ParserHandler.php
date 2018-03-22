@@ -81,7 +81,7 @@ class ParserHandler extends CompiledParser {
 
 	protected static function processAST(array $ast, string $source): array {
 
-		$ast = self::reduceAST($ast, \true);
+		$ast = self::reduceNode($ast);
 		$ast = self::addPositions($ast, $source);
 
 		return $ast;
@@ -89,43 +89,54 @@ class ParserHandler extends CompiledParser {
 	}
 
 	/**
-	 * Go recursively through each of the node elements and if ...
-	 * 1) Node contains 'skip' element ---> replace the node with the contents of that 'skip' element.
-	 * 2) Node contains 'skip' element ---> replace the node with the contents of that 'skip' element.
-	 * 3) Node's elements contains nested nodes ---> reduce them too.
-	 * 4) Aggressive mode is enabled ---> remove unnecessary elements created by PHP-PEG parser itself.
+	 * Go recursively through each of the nodes and strip unecessary data
+	 * in the abstract syntax tree.
 	 */
-	protected static function reduceAST(array $node, $aggressive = false): array {
+	protected static function reduceNode(array $node) {
 
-		static $aggresivelyRemove = ['_matchrule'];
+		static $reducers = [];
 
-		// Case 1)
+		// If node has "skip" node defined, replace the whole node with the
+		// "skip" subnode.
 		if (isset($node['skip'])) {
-			return self::reduceAST($node['skip'], $aggressive);
+			return self::reduceNode($node['skip']);
 		}
 
-		// Allow each type of handler handle its own reduction.
-		if (
-			isset($node['name'])
-			&& ($handler = HandlerFactory::get($node['name']))
-			&& \is_subclass_of($handler, \Smuuf\Primi\Handlers\IReducer::class)
-		) {
-			if ($reduced = $handler::reduce($node)) {
-				return self::reduceAST($reduced, $aggressive);
+		$name = $node['name'] ?? false;
+		if ($name !== false) {
+
+			// We have a reducer existence state saved in cache.
+			if (isset($reducers[$name])) {
+
+				// Reducer does really exists.
+				if ($reducers[$name] !== false) {
+					if ($reduced = $reducers[$name]::reduce($node)) {
+						return self::reduceNode($reduced);
+					}
+				}
+
+			} else {
+
+				$handler = HandlerFactory::get($name);
+				$reducers[$name] = false;
+
+				if (\is_subclass_of($handler, '\Smuuf\Primi\Handlers\IReducer')) {
+					$reducers[$name] = $handler;
+					if ($reduced = $handler::reduce($node)) {
+						return self::reduceNode($reduced);
+					}
+				}
+
 			}
+
 		}
 
-		foreach ($node as $k => &$v) {
+		unset($node['_matchrule']);
 
-			if (\is_array($v)) {
-				$v = self::reduceAST($v, $aggressive);
+		foreach ($node as &$item) {
+			if (is_array($item)) {
+				$item = self::reduceNode($item);
 			}
-
-			if (!$aggressive) continue;
-			if (\in_array($k, $aggresivelyRemove, \true)) {
-				unset($node[$k]);
-			}
-
 		}
 
 		return $node;

@@ -64,13 +64,17 @@ FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDe
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 ForeachStatement: "foreach" __ "(" __ left:Expression __ "as" __ item:VariableName __ ")" __ ( right:Block )
-BlockStatements: skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDefinition
 CommandStatements: skip:EchoStatement | skip:ReturnStatement
 EchoStatement: "echo" [ subject:Expression
 ReturnStatement: "return" ( [ subject:Expression )?
 
-Statement: skip:BlockStatements | skip:CommandStatements | skip:Expression
-Block: "{" __ ( skip:Program )? __ "}"
+# &/[A-Za-z]/ Ensures that no sub-rules will be even tried if the string does not start with a letter.
+# And we know that our block statements always start with a letter.
+BlockStatements: &/[A-Za-z]/ ( skip:IfStatement | skip:WhileStatement | skip:ForeachStatement | skip:FunctionDefinition )
+
+# !/[\s\{\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
+Statement: !/[\s\{\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )
+Block: "{" __ ( skip:Program )? "}"
 
 # Matches any optional whitespace or newline.
 __: / [\s\n]* /
@@ -79,7 +83,7 @@ __: / [\s\n]* /
 NL: / (?:\/\/[^\n]*)?\n /
 
 # Statement separator: Newline or semicolon.
-SEP: NL | ";"
+SEP: ";" | NL
 
 # "!/$/" Ensures we won't try to find statements at EOF.
 Program: ( !/$/ __ Statement? > SEP )+ __

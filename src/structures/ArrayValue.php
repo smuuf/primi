@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Stl\ArrayLibrary;
+
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsDereference;
 use \Smuuf\Primi\ISupportsInsertion;
@@ -87,29 +89,6 @@ class ArrayValue extends Value implements
 
 	public function propLength(): NumberValue {
 		return new NumberValue((string) \count($this->value));
-	}
-
-	// Methods.
-
-	public function callContains(Value $value) {
-
-		// I expect a bug here, since StringValues ought to be equal (how array_search() works) if all properties are
-		// equal. Strings can have a cached split buffer which could differ for the "same" internal strings (different
-		// objects containing the same string). We'll see, he he.
-
-		return new BoolValue(\array_search($value, $this->value) !== \false);
-
-	}
-
-	public function callPush(Value $value) {
-
-		$this->value[] = $value;
-		return $value;
-
-	}
-
-	public function callPop() {
-		return \array_pop($this->value);
 	}
 
 }

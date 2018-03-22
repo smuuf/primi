@@ -61,9 +61,9 @@ require __DIR__ . '/../bootstrap.php';
 		Assert::type(\Smuuf\Primi\Structures\NumberValue::class, $context->getVariable('var_e'));
 		Assert::type(\Smuuf\Primi\Structures\StringValue::class, $context->getVariable('var_f'));
 		Assert::type(\Smuuf\Primi\Structures\ArrayValue::class, $context->getVariable('var_g'));
-		Assert::same(123, $context->getVariable('var_e')->getPhpValue());
-		Assert::same("hello there!", $context->getVariable('var_f')->getPhpValue());
-		Assert::type('array', $context->getVariable('var_g')->getPhpValue());
+		Assert::same(123, $context->getVariable('var_e')->getInternalValue());
+		Assert::same("hello there!", $context->getVariable('var_f')->getInternalValue());
+		Assert::type('array', $context->getVariable('var_g')->getInternalValue());
 
 	}
 

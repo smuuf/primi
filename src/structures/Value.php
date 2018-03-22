@@ -2,12 +2,12 @@
 
 namespace Smuuf\Primi\Structures;
 
-abstract class Value extends \Smuuf\Primi\StrictObject {
+use \Smuuf\Primi\ValueFriends;
+use \Smuuf\Primi\InternalUndefinedMethodException;
+
+abstract class Value extends ValueFriends {
 
 	const TYPE = "__no_type__";
-
-	/** @var mixed Value **/
-	protected $value;
 
 	public static function buildAutomatic($value) {
 
@@ -24,8 +24,27 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public function getPhpValue() {
+	public function getInternalValue() {
 		return $this->value;
+	}
+
+	/**
+	 * Call a method on this value.
+	 * Engine uses this method as proxy to all value methods.
+	 */
+	public function call(string $method, array $args = []): Value {
+
+		// Get extensions registered for this class.
+		$exts = \Smuuf\Primi\ExtensionHub::get(static::class);
+
+		foreach ($exts as $ext) {
+			if (\method_exists($ext, $method)) {
+				return $ext::{$method}($this, ...$args);
+			}
+		}
+
+		throw new InternalUndefinedMethodException;
+
 	}
 
 	abstract public function getStringValue(): string;
@@ -38,7 +57,7 @@ abstract class Value extends \Smuuf\Primi\StrictObject {
 	 *
 	 * @throws \TypeException
 	 */
-	protected static function allowTypes(?Value $value, string ...$types) {
+	public static function allowTypes(?Value $value, string ...$types) {
 
 		foreach ($types as $type) {
 			if ($value instanceof $type) {

@@ -30,13 +30,13 @@ class FuncValue extends Value {
 		return $this->value;
 	}
 
-	public function call(array $args, Context $callerContext, array $callerNode) {
+	public function invoke(array $args, Context $callerContext, array $callerNode) {
 
 		$handler = HandlerFactory::get($this->body['name']);
 
 		if (\count($this->args) !== \count($args)) {
 			throw new ErrorException(sprintf(
-				"Wrong number of arguments passed to the '%s' function (%s instead of %s)",
+				"Too few arguments passed to the '%s' function (%s instead of %s)",
 				$this->value,
 				\count($args),
 				\count($this->args)

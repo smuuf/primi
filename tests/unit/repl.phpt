@@ -43,11 +43,9 @@ $context = new \Smuuf\Primi\Context;
 $interpreter = new \Smuuf\Primi\Interpreter($context);
 $repl = new \Smuuf\Primi\Repl($interpreter, $driver);
 
-$i = new \Smuuf\Primi\Repl($interpreter, $driver);
-
 // Run prepared commands and catch whole output.
 ob_start();
-$i->start();
+$repl->start();
 $buffer = ob_get_clean();
 
 // This is expected output. This will be compared with actual output down below.

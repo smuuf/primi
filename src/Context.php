@@ -11,7 +11,6 @@ class Context extends \Smuuf\Primi\StrictObject implements IContext {
 
 	const EMPTY_CONTAINER = [
 		'variables' => [],
-		'functions' => [],
 	];
 
 	private $container = self::EMPTY_CONTAINER;

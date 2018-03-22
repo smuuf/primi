@@ -16,18 +16,20 @@ class ErrorException extends InternalException {
 				);
 			}
 
-			// Second argument might be a node from AST tree, so we don't have exact line and position,
-			// but we can display a piece of code that caused the error.
+			// Second argument might be a node from AST tree, so we don't have
+			// exact line and position, but we can display a piece of code that
+			// caused the error.
 			$msg = sprintf(
 				"%s @ %scode: %s",
 				$msg,
 				$position ?? null,
-				$line['text']
+				$line['text'] ?? "<unknown>"
 			);
 
 		} elseif ($line !== false && $pos !== false) {
 
-			// If line and position were provided, we can display it with the error so the user knows where to look.
+			// If line and position were provided, we can display it with the
+			// error so the user knows where to look.
 			$msg = sprintf(
 				'%s @ line %s, position %s',
 				$msg,
