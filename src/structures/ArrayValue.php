@@ -16,10 +16,6 @@ class ArrayValue extends Value implements
 
 	const TYPE = "array";
 
-	protected static $libraries = [
-		ArrayLibrary::class,
-	];
-
 	public function __construct(array $arr) {
 		$this->value = $arr;
 	}

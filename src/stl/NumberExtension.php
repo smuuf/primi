@@ -2,11 +2,11 @@
 
 namespace Smuuf\Primi\Stl;
 
-use \Smuuf\Primi\Library;
+use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\ErrorException;
 
-abstract class NumberLibrary extends Library {
+abstract class NumberExtension extends Extension {
 
 	public static function round(NumberValue $self, NumberValue $precision = \null) {
 		return new NumberValue(\round($self->value, $precision ? $precision->value : 0));

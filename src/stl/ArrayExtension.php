@@ -2,13 +2,13 @@
 
 namespace Smuuf\Primi\Stl;
 
-use \Smuuf\Primi\Library;
+use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Structures\ArrayValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ErrorException;
 
-abstract class ArrayLibrary extends Library {
+abstract class ArrayExtension extends Extension {
 
 	public static function contains(ArrayValue $self, Value $value) {
 

@@ -2,8 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Stl\StringLibrary;
-
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
@@ -22,10 +20,6 @@ class StringValue extends Value implements
 {
 
 	const TYPE = "string";
-
-	protected static $libraries = [
-		StringLibrary::class,
-	];
 
 	public function __construct(string $value) {
 		$this->value = self::expandSequences($value);

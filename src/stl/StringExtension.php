@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Stl;
 
-use \Smuuf\Primi\Library;
+use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Structures\ArrayValue;
@@ -11,7 +11,7 @@ use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ErrorException;
 
-abstract class StringLibrary extends Library {
+abstract class StringExtension extends Extension {
 
 	public static function format(StringValue $self, Value ...$items) {
 

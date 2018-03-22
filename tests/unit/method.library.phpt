@@ -2,7 +2,8 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Library;
+use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ErrorEception;
@@ -14,11 +15,11 @@ function get_val(Value $v) {
 	return $v->getInternalValue();
 }
 
-abstract class BadLibrary {
+abstract class BadExtension {
 
 }
 
-abstract class CustomLibrary extends Library {
+abstract class CustomExtension extends Extension {
 
     public static function funnyreverse(StringValue $self, StringValue $prefix): StringValue {
         return new StringValue($prefix->value . '_' . strrev($self->value));
@@ -31,31 +32,32 @@ abstract class CustomLibrary extends Library {
 }
 
 //
-// Registering a not-a-library.
+// Registering a not-an-extension.
 //
 
-// Test that trying to register a library that does not extend the Library class throws a
+// Test that trying to register a extension that doesn't really
+// if an extension..
 Assert::exception(function() {
-    StringValue::registerLibrary(BadLibrary::class);
+    ExtensionHub::register(BadExtension::class, StringValue::class);
 }, \LogicException::class, '#Unable to register#i');
 
 //
-// Registering proper library.
+// Registering proper extension.
 //
 
 $string = new StringValue("jelenovi pivo nelej");
 
-// No library registered yet, expecting "undefined method" error.
+// No extension registered yet, expecting "undefined method" error.
 Assert::exception(function() use ($string) {
     $string->call('funnyreverse', [new StringValue('haha')]);
 }, InternalUndefinedMethodException::class);
 
-// Registering proper library throws no error.
+// Registering proper extension throws no error.
 Assert::noError(function() {
-    StringValue::registerLibrary(CustomLibrary::class);
+    ExtensionHub::register(CustomExtension::class, StringValue::class);
 });
 
-// After the library is registered, the method is now available for the string value.
+// After the extension is registered, the method is now available for the string value.
 $result = $string->call('funnyreverse', [new StringValue('haha')]);
 Assert::same('haha_jelen ovip ivonelej', get_val($result));
 

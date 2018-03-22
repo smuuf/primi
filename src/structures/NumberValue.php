@@ -2,8 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Stl\NumberLibrary;
-
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
@@ -21,10 +19,6 @@ class NumberValue extends Value implements
 {
 
 	const TYPE = "number";
-
-	protected static $libraries = [
-		NumberLibrary::class,
-	];
 
 	public function __construct(string $value) {
 		$this->value = self::isNumericInt($value) ? (int) $value : (float) $value;

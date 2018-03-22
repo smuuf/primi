@@ -9,19 +9,6 @@ abstract class Value extends ValueFriends {
 
 	const TYPE = "__no_type__";
 
-	/** @var array Array of prioritized libraries used to call methods on values. **/
-	protected static $libraries = [];
-
-	public static function registerLibrary(string $libraryClass) {
-
-		if (!is_subclass_of($libraryClass, \Smuuf\Primi\Library::class)) {
-			throw new \LogicException("Unable to register '$libraryClass' which does not extend '\Smuuf\Primi\Library'.");
-		}
-
-		array_unshift(static::$libraries, $libraryClass);
-
-	}
-
 	public static function buildAutomatic($value) {
 
 		switch (true) {
@@ -47,9 +34,12 @@ abstract class Value extends ValueFriends {
 	 */
 	public function call(string $method, array $args = []): Value {
 
-		foreach (static::$libraries as $lib) {
-			if (\method_exists($lib, $method)) {
-				return $lib::{$method}($this, ...$args);
+		// Get extensions registered for this class.
+		$exts = \Smuuf\Primi\ExtensionHub::get(static::class);
+
+		foreach ($exts as $ext) {
+			if (\method_exists($ext, $method)) {
+				return $ext::{$method}($this, ...$args);
 			}
 		}
 
