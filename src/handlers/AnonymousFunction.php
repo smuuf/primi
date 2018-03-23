@@ -32,7 +32,8 @@ class AnonymousFunction extends \Smuuf\Primi\StrictObject implements IHandler {
 		return new \Smuuf\Primi\Structures\FuncValue(
 			$name,
 			$argumentList,
-			$node['body']
+			$node['body'],
+			$context
 		);
 
 	}

@@ -20,17 +20,26 @@ class FuncValue extends Value {
 	/** @var array Node representing the body of function. **/
 	protected $body;
 
-	public function __construct(string $name, array $args, array $body) {
+	/** @var Context Optional context bound to this function. **/
+	protected $context;
+
+	public function __construct(
+		string $name,
+		array $args,
+		array $body,
+		Context $context = null
+	) {
 		$this->value = $name;
 		$this->args = $args;
 		$this->body = $body;
+		$this->context = $context;
 	}
 
 	public function getStringValue(): string {
 		return $this->value;
 	}
 
-	public function invoke(array $args, Context $callerContext, array $callerNode) {
+	public function invoke(array $args) {
 
 		$handler = HandlerFactory::get($this->body['name']);
 
@@ -40,7 +49,7 @@ class FuncValue extends Value {
 				$this->value,
 				\count($args),
 				\count($this->args)
-			), $callerNode);
+			), $this->body);
 		}
 
 		// Create new context (scope) for the function, so it doesn't operate in the global scope (and thus it won't
@@ -48,7 +57,10 @@ class FuncValue extends Value {
 		$context = new Context;
 
 		$args = \array_combine($this->args, $args);
-		$context->setVariables($callerContext->getVariables());
+		if ($this->context) {
+			$context->setVariables($this->context->getVariables());
+		}
+
 		$context->setVariables($args);
 
 		// Run the function body and expect a ReturnException with the return value.

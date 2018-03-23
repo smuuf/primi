@@ -34,7 +34,8 @@ class FunctionDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 			new \Smuuf\Primi\Structures\FuncValue(
 				$functionName,
 				$argumentList,
-				$node['body']
+				$node['body'],
+				$context
 			)
 		);
 
