@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\InternalArgumentCountException;
 use \Smuuf\Primi\InternalUndefinedVariableException;
 use \Smuuf\Primi\InternalException;
 use \Smuuf\Primi\Context;
@@ -51,7 +52,11 @@ class FunctionCall extends \Smuuf\Primi\StrictObject implements IHandler {
 			$arguments = $handler::handle($node['args'], $context);
 		}
 
-		return $fn->invoke($arguments);
+		try {
+			return $fn->invoke($arguments);
+		} catch (InternalArgumentCountException $e) {
+			throw new ErrorException($e->getMessage(), $node);
+		}
 
 	}
 

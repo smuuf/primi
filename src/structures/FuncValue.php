@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\InternalArgumentCountException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ReturnException;
 use \Smuuf\Primi\ErrorException;
@@ -44,12 +45,7 @@ class FuncValue extends Value {
 		$handler = HandlerFactory::get($this->body['name']);
 
 		if (\count($this->args) !== \count($args)) {
-			throw new ErrorException(sprintf(
-				"Too few arguments passed to the '%s' function (%s instead of %s)",
-				$this->value,
-				\count($args),
-				\count($this->args)
-			), $this->body);
+			throw new InternalArgumentCountException($this->value, \count($args), \count($this->args));
 		}
 
 		// Create new context (scope) for the function, so it doesn't operate in the global scope (and thus it won't

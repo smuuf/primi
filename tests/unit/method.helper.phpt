@@ -7,6 +7,7 @@ use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\InternalArgumentCountException;
 use \Smuuf\Primi\InternalUndefinedMethodException;
 
 require __DIR__ . '/../bootstrap.php';
@@ -36,7 +37,7 @@ Assert::same(6, get_val($result));
 // Test incorrect invocation - too few arguments.
 Assert::exception(function() use ($s) {
     $result = Helpers::invokeValueMethod($s, 'first', []);
-}, ErrorException::class, '#too.*few.*arguments.*\b0\b.*instead.*\b1\b#i');
+}, InternalArgumentCountException::class);
 
 // Test incorrect invocation - undefined method.
 Assert::exception(function() use ($s) {
