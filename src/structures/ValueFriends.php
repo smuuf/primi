@@ -1,6 +1,6 @@
 <?php
 
-namespace Smuuf\Primi;
+namespace Smuuf\Primi\Structures;
 
 /**
  * Emulate friends visibility.

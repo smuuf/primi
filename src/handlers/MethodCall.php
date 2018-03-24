@@ -26,7 +26,11 @@ class MethodCall extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$argList = $handler::handle($node['args'], $context);
 		}
 
-		return Helpers::invokeValueMethod($subject, $methodName, $argList, $node);
+		try {
+			return Helpers::invokeValueMethod($subject, $methodName, $argList, $node);
+		} catch (InternalArgumentCountException $e) {
+			throw new ErrorException($e->getMessage(), $node);
+		}
 
 	}
 

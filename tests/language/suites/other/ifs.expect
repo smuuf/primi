@@ -2,7 +2,7 @@ a:NumberValue:1
 aa:NumberValue:1
 b:NumberValue:0
 bb:NumberValue:0
-c:BoolValue:1
+c:BoolValue:true
 cc:NumberValue:1
-d:BoolValue:0
+d:BoolValue:false
 dd:NumberValue:0

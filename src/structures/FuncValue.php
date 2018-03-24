@@ -2,62 +2,37 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ReturnException;
-use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\Context;
+use \Smuuf\Primi\InternalArgumentCountException;
 
 class FuncValue extends Value {
 
 	const TYPE = "function";
 
-	/** @var string Function name is stored - in 'value' property - only for convenience. **/
+	/** @var string The function container itself. **/
 	protected $value;
 
-	/** @var array List of variable names used as arguments. **/
-	protected $args;
-
-	/** @var array Node representing the body of function. **/
-	protected $body;
-
-	public function __construct(string $name, array $args, array $body) {
-		$this->value = $name;
-		$this->args = $args;
-		$this->body = $body;
+	public function __construct(FunctionContainer $fn) {
+		$this->value = $fn;
 	}
 
 	public function getStringValue(): string {
-		return $this->value;
+		return "__function__";
 	}
 
-	public function invoke(array $args, Context $callerContext, array $callerNode) {
+	public function invoke(array $args) {
 
-		$handler = HandlerFactory::get($this->body['name']);
+		$fnArgs = $this->value->getArgs();
 
-		if (\count($this->args) !== \count($args)) {
-			throw new ErrorException(sprintf(
-				"Too few arguments passed to the '%s' function (%s instead of %s)",
-				$this->value,
+		if (\count($fnArgs) !== \count($args)) {
+			throw new InternalArgumentCountException(
+				$this->getStringValue(),
 				\count($args),
-				\count($this->args)
-			), $callerNode);
+				\count($fnArgs)
+			);
 		}
 
-		// Create new context (scope) for the function, so it doesn't operate in the global scope (and thus it won't
-		// modify the global context.
-		$context = new Context;
-
-		$args = \array_combine($this->args, $args);
-		$context->setVariables($callerContext->getVariables());
-		$context->setVariables($args);
-
-		// Run the function body and expect a ReturnException with the return value.
-
-		try {
-			$handler::handle($this->body, $context);
-		} catch (ReturnException $e) {
-			return $e->getValue();
-		}
+		// Simply execute the closure with passed arguments.
+		return ($this->value->getClosure())(...$args);
 
 	}
 

@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ValueFriends;
+use \Smuuf\Primi\Structures\ValueFriends;
 use \Smuuf\Primi\InternalUndefinedMethodException;
 
 abstract class Value extends ValueFriends {
@@ -16,6 +16,8 @@ abstract class Value extends ValueFriends {
 				return new BoolValue($value);
 			case \is_array($value):
 				return new ArrayValue(array_map([self::class, 'buildAutomatic'], $value));
+			case \is_callable($value);
+					return new FuncValue(FunctionContainer::buildNative($value));
 			case NumberValue::isNumeric($value): // Must be after "is_array" case.
 				return new NumberValue($value);
 			default:

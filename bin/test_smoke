@@ -2,7 +2,7 @@
 
 cd $(dirname $0)
 
-files=`find ../sample/ -iname "*.primi"`
+files=`find ../example/ -iname "*.primi"`
 
 for i in $files
 do

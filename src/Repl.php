@@ -30,6 +30,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	public function start() {
 
+		// Allow saving history even on serious errors.
+		register_shutdown_function(function() {
+			$this->saveHistory();
+		});
+
 		$i = $this->interpreter;
 
 		while (true) {
@@ -62,8 +67,6 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			}
 
 		}
-
-		$this->saveHistory();
 
 	}
 

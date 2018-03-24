@@ -3,8 +3,8 @@ b:NumberValue:1234567890
 c:NumberValue:1234567890
 d:NumberValue:0
 e:NumberValue:2
-f:StringValue:x
-g:StringValue:xyz
-i:StringValue:this is some whole very long sentence.
-j:BoolValue:1
-k:BoolValue:0
+f:StringValue:"x"
+g:StringValue:"xyz"
+i:StringValue:"this is some whole very long sentence."
+j:BoolValue:true
+k:BoolValue:false

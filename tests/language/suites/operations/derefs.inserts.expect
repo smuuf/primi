@@ -1,9 +1,9 @@
-a:ArrayValue:[0:1,1:2,2:4]
-b:ArrayValue:[0:[x:y],1:b,2:c]
-c:ArrayValue:[0:i,1:[1:a,42:yeah],2:k]
-d:ArrayValue:[0:first,1:second,2:[0:nested]]
-e:StringValue:xhojXy
-e_test1:StringValue:x
-e_test2:StringValue:h
-e_test3:StringValue:o
-f:StringValue:something very supiško
+a:ArrayValue:[0: 1, 1: 2, 2: 4]
+b:ArrayValue:[0: ["x": "y"], 1: "b", 2: "c"]
+c:ArrayValue:[0: "i", 1: [1: "a", 42: "yeah"], 2: "k"]
+d:ArrayValue:[0: "first", 1: "second", 2: [0: "nested"]]
+e:StringValue:"xhojXy"
+e_test1:StringValue:"x"
+e_test2:StringValue:"h"
+e_test3:StringValue:"o"
+f:StringValue:"something very supiško"

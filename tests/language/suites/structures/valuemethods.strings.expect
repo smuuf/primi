@@ -1,4 +1,4 @@
-a:StringValue:ahoj 123, jak se máš? 123
+a:StringValue:"ahoj 123, jak se máš? 123"
 b:NumberValue:3
 c:NumberValue:11
 d:NumberValue:5
@@ -7,5 +7,5 @@ f:NumberValue:107
 g:NumberValue:67
 h:NumberValue:11
 i:NumberValue:3
-j:StringValue:you can now format strings, you rascal!
-k:StringValue:1 2 3
+j:StringValue:"you can now format strings, you rascal!"
+k:StringValue:"1 2 3"

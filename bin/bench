@@ -12,7 +12,7 @@ echo "Clearing AST cache ..."
 rm ./temp/ast*.json 2>/dev/null
 rm bench.out 2>/dev/null
 
-simplefiles=$(find ./sample -iname "bench*.primi")
+simplefiles=$(find ./example -iname "bench*.primi")
 simpletime=0
 
 function timeit {

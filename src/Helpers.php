@@ -58,9 +58,7 @@ abstract class Helpers extends \Smuuf\Primi\StrictObject {
 			// We have the counts of expected/passed arguments available,
 			// add that information to the error message.
 			$expectedCounts = self::parseArgumentCountError($e);
-			$counts = sprintf(" (%d instead of %d)", $expectedCounts[0], $expectedCounts[1]);
-
-			throw new ErrorException(sprintf("Too few arguments passed to the '%s' method of '%s'%s.", $method, $subject::TYPE, $counts), $node);
+			throw new InternalArgumentCountException($method, $expectedCounts[0], $expectedCounts[1]);
 
 		} catch (\TypeError $e) {
 
