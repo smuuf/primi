@@ -8,7 +8,7 @@ class FuncValue extends Value {
 
 	const TYPE = "function";
 
-	/** @var string The function container itself. **/
+	/** @var FunctionContainer The function container itself. **/
 	protected $value;
 
 	public function __construct(FunctionContainer $fn) {

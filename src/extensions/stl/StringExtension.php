@@ -103,7 +103,7 @@ abstract class StringExtension extends Extension {
 
 		return new ArrayValue(array_map(function($part) {
 			return new StringValue($part);
-		}, $splat));
+		}, $splat ?? []));
 
 	}
 

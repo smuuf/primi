@@ -3,7 +3,7 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Helpers;
-use \Smuuf\Primi\InternalUndefinedMethodException;
+use \Smuuf\Primi\InternalArgumentCountException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
