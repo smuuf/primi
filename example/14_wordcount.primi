@@ -267,7 +267,7 @@ Přijaté zákony podepisuje předseda Poslanecké sněmovny, prezident republik
 (2) Interpelovaní členové vlády odpovědí na interpelaci do třiceti dnů ode dne jejího podání.";
 
 result = [];
-splat = constitution.split(",");
+splat = constitution.split(/\(\d+\)/);
 foreach (splat as word) {
     result[word] = 0;
 }
@@ -275,3 +275,5 @@ foreach (splat as word) {
 foreach (splat as word) {
     result[word] = result[word] + 1;
 }
+
+constitution = "";
