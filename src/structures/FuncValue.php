@@ -37,7 +37,7 @@ class FuncValue extends Value {
 	}
 
 	public function getStringValue(): string {
-		return $this->value;
+		return "__function__";
 	}
 
 	public function invoke(array $args) {

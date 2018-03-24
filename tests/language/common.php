@@ -40,7 +40,7 @@ function run_test($file) {
 
 		$vars = $context->getVariables();
 		array_walk($vars, function($x, $k) {
-			printf("%s:%s:%s\n", $k, main_class($x), return_string_value($x->getInternalValue()));
+			printf("%s:%s:%s\n", $k, main_class($x), $x->getStringValue());
 		});
 
 	}
@@ -54,24 +54,6 @@ function run_test($file) {
 
 function normalize(string $string) {
 	return preg_replace('~\r\n?~', "\n", $string);
-}
-
-function return_string_value($value) {
-
-	if (is_array($value)) {
-		$return = "[";
-		foreach ($value as $key => $item) {
-			$return .= sprintf("%s:%s,", $key, return_string_value($item->getInternalValue()));
-		}
-		$return = rtrim($return, ',') . "]";
-	} elseif (is_bool($value)) {
-		$return = $value ? 1 : 0;
-	} else {
-		$return = (string) $value;
-	}
-
-	return $return;
-
 }
 
 function main_class($instance) {

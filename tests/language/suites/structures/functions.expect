@@ -1,12 +1,12 @@
 a:NumberValue:0
-one:FuncValue:one
-with_argument:FuncValue:with_argument
-no_return:FuncValue:no_return
+one:FuncValue:__function__
+with_argument:FuncValue:__function__
+no_return:FuncValue:__function__
 x:NumberValue:4
-anon:FuncValue:0ff824c55a13d451
+anon:FuncValue:__function__
 result:NumberValue:12
-anon_short:FuncValue:3e035b330cecf1a0
+anon_short:FuncValue:__function__
 result_2:NumberValue:2
 result_3:NumberValue:112
-censor:FuncValue:25e4b03bf4fbc725
-censored:ArrayValue:[0:very_safe,1:voldemort]
+censor:FuncValue:__function__
+censored:ArrayValue:[0: "very_safe", 1: "voldemort"]

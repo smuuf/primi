@@ -2,6 +2,8 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Structures\FunctionContainer;
+
 require __DIR__ . '/../bootstrap.php';
 
 /** @testcase **/
@@ -75,7 +77,10 @@ require __DIR__ . '/../bootstrap.php';
 		Assert::type('array', $v = $context->getVariables());
 		Assert::falsey($v);
 
-		$funcA = new \Smuuf\Primi\Structures\FuncValue('func_a', [], []);
+		// Create empty function container for testing purposes.
+		$fnContainer = FunctionContainer::buildNative(function() {});
+
+		$funcA = new \Smuuf\Primi\Structures\FuncValue($fnContainer);
 		$context->setVariable('func_a', $funcA);
 
 		// The returned function instance Context returned is the same object as inserted.
@@ -85,8 +90,8 @@ require __DIR__ . '/../bootstrap.php';
 		Assert::truthy($context->getVariables());
 
 		$multi = [
-			'func_b' => ($funcB = new \Smuuf\Primi\Structures\FuncValue('func_b', [], [])),
-			'func_c' => ($funcC = new \Smuuf\Primi\Structures\FuncValue('func_c', [], []))
+			'func_b' => ($funcB = new \Smuuf\Primi\Structures\FuncValue($fnContainer)),
+			'func_c' => ($funcC = new \Smuuf\Primi\Structures\FuncValue($fnContainer)),
 		];
 
 		$context->setVariables($multi);

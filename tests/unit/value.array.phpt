@@ -81,3 +81,14 @@ $items = get_val($arr->call('shuffle'));
 foreach ($items as $item) {
 	Assert::contains($item, $arr->getInternalValue());
 }
+
+// Test cloning the array.
+$copy = $arr->call('copy');
+Assert::notSame($arr, $copy);
+
+// Test that array values were cloned, too (ie. deep copy was performed).
+$a1 = $arr->getInternalValue();
+$a2 = $copy->getInternalValue();
+foreach ($a1 as $index => $item) {
+	Assert::notSame($item, $a2[$index]);
+}

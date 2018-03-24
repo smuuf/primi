@@ -1,24 +1,24 @@
-a:ArrayValue:[0:1,1:2,2:3]
-b:ArrayValue:[0:4,1:5,2:6]
-c:ArrayValue:[0:[0:1,1:2,2:3],1:[0:4,1:5,2:6]]
-d:ArrayValue:[11:[0:[0:1,1:2,2:3],1:[0:4,1:5,2:6]],22:[0:1,1:2,2:3],33:[0:4,1:5,2:6]]
-e:ArrayValue:[123456789123456789aaabbbcccdddeeefff:987654321]
-f:BoolValue:1
-g:BoolValue:0
-h:BoolValue:0
-i:BoolValue:1
-j:BoolValue:0
-k:ArrayValue:[0:2,1:foo,somekey:bar,2:train]
+a:ArrayValue:[0: 1, 1: 2, 2: 3]
+b:ArrayValue:[0: 4, 1: 5, 2: 6]
+c:ArrayValue:[0: [0: 1, 1: 2, 2: 3], 1: [0: 4, 1: 5, 2: 6]]
+d:ArrayValue:[11: [0: [0: 1, 1: 2, 2: 3], 1: [0: 4, 1: 5, 2: 6]], 22: [0: 1, 1: 2, 2: 3], 33: [0: 4, 1: 5, 2: 6]]
+e:ArrayValue:["123456789123456789aaabbbcccdddeeefff": 987654321]
+f:BoolValue:true
+g:BoolValue:false
+h:BoolValue:false
+i:BoolValue:true
+j:BoolValue:false
+k:ArrayValue:[0: 2, 1: "foo", "somekey": "bar", 2: "train"]
 l:NumberValue:2
-m:StringValue:bar
+m:StringValue:"bar"
 test:ArrayValue:[]
-nested:ArrayValue:[x:y,0:extra]
+nested:ArrayValue:["x": "y", 0: "extra"]
 test_result_1:ArrayValue:[]
 test_result_2:ArrayValue:[]
 length_mid:NumberValue:3
-nested_2:ArrayValue:[x:y,0:extra]
+nested_2:ArrayValue:["x": "y", 0: "extra"]
 test_result_3:ArrayValue:[]
 length_post:NumberValue:0
-n:StringValue:d
-o:StringValue:z
-p:ArrayValue:[0:1,1:42,2:3]
+n:StringValue:"d"
+o:StringValue:"z"
+p:ArrayValue:[0: 1, 1: 42, 2: 3]
