@@ -7,6 +7,7 @@ use \Smuuf\Primi\Structures\{
 	NumberValue,
 	RegexValue,
 	ArrayValue,
+	FuncValue,
 	BoolValue
 };
 
@@ -28,6 +29,9 @@ Assert::same(BoolValue::TYPE, Value::buildAutomatic(false)::TYPE);
 
 Assert::same(ArrayValue::TYPE, Value::buildAutomatic([])::TYPE);
 Assert::same(ArrayValue::TYPE, Value::buildAutomatic([1])::TYPE);
+
+Assert::same(FuncValue::TYPE, Value::buildAutomatic(function() {})::TYPE);
+Assert::same(FuncValue::TYPE, Value::buildAutomatic(function($x, $y) { return 1; })::TYPE);
 
 //
 // Getting string representation of values.

@@ -7,7 +7,7 @@ class InternalArgumentCountException extends InternalException {
 	public function __construct(string $name, int $passed = null, int $expected = null) {
 
 		$counts = null;
-		if ($passed) {
+		if ($expected) {
 			$counts = sprintf(" (%d instead of %d)", $passed, $expected);
 		}
 
