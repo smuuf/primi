@@ -26,8 +26,18 @@ $five = new NumberValue(5);
 //
 
 // Create Primi function from a native PHP function.
+// This directly returns a Primi value. (Kind of optional low-levelness.)
 $fn = new FuncValue(FunctionContainer::buildNative(function($a, $b) {
-	return new NumberValue($a->getInternalValue() * $b->getInternalValue() ** 2);
+	return new NumberValue($a * $b ** 2);
+}));
+
+Assert::same(4, get_val($fn->invoke([$one, $two])));
+Assert::same(45, get_val($fn->invoke([$five, $three])));
+
+// This returns a PHP value and thus should be automatically converted
+// to Primi value after returning.
+$fn = new FuncValue(FunctionContainer::buildNative(function($a, $b) {
+	return $a * $b ** 2;
 }));
 
 Assert::same(4, get_val($fn->invoke([$one, $two])));

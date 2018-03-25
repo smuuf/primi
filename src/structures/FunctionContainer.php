@@ -14,9 +14,6 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 	/** @var array Array containing parameters the function is aware of. **/
 	protected $args = [];
 
-	/** @var Context Optional context bound to this function. **/
-	protected $context;
-
 	public static function build(
 		array $node,
 		array $definitionArgs = [],
@@ -67,7 +64,26 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 			return $param->name;
 		}, $r->getParameters());
 
-		return new self($closure, $args);
+		// Wrap the closure into another closure which handles automatic
+		// conversion of parameter types (Primi values -> PHP values) and
+		// return value type (PHP value -> Primi value).
+		$wrapper = function() use ($closure) {
+
+			$args = \array_map(function(Value $value) {
+				return $value->getInternalValue();
+			}, \func_get_args());
+
+			$result = $closure(...$args);
+
+			if (!$result instanceof Value) {
+				return Value::buildAutomatic($result);
+			}
+
+			return $result;
+
+		};
+
+		return new self($wrapper, $args);
 
 	}
 
