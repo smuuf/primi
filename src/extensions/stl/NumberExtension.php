@@ -12,6 +12,10 @@ abstract class NumberExtension extends Extension {
 		return new NumberValue(\round($self->value, $precision ? $precision->value : 0));
 	}
 
+	public static function abs(NumberValue $self) {
+		return new NumberValue(abs($self->value));
+	}
+
 	public static function ceil(NumberValue $self) {
 		return new NumberValue(\ceil($self->value));
 	}

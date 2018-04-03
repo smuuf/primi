@@ -5,10 +5,12 @@ use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
 	RegexValue,
+	FuncValue,
 	ArrayValue,
 	BoolValue,
 	Value
 };
+use \Smuuf\Primi\Structures\FunctionContainer;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -55,6 +57,7 @@ Assert::notSame($cloned->dereference($someKey), $arr->dereference($someKey));
 //
 
 $arr = new ArrayValue([]);
+
 // Push an item into the array and test stuff.
 $arr->call('push', [$anything]);
 Assert::same(1, get_val($arr->propLength()));
@@ -79,7 +82,7 @@ Assert::true($val === $num1 || $val === $num2 || $val === $num3);
 
 $items = get_val($arr->call('shuffle'));
 foreach ($items as $item) {
-	Assert::contains($item, $arr->getInternalValue());
+	Assert::contains($item, get_val($arr));
 }
 
 // Test cloning the array.
@@ -87,8 +90,27 @@ $copy = $arr->call('copy');
 Assert::notSame($arr, $copy);
 
 // Test that array values were cloned, too (ie. deep copy was performed).
-$a1 = $arr->getInternalValue();
-$a2 = $copy->getInternalValue();
+$a1 = get_val($arr);
+$a2 = get_val($copy);
 foreach ($a1 as $index => $item) {
 	Assert::notSame($item, $a2[$index]);
 }
+
+//
+// Test method: "map"
+//
+
+$num1 = new NumberValue(1);
+$num2 = new NumberValue(45);
+$num3 = new NumberValue(-30);
+$arr = new ArrayValue([$num1, $num2, $num3]);
+
+$fn = new FuncValue(FunctionContainer::buildNative(function ($input) {
+	return $input * 2;
+}));
+
+$result = get_val($arr->call('map', [$fn]));
+Assert::type('array', $result);
+Assert::same(2, get_val(array_shift($result)));
+Assert::same(90, get_val(array_shift($result)));
+Assert::same(-60, get_val(array_shift($result)));

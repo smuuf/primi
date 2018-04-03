@@ -164,7 +164,9 @@ Assert::exception(function() use ($integer) {
 	$integer->doMultiplication(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
+//
 // Test division.
+//
 
 Assert::exception(function() use ($float) {
 	$float->doDivision(new NumberValue("-0"));
@@ -190,7 +192,9 @@ Assert::exception(function() use ($integer) {
 	$integer->doDivision(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
+//
 // Test unary.
+//
 
 // Unary addition returns new value.
 Assert::same(2, $integer->doUnary("++")->getInternalValue());
@@ -201,7 +205,9 @@ Assert::exception(function() use ($integer) {
 	$integer->doUnary("!@=");
 }, \TypeError::class);
 
-// Test comparison operators...
+//
+// Test comparison.
+//
 
 function extract_bool_value(BoolValue $b) {
 	return $b->getInternalValue();
@@ -237,6 +243,15 @@ Assert::true(extract_bool_value($tmp));
 //
 // Methods-
 //
+
+$tmp = $integer->call('abs')->getInternalValue();
+Assert::same(1, $tmp);
+$tmp = $biggerInteger->call('abs')->getInternalValue();
+Assert::same(20, $tmp);
+$tmp = $posFloat->call('abs')->getInternalValue();
+Assert::same(2.3, $tmp);
+$tmp = $negFloat->call('abs')->getInternalValue();
+Assert::same(2.3, $tmp);
 
 $tmp = $integer->call('sqrt')->getInternalValue();
 Assert::type('int', $tmp);
