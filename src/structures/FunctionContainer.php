@@ -14,27 +14,35 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 	/** @var array Array containing parameters the function is aware of. **/
 	protected $args = [];
 
+	/**
+	 * Build and return a closure wrapper around a Primi function (represented
+	 * by its node tree).
+	 *
+	 * The closure returns some Primi value object as a result.
+	 */
 	public static function build(
 		array $node,
 		array $definitionArgs = [],
 		Context $definitionContext = \null
 	) {
 
-		// Build a closure wrapper around the Primi function.
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		// The closure also returns the resulting Primi value object.
 		$closure = function() use ($node, $definitionContext, $definitionArgs) {
 
-			// Create new context (scope) for the function, so it doesn't operate
-			// in the global scope (and thus it won't modify the global context.
+			// Create new context (scope) for the function, so it doesn't
+			// operate in the global scope.
 			$context = new Context;
 
+			// Inject variables from the context of the place of the function's
+			// definition into the function.
 			if ($definitionContext) {
 				$context->setVariables($definitionContext->getVariables());
 			}
 
-			// Create pairs of arguments <arg_name> => <arg_value>.
+			// Create pairs of arguments <arg_name> => <arg_value> and
+			// inject them into the function's context, too. (i.e. these are
+			// the arguments passed into it.)
 			$args = \array_combine($definitionArgs, \func_get_args());
 			$context->setVariables($args);
 
@@ -88,7 +96,7 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 	}
 
 	/**
-	 * Disallow direct instantiation.
+	 * Disallow direct instantiation. Always use the prepared static factories.
 	 */
 	private function __construct(\Closure $closure, array $args = []) {
 		$this->closure = $closure;
