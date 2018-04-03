@@ -5,6 +5,7 @@ namespace Smuuf\Primi\Structures;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
+use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsDereference;
 use \Smuuf\Primi\ISupportsInsertion;
@@ -13,6 +14,7 @@ use \Smuuf\Primi\ErrorException;
 class StringValue extends Value implements
 	ISupportsAddition,
 	ISupportsSubtraction,
+	ISupportsMultiplication,
 	ISupportsIteration,
 	ISupportsComparison,
 	ISupportsInsertion,
@@ -51,6 +53,20 @@ class StringValue extends Value implements
 		self::allowTypes($rightOperand, self::class);
 
 		return new self(\str_replace($rightOperand->value, \null, $this->value));
+
+	}
+
+	public function doMultiplication(Value $rightOperand) {
+
+		// Allow only number as right operands.
+		self::allowTypes($rightOperand, NumberValue::class);
+
+		$multiplier = $rightOperand->value;
+		if (is_int($multiplier) && $multiplier >= 0) {
+			return new self(str_repeat($this->value, $multiplier));
+		}
+
+		throw new \TypeError;
 
 	}
 

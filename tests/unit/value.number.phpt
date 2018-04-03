@@ -12,6 +12,7 @@ use \Smuuf\Primi\Structures\{
 require __DIR__ . '/../bootstrap.php';
 
 $integer = new NumberValue("1");
+$biggerInteger = new NumberValue("20");
 $posInteger = new NumberValue("+1");
 $negInteger = new NumberValue("-1");
 $integeryFloat = new NumberValue("1.0");
@@ -25,6 +26,10 @@ $posZero = new NumberValue("+0");
 $negZero = new NumberValue("-0");
 $posZeroFloat = new NumberValue("+0.0");
 $negZeroFloat = new NumberValue("-0.0");
+
+//
+// Test int vs float detection.
+//
 
 // Test that various input correcly decide which is int and which is float.
 Assert::type('int', $integer->getInternalValue());
@@ -42,6 +47,10 @@ Assert::type('int', $negZero->getInternalValue());
 Assert::type('float', $posZeroFloat->getInternalValue());
 Assert::type('float', $negZeroFloat->getInternalValue());
 
+//
+// Numeric string detection.
+//
+
 // Test correct detection of "numeric" string.
 Assert::true(NumberValue::isNumeric("1"));
 Assert::true(NumberValue::isNumeric("1.2"));
@@ -56,7 +65,9 @@ Assert::false(NumberValue::isNumeric("2 2"));
 Assert::true(NumberValue::isNumeric("+0.0"));
 Assert::false(NumberValue::isNumeric("+-1"));
 
+//
 // Test addition.
+//
 
 // Addition with a negative 0 constructed from string.
 Assert::same(1, $integer->doAddition(new NumberValue("-0"))->getInternalValue());
@@ -95,7 +106,9 @@ Assert::exception(function() use ($integer) {
 	$integer->doAddition(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
+//
 // Test subtraction.
+//
 
 Assert::same(1, $integer->doSubtraction(new NumberValue("-0"))->getInternalValue());
 Assert::same(6, $integer->doSubtraction(new NumberValue("-5"))->getInternalValue());
@@ -103,7 +116,7 @@ Assert::same(1, $integer->doSubtraction(new NumberValue(0))->getInternalValue())
 Assert::same(0, $integer->doSubtraction(new NumberValue(1))->getInternalValue());
 Assert::same(124, $integer->doSubtraction(new NumberValue(-123))->getInternalValue());
 
-// Subtaction with unsupported formats will result in type error.
+// Subtraction with unsupported formats will result in type error.
 Assert::exception(function() use ($integer) {
 	$integer->doSubtraction(new StringValue("1"));
 }, \TypeError::class);
@@ -117,17 +130,29 @@ Assert::exception(function() use ($integer) {
 	$integer->doSubtraction(new RegexValue("/[abc]/"));
 }, \TypeError::class);
 
+//
 // Test multiplication.
+//
 
+// Multiplication with numbers.
 Assert::same(0, $float->doMultiplication(new NumberValue("-0"))->getInternalValue());
 Assert::same(-11.5, $float->doMultiplication(new NumberValue("-5"))->getInternalValue());
 Assert::same(0, $float->doMultiplication(new NumberValue(0))->getInternalValue());
 Assert::same(2.3, $float->doMultiplication(new NumberValue(1))->getInternalValue());
 Assert::same(-282.9, $float->doMultiplication(new NumberValue(-123))->getInternalValue());
 
-// Subtaction with unsupported formats will result in type error.
-Assert::exception(function() use ($integer) {
-	$integer->doMultiplication(new StringValue("1"));
+// Multiplication by a string.
+$result = $biggerInteger->doMultiplication(new StringValue(" "))->getInternalValue();
+Assert::same("                    ", $result);
+$result = $biggerInteger->doMultiplication(new StringValue(" _ěšč"))->getInternalValue();
+Assert::same(" _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč", $result);
+
+// Multiplication with unsupported formats will result in type error.
+Assert::exception(function() use ($posFloat) {
+	$posFloat->doMultiplication(new StringValue(" a"));
+}, \TypeError::class);
+Assert::exception(function() use ($negFloat) {
+	$negFloat->doMultiplication(new StringValue(" b"));
 }, \TypeError::class);
 Assert::exception(function() use ($integer) {
 	$integer->doMultiplication(new ArrayValue([]));

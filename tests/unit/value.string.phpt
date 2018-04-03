@@ -75,6 +75,24 @@ Assert::exception(function() use ($string) {
 }, \TypeError::class);
 
 //
+// Multiplication.
+//
+
+// Multiplication by an integer number.
+$result = $string->doMultiplication(new NumberValue(2))->getInternalValue();
+Assert::same("this is a string.this is a string.", $result);
+$result = $unicode->doMultiplication(new NumberValue(3))->getInternalValue();
+Assert::same("ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.", $result);
+
+// Multiplication with float number will result in type error.
+Assert::exception(function() use ($string) {
+	$string->doMultiplication(new NumberValue(2.1));
+}, \TypeError::class);
+Assert::exception(function() use ($unicode) {
+	$unicode->doMultiplication(new NumberValue("3.1459"));
+}, \TypeError::class);
+
+//
 // Test comparison operators...
 //
 

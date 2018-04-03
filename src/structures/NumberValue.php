@@ -60,9 +60,20 @@ class NumberValue extends Value implements
 		return new self($this->value - $rightOperand->value);
 	}
 
-	public function doMultiplication(Value $rightOperand): self {
-		self::allowTypes($rightOperand, self::class);
+	public function doMultiplication(Value $rightOperand) {
+
+		self::allowTypes($rightOperand, self::class, StringValue::class);
+
+		if ($rightOperand instanceof StringValue) {
+			$multiplier = $this->value;
+			if (is_int($multiplier) && $multiplier >= 0) {
+				return new StringValue(str_repeat($rightOperand->value, $multiplier));
+			}
+			throw new \TypeError;
+		}
+
 		return new self($this->value * $rightOperand->value);
+
 	}
 
 	public function doDivision(Value $rightOperand): self {
