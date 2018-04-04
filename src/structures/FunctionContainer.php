@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ReturnException;
+use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 
@@ -56,6 +57,9 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 			} catch (ReturnException $e) {
 				return $e->getValue();
 			}
+
+			// Return null if no "return" was present.
+			return new NullValue;
 
 		};
 

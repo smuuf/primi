@@ -3,23 +3,22 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ISupportsComparison;
-use \Smuuf\Primi\Structures\NullValue;
+use \Smuuf\Primi\Structures\BoolValue;
+use \Smuuf\Primi\Structures\Value;
 
-class BoolValue extends Value implements ISupportsComparison {
+class NullValue extends Value implements ISupportsComparison {
 
-	const TYPE = "bool";
+	const TYPE = "null";
 
-	public function __construct(bool $value) {
-		$this->value = $value;
-	}
+	protected $value = null;
 
 	public function getStringValue(): string {
-		return $this->value ? 'true' : 'false';
+		return "null";
 	}
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		self::allowTypes($rightOperand, self::class, NullValue::class);
+		self::allowTypes($rightOperand, self::class, BoolValue::class);
 
 		switch ($op) {
 			case "==":

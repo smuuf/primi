@@ -8,3 +8,4 @@ g:StringValue:"xyz"
 i:StringValue:"this is some whole very long sentence."
 j:BoolValue:true
 k:BoolValue:false
+l:NullValue:null

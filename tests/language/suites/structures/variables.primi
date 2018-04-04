@@ -13,3 +13,6 @@ i = "this is some whole very long sentence.";
 // Bool
 j = true;
 k = false;
+
+// Null
+l = null;
