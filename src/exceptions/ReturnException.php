@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Structures\NullValue;
+
 class ReturnException extends InternalException {
 
 	/** @var mixed **/
@@ -13,7 +15,7 @@ class ReturnException extends InternalException {
 	}
 
 	public function getValue() {
-		return $this->value;
+		return $this->value ?? new NullValue;
 	}
 
 }

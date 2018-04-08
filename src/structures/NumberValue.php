@@ -31,8 +31,8 @@ class NumberValue extends Value implements
 	public static function isNumericInt(string $input) {
 
 		// Trim any present sign, because it screws up the detection.
-		// "+1" _is_ int, but the equation below would wrongly return false, because
-		// it's casted to (int) and the sign disappears there -> false.
+		// "+1" _is_ int, but the equation below would wrongly return false,
+		// because it's casted to (int) and the sign disappears there -> false.
 		$input = \ltrim($input, "+-");
 
 		return (string) (int) $input === (string) $input;

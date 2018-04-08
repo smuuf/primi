@@ -20,23 +20,24 @@ class Multiplication extends \Smuuf\Primi\StrictObject implements IHandler, IRed
 
 		Helpers::ensureIndexed($node['ops']);
 
-		// Go through each of the operands and build the final result value combining the operand's value with the
-		// so-far-result. The operator determining the operands's effect on the result always has the "n-1" index.
-		$first = \true;
-		$result = \null;
-		foreach ($node['operands'] as $index => $operandNode) {
+		$operands = $node['operands'];
+
+		$firstOperand = array_shift($operands);
+		$handler = HandlerFactory::get($firstOperand['name']);
+		$result = $handler::handle($firstOperand, $context);
+
+		// Go through each of the operands and continuously calculate the result
+		// value combining the operand's value with the result-so-far. The
+		// operator determining the operands's effect on the result has always
+		// the "n" index. (It would be "n-1" but we shifted the first operand
+		// already.)
+		foreach ($operands as $index => $operandNode) {
 
 			$handler = HandlerFactory::get($operandNode['name']);
-			if ($first) {
-				$result = $handler::handle($operandNode, $context);
-				$first = \false;
-				continue;
-			} else {
-				$tmp = $handler::handle($operandNode, $context);
-			}
+			$tmp = $handler::handle($operandNode, $context);
 
 			// Extract the text of the assigned operator node.
-			$op = $node['ops'][$index - 1]['text'];
+			$op = $node['ops'][$index]['text'];
 
 			try {
 

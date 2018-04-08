@@ -12,6 +12,8 @@ abstract class Value extends ValueFriends {
 	public static function buildAutomatic($value) {
 
 		switch (true) {
+			case $value === null:
+				return new NullValue;
 			case \is_bool($value):
 				return new BoolValue($value);
 			case \is_array($value):
