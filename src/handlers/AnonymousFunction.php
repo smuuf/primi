@@ -28,9 +28,6 @@ class AnonymousFunction extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		}
 
-		// Build convenient hash to ease identification amongst other functions.
-		$name = substr(Helpers::hash($argumentList, $node['body']), 0, 16);
-
 		$fn = FunctionContainer::build($node['body'], $argumentList, $context);
 		return new FuncValue($fn);
 

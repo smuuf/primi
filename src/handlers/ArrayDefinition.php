@@ -12,16 +12,21 @@ class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
-		if (!isset($node['items'])) {
+		if (empty($node['items'])) {
 			return new ArrayValue([]);
 		}
 
-		$result = [];
-		$indexCounter = 0;
-
 		Helpers::ensureIndexed($node['items']);
+		return new ArrayValue(self::buildArray($node['items'], $context));
 
-		foreach ($node['items'] as $itemNode) {
+	}
+
+	protected static function buildArray(array $itemNodes, Context $context): array {
+
+		$result = [];
+		$index = 0;
+
+		foreach ($itemNodes as $itemNode) {
 
 			// Key doesn't have to be defined.
 			if (isset($itemNode['key'])) {
@@ -33,13 +38,13 @@ class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 				// And if it is a numeric integer, use it as a base for the index counter
 				// we would have used if the key was not provided.
 				if (NumberValue::isNumericInt($key)) {
-					$indexCounter = $key + 1;
+					$index = $key + 1;
 				}
 
 			} else {
 
 				// The key was not provided, assign a key for this item using our internal index counter.
-				$key = $indexCounter++;
+				$key = $index++;
 
 			}
 
@@ -50,7 +55,7 @@ class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		}
 
-		return new ArrayValue($result);
+		return $result;
 
 	}
 

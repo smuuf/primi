@@ -33,7 +33,7 @@ class Assignment extends \Smuuf\Primi\StrictObject implements IHandler {
 			break;
 		}
 
-		// Assignment also returns its value.
+		// An assignment also returns its value.
 		return $return;
 
 	}

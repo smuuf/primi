@@ -13,7 +13,7 @@ abstract class Value extends ValueFriends {
 
 		switch (true) {
 			case $value === null:
-				return new NullValue(false);
+				return new NullValue;
 			case \is_bool($value):
 				return new BoolValue($value);
 			case \is_array($value):

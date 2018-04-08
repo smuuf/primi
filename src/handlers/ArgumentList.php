@@ -17,17 +17,16 @@ class ArgumentList extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
+		if (!isset($node['args'])) {
+			return [];
+		}
+
 		$list = [];
+		Helpers::ensureIndexed($node['args']);
 
-		if (isset($node['args'])) {
-
-			Helpers::ensureIndexed($node['args']);
-
-			foreach ($node['args'] as $a) {
-				$handler = HandlerFactory::get($a['name']);
-				$list[] = $handler::handle($a, $context);
-			}
-
+		foreach ($node['args'] as $a) {
+			$handler = HandlerFactory::get($a['name']);
+			$list[] = $handler::handle($a, $context);
 		}
 
 		return $list;
