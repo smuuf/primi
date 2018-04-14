@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ReturnException;
 use \Smuuf\Primi\Structures\NullValue;
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 
@@ -13,7 +14,7 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 	protected $closure;
 
 	/** @var array Array containing parameters the function is aware of. **/
-	protected $args = [];
+	protected $argsCount = 0;
 
 	/**
 	 * Build and return a closure wrapper around a Primi function (represented
@@ -29,7 +30,7 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function() use ($node, $definitionContext, $definitionArgs) {
+		$closure = function(...$args) use ($node, $definitionContext, $definitionArgs) {
 
 			// Create new context (scope) for the function, so it doesn't
 			// operate in the global scope.
@@ -44,7 +45,7 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 			// Create pairs of arguments <arg_name> => <arg_value> and
 			// inject them into the function's context, too. (i.e. these are
 			// the arguments passed into it.)
-			$args = \array_combine($definitionArgs, \func_get_args());
+			$args = \array_combine($definitionArgs, $args);
 			$context->setVariables($args);
 
 			try {
@@ -63,7 +64,7 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($closure, $definitionArgs);
+		return new self($closure, count($definitionArgs));
 
 	}
 
@@ -72,18 +73,16 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 		$closure = \Closure::fromCallable($fn);
 
 		$r = new \ReflectionFunction($closure);
-		$args = \array_map(function($param) {
-			return $param->name;
-		}, $r->getParameters());
+		$argsCount = $r->getNumberOfRequiredParameters();
 
 		// Wrap the closure into another closure which handles automatic
 		// conversion of parameter types (Primi values -> PHP values) and
 		// return value type (PHP value -> Primi value).
-		$wrapper = function() use ($closure) {
+		$wrapper = function(...$args) use ($closure) {
 
 			$args = \array_map(function(Value $value) {
 				return $value->getInternalValue();
-			}, \func_get_args());
+			}, $args);
 
 			$result = $closure(...$args);
 
@@ -95,24 +94,45 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($wrapper, $args);
+		return new self($wrapper, $argsCount);
+
+	}
+
+	public static function buildExtensionFunction(callable $fn) {
+
+		$closure = \Closure::fromCallable($fn);
+
+		$r = new \ReflectionFunction($closure);
+		$argsCount = $r->getNumberOfRequiredParameters();;
+
+		// Extension methods have "self" as first parameter, but we need
+		// to ignore that parameter for now internal purposes in the function
+		// container (otherwise our engine would think the method needs one too
+		// many arguments).
+		$argsCount--;
+
+		$wrapper = function(...$args) use ($closure) {
+			return $closure(...$args);
+		};
+
+		return new self($wrapper, $argsCount);
 
 	}
 
 	/**
-	 * Disallow direct instantiation. Always use the prepared static factories.
+	 * Disallow direct instantiation. Always use the static factories above.
 	 */
-	private function __construct(\Closure $closure, array $args = []) {
+	private function __construct(\Closure $closure, int $argsCount = 0) {
 		$this->closure = $closure;
-		$this->args = $args;
+		$this->argsCount = $argsCount;
 	}
 
 	public function getClosure() {
 		return $this->closure;
 	}
 
-	public function getArgs() {
-		return $this->args;
+	public function getArgsCount(): int {
+		return $this->argsCount;
 	}
 
 }

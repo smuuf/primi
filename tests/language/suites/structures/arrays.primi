@@ -29,7 +29,7 @@ test_result_2 = test;
 test.push(nested);
 
 // Should be 3 now.
-length_mid = test.length;
+length_mid = test.length();
 
 // test" === test_result_1 === test_result_2 === [123,456] and nested_2 = ["x":"y"];
 nested_2 = test.pop();
@@ -46,7 +46,7 @@ test.pop();
 // test === test_result_1 === test_result_2 should be now empty.
 
 // Should be zero now.
-length_post = test.length;
+length_post = test.length();
 
 n = ["a": "b", "c": "d"]["c"];
 o = ["x": "y", "c": "z"]["čaukoc" - "čauko"];

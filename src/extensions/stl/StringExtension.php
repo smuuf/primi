@@ -11,9 +11,13 @@ use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ErrorException;
 
-abstract class StringExtension extends Extension {
+class StringExtension extends Extension {
 
-	public static function format(StringValue $self, Value ...$items) {
+	public function length(StringValue $self): NumberValue {
+		return new NumberValue(mb_strlen($self->value));
+	}
+
+	public function format(StringValue $self, Value ...$items): StringValue {
 
 		// Extract PHP values from passed in value objects, because later we will pass the values to sprintf().
 		\array_walk($items, function(&$i) {
@@ -54,7 +58,7 @@ abstract class StringExtension extends Extension {
 
 	}
 
-	public static function replace(StringValue $self, Value $search, StringValue $replace = \null) {
+	public function replace(StringValue $self, Value $search, StringValue $replace = \null): StringValue {
 
 		// Replacing using array of search-replace pairs.
 		if ($search instanceof ArrayValue) {
@@ -72,7 +76,7 @@ abstract class StringExtension extends Extension {
 		}
 
 		if ($replace === \null) {
-			throw new \TypeError;
+			throw new \ArgumentCountError;
 		}
 
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
@@ -88,7 +92,23 @@ abstract class StringExtension extends Extension {
 
 	}
 
-	public static function split(StringValue $self, Value $delimiter): ArrayValue {
+	public function reverse(StringValue $self): StringValue {
+
+		// strrev() does not support multibyte.
+		// Let's do it ourselves then!
+
+		$result = '';
+		$len = mb_strlen($self->value);
+
+		for ($i = $len; $i-- > 0;) {
+			$result .= mb_substr($self->value, $i, 1);
+		}
+
+		return new StringValue($result);
+
+	}
+
+	public function split(StringValue $self, Value $delimiter): ArrayValue {
 
 		// Allow only some value types.
 		Value::allowTypes($delimiter, StringValue::class, RegexValue::class);
@@ -107,7 +127,7 @@ abstract class StringExtension extends Extension {
 
 	}
 
-	public static function count(StringValue $self, Value $needle): NumberValue {
+	public function count(StringValue $self, Value $needle): NumberValue {
 
 		// Allow only some value types.
 		Value::allowTypes($needle, StringValue::class, NumberValue::class);
@@ -116,7 +136,7 @@ abstract class StringExtension extends Extension {
 
 	}
 
-	public static function first(StringValue $self, Value $needle): Value {
+	public function first(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
 		Value::allowTypes($needle, StringValue::class, NumberValue::class);
@@ -130,7 +150,7 @@ abstract class StringExtension extends Extension {
 
 	}
 
-	public static function last(StringValue $self, Value $needle): Value {
+	public function last(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
 		Value::allowTypes($needle, StringValue::class, NumberValue::class);

@@ -6,9 +6,9 @@ c = a.last("a");
 d = a.first(12);
 e = a.last(23); // After multi-byte characters "áš"
 
-// Length.
-f = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".length;
-g = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.".length;
+// Length().
+f = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".length();
+g = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.".length();
 
 // Count.
 h = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".count("a");

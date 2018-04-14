@@ -124,7 +124,7 @@ class StringValue extends Value implements
 	public function insert(?Value $index, Value $value): Value {
 
 		// Allow only strings to be inserted.
-		self::allowTypes($value, self::class);
+		self::allowTypes($value, self::class, NumberValue::class);
 
 		if ($index === \null) {
 
@@ -177,12 +177,5 @@ class StringValue extends Value implements
 		}
 
 	}
-
-	// Properties.
-
-	public function propLength(): NumberValue {
-		return new NumberValue(\mb_strlen($this->value));
-	}
-
 
 }

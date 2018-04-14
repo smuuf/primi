@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\ISupportsInsertion;
 
 /**
@@ -25,7 +26,17 @@ class InsertionProxy extends \Smuuf\Primi\StrictObject {
 	}
 
 	public function commit(Value $value) {
-		$this->target->insert($this->key, $value);
+
+		try {
+			$this->target->insert($this->key, $value);
+		} catch (\TypeError $e) {
+			throw new ErrorException(sprintf(
+				"Cannot insert type '%s' into type '%s'",
+				$value::TYPE,
+				$this->target::TYPE
+			));
+		}
+
 	}
 
 }

@@ -41,7 +41,7 @@ result_3 = anon(anon_short, 10, 100);
 censor = (words) => {
 	filtered = [];
 	foreach (words as word) {
-		if (word.length != 4) {
+		if (word.length() != 4) {
 			filtered.push(word);
 		}
 	}

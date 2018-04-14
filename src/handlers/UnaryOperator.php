@@ -35,7 +35,7 @@ class UnaryOperator extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		if (!$value instanceof ISupportsUnary) {
 			throw new ErrorException(sprintf(
-				"Cannot perform unary operation on '%s'",
+				"Cannot perform unary operation on type '%s'",
 				$value::TYPE
 			), $node);
 		}

@@ -7,7 +7,7 @@ use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ErrorEception;
-use \Smuuf\Primi\InternalUndefinedMethodException;
+use \Smuuf\Primi\InternalUndefinedPropertyException;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -15,11 +15,11 @@ function get_val(Value $v) {
 	return $v->getInternalValue();
 }
 
-abstract class BadExtension {
+class BadExtension {
 
 }
 
-abstract class CustomExtension extends Extension {
+class CustomExtension extends Extension {
 
     public static function funnyreverse(StringValue $self, StringValue $prefix): StringValue {
         return new StringValue($prefix->value . '_' . strrev($self->value));
@@ -32,40 +32,45 @@ abstract class CustomExtension extends Extension {
 }
 
 //
-// Registering a not-an-extension.
+// Adding a not-an-extension.
 //
 
-// Test that trying to register a extension that doesn't really
+// Test that trying to add a extension that doesn't really
 // if an extension..
 Assert::exception(function() {
-    ExtensionHub::register(BadExtension::class, StringValue::class);
-}, \LogicException::class, '#Unable to register#i');
+    ExtensionHub::add(BadExtension::class, StringValue::class);
+}, \LogicException::class, '#not a valid#i');
 
 //
-// Registering proper extension.
+// adding proper extension.
 //
 
 $string = new StringValue("jelenovi pivo nelej");
 
-// No extension registered yet, expecting "undefined method" error.
+// No extension added yet, expecting "undefined method" error.
 Assert::exception(function() use ($string) {
     $string->call('funnyreverse', [new StringValue('haha')]);
-}, InternalUndefinedMethodException::class);
+}, InternalUndefinedPropertyException::class);
 
-// Registering proper extension throws no error.
+// Adding proper extension throws no error.
 Assert::noError(function() {
-    ExtensionHub::register(CustomExtension::class, StringValue::class);
+    ExtensionHub::add(CustomExtension::class, StringValue::class);
 });
 
-// After the extension is registered, the method is now available for the string value.
-$result = $string->call('funnyreverse', [new StringValue('haha')]);
+// Strings created _after_ the extension is registered are aware of the
+// registered extension.
+$stringTwo = new StringValue("jelenovi pivo nelej");
+
+// After the extension is added, the method is now available for the newly
+// created string value.
+$result = $stringTwo->call('funnyreverse', [new StringValue('haha')]);
 Assert::same('haha_jelen ovip ivonelej', get_val($result));
 
 // Test passing in wrong number of arguments. (we expect PHP internal exception here.)
-Assert::exception(function() use ($string) {
-    $string->call('funnyreverse');
+Assert::exception(function() use ($stringTwo) {
+    $stringTwo->call('funnyreverse');
 }, \ArgumentCountError::class);
 
 // Test that standard library's first() method was sucessfully overridden.
-$result = $string->call('first', [new StringValue('kalamář')]);
+$result = $stringTwo->call('first', [new StringValue('kalamář')]);
 Assert::same('1st kalamář', get_val($result));

@@ -85,10 +85,4 @@ class ArrayValue extends Value implements
 		return new InsertionProxy($this, $key);
 	}
 
-	// Properties.
-
-	public function propLength(): NumberValue {
-		return new NumberValue((string) \count($this->value));
-	}
-
 }

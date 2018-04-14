@@ -53,7 +53,7 @@ class Addition extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 			} catch (\TypeError $e) {
 
 				throw new ErrorException(sprintf(
-					"Cannot %s: '%s' and '%s'",
+					"Cannot %s types '%s' and '%s'",
 					$op === "+" ? "add" : "subtract",
 					$result::TYPE,
 					$tmp::TYPE

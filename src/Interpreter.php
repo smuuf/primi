@@ -73,3 +73,9 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 	}
 
 }
+
+ExtensionHub::add([
+	\Smuuf\Primi\Stl\StringExtension::class => \Smuuf\Primi\Structures\StringValue::class,
+	\Smuuf\Primi\Stl\NumberExtension::class => \Smuuf\Primi\Structures\NumberValue::class,
+	\Smuuf\Primi\Stl\ArrayExtension::class => \Smuuf\Primi\Structures\ArrayValue::class,
+]);

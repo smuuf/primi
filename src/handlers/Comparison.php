@@ -37,7 +37,7 @@ class Comparison extends \Smuuf\Primi\StrictObject implements IHandler {
 		} catch (\TypeError $e) {
 
 			throw new ErrorException(sprintf(
-				"Cannot compare: '%s' and '%s'",
+				"Cannot compare types '%s' and '%s'",
 				$leftReturn::TYPE,
 				$rightReturn::TYPE
 			), $node);

@@ -3,11 +3,21 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Structures\ValueFriends;
-use \Smuuf\Primi\InternalUndefinedMethodException;
+use \Smuuf\Primi\ExtensionHub;
+use \Smuuf\Primi\InternalUndefinedPropertyException;
 
 abstract class Value extends ValueFriends {
 
 	const TYPE = "__no_type__";
+
+	/**
+	 * @var array<Value>
+	 * Properties of this value object.
+	 */
+	protected $properties = [];
+
+	/** @var bool **/
+	protected $propertiesInitialized = false;
 
 	public static function buildAutomatic($value) {
 
@@ -32,26 +42,54 @@ abstract class Value extends ValueFriends {
 		return $this->value;
 	}
 
+	abstract public function getStringValue(): string;
+
 	/**
 	 * Call a method on this value.
 	 * Engine uses this method as proxy to all value methods.
 	 */
-	public function call(string $method, array $args = []): Value {
+	public function getProperty(string $name): Value {
 
-		// Get extensions registered for this class.
-		$exts = \Smuuf\Primi\ExtensionHub::get(static::class);
-
-		foreach ($exts as $ext) {
-			if (\method_exists($ext, $method)) {
-				return $ext::{$method}($this, ...$args);
-			}
+		if (!$this->propertiesInitialized) {
+			$this->initProperties();
 		}
 
-		throw new InternalUndefinedMethodException;
+		if (isset($this->properties[$name])) {
+			return $this->properties[$name];
+		}
+
+		throw new InternalUndefinedPropertyException;
 
 	}
 
-	abstract public function getStringValue(): string;
+	/**
+	 * Load properties from globally registered extensions.
+	 */
+	private function initProperties() {
+
+		$items = \Smuuf\Primi\ExtensionHub::get(static::class);
+		foreach ($items as $name => &$item) {
+
+			// If the value is a function, set "this" value instance to to
+			// as the function's "self". See FuncValue::bind() for details.
+			if ($item instanceof FuncValue) {
+				$item->bind($this);
+			}
+
+		}
+
+		// Don't overwrite any previously set properties.
+		$this->properties = $this->properties + $items;
+
+	}
+
+	/**
+	 * Shorthand for programatically getting the bound function (method) and
+	 * invoking it with optionally specified argumments.
+	 */
+	public function call(string $name, $args = []): Value {
+		return $this->getProperty($name)->invoke($args);
+	}
 
 	/**
 	 * Throw new TypeException when the value does not match any of the types provided.

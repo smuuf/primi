@@ -38,7 +38,7 @@ class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 
 				if (!$target instanceof ISupportsDereference) {
 					throw new ErrorException(sprintf(
-						"Value type '%s' does not support dereferencing.",
+						"Type '%s' does not support dereferencing",
 						$target::TYPE
 					), $node);
 				}
@@ -58,7 +58,7 @@ class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 		// going to put the new value into.
 		if (!$target instanceof ISupportsInsertion) {
 			throw new ErrorException(sprintf(
-				"Value type '%s' does not support insertion.",
+				"Type '%s' does not support insertion",
 				$target::TYPE
 			), $node);
 		}

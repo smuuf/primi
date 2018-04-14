@@ -2,7 +2,6 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\InternalArgumentCountException;
 use \Smuuf\Primi\Structures\{
 	FuncValue,
 	NumberValue,
@@ -50,9 +49,9 @@ Assert::same(45, get_val($fn->invoke([$five, $three])));
 // No arguments (but expected some).
 Assert::exception(function() use ($fn) {
 	$fn->invoke([]);
-}, InternalArgumentCountException::class);
+}, \ArgumentCountError::class);
 
-// Too many arguments (expected less).
-Assert::exception(function() use ($fn, $one, $two, $three) {
+// Too many arguments (expected less) - valid. Allow it.
+Assert::noError(function() use ($fn, $one, $two, $three) {
 	$fn->invoke([$one, $two, $three]);
-}, InternalArgumentCountException::class);
+});
