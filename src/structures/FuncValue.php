@@ -8,13 +8,13 @@ class FuncValue extends Value {
 
 	const TYPE = "function";
 
-	/** @var FunctionContainer The function container itself. **/
+	/** @var FnContainer The function container itself. **/
 	protected $value;
 
 	/** @var Value Value object acting as "this" when this function is invoked. **/
 	protected $self;
 
-	public function __construct(FunctionContainer $fn) {
+	public function __construct(FnContainer $fn) {
 		$this->value = $fn;
 	}
 
@@ -36,7 +36,7 @@ class FuncValue extends Value {
 		return $this->self;
 	}
 
-	public function invoke(array $args) {
+	public function invoke(array $args = []) {
 
 		$closure = ($this->value->getClosure());
 

@@ -2,7 +2,8 @@
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Structures\FunctionContainer;
+use \Smuuf\Primi\Structures\FnContainer;
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\FuncValue;
 
 class ExtensionHub extends \Smuuf\Primi\StrictObject {
@@ -32,14 +33,14 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public static function get($target) {
-		return self::$extensions[$target];
+	public static function get($target): array {
+		return self::$extensions[$target] ?? [];
 	}
 
 	protected static function process(string $class): array {
 
 		$classRef = new \ReflectionClass($class);
-		$methods = $classRef->getMethods(~\ReflectionMethod::IS_STATIC | \ReflectionMethod::IS_PUBLIC);
+		$methods = $classRef->getMethods(\ReflectionMethod::IS_PUBLIC);
 		$instance = new $class;
 		$result = [];
 
@@ -53,20 +54,12 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 			}
 
 			// Extensions must provide return types for its functions.
-			$returnType = $methodRef->getReturnType();
-			if (!$returnType) {
-				throw new \LogicException("Extension method '$class::{$methodRef->name}()' must have return type specified.");
+			$value = $instance->$methodName();
+			if (!$value instanceof Value) {
+				$value = Value::buildAutomatic($value);
 			}
 
-			// And that return type must be represent a value.
-			$returnType = $returnType->getName();
-			if (!is_a($returnType, \Smuuf\Primi\Structures\Value::class, true)) {
-				throw new \LogicException("Extension method '$class::{$methodRef->name}()' has wrong return type '$returnType'.");
-			}
-
-			$callable = [$instance, $methodName];
-			$container = FunctionContainer::buildExtensionFunction($callable);
-			$result[$methodName] = new FuncValue($container);
+			$result[$methodName] = $value;
 
 		}
 

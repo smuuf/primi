@@ -8,7 +8,7 @@ use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 
-class FunctionContainer extends \Smuuf\Primi\StrictObject {
+class FnContainer extends \Smuuf\Primi\StrictObject {
 
 	/** @var \Closure Closure wrapping the function itself. **/
 	protected $closure;
@@ -75,6 +75,21 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 		$r = new \ReflectionFunction($closure);
 		$argsCount = $r->getNumberOfRequiredParameters();
 
+		$wrapper = function(...$args) use ($closure) {
+			return $closure(...$args);
+		};
+
+		return new self($wrapper, $argsCount);
+
+	}
+
+	public static function buildRaw(callable $fn) {
+
+		$closure = \Closure::fromCallable($fn);
+
+		$r = new \ReflectionFunction($closure);
+		$argsCount = $r->getNumberOfRequiredParameters();
+
 		// Wrap the closure into another closure which handles automatic
 		// conversion of parameter types (Primi values -> PHP values) and
 		// return value type (PHP value -> Primi value).
@@ -92,27 +107,6 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 
 			return $result;
 
-		};
-
-		return new self($wrapper, $argsCount);
-
-	}
-
-	public static function buildExtensionFunction(callable $fn) {
-
-		$closure = \Closure::fromCallable($fn);
-
-		$r = new \ReflectionFunction($closure);
-		$argsCount = $r->getNumberOfRequiredParameters();;
-
-		// Extension methods have "self" as first parameter, but we need
-		// to ignore that parameter for now internal purposes in the function
-		// container (otherwise our engine would think the method needs one too
-		// many arguments).
-		$argsCount--;
-
-		$wrapper = function(...$args) use ($closure) {
-			return $closure(...$args);
 		};
 
 		return new self($wrapper, $argsCount);

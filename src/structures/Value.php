@@ -2,22 +2,24 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Structures\ValueFriends;
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ExtensionHub;
+use \Smuuf\Primi\InternalUndefinedVariableException;
 use \Smuuf\Primi\InternalUndefinedPropertyException;
+use \Smuuf\Primi\Structures\ValueFriends;
 
 abstract class Value extends ValueFriends {
 
 	const TYPE = "__no_type__";
 
 	/**
-	 * @var array<Value>
-	 * Properties of this value object.
+	 * This value object's own context (eg. contains properties, etc.)
+	 * @var Context
 	 */
-	protected $properties = [];
+	protected $innerContext;
 
 	/** @var bool **/
-	protected $propertiesInitialized = false;
+	protected $innerContextInitialized = false;
 
 	public static function buildAutomatic($value) {
 
@@ -29,7 +31,7 @@ abstract class Value extends ValueFriends {
 			case \is_array($value):
 				return new ArrayValue(array_map([self::class, 'buildAutomatic'], $value));
 			case \is_callable($value);
-					return new FuncValue(FunctionContainer::buildNative($value));
+					return new FuncValue(FnContainer::buildNative($value));
 			case NumberValue::isNumeric($value): // Must be after "is_array" case.
 				return new NumberValue($value);
 			default:
@@ -44,42 +46,35 @@ abstract class Value extends ValueFriends {
 
 	abstract public function getStringValue(): string;
 
-	/**
-	 * Call a method on this value.
-	 * Engine uses this method as proxy to all value methods.
-	 */
 	public function getProperty(string $name): Value {
 
-		if (!$this->propertiesInitialized) {
-			$this->initProperties();
+		if (!$this->innerContextInitialized) {
+			$this->initInnerContext();
 		}
 
-		if (isset($this->properties[$name])) {
-			return $this->properties[$name];
+		try {
+			return $this->innerContext->getVariable($name);
+		} catch (InternalUndefinedVariableException $e) {
+			throw new InternalUndefinedPropertyException;
 		}
-
-		throw new InternalUndefinedPropertyException;
 
 	}
 
-	/**
-	 * Load properties from globally registered extensions.
-	 */
-	private function initProperties() {
+	private function initInnerContext() {
 
 		$items = \Smuuf\Primi\ExtensionHub::get(static::class);
-		foreach ($items as $name => &$item) {
+		foreach ($items as $name => $item) {
 
 			// If the value is a function, set "this" value instance to to
 			// as the function's "self". See FuncValue::bind() for details.
-			if ($item instanceof FuncValue) {
+			if ($item instanceof FuncValue || $item instanceof LazyValue) {
 				$item->bind($this);
 			}
 
 		}
 
-		// Don't overwrite any previously set properties.
-		$this->properties = $this->properties + $items;
+		$this->innerContext = new Context;
+		$this->innerContext->setVariables($items);
 
 	}
 

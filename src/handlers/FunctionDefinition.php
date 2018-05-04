@@ -3,7 +3,7 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\FuncValue;
-use \Smuuf\Primi\Structures\FunctionContainer;
+use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers;
@@ -31,7 +31,7 @@ class FunctionDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 
 		}
 
-		$fn = FunctionContainer::build($node['body'], $argumentList, $context);
+		$fn = FnContainer::build($node['body'], $argumentList, $context);
 		$context->setVariable($functionName, new FuncValue($fn));
 
 	}

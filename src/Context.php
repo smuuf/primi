@@ -3,6 +3,7 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\LazyValue;
 use \Smuuf\Primi\Structures\FuncValue;
 
 class Context extends \Smuuf\Primi\StrictObject implements IContext {
@@ -50,7 +51,13 @@ class Context extends \Smuuf\Primi\StrictObject implements IContext {
 			throw new InternalUndefinedVariableException($name);
 		}
 
-		return $this->container['variables'][$name];
+		$value = $this->container['variables'][$name];
+
+		if ($value instanceof LazyValue) {
+			return $value->resolve();
+		}
+
+		return $value;
 
 	}
 

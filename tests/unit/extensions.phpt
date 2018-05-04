@@ -21,12 +21,20 @@ class BadExtension {
 
 class CustomExtension extends Extension {
 
-    public static function funnyreverse(StringValue $self, StringValue $prefix): StringValue {
-        return new StringValue($prefix->value . '_' . strrev($self->value));
+    public function funnyreverse() {
+
+        return function(StringValue $self, StringValue $prefix): StringValue {
+            return new StringValue($prefix->value . '_' . strrev($self->value));
+        };
+
     }
 
-    public static function first(StringValue $self, StringValue $argument): StringValue {
-        return new StringValue("1st {$argument->value}");
+    public function first() {
+
+        return function(StringValue $self, StringValue $argument): StringValue {
+            return new StringValue("1st {$argument->value}");
+        };
+
     }
 
 }
