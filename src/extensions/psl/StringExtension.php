@@ -1,6 +1,6 @@
 <?php
 
-namespace Smuuf\Primi\Stl;
+namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Structures\FnContainer;

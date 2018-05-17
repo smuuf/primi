@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Stl\ArrayLibrary;
+use \Smuuf\Primi\Psl\ArrayLibrary;
 use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\Helpers;
 
