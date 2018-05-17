@@ -29,10 +29,14 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$arguments = $handler::handle($node['args'], $context);
 		}
 
+		return self::invoke($fn, $arguments);
+
+	}
+
+	private static function invoke(FuncValue $fn, array $arguments): Value {
+
 		try {
-
 			return $fn->invoke($arguments);
-
 		} catch (\ArgumentCountError | InternalArgumentCountException $e) {
 
 			if ($e instanceof \InternalArgumentCountException) {
@@ -53,15 +57,13 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 			}
 
-			$bound = $fn->getBoundValue();
-
 			$details = null;
 			if ($expected !== null && $passed !== null) {
 				$details = sprintf(" (%d instead of %d)", $passed, $expected);
 			}
 
 			$type = null;
-			if ($bound) {
+			if ($bound = $fn->getBoundValue()) {
 				$type = sprintf(" of type '%s'", $bound::TYPE);
 			}
 
@@ -70,15 +72,16 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		} catch (\TypeError $e) {
 
-			$bound = $fn->getBoundValue();
 			$type = null;
-			if ($bound) {
+			if ($bound = $fn->getBoundValue()) {
 				$type = sprintf(" of type '%s'", $bound::TYPE);
 			}
 
 			// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
-			throw new ErrorException(sprintf("Wrong arguments passed to function%s", $type), $node);
-
+			throw new ErrorException(
+				sprintf("Wrong arguments passed to function%s", $type),
+				$node
+			);
 
 		}
 

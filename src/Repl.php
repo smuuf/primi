@@ -47,6 +47,12 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			$this->saveHistory();
 		});
 
+		$this->loop();
+
+	}
+
+	private function loop() {
+
 		$i = $this->interpreter;
 
 		while (true) {

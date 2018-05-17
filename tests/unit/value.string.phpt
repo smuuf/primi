@@ -251,13 +251,19 @@ Assert::exception(function() {
 	);
 }, \Smuuf\Primi\ErrorException::class);
 
+//
 // Test count.
+//
+
 Assert::same(3, get_val($string->call('count', [new StringValue("i")])));
 Assert::same(2, get_val($string->call('count', [new StringValue("is")])));
 Assert::same(0, get_val($string->call('count', [new StringValue("xoxoxo")])));
 Assert::same(0, get_val($string->call('count', [new NumberValue(1)])));
 
+//
 // Test length.
+//
+
 Assert::same(17, get_val($string->propertyGet('length')));
 Assert::same(1, get_val($letterA->propertyGet('length')));
 // Multibyte strings should report length correctly.
@@ -265,7 +271,9 @@ Assert::same(17, get_val($unicode->propertyGet('length')));
 // "\n" is expanded as newline - that's one character.
 Assert::same(5, get_val($withNewline->propertyGet('length')));
 
+//
 // Test replacing.
+//
 
 // Test replacing with array of needle-replacement.
 $pairs = new ArrayValue([
@@ -282,7 +290,10 @@ Assert::same("thyes! yes! a string.", get_val($result));
 $result = $string->call('replace', [new RegexValue('(i?s|\s)'), new StringValue("no!")]);
 Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 
+//
 // Test first/last occurence search.
+//
+
 Assert::same(2, get_val($string->call('first', [new StringValue("is")])));
 Assert::same(5, get_val($string->call('last', [new StringValue("is")])));
 
@@ -291,7 +302,10 @@ Assert::false(get_val($string->call('first', [new StringValue("aaa")])));
 // Last: False when it does not appear in the string.
 Assert::false(get_val($string->call('last', [new StringValue("aaa")])));
 
+//
 // Test splitting.
+//
+
 $string = new StringValue("hello,how,are,you");
 $result = [];
 foreach (get_val($string->call('split', [new StringValue(",")])) as $item) {
@@ -305,3 +319,19 @@ foreach (get_val($string->call('split', [new RegexValue("/[,\s\.]+/")])) as $ite
 	$result[] = get_val($item);
 }
 Assert::same(["well", "this", "IS", "awkward!"], $result);
+
+//
+// Test reverse.
+//
+
+// Simple ascii string.
+$string = new StringValue("You wake me up, god damn it!");
+Assert::same("!ti nmad dog ,pu em ekaw uoY", get_val($string->call('reverse')));
+
+// With accents
+$string = new StringValue("Čauky mňauky, kolovrátku ;D");
+Assert::same("D; uktárvolok ,ykuaňm ykuaČ", get_val($string->call('reverse')));
+
+// With the worst smiley ever.
+$string = new StringValue("Yoo 🤣, my mæte 😂!!!");
+Assert::same("!!!😂 etæm ym ,🤣 ooY", get_val($string->call('reverse')));

@@ -60,16 +60,15 @@ class Context extends StrictObject implements IContext {
 
 		$value = $this->container['variables'][$name];
 
+		// If this context has a "self" parent value defined, bind it to
+		// functions and lazy values that come out from it.
 		if ($this->self) {
-
-			// If the value is a function, set "this" value instance to to
-			// as the function's "self". See FuncValue::bind() for details.
 			if ($value instanceof FuncValue || $value instanceof LazyValue) {
 				$value->bind($this->self);
 			}
-
 		}
 
+		// We also resolve lazy values at this point.
 		if ($value instanceof LazyValue) {
 			return $value->resolve();
 		}
