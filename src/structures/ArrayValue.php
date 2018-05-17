@@ -3,6 +3,8 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Stl\ArrayLibrary;
+use \Smuuf\Primi\Helpers\CircularDetector;
+use \Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsDereference;
@@ -29,16 +31,38 @@ class ArrayValue extends Value implements
 
 	}
 
-	public function getStringValue(): string {
-		return self::convertToString($this->value);
+	public function getStringValue(CircularDetector $cd = null): string {
+
+		// If this is a root method of getting a string value, create instance
+		// of circular references detector, which we will from now on pass
+		// to all deeper methods.
+		if (!$cd) {
+			$cd = new CircularDetector;
+		}
+
+		return self::convertToString($this, $cd);
+
 	}
 
-	private static function convertToString($value): string {
+	private static function convertToString($self, CircularDetector $cd): string {
+
+		$cd->add(spl_object_hash($self));
 
 		$return = "[";
-		foreach ($value as $key => $item) {
+		foreach ($self->value as $key => $item) {
+
 			$key = is_numeric($key) ? $key : "\"$key\"";
-			$return .= sprintf("%s: %s, ", $key, $item->getStringValue());
+
+			// This avoids infinite loops with self-nested structures by
+			// checking whether circular detector determined that we
+			// would end up going in (infinite) circles.
+			$hash = spl_object_hash($item);
+			$str = $cd->has($hash)
+				? sprintf("*recursion (%s)*", Helpers::objectHash($item))
+				: $item->getStringValue($cd);
+
+			$return .= sprintf("%s: %s, ", $key, $str);
+
 		}
 
 		return rtrim($return, ', ') . "]";
