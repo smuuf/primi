@@ -2,11 +2,12 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\LazyValue;
 use \Smuuf\Primi\Structures\FuncValue;
+use \Smuuf\Primi\Structures\LazyValue;
 
-class Context extends \Smuuf\Primi\StrictObject implements IContext {
+class Context extends StrictObject implements IContext {
 
 	// use WatchLifecycle;
 
@@ -15,6 +16,12 @@ class Context extends \Smuuf\Primi\StrictObject implements IContext {
 	];
 
 	private $container = self::EMPTY_CONTAINER;
+
+	private $self;
+
+	public function __construct(Value $self = null) {
+		$this->self = $self;
+	}
 
 	public function reset() {
 		$this->container = self::EMPTY_CONTAINER;
@@ -47,11 +54,21 @@ class Context extends \Smuuf\Primi\StrictObject implements IContext {
 
 	public function getVariable(string $name): Value {
 
-		if (!\array_key_exists($name, $this->container['variables'])) {
+		if (!isset($this->container['variables'][$name])) {
 			throw new InternalUndefinedVariableException($name);
 		}
 
 		$value = $this->container['variables'][$name];
+
+		if ($this->self) {
+
+			// If the value is a function, set "this" value instance to to
+			// as the function's "self". See FuncValue::bind() for details.
+			if ($value instanceof FuncValue || $value instanceof LazyValue) {
+				$value->bind($this->self);
+			}
+
+		}
 
 		if ($value instanceof LazyValue) {
 			return $value->resolve();
