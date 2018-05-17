@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\IReadlineDriver;
 
@@ -19,9 +23,17 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	/** @var \Smuuf\Primi\IReadlineDriver **/
 	protected $driver;
 
-	public function __construct(Interpreter $interpreter, IReadlineDriver $driver = null) {
+	/** @var bool**/
+	protected $rawOutput = false;
+
+	public function __construct(
+		Interpreter $interpreter,
+		IReadlineDriver $driver = null,
+		$rawOutput = false
+	) {
 
 		$this->interpreter = $interpreter;
+		$this->rawOutput = $rawOutput;
 		$this->driver = $driver ?: new \Smuuf\Primi\Readline;
 		$this->historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 		$this->loadHistory();
@@ -42,7 +54,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			$input = $this->driver->readline(self::PROMPT);
 
 			// Ignore (skip) empty input.
-			if ($input == '') {
+			if (trim($input) == '') {
 				continue;
 			}
 
@@ -59,7 +71,13 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				// This way users won't have to put it in there themselves.
 				$result = $i->run("$input;");
 				if ($result instanceof \Smuuf\Primi\Structures\Value) {
-					echo $result->getStringValue() . "\n";
+					printf(
+						"%s %s\n",
+						$result->getStringValue(),
+						!$this->rawOutput
+							? $this->formatType($result)
+							: null
+					);
 				}
 
 			} catch (\Smuuf\Primi\ErrorException $e) {
@@ -67,6 +85,16 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			}
 
 		}
+
+	}
+
+	private function formatType($value) {
+
+		return Colors::get(sprintf(
+			"{darkgrey}(%s %s){_}",
+			$value::TYPE,
+			Helpers::objectHash($value)
+		));
 
 	}
 

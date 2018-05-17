@@ -6,6 +6,10 @@ use \Smuuf\Primi\Structures\Value;
 
 abstract class Helpers extends \Smuuf\Primi\StrictObject {
 
+	public static function objectHash($o): string {
+		return substr(md5(spl_object_hash($o)), 0, 6);
+	}
+
 	/**
 	 * Takes array as reference and ensures its contents are represented in a form of indexed sub-arrays.
 	 * This comes handy if we want to be sure that multiple sub-nodes (which PHP-PEG parser returns) are universally
