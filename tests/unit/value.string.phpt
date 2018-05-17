@@ -153,33 +153,34 @@ Assert::exception(function() use ($string) {
 //
 
 // Dereferencing returns new instance.
-$dereferenced1 = $string->dereference(new NumberValue(0));
+$dereferenced1 = $string->arrayGet(0);
 Assert::notSame($string, $dereferenced1);
 
 // Test return values of dereferencing.
-Assert::same("t", get_val($string->dereference(new NumberValue(0))));
-Assert::same("s", get_val($string->dereference(new NumberValue(3))));
+Assert::same("t", get_val($string->arrayGet(0)));
+Assert::same("s", get_val($string->arrayGet(3)));
 
 // Test error when dereferencing from undexined index.
 Assert::exception(function() use ($string) {
-	$string->dereference(new NumberValue(50));
+	$string->arrayGet(50);
 }, \Smuuf\Primi\InternalUndefinedIndexException::class);
 
 // Test that inserting does happen on the same instance of the value object.
 $copy = clone $string;
-Assert::same($copy, $copy->insert(new NumberValue(0), new StringValue("x")));
 // Test classic insertion.
-$copy->insert(new NumberValue(2), new StringValue("u"));
+$copy->arraySet(0, new StringValue("x"));
+Assert::same("xhis is a string.", get_val($copy));
+$copy->arraySet(2, new StringValue("u"));
 Assert::same("xhus is a string.", get_val($copy));
 // Test insertion without specifying index - Single letter.
-$copy->insert(null, new StringValue("A"));
+$copy->arraySet(null, new StringValue("A"));
 Assert::same("xhus is a string.A", get_val($copy));
 // Test insertion without specifying index - Multiple letters.
-$copy->insert(null, new StringValue("BBB"));
+$copy->arraySet(null, new StringValue("BBB"));
 Assert::same("xhus is a string.ABBB", get_val($copy));
 
 // Test creating insertion proxy and commiting it.
-$proxy = $copy->getInsertionProxy(new NumberValue(4));
+$proxy = $copy->getArrayInsertionProxy(4);
 $proxy->commit(new StringValue("O"));
 Assert::same("xhusOis a string.ABBB", get_val($copy));
 
@@ -257,12 +258,12 @@ Assert::same(0, get_val($string->call('count', [new StringValue("xoxoxo")])));
 Assert::same(0, get_val($string->call('count', [new NumberValue(1)])));
 
 // Test length.
-Assert::same(17, get_val($string->getProperty('length')));
-Assert::same(1, get_val($letterA->getProperty('length')));
+Assert::same(17, get_val($string->propertyGet('length')));
+Assert::same(1, get_val($letterA->propertyGet('length')));
 // Multibyte strings should report length correctly.
-Assert::same(17, get_val($unicode->getProperty('length')));
+Assert::same(17, get_val($unicode->propertyGet('length')));
 // "\n" is expanded as newline - that's one character.
-Assert::same(5, get_val($withNewline->getProperty('length')));
+Assert::same(5, get_val($withNewline->propertyGet('length')));
 
 // Test replacing.
 

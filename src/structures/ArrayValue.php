@@ -7,13 +7,11 @@ use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ISupportsDereference;
-use \Smuuf\Primi\ISupportsInsertion;
+use \Smuuf\Primi\ISupportsArrayAccess;
 
 class ArrayValue extends Value implements
 	ISupportsIteration,
-	ISupportsDereference,
-	ISupportsInsertion
+	ISupportsArrayAccess
 {
 
 	const TYPE = "array";
@@ -73,40 +71,28 @@ class ArrayValue extends Value implements
 		return new \ArrayIterator($this->value);
 	}
 
-	public function dereference(Value $key) {
+	public function arrayGet(string $key): Value {
 
-		// Array keys can be string and numbers.
-		self::allowTypes($key, StringValue::class, NumberValue::class);
-		$phpKey = $key->value;
-
-		if (!isset($this->value[$phpKey])) {
-			throw new \Smuuf\Primi\InternalUndefinedIndexException($phpKey);
+		if (!isset($this->value[$key])) {
+			throw new \Smuuf\Primi\InternalUndefinedIndexException($key);
 		}
 
-		return $this->value[$phpKey];
+		return $this->value[$key];
 
 	}
 
-	public function insert(?Value $key, Value $value): Value {
+	public function arraySet(?string $key, Value $value) {
 
 		if ($key === \null) {
-
 			$this->value[] = $value;
-
 		} else {
-
-			// Array keys can be string and numbers.
-			self::allowTypes($key, StringValue::class, NumberValue::class);
-			$this->value[$key->value] = $value;
-
+			$this->value[$key] = $value;
 		}
-
-		return $this;
 
 	}
 
-	public function getInsertionProxy(?Value $key): InsertionProxy {
-		return new InsertionProxy($this, $key);
+	public function getArrayInsertionProxy(?string $key): ArrayInsertionProxy {
+		return new ArrayInsertionProxy($this, $key);
 	}
 
 }

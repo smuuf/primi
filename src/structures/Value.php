@@ -4,11 +4,12 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ExtensionHub;
+use \Smuuf\Primi\ISupportsPropertyAccess;
 use \Smuuf\Primi\InternalUndefinedVariableException;
 use \Smuuf\Primi\InternalUndefinedPropertyException;
 use \Smuuf\Primi\Structures\ValueFriends;
 
-abstract class Value extends ValueFriends {
+abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 
 	const TYPE = "__no_type__";
 
@@ -16,10 +17,10 @@ abstract class Value extends ValueFriends {
 	 * This value object's own context (eg. contains properties, etc.)
 	 * @var Context
 	 */
-	protected $innerContext;
+	protected $properties;
 
 	/** @var bool **/
-	protected $innerContextInitialized = false;
+	protected $propertiesInitialized = false;
 
 	public static function buildAutomatic($value) {
 
@@ -46,35 +47,44 @@ abstract class Value extends ValueFriends {
 
 	abstract public function getStringValue(): string;
 
-	public function getProperty(string $name): Value {
+	public function propertyGet(string $name): Value {
 
-		if (!$this->innerContextInitialized) {
-			$this->initInnerContext();
+		// Lazy load properties from extensions.
+		if (!$this->propertiesInitialized) {
+			$this->initProperties();
 		}
 
 		try {
-			return $this->innerContext->getVariable($name);
+			return $this->properties->getVariable($name);
 		} catch (InternalUndefinedVariableException $e) {
 			throw new InternalUndefinedPropertyException;
 		}
 
 	}
 
-	private function initInnerContext() {
+	public function propertySet(string $key, Value $value) {
 
-		$items = \Smuuf\Primi\ExtensionHub::get(static::class);
-		foreach ($items as $name => $item) {
-
-			// If the value is a function, set "this" value instance to to
-			// as the function's "self". See FuncValue::bind() for details.
-			if ($item instanceof FuncValue || $item instanceof LazyValue) {
-				$item->bind($this);
-			}
-
+		// Lazy load properties from extensions.
+		if (!$this->propertiesInitialized) {
+			$this->initProperties();
 		}
 
-		$this->innerContext = new Context;
-		$this->innerContext->setVariables($items);
+		$this->properties->setVariable($key, $value);
+		return $value;
+
+	}
+
+	public function getPropertyInsertionProxy(string $key): PropertyInsertionProxy {
+		return new PropertyInsertionProxy($this, $key);
+	}
+
+	private function initProperties() {
+
+		$this->properties = new Context($this);
+
+		$items = \Smuuf\Primi\ExtensionHub::get(static::class);
+		$this->properties->setVariables($items);
+		$this->propertiesInitialized = true;
 
 	}
 
@@ -83,7 +93,7 @@ abstract class Value extends ValueFriends {
 	 * invoking it with optionally specified argumments.
 	 */
 	public function call(string $name, $args = []): Value {
-		return $this->getProperty($name)->invoke($args);
+		return $this->propertyGet($name)->invoke($args);
 	}
 
 	/**

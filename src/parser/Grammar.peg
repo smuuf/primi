@@ -26,6 +26,7 @@ NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
 NullLiteral: "null"
 RegexLiteral: "/" /(\\\/|[^\/])+/ "/"
+Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
 VariableName: / ([a-zA-Z_][a-zA-Z0-9_]*) /
@@ -37,8 +38,10 @@ ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
-VariableVector: core:Variable ( "[" __ ( vector:Expression | vector:"" ) __ "]" )+
+VariableVector: core:Variable vector:Vector
+Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" | propKey:PropertyAccess) vector:Vector?
 Mutable: skip:VariableVector | skip:VariableName
+PropertyAccess: ObjectResolutionOperator skip:Property
 
 ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
@@ -53,10 +56,10 @@ Assignment: left:Mutable __ op:AssignmentOperator __ right:Expression
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication)*
 Multiplication: operands:Operand ( __ ops:MultiplyOperator __ operands:Operand)*
 Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value
-Chain: ( core:Dereference | core:Invocation | core:PropertyAccess ) chain:Chain?
+Chain: ( core:Dereference | core:Invocation | core:PropertyGetter ) chain:Chain?
+PropertyGetter: key:PropertyAccess
 Dereference: "[" __ key:Expression __ "]"
 Invocation: "(" __ args:ArgumentList? __ ")"
-PropertyAccess: ObjectResolutionOperator key:Property
 
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
