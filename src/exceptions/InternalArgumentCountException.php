@@ -4,9 +4,9 @@ namespace Smuuf\Primi;
 
 class InternalArgumentCountException extends InternalException {
 
-	public function __construct(string $name, int $passed = null, int $expected = null) {
-		$this->passedCount = $passedCount;
-		$this->expectedCount = $expectedCount;
+	public function __construct(int $passed = null, int $expected = null) {
+		$this->passedCount = $passed;
+		$this->expectedCount = $expected;
 	}
 
 	public function getPassedCount() {

@@ -7,7 +7,6 @@ use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\InternalArgumentCountException;
 use \Smuuf\Primi\InternalUndefinedPropertyException;
 
 require __DIR__ . '/../bootstrap.php';

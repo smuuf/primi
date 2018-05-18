@@ -2,11 +2,13 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ReturnException;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
+
+use \Smuuf\Primi\ReturnException;
+use \Smuuf\Primi\InternalArgumentCountException;
 
 class FnContainer extends \Smuuf\Primi\StrictObject {
 
@@ -40,6 +42,16 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 			// definition into the function.
 			if ($definitionContext) {
 				$context->setVariables($definitionContext->getVariables());
+			}
+
+
+			$args = \array_splice($args, 0, \count($definitionArgs));
+
+			if (\count($definitionArgs) > \count($args)) {
+				throw new InternalArgumentCountException(
+					\count($args),
+					\count($definitionArgs)
+				);
 			}
 
 			// Create pairs of arguments <arg_name> => <arg_value> and

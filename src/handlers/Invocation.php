@@ -29,17 +29,17 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$arguments = $handler::handle($node['args'], $context);
 		}
 
-		return self::invoke($fn, $arguments);
+		return self::invoke($fn, $arguments, $node);
 
 	}
 
-	private static function invoke(FuncValue $fn, array $arguments): Value {
+	private static function invoke(FuncValue $fn, array $arguments, array $node): Value {
 
 		try {
 			return $fn->invoke($arguments);
 		} catch (\ArgumentCountError | InternalArgumentCountException $e) {
 
-			if ($e instanceof \InternalArgumentCountException) {
+			if ($e instanceof InternalArgumentCountException) {
 
 				[$expected, $passed] = [$e->getExpectedCount(), $e->getPassedCount()];
 

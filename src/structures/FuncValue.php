@@ -2,8 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\InternalArgumentCountException;
-
 class FuncValue extends Value {
 
 	const TYPE = "function";
@@ -32,7 +30,7 @@ class FuncValue extends Value {
 		$this->self = $self;
 	}
 
-	public function getBoundValue(): Value {
+	public function getBoundValue() {
 		return $this->self;
 	}
 
