@@ -44,9 +44,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 				$context->setVariables($definitionContext->getVariables());
 			}
 
-
 			$args = \array_splice($args, 0, \count($definitionArgs));
-
 			if (\count($definitionArgs) > \count($args)) {
 				throw new InternalArgumentCountException(
 					\count($args),

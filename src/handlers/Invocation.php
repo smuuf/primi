@@ -29,61 +29,77 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$arguments = $handler::handle($node['args'], $context);
 		}
 
-		return self::invoke($fn, $arguments, $node);
-
-	}
-
-	private static function invoke(FuncValue $fn, array $arguments, array $node): Value {
-
 		try {
+
 			return $fn->invoke($arguments);
+
 		} catch (\ArgumentCountError | InternalArgumentCountException $e) {
 
-			if ($e instanceof InternalArgumentCountException) {
-
-				[$expected, $passed] = [$e->getExpectedCount(), $e->getPassedCount()];
-
-			} else {
-
-				// We have the counts of expected/passed arguments available,
-				// add that information to the error message.
-				[$expected, $passed] = Helpers::parseArgumentCountError($e);
-
-				// Also, because of how calling Primi value methods work, we need to
-				// subtract 1 from these numbers. (first argument is the value - upon
-				// which the method is called - itself).
-				$expected--;
-				$passed--;
-
-			}
-
-			$details = null;
-			if ($expected !== null && $passed !== null) {
-				$details = sprintf(" (%d instead of %d)", $passed, $expected);
-			}
-
-			$type = null;
-			if ($bound = $fn->getBoundValue()) {
-				$type = sprintf(" of type '%s'", $bound::TYPE);
-			}
-
-			$msg = sprintf("Too few arguments passed to function%s%s", $type, $details);
+			$msg = self::buildArgumentCountErrorMessage($e, $fn);
 			throw new ErrorException($msg, $node);
 
 		} catch (\TypeError $e) {
 
-			$type = null;
-			if ($bound = $fn->getBoundValue()) {
-				$type = sprintf(" of type '%s'", $bound::TYPE);
-			}
-
-			// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
-			throw new ErrorException(
-				sprintf("Wrong arguments passed to function%s", $type),
-				$node
-			);
+			$msg = self::buildTypeErrorMessage($e, $fn);
+			throw new ErrorException($msg, $node);
 
 		}
+
+	}
+
+	private static function buildTypeErrorMessage(
+		\Throwable $e,
+		FuncValue $fn
+	): string {
+
+		$type = null;
+		if ($bound = $fn->getBoundValue()) {
+			$type = sprintf(" of type '%s'", $bound::TYPE);
+		}
+
+		// Make use of PHP's internal TypeError being thrown when passing wrong
+		// types of arguments.
+		return sprintf("Wrong arguments passed to function%s", $type);
+
+	}
+
+	private static function buildArgumentCountErrorMessage(
+		\Throwable $e,
+		FuncValue $fn
+	): string {
+
+		if ($e instanceof InternalArgumentCountException) {
+
+			[$expected, $passed] = [
+				$e->getExpectedCount(),
+				$e->getPassedCount()
+			];
+
+		} else {
+
+			// We have the counts of expected/passed arguments available,
+			// add that information to the error message.
+			[$expected, $passed] = Helpers::parseArgumentCountError($e);
+
+			// Also, because of how calling Primi value methods work, we need to
+			// subtract 1 from these numbers. (first argument is the value - upon
+			// which the method is called - itself).
+			$expected--;
+			$passed--;
+
+		}
+
+		$details = null;
+		if ($expected !== null && $passed !== null) {
+			$details = sprintf(" (%d instead of %d)", $passed, $expected);
+		}
+
+		$type = null;
+		if ($bound = $fn->getBoundValue()) {
+			$type = sprintf(" of type '%s'", $bound::TYPE);
+		}
+
+		return sprintf("Too few arguments passed to function%s%s", $type, $details);
 
 	}
 

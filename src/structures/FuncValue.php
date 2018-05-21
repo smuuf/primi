@@ -21,10 +21,10 @@ class FuncValue extends Value {
 	}
 
 	/**
-	 * Set a value object as "self" to this functions. Ie. bind together
-	 * the passed parent value and this function value. When this function
-	 * value is later invoked, the bound "self" is then passed as the first
-	 * argument into this function value's inner closure.
+	 * Set a value object as "self" to this functions. Ie. bind together the
+	 * passed parent value and this function value. When this function value is
+	 * later invoked, the bound "self" is then passed as the first argument into
+	 * this function value's inner closure.
 	 */
 	public function bind(Value $self) {
 		$this->self = $self;
