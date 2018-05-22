@@ -2,3 +2,10 @@ version: "2"
 exclude_patterns:
   - "src/parser/"
   - "!src/parser/ParserHandler.php"
+checks:
+  method-complexity:
+    config:
+      threshold: 8
+  method-lines:
+    config:
+      threshold: 40
