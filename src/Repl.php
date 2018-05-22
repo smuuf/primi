@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
@@ -58,14 +59,14 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		while (true) {
 
 			$input = $this->driver->readline(self::PROMPT);
-
-			// Ignore (skip) empty input.
-			if (trim($input) == '') {
-				continue;
-			}
-
-			// Catch a non-command 'exit'.
-			if ($input === 'exit') {
+			switch (trim($input)) {
+				case '':
+					// Ignore (skip) empty input.
+					continue;
+				break;
+				case 'exit':
+					// Catch a non-command 'exit'.
+					break 2;
 				break;
 			}
 
@@ -76,13 +77,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				// Ensure that there's a semicolon at the end.
 				// This way users won't have to put it in there themselves.
 				$result = $i->run("$input;");
-				if ($result instanceof \Smuuf\Primi\Structures\Value) {
+				if ($result instanceof Value) {
 					printf(
 						"%s %s\n",
 						$result->getStringValue(),
-						!$this->rawOutput
-							? $this->formatType($result)
-							: null
+						!$this->rawOutput ? $this->formatType($result) : null
 					);
 				}
 
@@ -94,7 +93,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private function formatType($value) {
+	private function formatType(Value $value) {
 
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",

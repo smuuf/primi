@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . "/../../vendor/autoload.php";
+require __DIR__ . "/../../../vendor/autoload.php";
 $bench = new \Smuuf\Phpcb\PhpBenchmark;
 
 class FirstParentClass {}
@@ -27,4 +27,4 @@ $bench->addBench(function() {
 	$y = check_with_cache('\\SecondChildClass');
 });
 
-$bench->run(); 
+$bench->run();
