@@ -4,6 +4,10 @@
 // Composer's autoload.
 require __DIR__ . "/vendor/autoload.php";
 
+set_error_handler(function($severity, $message, $file, $line) {
+	throw new \ErrorException($message, 0, $severity, $file, $line);
+}, E_ALL);
+
 // Autoloader.
 $loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/temp/");
 $loader->addDirectory(__DIR__ . "/src")->register();
