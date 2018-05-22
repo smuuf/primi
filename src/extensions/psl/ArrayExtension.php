@@ -18,7 +18,7 @@ class ArrayExtension extends Extension {
 
 		return new LazyValue(
 			FnContainer::buildNative(function(ArrayValue $self) {
-				return new NumberValue(count($self->value));
+				return new NumberValue(\count($self->value));
 			})
 		);
 

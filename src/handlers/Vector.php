@@ -34,6 +34,10 @@ class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$type = 'prop';
 		}
 
+		if (!isset($type, $key)) {
+			throw new \InternalException("Malformed vector node.");
+		}
+
 		// Are we going to handle this node as a leaf node?
 		$isLeaf = !isset($node['vector']);
 
@@ -60,10 +64,10 @@ class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		if ($type === 'array') {
 			$next = $subject->arrayGet($key);
-		}
-
-		if ($type === 'prop') {
+		} elseif ($type === 'prop') {
 			$next = $subject->propertyGet($key);
+		} else {
+			throw new \InternalException("Malformed vector node.");
 		}
 
 		// At this point we know there's some another, deeper part of vector,

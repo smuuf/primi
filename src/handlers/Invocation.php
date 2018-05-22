@@ -75,7 +75,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 				$e->getPassedCount()
 			];
 
-		} else {
+		} elseif ($e instanceof \ArgumentCountError) {
 
 			// We have the counts of expected/passed arguments available,
 			// add that information to the error message.
@@ -86,6 +86,12 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			// which the method is called - itself).
 			$expected--;
 			$passed--;
+
+		} else {
+
+			throw new InternalException(
+				"Cannot parse argument count from unexpected exception."
+			);
 
 		}
 
