@@ -19,7 +19,7 @@ abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 	 */
 	protected $properties;
 
-	/** @var bool **/
+	/** @var bool Are this value's properties initialized? **/
 	protected $propertiesInitialized = false;
 
 	public static function buildAutomatic($value) {

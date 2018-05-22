@@ -13,7 +13,8 @@ use \Smuuf\Primi\IReadlineDriver;
 class Repl extends \Smuuf\Primi\StrictObject {
 
 	const HISTORY_FILE = '.primi_history';
-	const PROMPT = '>>> ';
+	const PRIMARY_PROMPT = '>>> ';
+	const MULTILINE_PROMPT = '... ';
 
 	/** @var string Full path to readline history file. **/
 	private $historyFilePath;
@@ -55,10 +56,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	private function loop() {
 
 		$i = $this->interpreter;
-
+		readline_completion_function(function() { return []; });
 		while (true) {
 
-			$input = $this->driver->readline(self::PROMPT);
+			$input = $this->gatherLines();
+
 			switch (trim($input)) {
 				case '':
 					// Ignore (skip) empty input.
@@ -100,6 +102,43 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			$value::TYPE,
 			Helpers::objectHash($value)
 		));
+
+	}
+
+	private function gatherLines(): string {
+
+		$gathering = false;
+		$lines = '';
+
+		while (true) {
+
+			if ($gathering === false) {
+				$prompt = self::PRIMARY_PROMPT;
+			} else {
+				$prompt = self::MULTILINE_PROMPT;
+			}
+
+			$input = $this->driver->readline($prompt);
+
+			if (!empty($input) && $input[-1] === '\\') {
+
+				// Consider non-empty line ending with a "\" character as
+				// a part of multiline input. That is: Trim the backslash and
+				// go read another line from the user.
+				$lines .= mb_substr($input, 0, mb_strlen($input) - 1) . "\n";
+				$gathering = true;
+
+			} else {
+
+				// Normal non-multiline input. Add it to the line buffer and
+				// return the whole buffer (with all lines that may have been)
+				// gathered as multiline input so far.
+				$lines .= $input;
+				return $lines;
+
+			}
+
+		}
 
 	}
 
