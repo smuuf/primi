@@ -105,7 +105,7 @@ $num2 = new NumberValue(45);
 $num3 = new NumberValue(-30);
 $arr = new ArrayValue([$num1, $num2, $num3]);
 
-$fn = new FuncValue(FnContainer::buildRaw(function ($input) {
+$fn = new FuncValue(FnContainer::buildFromClosure(function ($input) {
 	return $input * 2;
 }));
 

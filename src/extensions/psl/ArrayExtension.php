@@ -17,7 +17,7 @@ class ArrayExtension extends Extension {
 	public function length() {
 
 		return new LazyValue(
-			FnContainer::buildNative(function(ArrayValue $self) {
+			FnContainer::buildFromClosure(function(ArrayValue $self): NumberValue {
 				return new NumberValue(\count($self->value));
 			})
 		);

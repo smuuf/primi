@@ -85,14 +85,25 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public static function buildNative(callable $fn) {
+	public static function buildFromClosure(callable $fn) {
 
 		$closure = \Closure::fromCallable($fn);
 
 		$r = new \ReflectionFunction($closure);
 		$argsCount = $r->getNumberOfRequiredParameters();
 
-		$wrapper = function($self = null, ...$args) use ($closure) {
+		// If the callable does not have a return type of Value, we will
+		// handle consider the function as handling PHP values instead of
+		// Primi value objects.
+		$passPhpValues = true;
+		if (
+			$r->hasReturnType()
+			&& is_a((string) $r->getReturnType(), Value::class, true)
+		) {
+			$passPhpValues = false;
+		}
+
+		$wrapper = function($self = null, ...$args) use ($closure, $passPhpValues) {
 
 			// If this function has "self" specified, pass it as the first
 			// argument.
@@ -100,39 +111,15 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 				array_unshift($args, $self);
 			}
 
-			return $closure(...$args);
-
-		};
-
-		return new self($wrapper, $argsCount);
-
-	}
-
-	public static function buildRaw(callable $fn) {
-
-		$closure = \Closure::fromCallable($fn);
-
-		$r = new \ReflectionFunction($closure);
-		$argsCount = $r->getNumberOfRequiredParameters();
-
-		// Wrap the closure into another closure which handles automatic
-		// conversion of parameter types (Primi values -> PHP values) and
-		// return value type (PHP value -> Primi value).
-		$wrapper = function($self = null, ...$args) use ($closure) {
-
-			// If this function has "self" specified, pass it as the first
-			// argument.
-			if ($self) {
-				array_unshift($args, $self);
+			if ($passPhpValues) {
+				$args = \array_map(function(Value $value) {
+					return $value->getInternalValue();
+				}, $args);
 			}
-
-			$args = \array_map(function(Value $value) {
-				return $value->getInternalValue();
-			}, $args);
 
 			$result = $closure(...$args);
 
-			if (!$result instanceof Value) {
+			if ($passPhpValues && !$result instanceof Value) {
 				return Value::buildAutomatic($result);
 			}
 

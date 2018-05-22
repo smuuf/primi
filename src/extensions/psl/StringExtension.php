@@ -18,7 +18,7 @@ class StringExtension extends Extension {
 	public static function length() {
 
 		return new LazyValue(
-			FnContainer::buildNative(function(StringValue $self) {
+			FnContainer::buildFromClosure(function(StringValue $self): NumberValue {
 				return new NumberValue(mb_strlen($self->value));
 			})
 		);

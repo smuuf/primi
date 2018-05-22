@@ -32,7 +32,7 @@ abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 			case \is_array($value):
 				return new ArrayValue(array_map([self::class, 'buildAutomatic'], $value));
 			case \is_callable($value);
-					return new FuncValue(FnContainer::buildNative($value));
+					return new FuncValue(FnContainer::buildFromClosure($value));
 			case NumberValue::isNumeric($value): // Must be after "is_array" case.
 				return new NumberValue($value);
 			default:
