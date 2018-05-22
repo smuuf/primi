@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\UndefinedIndexException;
+use \Smuuf\Primi\InternalException;
 use \Smuuf\Primi\InternalUndefinedIndexException;
 
 use \Smuuf\Primi\ISupportsArrayAccess;
@@ -21,6 +22,8 @@ class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 	 */
 	public static function chain(array $node, Context $context, \Smuuf\Primi\Structures\Value $subject) {
 
+		$key = null;
+
 		if (isset($node['arrayKey'])) {
 			$handler = HandlerFactory::get($node['arrayKey']['name']);
 			$key = $handler::handle($node['arrayKey'], $context, $subject);
@@ -34,8 +37,8 @@ class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$type = 'prop';
 		}
 
-		if (!isset($type, $key)) {
-			throw new \InternalException("Malformed vector node.");
+		if (!isset($type)) {
+			throw new InternalException("Malformed vector node.");
 		}
 
 		// Are we going to handle this node as a leaf node?
