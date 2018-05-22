@@ -32,7 +32,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function(...$args) use ($node, $definitionContext, $definitionArgs) {
+		$closure = function($self = null, ...$args) use ($node, $definitionContext, $definitionArgs) {
 
 			// Create new context (scope) for the function, so it doesn't
 			// operate in the global scope.
@@ -56,6 +56,13 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 			// inject them into the function's context, too. (i.e. these are
 			// the arguments passed into it.)
 			$args = \array_combine($definitionArgs, $args);
+
+			// If this function has "self" specified, pass it as the "this"
+			// variable.
+			if ($self) {
+				$args['this'] = $self;
+			}
+
 			$context->setVariables($args);
 
 			try {
@@ -85,8 +92,16 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		$r = new \ReflectionFunction($closure);
 		$argsCount = $r->getNumberOfRequiredParameters();
 
-		$wrapper = function(...$args) use ($closure) {
+		$wrapper = function($self = null, ...$args) use ($closure) {
+
+			// If this function has "self" specified, pass it as the first
+			// argument.
+			if ($self) {
+				array_unshift($args, $self);
+			}
+
 			return $closure(...$args);
+
 		};
 
 		return new self($wrapper, $argsCount);
@@ -103,7 +118,13 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		// Wrap the closure into another closure which handles automatic
 		// conversion of parameter types (Primi values -> PHP values) and
 		// return value type (PHP value -> Primi value).
-		$wrapper = function(...$args) use ($closure) {
+		$wrapper = function($self = null, ...$args) use ($closure) {
+
+			// If this function has "self" specified, pass it as the first
+			// argument.
+			if ($self) {
+				array_unshift($args, $self);
+			}
 
 			$args = \array_map(function(Value $value) {
 				return $value->getInternalValue();

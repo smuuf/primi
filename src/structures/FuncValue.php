@@ -38,13 +38,8 @@ class FuncValue extends Value {
 
 		$closure = ($this->value->getClosure());
 
-		// If this function has "self" specified, pass it as the first argument.
-		if ($this->self) {
-			array_unshift($args, $this->self);
-		}
-
-		// Simply execute the closure with passed arguments.
-		return $closure(...$args);
+		// Simply execute the closure with self|null and then passed arguments.
+		return $closure($this->self, ...$args);
 
 	}
 
