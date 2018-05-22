@@ -30,7 +30,15 @@ class Context extends StrictObject implements IContext {
 	// Variables.
 
 	public function setVariable(string $name, Value $value) {
+
+		if ($this->self) {
+			if ($value instanceof FuncValue || $value instanceof LazyValue) {
+				$value->bind($this->self);
+			}
+		}
+
 		$this->container['variables'][$name] = $value;
+
 	}
 
 	/**
@@ -46,6 +54,21 @@ class Context extends StrictObject implements IContext {
 				$value = Value::buildAutomatic($value);
 			}
 
+			// If this context has a "self" parent value defined, bind it to
+			// functions and lazy values that may come out from it.
+
+			// We might do this in the self::getVariable method, too, but
+			// I work under assumption that setting variables is done
+			// less frequently than getting it (in bench_simple.primi it was
+			// 40004x setting vs 50005x getting), so we may gain some
+			// performance boost by putting it here.
+
+			if ($this->self) {
+				if ($value instanceof FuncValue || $value instanceof LazyValue) {
+					$value->bind($this->self);
+				}
+			}
+
 			$this->setVariable($name, $value);
 
 		}
@@ -59,14 +82,6 @@ class Context extends StrictObject implements IContext {
 		}
 
 		$value = $this->container['variables'][$name];
-
-		// If this context has a "self" parent value defined, bind it to
-		// functions and lazy values that come out from it.
-		if ($this->self) {
-			if ($value instanceof FuncValue || $value instanceof LazyValue) {
-				$value->bind($this->self);
-			}
-		}
 
 		// We also resolve lazy values at this point.
 		if ($value instanceof LazyValue) {
