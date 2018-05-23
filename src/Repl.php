@@ -64,7 +64,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			switch (trim($input)) {
 				case '':
 					// Ignore (skip) empty input.
-					continue;
+					continue 2;
 				break;
 				case 'exit':
 					// Catch a non-command 'exit'.
@@ -79,19 +79,29 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				// Ensure that there's a semicolon at the end.
 				// This way users won't have to put it in there themselves.
 				$result = $i->run("$input;");
-				if ($result instanceof Value) {
-					printf(
-						"%s %s\n",
-						$result->getStringValue(),
-						!$this->rawOutput ? $this->formatType($result) : null
-					);
-				}
+				$this->printResult($result);
 
 			} catch (\Smuuf\Primi\ErrorException $e) {
 				echo($e->getMessage() . "\n");
+			} catch (\Throwable $e) {
+				echo("PHP ERROR: {$e->getMessage()}\n");
 			}
 
 		}
+
+	}
+
+	public function printResult(Value $result = null): void {
+
+		if ($result === null) {
+			return;
+		}
+
+		printf(
+			"%s %s\n",
+			$result->getStringValue(),
+			!$this->rawOutput ? $this->formatType($result) : null
+		);
 
 	}
 
