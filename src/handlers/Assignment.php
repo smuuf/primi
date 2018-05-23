@@ -5,7 +5,7 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\InsertionProxy;
 
-use \Smuuf\Primi\ISupportsInsertion;
+use \Smuuf\Primi\ISupportsArrayAccess;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;

@@ -26,20 +26,22 @@ NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
 NullLiteral: "null"
 RegexLiteral: "/" /(\\\/|[^\/])+/ "/"
+Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
 VariableName: / ([a-zA-Z_][a-zA-Z0-9_]*) /
-Variable: ( core:VariableName post:UnaryOperator? ) | ( pre:UnaryOperator? core:VariableName )
-PropertyGetter: core:VariableName
+Variable: ( pre:UnaryOperator core:VariableName ) | ( core:VariableName post:UnaryOperator ) | core:VariableName
+Property: skip:VariableName
 AnonymousFunction: "function" __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ args:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
 Value: skip:Literal | skip:Variable | skip:ArrayDefinition
-DereferencableValue: core:Value ( "[" __ dereference:Expression __ "]" )*
-VariableVector: core:Variable ( "[" __ ( vector:Expression | vector:"" ) __ "]" )+
+VariableVector: core:Variable vector:Vector
+Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" | propKey:PropertyAccess) vector:Vector?
 Mutable: skip:VariableVector | skip:VariableName
+PropertyAccess: ObjectResolutionOperator skip:Property
 
 ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
@@ -53,15 +55,17 @@ Comparison: left:Addition __ op:ComparisonOperator __ right:Addition
 Assignment: left:Mutable __ op:AssignmentOperator __ right:Expression
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication)*
 Multiplication: operands:Operand ( __ ops:MultiplyOperator __ operands:Operand)*
-Chain: ObjectResolutionOperator ( core:MethodCall | core:PropertyGetter ) ( chain:Chain )?
-Operand: ( core:FunctionCall | "(" __ core:Expression __ ")" | core:DereferencableValue ) ( chain:Chain )?
+Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value
+Chain: ( core:Dereference | core:Invocation | core:PropertyGetter ) chain:Chain?
+PropertyGetter: key:PropertyAccess
+Dereference: "[" __ key:Expression __ "]"
+Invocation: "(" __ args:ArgumentList? __ ")"
 
-MethodCall: method:VariableName "(" __ args:ArgumentList? __ ")"
-FunctionCall: ( variable:VariableName | "(" __ value:Expression __ ")" ) "(" __ args:ArgumentList? __ ")"
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block
+
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 ForeachStatement: "foreach" __ "(" __ left:Expression __ "as" __ item:VariableName __ ")" __ ( right:Block )

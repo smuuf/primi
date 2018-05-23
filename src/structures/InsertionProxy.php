@@ -2,7 +2,8 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsInsertion;
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\ISupportsArrayAccess;
 
 /**
  * Insertion proxy is a special structure that encapsulates a value object which
@@ -14,18 +15,16 @@ use \Smuuf\Primi\ISupportsInsertion;
  *
  * @see \Smuuf\Primi\Handlers\VariableVector
  */
-class InsertionProxy extends \Smuuf\Primi\StrictObject {
+abstract class InsertionProxy extends \Smuuf\Primi\StrictObject {
 
 	protected $target;
 	protected $key;
 
-	public function __construct(ISupportsInsertion $target, ?Value $key) {
+	public function __construct(Value $target, ?string $key) {
 		$this->target = $target;
 		$this->key = $key;
 	}
 
-	public function commit(Value $value) {
-		$this->target->insert($this->key, $value);
-	}
+	abstract public function commit(Value $value);
 
 }

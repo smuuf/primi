@@ -4,8 +4,17 @@ cd $(dirname $0)
 
 files=`find ../example/ -iname "*.primi"`
 
+exitcode=0
+
 for i in $files
 do
     echo -e "█ $i"
     ../primi $i
+    ec="$?"
+    if [ $ec != "0" ]; then
+        exitcode=1
+        echo "Non-zero exit code!"
+    fi
 done
+
+exit $exitcode

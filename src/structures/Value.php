@@ -2,12 +2,25 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\ExtensionHub;
+use \Smuuf\Primi\ISupportsPropertyAccess;
+use \Smuuf\Primi\InternalUndefinedVariableException;
+use \Smuuf\Primi\InternalUndefinedPropertyException;
 use \Smuuf\Primi\Structures\ValueFriends;
-use \Smuuf\Primi\InternalUndefinedMethodException;
 
-abstract class Value extends ValueFriends {
+abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 
 	const TYPE = "__no_type__";
+
+	/**
+	 * This value object's own context (eg. contains properties, etc.)
+	 * @var Context
+	 */
+	protected $properties;
+
+	/** @var bool Are this value's properties initialized? **/
+	protected $propertiesInitialized = false;
 
 	public static function buildAutomatic($value) {
 
@@ -19,7 +32,7 @@ abstract class Value extends ValueFriends {
 			case \is_array($value):
 				return new ArrayValue(array_map([self::class, 'buildAutomatic'], $value));
 			case \is_callable($value);
-					return new FuncValue(FunctionContainer::buildNative($value));
+					return new FuncValue(FnContainer::buildFromClosure($value));
 			case NumberValue::isNumeric($value): // Must be after "is_array" case.
 				return new NumberValue($value);
 			default:
@@ -32,26 +45,56 @@ abstract class Value extends ValueFriends {
 		return $this->value;
 	}
 
-	/**
-	 * Call a method on this value.
-	 * Engine uses this method as proxy to all value methods.
-	 */
-	public function call(string $method, array $args = []): Value {
+	abstract public function getStringValue(): string;
 
-		// Get extensions registered for this class.
-		$exts = \Smuuf\Primi\ExtensionHub::get(static::class);
+	public function propertyGet(string $name): Value {
 
-		foreach ($exts as $ext) {
-			if (\method_exists($ext, $method)) {
-				return $ext::{$method}($this, ...$args);
-			}
+		// Lazy load properties from extensions.
+		if (!$this->propertiesInitialized) {
+			$this->initProperties();
 		}
 
-		throw new InternalUndefinedMethodException;
+		try {
+			return $this->properties->getVariable($name);
+		} catch (InternalUndefinedVariableException $e) {
+			throw new InternalUndefinedPropertyException;
+		}
 
 	}
 
-	abstract public function getStringValue(): string;
+	public function propertySet(string $key, Value $value) {
+
+		// Lazy load properties from extensions.
+		if (!$this->propertiesInitialized) {
+			$this->initProperties();
+		}
+
+		$this->properties->setVariable($key, $value);
+		return $value;
+
+	}
+
+	public function getPropertyInsertionProxy(string $key): PropertyInsertionProxy {
+		return new PropertyInsertionProxy($this, $key);
+	}
+
+	private function initProperties() {
+
+		$this->properties = new Context($this);
+
+		$items = \Smuuf\Primi\ExtensionHub::get(static::class);
+		$this->properties->setVariables($items);
+		$this->propertiesInitialized = true;
+
+	}
+
+	/**
+	 * Shorthand for programatically getting the bound function (method) and
+	 * invoking it with optionally specified argumments.
+	 */
+	public function call(string $name, $args = []): Value {
+		return $this->propertyGet($name)->invoke($args);
+	}
 
 	/**
 	 * Throw new TypeException when the value does not match any of the types provided.

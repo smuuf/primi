@@ -153,33 +153,34 @@ Assert::exception(function() use ($string) {
 //
 
 // Dereferencing returns new instance.
-$dereferenced1 = $string->dereference(new NumberValue(0));
+$dereferenced1 = $string->arrayGet(0);
 Assert::notSame($string, $dereferenced1);
 
 // Test return values of dereferencing.
-Assert::same("t", get_val($string->dereference(new NumberValue(0))));
-Assert::same("s", get_val($string->dereference(new NumberValue(3))));
+Assert::same("t", get_val($string->arrayGet(0)));
+Assert::same("s", get_val($string->arrayGet(3)));
 
 // Test error when dereferencing from undexined index.
 Assert::exception(function() use ($string) {
-	$string->dereference(new NumberValue(50));
+	$string->arrayGet(50);
 }, \Smuuf\Primi\InternalUndefinedIndexException::class);
 
 // Test that inserting does happen on the same instance of the value object.
 $copy = clone $string;
-Assert::same($copy, $copy->insert(new NumberValue(0), new StringValue("x")));
 // Test classic insertion.
-$copy->insert(new NumberValue(2), new StringValue("u"));
+$copy->arraySet(0, new StringValue("x"));
+Assert::same("xhis is a string.", get_val($copy));
+$copy->arraySet(2, new StringValue("u"));
 Assert::same("xhus is a string.", get_val($copy));
 // Test insertion without specifying index - Single letter.
-$copy->insert(null, new StringValue("A"));
+$copy->arraySet(null, new StringValue("A"));
 Assert::same("xhus is a string.A", get_val($copy));
 // Test insertion without specifying index - Multiple letters.
-$copy->insert(null, new StringValue("BBB"));
+$copy->arraySet(null, new StringValue("BBB"));
 Assert::same("xhus is a string.ABBB", get_val($copy));
 
 // Test creating insertion proxy and commiting it.
-$proxy = $copy->getInsertionProxy(new NumberValue(4));
+$proxy = $copy->getArrayInsertionProxy(4);
 $proxy->commit(new StringValue("O"));
 Assert::same("xhusOis a string.ABBB", get_val($copy));
 
@@ -250,21 +251,29 @@ Assert::exception(function() {
 	);
 }, \Smuuf\Primi\ErrorException::class);
 
+//
 // Test count.
+//
+
 Assert::same(3, get_val($string->call('count', [new StringValue("i")])));
 Assert::same(2, get_val($string->call('count', [new StringValue("is")])));
 Assert::same(0, get_val($string->call('count', [new StringValue("xoxoxo")])));
 Assert::same(0, get_val($string->call('count', [new NumberValue(1)])));
 
+//
 // Test length.
-Assert::same(17, get_val($string->propLength()));
-Assert::same(1, get_val($letterA->propLength()));
-// Multibyte strings should report length correctly.
-Assert::same(17, get_val($unicode->propLength()));
-// "\n" is expanded as newline - that's one character.
-Assert::same(5, get_val($withNewline->propLength()));
+//
 
+Assert::same(17, get_val($string->propertyGet('length')));
+Assert::same(1, get_val($letterA->propertyGet('length')));
+// Multibyte strings should report length correctly.
+Assert::same(17, get_val($unicode->propertyGet('length')));
+// "\n" is expanded as newline - that's one character.
+Assert::same(5, get_val($withNewline->propertyGet('length')));
+
+//
 // Test replacing.
+//
 
 // Test replacing with array of needle-replacement.
 $pairs = new ArrayValue([
@@ -281,7 +290,10 @@ Assert::same("thyes! yes! a string.", get_val($result));
 $result = $string->call('replace', [new RegexValue('(i?s|\s)'), new StringValue("no!")]);
 Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 
+//
 // Test first/last occurence search.
+//
+
 Assert::same(2, get_val($string->call('first', [new StringValue("is")])));
 Assert::same(5, get_val($string->call('last', [new StringValue("is")])));
 
@@ -290,7 +302,10 @@ Assert::false(get_val($string->call('first', [new StringValue("aaa")])));
 // Last: False when it does not appear in the string.
 Assert::false(get_val($string->call('last', [new StringValue("aaa")])));
 
+//
 // Test splitting.
+//
+
 $string = new StringValue("hello,how,are,you");
 $result = [];
 foreach (get_val($string->call('split', [new StringValue(",")])) as $item) {
@@ -304,3 +319,19 @@ foreach (get_val($string->call('split', [new RegexValue("/[,\s\.]+/")])) as $ite
 	$result[] = get_val($item);
 }
 Assert::same(["well", "this", "IS", "awkward!"], $result);
+
+//
+// Test reverse.
+//
+
+// Simple ascii string.
+$string = new StringValue("You wake me up, god damn it!");
+Assert::same("!ti nmad dog ,pu em ekaw uoY", get_val($string->call('reverse')));
+
+// With accents
+$string = new StringValue("Čauky mňauky, kolovrátku ;D");
+Assert::same("D; uktárvolok ,ykuaňm ykuaČ", get_val($string->call('reverse')));
+
+// With the worst smiley ever.
+$string = new StringValue("Yoo 🤣, my mæte 😂!!!");
+Assert::same("!!!😂 etæm ym ,🤣 ooY", get_val($string->call('reverse')));

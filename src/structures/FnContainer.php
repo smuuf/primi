@@ -2,18 +2,21 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ReturnException;
 use \Smuuf\Primi\Structures\NullValue;
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 
-class FunctionContainer extends \Smuuf\Primi\StrictObject {
+use \Smuuf\Primi\ReturnException;
+use \Smuuf\Primi\InternalArgumentCountException;
+
+class FnContainer extends \Smuuf\Primi\StrictObject {
 
 	/** @var \Closure Closure wrapping the function itself. **/
 	protected $closure;
 
 	/** @var array Array containing parameters the function is aware of. **/
-	protected $args = [];
+	protected $argsCount = 0;
 
 	/**
 	 * Build and return a closure wrapper around a Primi function (represented
@@ -29,7 +32,7 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function() use ($node, $definitionContext, $definitionArgs) {
+		$closure = function($self = null, ...$args) use ($node, $definitionContext, $definitionArgs) {
 
 			// Create new context (scope) for the function, so it doesn't
 			// operate in the global scope.
@@ -41,10 +44,25 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 				$context->setVariables($definitionContext->getVariables());
 			}
 
+			$args = \array_splice($args, 0, \count($definitionArgs));
+			if (\count($definitionArgs) > \count($args)) {
+				throw new InternalArgumentCountException(
+					\count($args),
+					\count($definitionArgs)
+				);
+			}
+
 			// Create pairs of arguments <arg_name> => <arg_value> and
 			// inject them into the function's context, too. (i.e. these are
 			// the arguments passed into it.)
-			$args = \array_combine($definitionArgs, \func_get_args());
+			$args = \array_combine($definitionArgs, $args);
+
+			// If this function has "self" specified, pass it as the "this"
+			// variable.
+			if ($self) {
+				$args['this'] = $self;
+			}
+
 			$context->setVariables($args);
 
 			try {
@@ -63,31 +81,45 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($closure, $definitionArgs);
+		return new self($closure, count($definitionArgs));
 
 	}
 
-	public static function buildNative(callable $fn) {
+	public static function buildFromClosure(callable $fn) {
 
 		$closure = \Closure::fromCallable($fn);
 
 		$r = new \ReflectionFunction($closure);
-		$args = \array_map(function($param) {
-			return $param->name;
-		}, $r->getParameters());
+		$argsCount = $r->getNumberOfRequiredParameters();
 
-		// Wrap the closure into another closure which handles automatic
-		// conversion of parameter types (Primi values -> PHP values) and
-		// return value type (PHP value -> Primi value).
-		$wrapper = function() use ($closure) {
+		// If the callable does not have a return type of Value, we will
+		// handle consider the function as handling PHP values instead of
+		// Primi value objects.
+		$passPhpValues = true;
+		if (
+			$r->hasReturnType()
+			&& is_a((string) $r->getReturnType(), Value::class, true)
+		) {
+			$passPhpValues = false;
+		}
 
-			$args = \array_map(function(Value $value) {
-				return $value->getInternalValue();
-			}, \func_get_args());
+		$wrapper = function($self = null, ...$args) use ($closure, $passPhpValues) {
+
+			// If this function has "self" specified, pass it as the first
+			// argument.
+			if ($self) {
+				array_unshift($args, $self);
+			}
+
+			if ($passPhpValues) {
+				$args = \array_map(function(Value $value) {
+					return $value->getInternalValue();
+				}, $args);
+			}
 
 			$result = $closure(...$args);
 
-			if (!$result instanceof Value) {
+			if ($passPhpValues && !$result instanceof Value) {
 				return Value::buildAutomatic($result);
 			}
 
@@ -95,24 +127,24 @@ class FunctionContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($wrapper, $args);
+		return new self($wrapper, $argsCount);
 
 	}
 
 	/**
-	 * Disallow direct instantiation. Always use the prepared static factories.
+	 * Disallow direct instantiation. Always use the static factories above.
 	 */
-	private function __construct(\Closure $closure, array $args = []) {
+	private function __construct(\Closure $closure, int $argsCount = 0) {
 		$this->closure = $closure;
-		$this->args = $args;
+		$this->argsCount = $argsCount;
 	}
 
 	public function getClosure() {
 		return $this->closure;
 	}
 
-	public function getArgs() {
-		return $this->args;
+	public function getArgsCount(): int {
+		return $this->argsCount;
 	}
 
 }

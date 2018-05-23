@@ -2,7 +2,6 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\InternalArgumentCountException;
 use \Smuuf\Primi\Structures\{
 	BoolValue,
 	NullValue,

@@ -52,7 +52,7 @@ class Multiplication extends \Smuuf\Primi\StrictObject implements IHandler, IRed
 			} catch (\TypeError $e) {
 
 				throw new ErrorException(sprintf(
-					"Cannot %s: '%s' and '%s'",
+					"Cannot %s types '%s' and '%s'",
 					$op ===  "*" ? "multiply" : "divide",
 					$result::TYPE,
 					$tmp::TYPE

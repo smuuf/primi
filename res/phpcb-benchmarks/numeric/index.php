@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . "/../../vendor/autoload.php";
+require __DIR__ . "/../../../vendor/autoload.php";
 $bench = new \Smuuf\Phpcb\PhpBenchmark;
 
 $data = [false, 0, 1, 42, -1024, "ahoj", "0.1", "-4.2", "-1000000", "false", "75", "125"];

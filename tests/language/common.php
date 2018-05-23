@@ -53,7 +53,7 @@ function run_test($file) {
 }
 
 function normalize(string $string) {
-	return preg_replace('~\r\n?~', "\n", $string);
+	return trim(preg_replace('~\r?\n~', "\n", $string));
 }
 
 function main_class($instance) {

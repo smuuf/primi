@@ -2,7 +2,7 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Structures\FunctionContainer;
+use \Smuuf\Primi\Structures\FnContainer;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -78,7 +78,7 @@ require __DIR__ . '/../bootstrap.php';
 		Assert::falsey($v);
 
 		// Create empty function container for testing purposes.
-		$fnContainer = FunctionContainer::buildNative(function() {});
+		$fnContainer = FnContainer::buildFromClosure(function() {});
 
 		$funcA = new \Smuuf\Primi\Structures\FuncValue($fnContainer);
 		$context->setVariable('func_a', $funcA);

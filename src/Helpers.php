@@ -6,6 +6,10 @@ use \Smuuf\Primi\Structures\Value;
 
 abstract class Helpers extends \Smuuf\Primi\StrictObject {
 
+	public static function objectHash($o): string {
+		return substr(md5(spl_object_hash($o)), 0, 6);
+	}
+
 	/**
 	 * Takes array as reference and ensures its contents are represented in a form of indexed sub-arrays.
 	 * This comes handy if we want to be sure that multiple sub-nodes (which PHP-PEG parser returns) are universally
@@ -42,57 +46,22 @@ abstract class Helpers extends \Smuuf\Primi\StrictObject {
 	}
 
 	/**
-	 * Invoke the $method method with $args arguments on a $subject Value object.
-	 *
-	 * This method also provides the necessary stuffing around such invocation,
-	 * such as catching different possible exceptions.
-	 */
-	public static function invokeValueMethod(Value $subject, string $method, array $args = [], array $node = []): Value {
-
-		try {
-
-			return $subject->call($method, $args);
-
-		} catch (\ArgumentCountError $e) {
-
-			// We have the counts of expected/passed arguments available,
-			// add that information to the error message.
-			$expectedCounts = self::parseArgumentCountError($e);
-			throw new InternalArgumentCountException($method, $expectedCounts[0], $expectedCounts[1]);
-
-		} catch (\TypeError $e) {
-
-			// Make use of PHP's internal TypeError being thrown when passing wrong types of arguments.
-			throw new ErrorException(sprintf("Wrong arguments passed to method '%s' of '%s'.", $method, $subject::TYPE), $node);
-
-		} catch (InternalUndefinedMethodException $e) {
-
-			throw new ErrorException(sprintf("Calling undefined method '%s' on '%s'.", $method, $subject::TYPE), $node);
-
-		}
-
-	}
-
-	/**
 	 * Parse \ArgumentCountError's message and return a tuple of integers
 	 * representing:
 	 * 1. Number of arguments passed.
 	 * 2. Number of arguments expected.
 	 */
-	protected static function parseArgumentCountError(\ArgumentCountError $e): array {
+	public static function parseArgumentCountError(\ArgumentCountError $e): array {
 
 		$msg = $e->getMessage();
 
 		// ArgumentCountError exception does not provide these numbers itself,
 		// so we have to extract it from the internal PHP exception message.
 		if (!preg_match('#(?<passed>\d+)\s+passed.*(?<expected>\d+)\s+expected#', $msg, $m)) {
-			return [];
+			return [null, null];
 		}
 
-		// Also, because of how calling Primi value methods work, we need to
-		// subtract 1 from these numbers. (first argument is the value - upon
-		// which the method is called - itself).
-		return [$m['passed'] - 1, $m['expected'] - 1];
+		return [$m['passed'], $m['expected']];
 
 	}
 

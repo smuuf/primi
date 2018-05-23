@@ -7,8 +7,7 @@ use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ISupportsDereference;
-use \Smuuf\Primi\ISupportsInsertion;
+use \Smuuf\Primi\ISupportsArrayAccess;
 use \Smuuf\Primi\ErrorException;
 
 class StringValue extends Value implements
@@ -17,8 +16,7 @@ class StringValue extends Value implements
 	ISupportsMultiplication,
 	ISupportsIteration,
 	ISupportsComparison,
-	ISupportsInsertion,
-	ISupportsDereference
+	ISupportsArrayAccess
 {
 
 	const TYPE = "string";
@@ -106,25 +104,22 @@ class StringValue extends Value implements
 
 	}
 
-	public function dereference(Value $index) {
+	public function arrayGet(string $index): Value {
 
-		// Allow dereferencing only by numbers.
-		self::allowTypes($index, NumberValue::class);
+		$index = (int) $index;
 
-		$phpIndex = (string) $index->value;
-
-		if (!isset($this->value[$phpIndex])) {
-			throw new \Smuuf\Primi\InternalUndefinedIndexException($phpIndex);
+		if (!isset($this->value[$index])) {
+			throw new \Smuuf\Primi\InternalUndefinedIndexException($index);
 		}
 
-		return new self($this->value[$phpIndex]);
+		return new self($this->value[$index]);
 
 	}
 
-	public function insert(?Value $index, Value $value): Value {
+	public function arraySet(?string $index, Value $value) {
 
 		// Allow only strings to be inserted.
-		self::allowTypes($value, self::class);
+		self::allowTypes($value, self::class, NumberValue::class);
 
 		if ($index === \null) {
 
@@ -133,21 +128,15 @@ class StringValue extends Value implements
 
 		} else {
 
-			// Only numbers can be indexes in strings.
-			self::allowTypes($index, NumberValue::class);
-			$phpIndex = $index->value;
-
 			// If index is specified, PHP own rules for inserting into strings apply.
-			$this->value[$phpIndex] = $value->value;
+			$this->value[(int) $index] = $value->value;
 
 		}
 
-		return $this;
-
 	}
 
-	public function getInsertionProxy(?Value $index): InsertionProxy {
-		return new InsertionProxy($this, $index);
+	public function getArrayInsertionProxy(?string $index): ArrayInsertionProxy {
+		return new ArrayInsertionProxy($this, $index);
 	}
 
 	public function getIterator(): \Iterator {
@@ -177,12 +166,5 @@ class StringValue extends Value implements
 		}
 
 	}
-
-	// Properties.
-
-	public function propLength(): NumberValue {
-		return new NumberValue(\mb_strlen($this->value));
-	}
-
 
 }

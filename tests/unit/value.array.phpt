@@ -10,7 +10,7 @@ use \Smuuf\Primi\Structures\{
 	BoolValue,
 	Value
 };
-use \Smuuf\Primi\Structures\FunctionContainer;
+use \Smuuf\Primi\Structures\FnContainer;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -21,24 +21,24 @@ function get_val(Value $v) {
 // Prepare helper objects.
 $something = new StringValue("something");
 $anything = new StringValue("anything");
-$someKey = new StringValue("some_key");
+$someKey = "some_key";
 
 // Test behaviour of empty array.
 $arr = new ArrayValue([]);
-Assert::same(0, get_val($arr->propLength()));
+Assert::same(0, get_val($arr->propertyGet('length')));
 Assert::same(false, get_val($arr->call('contains', [$something])));
 
 // Test proper exception when accessing non-existing key.
 Assert::exception(function() use ($arr) {
-	$arr->dereference(new StringValue("non_existing_key"));
+	$arr->arrayGet("non_existing_key");
 }, \Smuuf\Primi\InternalUndefinedIndexException::class);
 
 // Test working with insertion proxy.
-$proxy = $arr->getInsertionProxy($someKey);
-Assert::same(0, get_val($arr->propLength()));
+$proxy = $arr->getArrayInsertionProxy($someKey);
+Assert::same(0, get_val($arr->propertyGet('length')));
 Assert::same(false, get_val($arr->call('contains', [$anything])));
 $proxy->commit($anything);
-Assert::same(1, get_val($arr->propLength()));
+Assert::same(1, get_val($arr->propertyGet('length')));
 Assert::same(true, get_val($arr->call('contains', [$anything])));
 
 // Test getting and iterating array object iterator.
@@ -50,7 +50,7 @@ Assert::same(["anything"], $result);
 
 // Test deep clone of array object (all inner objects ought to be cloned too).
 $cloned = clone $arr;
-Assert::notSame($cloned->dereference($someKey), $arr->dereference($someKey));
+Assert::notSame($cloned->arrayGet($someKey), $arr->arrayGet($someKey));
 
 //
 // Test methods.
@@ -60,13 +60,13 @@ $arr = new ArrayValue([]);
 
 // Push an item into the array and test stuff.
 $arr->call('push', [$anything]);
-Assert::same(1, get_val($arr->propLength()));
+Assert::same(1, get_val($arr->propertyGet('length')));
 Assert::same(false, get_val($arr->call('contains', [$something])));
 Assert::same(true, get_val($arr->call('contains', [$anything])));
 
 // Pop an item form the array and test stuff.
 $arr->call('pop');
-Assert::same(0, get_val($arr->propLength()));
+Assert::same(0, get_val($arr->propertyGet('length')));
 Assert::same(false, get_val($arr->call('contains', [$something])));
 Assert::same(false, get_val($arr->call('contains', [$anything])));
 
@@ -105,7 +105,7 @@ $num2 = new NumberValue(45);
 $num3 = new NumberValue(-30);
 $arr = new ArrayValue([$num1, $num2, $num3]);
 
-$fn = new FuncValue(FunctionContainer::buildNative(function ($input) {
+$fn = new FuncValue(FnContainer::buildFromClosure(function ($input) {
 	return $input * 2;
 }));
 

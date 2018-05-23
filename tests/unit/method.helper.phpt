@@ -7,8 +7,7 @@ use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\InternalArgumentCountException;
-use \Smuuf\Primi\InternalUndefinedMethodException;
+use \Smuuf\Primi\InternalUndefinedPropertyException;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -19,33 +18,35 @@ function get_val(Value $v) {
 $s = new StringValue("hello there");
 
 //
-// Correct invocation.
+// Argument count error message parser.
 //
 
-// Test correct invocation.
-$args = [new StringValue("there")];
-$result = Helpers::invokeValueMethod($s, 'first', $args);
-Assert::same(6, get_val($result));
+try {
+    (function($a, $b, $c) {
+        echo "yay";
+    })(1, 2);
+} catch (\ArgumentCountError $e) {
+    [$x, $y] = Helpers::parseArgumentCountError($e);
+    Assert::same(2, (int) $x);
+    Assert::same(3, (int) $y);
+}
 
-//
-// Incorrect invocations.
-//
+try {
+    (function($a, $b) {
+        echo "yay";
+    })();
+} catch (\ArgumentCountError $e) {
+    [$x, $y] = Helpers::parseArgumentCountError($e);
+    Assert::same(0, (int) $x);
+    Assert::same(2, (int) $y);
+}
 
-// The helper function should convert any internal/php errors to
-// a proper, normal Primi's error exception.
-
-// Test incorrect invocation - too few arguments.
-Assert::exception(function() use ($s) {
-    $result = Helpers::invokeValueMethod($s, 'first', []);
-}, InternalArgumentCountException::class);
-
-// Test incorrect invocation - undefined method.
-Assert::exception(function() use ($s) {
-    $result = Helpers::invokeValueMethod($s, 'totally_undefined_method');
-}, ErrorException::class, '#undefined.*method#i');
-
-// Test incorrect invocation - wrong type of argument.
-Assert::exception(function() use ($s) {
-    $wrongArgs = [new RegexValue("@[abc]@")];
-    $result = Helpers::invokeValueMethod($s, 'first', [$wrongArgs]);
-}, ErrorException::class, '#wrong.*arguments#i');
+try {
+    (function($a, $b, $c) {
+        echo "yay";
+    })(1);
+} catch (\ArgumentCountError $e) {
+    [$x, $y] = Helpers::parseArgumentCountError($e);
+    Assert::same(1, (int) $x);
+    Assert::same(3, (int) $y);
+}
