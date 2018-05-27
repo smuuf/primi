@@ -1,10 +1,10 @@
 <?php
 
-namespace Smuuf\Primi;
+namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Structures\Value;
 
-abstract class Helpers extends \Smuuf\Primi\StrictObject {
+abstract class Common extends \Smuuf\Primi\StrictObject {
 
 	public static function objectHash($o): string {
 		return substr(md5(spl_object_hash($o)), 0, 6);

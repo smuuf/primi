@@ -5,7 +5,7 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 
 /**
  * Node fields:
@@ -22,7 +22,7 @@ class ArgumentList extends \Smuuf\Primi\StrictObject implements IHandler {
 		}
 
 		$list = [];
-		Helpers::ensureIndexed($node['args']);
+		Common::ensureIndexed($node['args']);
 
 		foreach ($node['args'] as $a) {
 			$handler = HandlerFactory::get($a['name']);

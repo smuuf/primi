@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\IReadlineDriver;
@@ -110,7 +110,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",
 			$value::TYPE,
-			Helpers::objectHash($value)
+			Common::objectHash($value)
 		));
 
 	}

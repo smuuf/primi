@@ -2,7 +2,7 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\RegexValue;
@@ -26,7 +26,7 @@ try {
         echo "yay";
     })(1, 2);
 } catch (\ArgumentCountError $e) {
-    [$x, $y] = Helpers::parseArgumentCountError($e);
+    [$x, $y] = Common::parseArgumentCountError($e);
     Assert::same(2, (int) $x);
     Assert::same(3, (int) $y);
 }
@@ -36,7 +36,7 @@ try {
         echo "yay";
     })();
 } catch (\ArgumentCountError $e) {
-    [$x, $y] = Helpers::parseArgumentCountError($e);
+    [$x, $y] = Common::parseArgumentCountError($e);
     Assert::same(0, (int) $x);
     Assert::same(2, (int) $y);
 }
@@ -46,7 +46,7 @@ try {
         echo "yay";
     })(1);
 } catch (\ArgumentCountError $e) {
-    [$x, $y] = Helpers::parseArgumentCountError($e);
+    [$x, $y] = Common::parseArgumentCountError($e);
     Assert::same(1, (int) $x);
     Assert::same(3, (int) $y);
 }

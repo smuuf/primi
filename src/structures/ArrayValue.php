@@ -4,7 +4,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Psl\ArrayLibrary;
 use \Smuuf\Primi\Helpers\CircularDetector;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsArrayAccess;
@@ -56,7 +56,7 @@ class ArrayValue extends Value implements
 			// would end up going in (infinite) circles.
 			$hash = spl_object_hash($item);
 			$str = $cd->has($hash)
-				? sprintf("*recursion (%s)*", Helpers::objectHash($item))
+				? sprintf("*recursion (%s)*", Common::objectHash($item))
 				: $item->getStringValue($cd);
 
 			$return .= sprintf("%s: %s, ", $key, $str);

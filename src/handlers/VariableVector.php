@@ -10,7 +10,7 @@ use \Smuuf\Primi\ISupportsArrayAccess;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 
 class VariableVector extends \Smuuf\Primi\StrictObject implements IHandler {
 

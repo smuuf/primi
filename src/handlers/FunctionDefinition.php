@@ -6,7 +6,7 @@ use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 
 /**
  * Node fields:
@@ -23,7 +23,7 @@ class FunctionDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 		$argumentList = [];
 		if (isset($node['args'])) {
 
-			Helpers::ensureIndexed($node['args']);
+			Common::ensureIndexed($node['args']);
 
 			foreach ($node['args'] as $a) {
 				$argumentList[] = $a['text'];

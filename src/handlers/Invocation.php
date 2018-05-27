@@ -4,7 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\FuncValue;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\InternalArgumentCountException;
@@ -79,7 +79,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 			// We have the counts of expected/passed arguments available,
 			// add that information to the error message.
-			[$expected, $passed] = Helpers::parseArgumentCountError($e);
+			[$expected, $passed] = Common::parseArgumentCountError($e);
 
 			// Also, because of how calling Primi value methods work, we need to
 			// subtract 1 from these numbers. (first argument is the value - upon

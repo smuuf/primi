@@ -8,7 +8,7 @@ use \Smuuf\Primi\ISupportsArrayAccess;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 
 class Dereference extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 

@@ -3,6 +3,8 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Helpers\Common;
+
 use \hafriedlander\Peg\Parser;
 
 class ParserHandler extends CompiledParser {
@@ -61,7 +63,7 @@ class ParserHandler extends CompiledParser {
 		$pos = \false;
 
 		if ($position !== \false) {
-			list($line, $pos) = Helpers::getPositionEstimate($this->source, $position);
+			list($line, $pos) = Common::getPositionEstimate($this->source, $position);
 		}
 
 		throw new SyntaxErrorException($msg, $line, $pos);
@@ -151,7 +153,7 @@ class ParserHandler extends CompiledParser {
 
 		if (isset($node['offset'])) {
 
-			list($line, $pos) = Helpers::getPositionEstimate($source, $node['offset']);
+			list($line, $pos) = Common::getPositionEstimate($source, $node['offset']);
 			$node['line'] = $line;
 			$node['pos'] = $pos;
 

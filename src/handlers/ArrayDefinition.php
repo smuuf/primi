@@ -6,7 +6,7 @@ use \Smuuf\Primi\Structures\ArrayValue;
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers;
+use \Smuuf\Primi\Helpers\Common;
 
 class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 
@@ -16,7 +16,7 @@ class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 			return new ArrayValue([]);
 		}
 
-		Helpers::ensureIndexed($node['items']);
+		Common::ensureIndexed($node['items']);
 		return new ArrayValue(self::buildArray($node['items'], $context));
 
 	}
