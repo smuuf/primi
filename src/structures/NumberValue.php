@@ -40,7 +40,7 @@ class NumberValue extends Value implements
 	}
 
 	public static function isNumeric(string $input): bool {
-		return \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
+		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
 	}
 
 	public function doAddition(Value $rightOperand): Value {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
@@ -18,7 +20,7 @@ class ArrayExtension extends Extension {
 
 		return new LazyValue(
 			FnContainer::buildFromClosure(function(ArrayValue $self): NumberValue {
-				return new NumberValue(\count($self->value));
+				return new NumberValue((string) \count($self->value));
 			})
 		);
 

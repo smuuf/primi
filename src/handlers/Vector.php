@@ -70,7 +70,7 @@ class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 		} elseif ($type === 'prop') {
 			$next = $subject->propertyGet($key);
 		} else {
-			throw new \InternalException("Malformed vector node.");
+			throw new InternalException("Malformed vector node.");
 		}
 
 		// At this point we know there's some another, deeper part of vector,

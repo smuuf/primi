@@ -15,7 +15,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	/** @var \Closure Closure wrapping the function itself. **/
 	protected $closure;
 
-	/** @var array Array containing parameters the function is aware of. **/
+	/** @var int Number of parameters the function is aware of. **/
 	protected $argsCount = 0;
 
 	/**
@@ -139,7 +139,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		$this->argsCount = $argsCount;
 	}
 
-	public function getClosure() {
+	public function getClosure(): \Closure {
 		return $this->closure;
 	}
 
