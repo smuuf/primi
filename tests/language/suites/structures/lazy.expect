@@ -1,0 +1,4 @@
+arr:ArrayValue:[0: 1, 1: 2, 2: 3, 3: 4, 4: 5]
+sum:LazyValue:__lazy__
+result_1:NumberValue:15
+result_2:NumberValue:15
