@@ -50,7 +50,7 @@ AssignmentOperator: "="
 ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
 UnaryOperator: "++" | "--"
 
-Expression: skip:AnonymousFunction | skip:Assignment | skip:Comparison | skip:Addition
+Expression: skip:AnonymousFunction | skip:LazyDefinition | skip:Assignment | skip:Comparison | skip:Addition
 Comparison: left:Addition __ op:ComparisonOperator __ right:Addition
 Assignment: left:Mutable __ op:AssignmentOperator __ right:Expression
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication)*
@@ -65,6 +65,7 @@ ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block
+LazyDefinition: "lazy" __ body:Block
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
