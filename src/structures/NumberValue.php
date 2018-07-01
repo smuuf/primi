@@ -35,12 +35,19 @@ class NumberValue extends Value implements
 		// because it's casted to (int) and the sign disappears there -> false.
 		$input = \ltrim($input, "+-");
 
+		// The same with zeroes at the beginning.
+		// But only if the input is not a zero.
+		$input = $input !== "0" ? \ltrim($input, "0") : $input;
+
 		return (string) (int) $input === (string) $input;
 
 	}
 
 	public static function isNumeric(string $input): bool {
-		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
+		return
+			(bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input)
+			&& (int) $input !== PHP_INT_MAX
+			&& (int) $input !== PHP_INT_MIN;
 	}
 
 	public function doAddition(Value $rightOperand): Value {
