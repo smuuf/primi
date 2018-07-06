@@ -30,7 +30,7 @@ class StringValue extends Value implements
 
 		// We are about to put double-quotes around the return value,
 		// so let's "escape" double-quotes present in the string value.
-		$escaped = str_replace('"', '\"', $this->value);
+		$escaped = \str_replace('"', '\"', $this->value);
 		return "\"$escaped\"";
 
 	}
@@ -61,8 +61,8 @@ class StringValue extends Value implements
 		Common::allowTypes($rightOperand, NumberValue::class);
 
 		$multiplier = $rightOperand->value;
-		if (is_int($multiplier) && $multiplier >= 0) {
-			return new self(str_repeat($this->value, $multiplier));
+		if (\is_int($multiplier) && $multiplier >= 0) {
+			return new self(\str_repeat($this->value, $multiplier));
 		}
 
 		throw new \TypeError;

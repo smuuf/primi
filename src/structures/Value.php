@@ -21,17 +21,17 @@ abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 	protected $properties;
 
 	/** @var bool Are this value's properties initialized? **/
-	protected $propertiesInitialized = false;
+	protected $propertiesInitialized = \false;
 
 	public static function buildAutomatic($value) {
 
-		switch (true) {
-			case $value === null:
+		switch (\true) {
+			case $value === \null:
 				return new NullValue;
 			case \is_bool($value):
 				return new BoolValue($value);
 			case \is_array($value):
-				return new ArrayValue(array_map([self::class, 'buildAutomatic'], $value));
+				return new ArrayValue(\array_map([self::class, 'buildAutomatic'], $value));
 			case \is_callable($value);
 					return new FuncValue(FnContainer::buildFromClosure($value));
 			case NumberValue::isNumeric($value): // Must be after "is_array" case.
@@ -66,7 +66,7 @@ abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 	public function propertySet(string $key, Value $value) {
 
 		// Lazy load properties from extensions.
-		if (!$this->propertiesInitialized) {
+		if ($this->propertiesInitialized === \false) {
 			$this->initProperties();
 		}
 
@@ -85,7 +85,7 @@ abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 
 		$items = \Smuuf\Primi\ExtensionHub::get(static::class);
 		$this->properties->setVariables($items);
-		$this->propertiesInitialized = true;
+		$this->propertiesInitialized = \true;
 
 	}
 

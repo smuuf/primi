@@ -32,7 +32,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function($self = null, ...$args) use ($node, $definitionContext, $definitionArgs) {
+		$closure = function($self = \null, ...$args) use ($node, $definitionContext, $definitionArgs) {
 
 			// Create new context (scope) for the function, so it doesn't
 			// operate in the global scope.
@@ -81,7 +81,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($closure, count($definitionArgs));
+		return new self($closure, \count($definitionArgs));
 
 	}
 
@@ -95,20 +95,20 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		// If the callable does not have a return type of Value, we will
 		// handle consider the function as handling PHP values instead of
 		// Primi value objects.
-		$passPhpValues = true;
+		$passPhpValues = \true;
 		if (
 			$r->hasReturnType()
-			&& is_a((string) $r->getReturnType(), Value::class, true)
+			&& \is_a((string) $r->getReturnType(), Value::class, \true)
 		) {
-			$passPhpValues = false;
+			$passPhpValues = \false;
 		}
 
-		$wrapper = function($self = null, ...$args) use ($closure, $passPhpValues) {
+		$wrapper = function($self = \null, ...$args) use ($closure, $passPhpValues) {
 
 			// If this function has "self" specified, pass it as the first
 			// argument.
 			if ($self) {
-				array_unshift($args, $self);
+				\array_unshift($args, $self);
 			}
 
 			if ($passPhpValues) {

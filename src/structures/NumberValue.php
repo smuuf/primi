@@ -47,8 +47,8 @@ class NumberValue extends Value implements
 	public static function isNumeric(string $input): bool {
 		return
 			(bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input)
-			&& (int) $input !== PHP_INT_MAX
-			&& (int) $input !== PHP_INT_MIN;
+			&& (int) $input !== \PHP_INT_MAX
+			&& (int) $input !== \PHP_INT_MIN;
 	}
 
 	public function doAddition(Value $rightOperand): Value {
@@ -74,7 +74,7 @@ class NumberValue extends Value implements
 
 		if ($rightOperand instanceof StringValue) {
 			$multiplier = $this->value;
-			if (is_int($multiplier) && $multiplier >= 0) {
+			if (\is_int($multiplier) && $multiplier >= 0) {
 				return new StringValue(str_repeat($rightOperand->value, $multiplier));
 			}
 			throw new \TypeError;
@@ -89,7 +89,7 @@ class NumberValue extends Value implements
 		Common::allowTypes($rightOperand, self::class);
 
 		// Avoid division by zero.
-		if ($rightOperand->value == 0) {
+		if ($rightOperand->value === 0) {
 			throw new \Smuuf\Primi\ErrorException("Division by zero.");
 		}
 

@@ -11,7 +11,7 @@ class NullValue extends Value implements ISupportsComparison {
 
 	const TYPE = "null";
 
-	protected $value = null;
+	protected $value = \null;
 
 	public function getStringValue(): string {
 		return "null";

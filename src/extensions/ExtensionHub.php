@@ -46,11 +46,13 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	 * We need to always return a fresh copy!
 	 */
 	public static function get($target): array {
+
 		return self::$extensions[$target]
 			? array_map(function($item) {
 				return clone $item;
 			}, self::$extensions[$target])
 			: [];
+
 	}
 
 	/**
