@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
@@ -52,7 +53,7 @@ class NumberValue extends Value implements
 
 	public function doAddition(Value $rightOperand): Value {
 
-		self::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes($rightOperand, self::class, StringValue::class);
 
 		if ($rightOperand instanceof StringValue && !self::isNumeric($rightOperand->value)) {
 			return new StringValue($this->value . $rightOperand->value);
@@ -63,13 +64,13 @@ class NumberValue extends Value implements
 	}
 
 	public function doSubtraction(Value $rightOperand): self {
-		self::allowTypes($rightOperand, self::class);
+		Common::allowTypes($rightOperand, self::class);
 		return new self($this->value - $rightOperand->value);
 	}
 
 	public function doMultiplication(Value $rightOperand) {
 
-		self::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes($rightOperand, self::class, StringValue::class);
 
 		if ($rightOperand instanceof StringValue) {
 			$multiplier = $this->value;
@@ -85,7 +86,7 @@ class NumberValue extends Value implements
 
 	public function doDivision(Value $rightOperand): self {
 
-		self::allowTypes($rightOperand, self::class);
+		Common::allowTypes($rightOperand, self::class);
 
 		// Avoid division by zero.
 		if ($rightOperand->value == 0) {
@@ -111,7 +112,7 @@ class NumberValue extends Value implements
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		self::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes($rightOperand, self::class, StringValue::class);
 
 		switch ($op) {
 			case "==":

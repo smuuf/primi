@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ISupportsComparison;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\NullValue;
 
 class BoolValue extends Value implements ISupportsComparison {
@@ -19,7 +20,7 @@ class BoolValue extends Value implements ISupportsComparison {
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		self::allowTypes($rightOperand, self::class, NullValue::class);
+		Common::allowTypes($rightOperand, self::class, NullValue::class);
 
 		switch ($op) {
 			case "==":

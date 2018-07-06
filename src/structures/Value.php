@@ -7,6 +7,7 @@ use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\ISupportsPropertyAccess;
 use \Smuuf\Primi\InternalUndefinedVariableException;
 use \Smuuf\Primi\InternalUndefinedPropertyException;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\ValueFriends;
 
 abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
@@ -94,27 +95,6 @@ abstract class Value extends ValueFriends implements ISupportsPropertyAccess {
 	 */
 	public function call(string $name, $args = []): Value {
 		return $this->propertyGet($name)->invoke($args);
-	}
-
-	/**
-	 * Throw new TypeException when the value does not match any of the types provided.
-	 * Use this when allowing only certain types of values in call*() methods.
-	 *
-	 * This is needed because of PHP's imperfect type-hinting system which does not support union types.
-	 *
-	 * @throws \TypeException
-	 */
-	public static function allowTypes(?Value $value, string ...$types) {
-
-		foreach ($types as $type) {
-			if ($value instanceof $type) {
-				return; // If any of the instanceof checks is true, the type is allowed.
-			}
-		}
-
-		// The value did not match any of the types provided.
-		throw new \TypeError;
-
 	}
 
 }

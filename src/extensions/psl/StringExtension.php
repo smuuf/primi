@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\Structures\LazyValue;
 use \Smuuf\Primi\Structures\StringValue;
@@ -133,7 +134,7 @@ class StringExtension extends Extension {
 		return function(StringValue $self, Value $delimiter): ArrayValue {
 
 			// Allow only some value types.
-			Value::allowTypes($delimiter, StringValue::class, RegexValue::class);
+			Common::allowTypes($delimiter, StringValue::class, RegexValue::class);
 
 			if ($delimiter instanceof RegexValue) {
 				$splat = preg_split($delimiter->value, $self->value);
@@ -156,7 +157,7 @@ class StringExtension extends Extension {
 		return function(StringValue $self, Value $needle): NumberValue {
 
 			// Allow only some value types.
-			Value::allowTypes($needle, StringValue::class, NumberValue::class);
+			Common::allowTypes($needle, StringValue::class, NumberValue::class);
 
 			return new NumberValue(\mb_substr_count($self->value, $needle->value));
 
@@ -169,7 +170,7 @@ class StringExtension extends Extension {
 		return function(StringValue $self, Value $needle): Value {
 
 			// Allow only some value types.
-			Value::allowTypes($needle, StringValue::class, NumberValue::class);
+			Common::allowTypes($needle, StringValue::class, NumberValue::class);
 
 			$pos = \mb_strpos($self->value, (string) $needle->value);
 			if ($pos !== \false) {
@@ -187,7 +188,7 @@ class StringExtension extends Extension {
 		return function(StringValue $self, Value $needle): Value {
 
 			// Allow only some value types.
-			Value::allowTypes($needle, StringValue::class, NumberValue::class);
+			Common::allowTypes($needle, StringValue::class, NumberValue::class);
 
 			$pos = \mb_strrpos($self->value, (string) $needle->value);
 			if ($pos !== \false) {

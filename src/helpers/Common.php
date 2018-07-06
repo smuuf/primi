@@ -11,6 +11,33 @@ abstract class Common extends \Smuuf\Primi\StrictObject {
 	}
 
 	/**
+	 * Throw new TypeException when the value does not match any of the types
+	 * provided.
+	 *
+	 * We're using this helper e.g. in value methods for performing easy
+	 * checks against allowed set of types of values. If PHP ever supports union
+	 * types, I guess this helper method might become unnecessary.
+	 *
+	 * @throws \TypeException
+	 */
+	public static function allowTypes(?Value $value, string ...$types) {
+
+		foreach ($types as $type) {
+			if ($value instanceof $type) {
+
+				// If any of the "instanceof" checks is true,
+				// the type is allowed.
+				return;
+
+			}
+		}
+
+		// The value did not match any of the types provided.
+		throw new \TypeError;
+
+	}
+
+	/**
 	 * Takes array as reference and ensures its contents are represented in a form of indexed sub-arrays.
 	 * This comes handy if we want to be sure that multiple sub-nodes (which PHP-PEG parser returns) are universally
 	 * iterable.

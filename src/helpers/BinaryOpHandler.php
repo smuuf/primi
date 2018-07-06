@@ -34,7 +34,7 @@ class BinaryOpHandler extends \Smuuf\Primi\StrictObject {
 					return $left->doDivision($right);
 				default:
 					// We're not throwing InternalBinaryOperationxception
-					// becasue we want to unify handling wrong "op" with
+					// because we want to unify handling of wrong "op" with
 					// whatever type errors might be thrown from inside the
 					// value's operator methods.
 					throw new \TypeError;

@@ -22,7 +22,7 @@ class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 	 */
 	public static function chain(array $node, Context $context, \Smuuf\Primi\Structures\Value $subject) {
 
-		$key = null;
+		$key = \null;
 
 		if (isset($node['arrayKey'])) {
 			$handler = HandlerFactory::get($node['arrayKey']['name']);
