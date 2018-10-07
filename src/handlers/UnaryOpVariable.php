@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\InternalException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 

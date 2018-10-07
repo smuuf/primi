@@ -3,24 +3,30 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\UndefinedIndexException;
-use \Smuuf\Primi\InternalException;
-use \Smuuf\Primi\InternalUndefinedIndexException;
-
-use \Smuuf\Primi\ISupportsArrayAccess;
-
 use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\ISupportsArrayAccess;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Common;
 
 /**
- * This handler returns a final part of the chain - a value object that's derived from the vector and which
- * supports insertion. All values but the last part of the chain also must support dereferencing.
+ * This handler returns a final part of the chain - a value object that's
+ * derived from the vector and which supports insertion. All values but the last
+ * part of the chain also must support dereferencing.
  */
 class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
-	public static function chain(array $node, Context $context, \Smuuf\Primi\Structures\Value $subject) {
+	public static function chain(
+		array $node,
+		Context $context,
+		Value $subject
+	) {
+
+		if (!$subject instanceof ISupportsArrayAccess) {
+			throw new ErrorException(sprintf(
+				"Cannot perform array-like write on '%s'",
+				$subject::TYPE
+			), $node);
+		}
 
 		$key = \null;
 
