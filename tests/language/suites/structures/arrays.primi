@@ -16,37 +16,37 @@ m = k["somekey"];
 test = [];
 nested = ["x": "y"];
 
-test.push(123); // test" should now contain 123 as the only item.
+test.array_push(123); // test" should now contain 123 as the only item.
 test_result_1 = test; // test_result_1" should now be the SAME value object as test"
 
 // test" === test_result_1 and both should now contain 123 and 456
-test.push(456);
+test.array_push(456);
 
 // test" === test_result_1 === test_result_2
 test_result_2 = test;
 
 // test" === test_result_1 === test_result_2 === [123,456,["x":"y"]]
-test.push(nested);
+test.array_push(nested);
 
 // Should be 3 now.
-length_mid = test.length;
+length_mid = test.length();
 
 // test" === test_result_1 === test_result_2 === [123,456] and nested_2 = ["x":"y"];
-nested_2 = test.pop();
+nested_2 = test.array_pop();
 
 // test" === test_result_1 === test_result_2 === [123,456]
 // nested_2 === ["x": "y", "extra"] === nested
-nested_2.push("extra");
+nested_2.array_push("extra");
 
 // test_result_3 === test_result_2 === test
 test_result_3 = test;
 
-test.pop();
-test.pop();
+test.array_pop();
+test.array_pop();
 // test === test_result_1 === test_result_2 should be now empty.
 
 // Should be zero now.
-length_post = test.length;
+length_post = test.length();
 
 n = ["a": "b", "c": "d"]["c"];
 o = ["x": "y", "c": "z"]["čaukoc" - "čauko"];

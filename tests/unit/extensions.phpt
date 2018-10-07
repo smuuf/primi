@@ -21,21 +21,13 @@ class BadExtension {
 
 class CustomExtension extends Extension {
 
-    public function funnyreverse() {
+	public function funnyreverse(StringValue $self, StringValue $prefix): StringValue {
+		return new StringValue($prefix->value . '_' . strrev($self->value));
+	}
 
-        return function(StringValue $self, StringValue $prefix): StringValue {
-            return new StringValue($prefix->value . '_' . strrev($self->value));
-        };
-
-    }
-
-    public function first() {
-
-        return function(StringValue $self, StringValue $argument): StringValue {
-            return new StringValue("1st {$argument->value}");
-        };
-
-    }
+	public function first(StringValue $self, StringValue $argument): StringValue {
+		return new StringValue("1st {$argument->value}");
+	}
 
 }
 
@@ -46,39 +38,5 @@ class CustomExtension extends Extension {
 // Test that trying to add a extension that doesn't really
 // if an extension..
 Assert::exception(function() {
-    ExtensionHub::add(BadExtension::class, StringValue::class);
+	ExtensionHub::add(BadExtension::class);
 }, \LogicException::class, '#not a valid#i');
-
-//
-// adding proper extension.
-//
-
-$string = new StringValue("jelenovi pivo nelej");
-
-// No extension added yet, expecting "undefined method" error.
-Assert::exception(function() use ($string) {
-    $string->call('funnyreverse', [new StringValue('haha')]);
-}, InternalUndefinedPropertyException::class);
-
-// Adding proper extension throws no error.
-Assert::noError(function() {
-    ExtensionHub::add(CustomExtension::class, StringValue::class);
-});
-
-// Strings created _after_ the extension is registered are aware of the
-// registered extension.
-$stringTwo = new StringValue("jelenovi pivo nelej");
-
-// After the extension is added, the method is now available for the newly
-// created string value.
-$result = $stringTwo->call('funnyreverse', [new StringValue('haha')]);
-Assert::same('haha_jelen ovip ivonelej', get_val($result));
-
-// Test passing in wrong number of arguments. (we expect PHP internal exception here.)
-Assert::exception(function() use ($stringTwo) {
-    $stringTwo->call('funnyreverse');
-}, \ArgumentCountError::class);
-
-// Test that standard library's first() method was sucessfully overridden.
-$result = $stringTwo->call('first', [new StringValue('kalamář')]);
-Assert::same('1st kalamář', get_val($result));

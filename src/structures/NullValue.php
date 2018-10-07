@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ISupportsComparison;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 
@@ -10,15 +11,13 @@ class NullValue extends Value implements ISupportsComparison {
 
 	const TYPE = "null";
 
-	protected $value = null;
-
 	public function getStringValue(): string {
 		return "null";
 	}
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		self::allowTypes($rightOperand, self::class, BoolValue::class);
+		Common::allowTypes($rightOperand, self::class, BoolValue::class);
 
 		switch ($op) {
 			case "==":

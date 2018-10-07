@@ -13,6 +13,6 @@ namespace Smuuf\Primi\Structures;
 abstract class ValueFriends extends \Smuuf\Primi\StrictObject {
 
 	/** @var mixed The actual Value. Whatever it is. **/
-	protected $value;
+	protected $value = null;
 
 }

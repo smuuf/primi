@@ -1,7 +1,7 @@
 function qsort_wrapper(arr) {
 
     low = 0;
-    high = arr.length - 1;
+    high = arr.length() - 1;
     qsort(arr, low, high);
 
 }

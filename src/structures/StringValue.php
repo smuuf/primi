@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
@@ -29,14 +30,14 @@ class StringValue extends Value implements
 
 		// We are about to put double-quotes around the return value,
 		// so let's "escape" double-quotes present in the string value.
-		$escaped = str_replace('"', '\"', $this->value);
+		$escaped = \str_replace('"', '\"', $this->value);
 		return "\"$escaped\"";
 
 	}
 
 	public function doAddition(Value $rightOperand) {
 
-		self::allowTypes($rightOperand, self::class, NumberValue::class);
+		Common::allowTypes($rightOperand, self::class, NumberValue::class);
 		return new self($this->value . $rightOperand->value);
 
 	}
@@ -48,7 +49,7 @@ class StringValue extends Value implements
 		}
 
 		// Allow only string at this point (if the operand was a regex, we've already returned value).
-		self::allowTypes($rightOperand, self::class);
+		Common::allowTypes($rightOperand, self::class);
 
 		return new self(\str_replace($rightOperand->value, \null, $this->value));
 
@@ -57,11 +58,11 @@ class StringValue extends Value implements
 	public function doMultiplication(Value $rightOperand) {
 
 		// Allow only number as right operands.
-		self::allowTypes($rightOperand, NumberValue::class);
+		Common::allowTypes($rightOperand, NumberValue::class);
 
 		$multiplier = $rightOperand->value;
-		if (is_int($multiplier) && $multiplier >= 0) {
-			return new self(str_repeat($this->value, $multiplier));
+		if (\is_int($multiplier) && $multiplier >= 0) {
+			return new self(\str_repeat($this->value, $multiplier));
 		}
 
 		throw new \TypeError;
@@ -70,7 +71,7 @@ class StringValue extends Value implements
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		self::allowTypes(
+		Common::allowTypes(
 			$rightOperand,
 			self::class,
 			RegexValue::class,
@@ -119,7 +120,7 @@ class StringValue extends Value implements
 	public function arraySet(?string $index, Value $value) {
 
 		// Allow only strings to be inserted.
-		self::allowTypes($value, self::class, NumberValue::class);
+		Common::allowTypes($value, self::class, NumberValue::class);
 
 		if ($index === \null) {
 

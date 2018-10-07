@@ -25,16 +25,16 @@ l = k[0];
 m = k["somekey"];
 test = [];
 nested = ["x": "y"];
-test.push(123); // test" should now contain 123 as the only item.
+test.array_push(123); // test" should now contain 123 as the only item.
 test_result_1 = test; // test_result_1" should now be the SAME value object as test"
-test.push(456);
+test.array_push(456);
 test_result_2 = test;
-test.push(nested);
-nested_2 = test.pop();
-nested_2.push("extra");
+test.array_push(nested);
+nested_2 = test.array_pop();
+nested_2.array_push("extra");
 test_result_3 = test;
-test.pop();
-test.pop();
+test.array_pop();
+test.array_pop();
 n = ["a": "b", "c": "d"]["c"];
 o = ["x": "y", "c": "z"]["čaukoc" - "čauko"];
 p = [1, 2, 3];
@@ -110,7 +110,7 @@ xb = b - i;
 xb_2 = b - i_2;
 xc = c - j;
 xc_k = c - k;
-l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".replace(/ann?o/, "FAIL");
+l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".str_replace(/ann?o/, "FAIL");
 m = "\ahoj\n\vo\le" - /\\ahoj\s/;
 n = "a/b/c" - /\/b/; // Test proper handling of escaped regex delimiters.
 a = 4;
@@ -130,19 +130,19 @@ n = f--;
 o = ++g;
 p = --h;
 a = "ahojkyacauky";
-b = a.replace("a", "xxx");
-c = "voleneasijakprase".replace("ne", "jo");
-d = c.replace("asi", "určitě");
-e = "abcdefghijklmn".replace(/[c-g]/, "_");
+b = a.str_replace("a", "xxx");
+c = "voleneasijakprase".str_replace("ne", "jo");
+d = c.str_replace("asi", "určitě");
+e = "abcdefghijklmn".str_replace(/[c-g]/, "_");
 _definitions = [
     "á": "a",
     "č": "c",
     "ě": "e"
 ];
-f = "rádoby čau".replace(_definitions);
-g = "vole".replace("v", "l").replace("o", "i") + "k";
-h = ("číslo je " + 000.cos()).replace(["č": "c", "í": "i"]);
-i = "kokot je " + "oo".replace("o", "e");
+f = "rádoby čau".str_replace(_definitions);
+g = "vole".str_replace("v", "l").str_replace("o", "i") + "k";
+h = ("číslo je " + 000.cos()).str_replace(["č": "c", "í": "i"]);
+i = "kokot je " + "oo".str_replace("o", "e");
 a_1 = 9.sqrt();
 b_1 = 3.pow();
 b_2 = 3.pow(2);

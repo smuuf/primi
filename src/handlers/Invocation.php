@@ -31,6 +31,13 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		try {
 
+			// If the node contains an argument to be prepended to the arg list,
+			// do exactly that. (This is used then for chained functions.)
+			$prepend = $node['prepend_arg'] ?? null;
+			if ($prepend) {
+				\array_unshift($arguments, $prepend);
+			}
+
 			return $fn->invoke($arguments);
 
 		} catch (\ArgumentCountError | InternalArgumentCountException $e) {
@@ -40,26 +47,10 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		} catch (\TypeError $e) {
 
-			$msg = self::buildTypeErrorMessage($e, $fn);
+			$msg = "Wrong arguments passed to function";
 			throw new ErrorException($msg, $node);
 
 		}
-
-	}
-
-	private static function buildTypeErrorMessage(
-		\Throwable $e,
-		FuncValue $fn
-	): string {
-
-		$type = null;
-		if ($bound = $fn->getBoundValue()) {
-			$type = sprintf(" of type '%s'", $bound::TYPE);
-		}
-
-		// Make use of PHP's internal TypeError being thrown when passing wrong
-		// types of arguments.
-		return sprintf("Wrong arguments passed to function%s", $type);
 
 	}
 
@@ -79,13 +70,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 			// We have the counts of expected/passed arguments available,
 			// add that information to the error message.
-			[$expected, $passed] = Common::parseArgumentCountError($e);
-
-			// Also, because of how calling Primi value methods work, we need to
-			// subtract 1 from these numbers. (first argument is the value - upon
-			// which the method is called - itself).
-			$expected--;
-			$passed--;
+			[$passed, $expected] = Common::parseArgumentCountError($e);
 
 		} else {
 
@@ -100,12 +85,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 			$details = sprintf(" (%d instead of %d)", $passed, $expected);
 		}
 
-		$type = null;
-		if ($bound = $fn->getBoundValue()) {
-			$type = sprintf(" of type '%s'", $bound::TYPE);
-		}
-
-		return sprintf("Too few arguments passed to function%s%s", $type, $details);
+		return sprintf("Too few arguments passed to function%s", $details);
 
 	}
 

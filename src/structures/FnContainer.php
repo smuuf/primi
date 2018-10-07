@@ -32,16 +32,18 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function($self = null, ...$args) use ($node, $definitionContext, $definitionArgs) {
+		$closure = function(...$args) use (
+			$node,
+			$definitionContext,
+			$definitionArgs
+		) {
 
-			// Create new context (scope) for the function, so it doesn't
-			// operate in the global scope.
-			$context = new Context;
-
-			// Inject variables from the context of the place of the function's
-			// definition into the function.
+			// If there's a parent/definition context, clone a new context from
+			// it, so the function does not operate in the global scope..
 			if ($definitionContext) {
-				$context->setVariables($definitionContext->getVariables());
+				$context = clone $definitionContext;
+			} else {
+				$context = new Context;
 			}
 
 			$args = \array_splice($args, 0, \count($definitionArgs));
@@ -56,13 +58,6 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 			// inject them into the function's context, too. (i.e. these are
 			// the arguments passed into it.)
 			$args = \array_combine($definitionArgs, $args);
-
-			// If this function has "self" specified, pass it as the "this"
-			// variable.
-			if ($self) {
-				$args['this'] = $self;
-			}
-
 			$context->setVariables($args);
 
 			try {
@@ -81,7 +76,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($closure, count($definitionArgs));
+		return new self($closure, \count($definitionArgs));
 
 	}
 
@@ -95,21 +90,15 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		// If the callable does not have a return type of Value, we will
 		// handle consider the function as handling PHP values instead of
 		// Primi value objects.
-		$passPhpValues = true;
+		$passPhpValues = \true;
 		if (
 			$r->hasReturnType()
-			&& is_a((string) $r->getReturnType(), Value::class, true)
+			&& \is_a((string) $r->getReturnType(), Value::class, \true)
 		) {
-			$passPhpValues = false;
+			$passPhpValues = \false;
 		}
 
-		$wrapper = function($self = null, ...$args) use ($closure, $passPhpValues) {
-
-			// If this function has "self" specified, pass it as the first
-			// argument.
-			if ($self) {
-				array_unshift($args, $self);
-			}
+		$wrapper = function(...$args) use ($closure, $passPhpValues) {
 
 			if ($passPhpValues) {
 				$args = \array_map(function(Value $value) {

@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
@@ -35,17 +36,24 @@ class NumberValue extends Value implements
 		// because it's casted to (int) and the sign disappears there -> false.
 		$input = \ltrim($input, "+-");
 
+		// The same with zeroes at the beginning.
+		// But only if the input is not a zero.
+		$input = $input !== "0" ? \ltrim($input, "0") : $input;
+
 		return (string) (int) $input === (string) $input;
 
 	}
 
 	public static function isNumeric(string $input): bool {
-		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
+		return
+			(bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input)
+			&& (int) $input !== \PHP_INT_MAX
+			&& (int) $input !== \PHP_INT_MIN;
 	}
 
 	public function doAddition(Value $rightOperand): Value {
 
-		self::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes($rightOperand, self::class, StringValue::class);
 
 		if ($rightOperand instanceof StringValue && !self::isNumeric($rightOperand->value)) {
 			return new StringValue($this->value . $rightOperand->value);
@@ -56,18 +64,18 @@ class NumberValue extends Value implements
 	}
 
 	public function doSubtraction(Value $rightOperand): self {
-		self::allowTypes($rightOperand, self::class);
+		Common::allowTypes($rightOperand, self::class);
 		return new self($this->value - $rightOperand->value);
 	}
 
 	public function doMultiplication(Value $rightOperand) {
 
-		self::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes($rightOperand, self::class, StringValue::class);
 
 		if ($rightOperand instanceof StringValue) {
 			$multiplier = $this->value;
-			if (is_int($multiplier) && $multiplier >= 0) {
-				return new StringValue(str_repeat($rightOperand->value, $multiplier));
+			if (\is_int($multiplier) && $multiplier >= 0) {
+				return new StringValue(\str_repeat($rightOperand->value, $multiplier));
 			}
 			throw new \TypeError;
 		}
@@ -78,10 +86,10 @@ class NumberValue extends Value implements
 
 	public function doDivision(Value $rightOperand): self {
 
-		self::allowTypes($rightOperand, self::class);
+		Common::allowTypes($rightOperand, self::class);
 
 		// Avoid division by zero.
-		if ($rightOperand->value == 0) {
+		if ($rightOperand->value === 0) {
 			throw new \Smuuf\Primi\ErrorException("Division by zero.");
 		}
 
@@ -104,7 +112,7 @@ class NumberValue extends Value implements
 
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		self::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes($rightOperand, self::class, StringValue::class);
 
 		switch ($op) {
 			case "==":

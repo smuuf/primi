@@ -1,2 +1,2 @@
-EX:Smuuf\Primi\ErrorException
+EX:Smuuf\Primi\UndefinedVariableException
 a:NumberValue:1

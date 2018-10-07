@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsComparison;
 
 class RegexValue extends Value implements
@@ -20,7 +21,7 @@ class RegexValue extends Value implements
 
 	public function doComparison(string $operator, Value $rightOperand): BoolValue {
 
-		self::allowTypes($rightOperand, StringValue::class, NumberValue::class);
+		Common::allowTypes($rightOperand, StringValue::class, NumberValue::class);
 
 		if ($operator === "==") {
 			return new BoolValue(\preg_match($this->value, $rightOperand->value));

@@ -6,8 +6,9 @@ use \Smuuf\Primi\Structures\Value;
 
 class InternalBinaryOperationxception extends InternalException {
 
-	protected $passedCount;
-	protected $expectedCount;
+	protected $op;
+	protected $left;
+	protected $right;
 
 	public function __construct(
 		string $op,

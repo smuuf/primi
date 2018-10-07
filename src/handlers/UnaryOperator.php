@@ -23,15 +23,10 @@ class UnaryOperator extends \Smuuf\Primi\StrictObject implements IHandler {
 			throw new InternalException("Handling unary operator without unary node");
 		}
 
-		$variableName = HandlerFactory
+		$variableName = $node['core']['text'];
+		$value = HandlerFactory
 			::get($node['core']['name'])
 			::handle($node['core'], $context);
-
-		try {
-			$value = $context->getVariable($variableName);
-		} catch (InternalUndefinedVariableException $e) {
-			throw new UndefinedVariableException($e->getMessage(), $node);
-		}
 
 		if (!$value instanceof ISupportsUnary) {
 			throw new ErrorException(sprintf(

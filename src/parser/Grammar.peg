@@ -19,7 +19,7 @@ class CompiledParser extends Parser\Packrat {
 # Previous StringLiteral regex causing PREG_JIT_STACKLIMIT_ERROR
 # StringLiteral: /"(.|\n)*?"|'(.|\n)*?'/
 
-# Carefully crafted (or stolen somewhere) string matching regex which supports
+# Carefully crafted (or stolen somewhere?) string matching regex which supports
 # both " and ' quotes, doesn't cause JIT stack overflow and also supports escaped quotes.
 StringLiteral: / (?:".*?(?<!\\)")|(?:'.*?(?<!\\)') /s
 NumberLiteral: /-?\d+(\.\d+)?/
@@ -30,18 +30,17 @@ Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
 VariableName: / ([a-zA-Z_][a-zA-Z0-9_]*) /
-Variable: ( pre:UnaryOperator core:VariableName ) | ( core:VariableName post:UnaryOperator ) | core:VariableName
-Property: skip:VariableName
+Variable: core:VariableName
+UnaryOpVariable: ( pre:UnaryOperator core:Variable ) | ( core:Variable post:UnaryOperator )
 AnonymousFunction: "function" __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ args:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
-Value: skip:Literal | skip:Variable | skip:ArrayDefinition
+Value: skip:Literal | skip:UnaryOpVariable | skip:Variable | skip:ArrayDefinition
 VariableVector: core:Variable vector:Vector
-Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" | propKey:PropertyAccess) vector:Vector?
+Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" ) vector:Vector?
 Mutable: skip:VariableVector | skip:VariableName
-PropertyAccess: ObjectResolutionOperator skip:Property
 
 ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
@@ -50,22 +49,21 @@ AssignmentOperator: "="
 ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
 UnaryOperator: "++" | "--"
 
-Expression: skip:AnonymousFunction | skip:LazyDefinition | skip:Assignment | skip:Comparison | skip:Addition
+Expression: skip:AnonymousFunction | skip:Assignment | skip:Comparison | skip:Addition
 Comparison: left:Addition __ op:ComparisonOperator __ right:Addition
 Assignment: left:Mutable __ op:AssignmentOperator __ right:Expression
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication)*
 Multiplication: operands:Operand ( __ ops:MultiplyOperator __ operands:Operand)*
 Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value
-Chain: ( core:Dereference | core:Invocation | core:PropertyGetter ) chain:Chain?
-PropertyGetter: key:PropertyAccess
+Chain: ( core:Dereference | core:Invocation | core:ChainedFunction ) chain:Chain?
 Dereference: "[" __ key:Expression __ "]"
 Invocation: "(" __ args:ArgumentList? __ ")"
+ChainedFunction: ObjectResolutionOperator fn:Variable invo:Invocation
 
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block
-LazyDefinition: "lazy" __ body:Block
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )

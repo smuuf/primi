@@ -21,9 +21,9 @@ class ArgumentList extends \Smuuf\Primi\StrictObject implements IHandler {
 			return [];
 		}
 
-		$list = [];
 		Common::ensureIndexed($node['args']);
 
+		$list = [];
 		foreach ($node['args'] as $a) {
 			$handler = HandlerFactory::get($a['name']);
 			$list[] = $handler::handle($a, $context);

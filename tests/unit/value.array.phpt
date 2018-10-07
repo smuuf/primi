@@ -1,6 +1,6 @@
 <?php
 
-use \Tester\Assert;
+use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
@@ -12,6 +12,8 @@ use \Smuuf\Primi\Structures\{
 };
 use \Smuuf\Primi\Structures\FnContainer;
 
+use \Tester\Assert;
+
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(Value $v) {
@@ -19,14 +21,15 @@ function get_val(Value $v) {
 }
 
 // Prepare helper objects.
+$fns = ExtensionHub::get();
 $something = new StringValue("something");
 $anything = new StringValue("anything");
 $someKey = "some_key";
 
 // Test behaviour of empty array.
 $arr = new ArrayValue([]);
-Assert::same(0, get_val($arr->propertyGet('length')));
-Assert::same(false, get_val($arr->call('contains', [$something])));
+Assert::same(0, get_val($fns['length']->invoke([$arr])));
+Assert::same(false, get_val($fns['contains']->invoke([$arr, $something])));
 
 // Test proper exception when accessing non-existing key.
 Assert::exception(function() use ($arr) {
@@ -35,11 +38,11 @@ Assert::exception(function() use ($arr) {
 
 // Test working with insertion proxy.
 $proxy = $arr->getArrayInsertionProxy($someKey);
-Assert::same(0, get_val($arr->propertyGet('length')));
-Assert::same(false, get_val($arr->call('contains', [$anything])));
+Assert::same(0, get_val($fns['length']->invoke([$arr])));
+Assert::same(false, get_val($fns['contains']->invoke([$arr, $anything])));
 $proxy->commit($anything);
-Assert::same(1, get_val($arr->propertyGet('length')));
-Assert::same(true, get_val($arr->call('contains', [$anything])));
+Assert::same(1, get_val($fns['length']->invoke([$arr])));
+Assert::same(true, get_val($fns['contains']->invoke([$arr, $anything])));
 
 // Test getting and iterating array object iterator.
 $result = [];
@@ -59,16 +62,16 @@ Assert::notSame($cloned->arrayGet($someKey), $arr->arrayGet($someKey));
 $arr = new ArrayValue([]);
 
 // Push an item into the array and test stuff.
-$arr->call('push', [$anything]);
-Assert::same(1, get_val($arr->propertyGet('length')));
-Assert::same(false, get_val($arr->call('contains', [$something])));
-Assert::same(true, get_val($arr->call('contains', [$anything])));
+$fns['array_push']->invoke([$arr, $anything]);
+Assert::same(1, get_val($fns['length']->invoke([$arr])));
+Assert::same(false, get_val($fns['contains']->invoke([$arr, $something])));
+Assert::same(true, get_val($fns['contains']->invoke([$arr, $anything])));
 
 // Pop an item form the array and test stuff.
-$arr->call('pop');
-Assert::same(0, get_val($arr->propertyGet('length')));
-Assert::same(false, get_val($arr->call('contains', [$something])));
-Assert::same(false, get_val($arr->call('contains', [$anything])));
+$fns['array_pop']->invoke([$arr]);
+Assert::same(0, get_val($fns['length']->invoke([$arr])));
+Assert::same(false, get_val($fns['contains']->invoke([$arr, $something])));
+Assert::same(false, get_val($fns['contains']->invoke([$arr, $anything])));
 
 // Prepare helper objects.
 $num1 = new NumberValue(1);
@@ -77,16 +80,16 @@ $num3 = new NumberValue(3);
 $arr = new ArrayValue([$num1, $num2, $num3]);
 
 // Test that getting a random item from that array really does that.
-$val = $arr->call('random');
+$val = $fns['array_random']->invoke([$arr]);
 Assert::true($val === $num1 || $val === $num2 || $val === $num3);
 
-$items = get_val($arr->call('shuffle'));
+$items = get_val($fns['array_shuffle']->invoke([$arr]));
 foreach ($items as $item) {
 	Assert::contains($item, get_val($arr));
 }
 
 // Test cloning the array.
-$copy = $arr->call('copy');
+$copy = $fns['array_copy']->invoke([$arr]);
 Assert::notSame($arr, $copy);
 
 // Test that array values were cloned, too (ie. deep copy was performed).
@@ -109,7 +112,7 @@ $fn = new FuncValue(FnContainer::buildFromClosure(function ($input) {
 	return $input * 2;
 }));
 
-$result = get_val($arr->call('map', [$fn]));
+$result = get_val($fns['array_map']->invoke([$arr, $fn]));
 Assert::type('array', $result);
 Assert::same(2, get_val(array_shift($result)));
 Assert::same(90, get_val(array_shift($result)));
