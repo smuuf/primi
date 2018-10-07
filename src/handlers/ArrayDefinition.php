@@ -33,17 +33,19 @@ class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
 
 				// But if it is defined for this item, use it.
 				$keyHandler = HandlerFactory::get($itemNode['key']['name']);
-				$key = $keyHandler::handle($itemNode['key'], $context)->getInternalValue();
+				$key = $keyHandler::handle($itemNode['key'], $context);
+				$key = $key->getInternalValue();
 
-				// And if it is a numeric integer, use it as a base for the index counter
-				// we would have used if the key was not provided.
+				// And if it is a numeric integer, use it as a base for the
+				// index counter we would have used if the key was not provided.
 				if (NumberValue::isNumericInt($key)) {
 					$index = $key + 1;
 				}
 
 			} else {
 
-				// The key was not provided, assign a key for this item using our internal index counter.
+				// The key was not provided, so assign a key for this item using
+				// our private index counter.
 				$key = $index++;
 
 			}

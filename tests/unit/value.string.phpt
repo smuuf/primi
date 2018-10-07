@@ -1,6 +1,6 @@
 <?php
 
-use \Tester\Assert;
+use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
@@ -10,12 +10,15 @@ use \Smuuf\Primi\Structures\{
 	Value
 };
 
+use \Tester\Assert;
+
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(Value $v) {
 	return $v->getInternalValue();
 }
 
+$fns = ExtensionHub::get();
 $string = new StringValue("this is a string.");
 $letterA = new StringValue("a");
 $unicode = new StringValue("ťhiš íš á ŠTřing.");
@@ -196,84 +199,83 @@ foreach ($iterable->getIterator() as $index => $x) {
 //
 
 // Test classic formatting
+
+
 $template = new StringValue("1:{},2:{},3:{},4:{}");
-$result = $template->call(
-	'format', [
-		new StringValue("FIRST"),
-		new StringValue("SECOND"),
-		new StringValue("THIRD"),
-		new StringValue("FOURTH"),
-	]
-);
+$result = $fns['format']->invoke([
+	$template,
+	new StringValue("FIRST"),
+	new StringValue("SECOND"),
+	new StringValue("THIRD"),
+	new StringValue("FOURTH"),
+]);
 Assert::same("1:FIRST,2:SECOND,3:THIRD,4:FOURTH", get_val($result));
 
 // Test formatting with positions.
 $template = new StringValue("1:{},2:{2},3:{1},4:{}");
-$result = $template->call(
-	'format', [
-		new StringValue("FIRST"),
-		new StringValue("SECOND"),
-		new StringValue("THIRD"),
-		new StringValue("FOURTH"),
-	]
-);
+$result = $fns['format']->invoke([
+	$template,
+	new StringValue("FIRST"),
+	new StringValue("SECOND"),
+	new StringValue("THIRD"),
+	new StringValue("FOURTH"),
+]);
 Assert::same("1:FIRST,2:SECOND,3:FIRST,4:SECOND", get_val($result));
 
 // Test too-few-parameters.
-Assert::exception(function() {
+Assert::exception(function() use ($fns) {
 	$template = new StringValue("1:{},2:{},3:{},4:{}");
-	$result = $template->call(
-		'format', [
-			new StringValue("FIRST"),
-			new StringValue("SECOND"),
-		]
-	);
+	$result = $fns['format']->invoke([
+		$template,
+		new StringValue("FIRST"),
+		new StringValue("SECOND"),
+	]);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test too-few-parameters with positions.
-Assert::exception(function() {
+Assert::exception(function() use ($fns) {
 	$template = new StringValue("1:{},2:{1},3:{1},4:{}");
-	$result = $template->call(
-		'format', [
-			new StringValue("FIRST"),
-		]
-	);
+	$result = $fns['format']->invoke([
+		$template,
+		new StringValue("FIRST")
+	]);
 }, \Smuuf\Primi\ErrorException::class);
 
 // Test placeholder index being too high for passed parameters.
-Assert::exception(function() {
+Assert::exception(function() use ($fns) {
 	$template = new StringValue("1:{},2:{1000}");
-	$result = $template->call(
-		'format', [
-			new StringValue("FIRST"),
-			new StringValue("SECOND"),
-		]
-	);
+	$result = $fns['format']->invoke([
+		$template,
+		new StringValue("FIRST"),
+		new StringValue("SECOND"),
+	]);
 }, \Smuuf\Primi\ErrorException::class);
 
 //
 // Test count.
 //
 
-Assert::same(3, get_val($string->call('count', [new StringValue("i")])));
-Assert::same(2, get_val($string->call('count', [new StringValue("is")])));
-Assert::same(0, get_val($string->call('count', [new StringValue("xoxoxo")])));
-Assert::same(0, get_val($string->call('count', [new NumberValue(1)])));
+Assert::same(3, get_val($fns['str_number_of']->invoke([$string, new StringValue("i")])));
+Assert::same(2, get_val($fns['str_number_of']->invoke([$string, new StringValue("is")])));
+Assert::same(0, get_val($fns['str_number_of']->invoke([$string, new StringValue("xoxoxo")])));
+Assert::same(0, get_val($fns['str_number_of']->invoke([$string, new NumberValue(1)])));
 
 //
 // Test length.
 //
 
-Assert::same(17, get_val($string->propertyGet('length')));
-Assert::same(1, get_val($letterA->propertyGet('length')));
+Assert::same(17, get_val($fns['str_length']->invoke([$string])));
+Assert::same(1, get_val($fns['str_length']->invoke([$letterA])));
 // Multibyte strings should report length correctly.
-Assert::same(17, get_val($unicode->propertyGet('length')));
+Assert::same(17, get_val($fns['str_length']->invoke([$unicode])));
 // "\n" is expanded as newline - that's one character.
-Assert::same(5, get_val($withNewline->propertyGet('length')));
+Assert::same(5, get_val($fns['str_length']->invoke([$withNewline])));
 
 //
 // Test replacing.
 //
+
+$fnReplace = $fns['str_replace'];
 
 // Test replacing with array of needle-replacement.
 $pairs = new ArrayValue([
@@ -281,26 +283,29 @@ $pairs = new ArrayValue([
 	"i" => new StringValue("B"),
 	"." => new StringValue("ščř"),
 ]);
-$result = $string->call('replace', [$pairs]);
+$result = $fnReplace->invoke([$string, $pairs]);
 Assert::same("thA A a strBngščř", get_val($result));
 // Replacing ordinary strings.
-$result = $string->call('replace', [new StringValue("is"), new StringValue("yes!")]);
+$result = $fnReplace->invoke([$string, new StringValue("is"), new StringValue("yes!")]);
 Assert::same("thyes! yes! a string.", get_val($result));
 // Replacing with regex needle.
-$result = $string->call('replace', [new RegexValue('(i?s|\s)'), new StringValue("no!")]);
+$result = $fnReplace->invoke([$string, new RegexValue('(i?s|\s)'), new StringValue("no!")]);
 Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 
 //
 // Test first/last occurence search.
 //
 
-Assert::same(2, get_val($string->call('first', [new StringValue("is")])));
-Assert::same(5, get_val($string->call('last', [new StringValue("is")])));
+$fnFirst = $fns['str_find_first'];
+$fnLast = $fns['str_find_last'];
+
+Assert::same(2, get_val($fnFirst->invoke([$string, new StringValue("is")])));
+Assert::same(5, get_val($fnLast->invoke([$string, new StringValue("is")])));
 
 // First: False when it does not appear in the string.
-Assert::false(get_val($string->call('first', [new StringValue("aaa")])));
+Assert::false(get_val($fnFirst->invoke([$string, new StringValue("aaa")])));
 // Last: False when it does not appear in the string.
-Assert::false(get_val($string->call('last', [new StringValue("aaa")])));
+Assert::false(get_val($fnLast->invoke([$string, new StringValue("aaa")])));
 
 //
 // Test splitting.
@@ -308,14 +313,14 @@ Assert::false(get_val($string->call('last', [new StringValue("aaa")])));
 
 $string = new StringValue("hello,how,are,you");
 $result = [];
-foreach (get_val($string->call('split', [new StringValue(",")])) as $item) {
+foreach (get_val($fns['str_split']->invoke([$string, new StringValue(",")])) as $item) {
 	$result[] = get_val($item);
 }
 Assert::same(["hello", "how", "are", "you"], $result);
 
 $string = new StringValue("well, this ... IS ... awkward!");
 $result = [];
-foreach (get_val($string->call('split', [new RegexValue("/[,\s\.]+/")])) as $item) {
+foreach (get_val($fns['str_split']->invoke([$string, new RegexValue("/[,\s\.]+/")])) as $item) {
 	$result[] = get_val($item);
 }
 Assert::same(["well", "this", "IS", "awkward!"], $result);
@@ -324,14 +329,16 @@ Assert::same(["well", "this", "IS", "awkward!"], $result);
 // Test reverse.
 //
 
+$fnReverse = $fns['str_reverse'];
+
 // Simple ascii string.
 $string = new StringValue("You wake me up, god damn it!");
-Assert::same("!ti nmad dog ,pu em ekaw uoY", get_val($string->call('reverse')));
+Assert::same("!ti nmad dog ,pu em ekaw uoY", get_val($fnReverse->invoke([$string])));
 
 // With accents
 $string = new StringValue("Čauky mňauky, kolovrátku ;D");
-Assert::same("D; uktárvolok ,ykuaňm ykuaČ", get_val($string->call('reverse')));
+Assert::same("D; uktárvolok ,ykuaňm ykuaČ", get_val($fnReverse->invoke([$string])));
 
 // With the worst smiley ever.
 $string = new StringValue("Yoo 🤣, my mæte 😂!!!");
-Assert::same("!!!😂 etæm ym ,🤣 ooY", get_val($string->call('reverse')));
+Assert::same("!!!😂 etæm ym ,🤣 ooY", get_val($fnReverse->invoke([$string])));

@@ -15,7 +15,7 @@ class Dereference extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 	public static function chain(array $node, Context $context, \Smuuf\Primi\Structures\Value $subject) {
 
 		if (!$subject instanceof ISupportsArrayAccess) {
-			throw new \Smuuf\Primi\ErrorException(sprintf(
+			throw new \Smuuf\Primi\ErrorException(\sprintf(
 				"Type '%s' does not support dereferencing",
 				$subject::TYPE
 			), $node);

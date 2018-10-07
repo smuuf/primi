@@ -27,8 +27,9 @@ class Assignment extends \Smuuf\Primi\StrictObject implements IHandler {
 				$context->setVariable($node['left']['text'], $return);
 			break;
 			case $target instanceof InsertionProxy:
-				// Vector handler returns a proxy with the key being pre-configured.
-				// Commit the value to that key into the correct value object.
+				// Vector handler returns a proxy with the key being
+				// pre-configured. Commit the value to that key into the correct
+				// value object.
 				$target->commit($return);
 			break;
 		}

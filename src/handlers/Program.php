@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -14,7 +15,7 @@ class Program extends \Smuuf\Primi\StrictObject implements IHandler {
 			$returnValue = $handler::handle($sub, $context);
 		}
 
-		return $returnValue ?? \null;
+		return $returnValue ?? new NullValue;
 
 	}
 

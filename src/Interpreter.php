@@ -11,11 +11,20 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 	private $tempDir;
 	private $context;
 
-	public function __construct(IContext $context = null, string $tempDir = null) {
+	public function __construct(
+		IContext $context = null,
+		string $tempDir = null
+	) {
 
 		$this->tempDir = $tempDir ?: false;
 		$this->context = $context ?: new Context;
 
+		self::applyExtensions($this->context);
+
+	}
+
+	protected static function applyExtensions(IContext $context) {
+		$context->setVariables(ExtensionHub::get(), true);
 	}
 
 	public function getContext(): IContext {
@@ -75,7 +84,10 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 }
 
 ExtensionHub::add([
-	\Smuuf\Primi\Psl\StringExtension::class => \Smuuf\Primi\Structures\StringValue::class,
-	\Smuuf\Primi\Psl\NumberExtension::class => \Smuuf\Primi\Structures\NumberValue::class,
-	\Smuuf\Primi\Psl\ArrayExtension::class => \Smuuf\Primi\Structures\ArrayValue::class,
+	\Smuuf\Primi\Psl\GenericExtension::class,
+	\Smuuf\Primi\Psl\StringExtension::class,
+	\Smuuf\Primi\Psl\NumberExtension::class,
+	\Smuuf\Primi\Psl\ArrayExtension::class,
+	\Smuuf\Primi\Psl\BoolExtension::class,
 ]);
+

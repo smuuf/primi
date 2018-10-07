@@ -1,6 +1,6 @@
 <?php
 
-use \Tester\Assert;
+use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
@@ -9,7 +9,11 @@ use \Smuuf\Primi\Structures\{
 	BoolValue
 };
 
+use \Tester\Assert;
+
 require __DIR__ . '/../bootstrap.php';
+
+$fns = ExtensionHub::get();
 
 $integer = new NumberValue("1");
 $biggerInteger = new NumberValue("20");
@@ -241,52 +245,52 @@ $tmp = $float->doComparison("<=", new NumberValue("2.31"));
 Assert::true(extract_bool_value($tmp));
 
 //
-// Methods-
+// Methods...
 //
 
-$tmp = $integer->call('abs')->getInternalValue();
+$tmp = $fns['abs']->invoke([$integer])->getInternalValue();
 Assert::same(1, $tmp);
-$tmp = $biggerInteger->call('abs')->getInternalValue();
+$tmp = $fns['abs']->invoke([$biggerInteger])->getInternalValue();
 Assert::same(20, $tmp);
-$tmp = $posFloat->call('abs')->getInternalValue();
+$tmp = $fns['abs']->invoke([$posFloat])->getInternalValue();
 Assert::same(2.3, $tmp);
-$tmp = $negFloat->call('abs')->getInternalValue();
+$tmp = $fns['abs']->invoke([$negFloat])->getInternalValue();
 Assert::same(2.3, $tmp);
 
-$tmp = $integer->call('sqrt')->getInternalValue();
+$tmp = $fns['sqrt']->invoke([$integer])->getInternalValue();
 Assert::type('int', $tmp);
-$tmp = $integer->call('pow', [new NumberValue(4)])->getInternalValue();
+$tmp = $fns['pow']->invoke([$integer, new NumberValue(4)])->getInternalValue();
 Assert::type('int', $tmp);
-$tmp = $integer->call('sin')->getInternalValue();
+$tmp = $fns['sin']->invoke([$integer])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $integer->call('cos')->getInternalValue();
+$tmp = $fns['cos']->invoke([$integer])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $integer->call('tan')->getInternalValue();
+$tmp = $fns['tan']->invoke([$integer])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $integer->call('atan')->getInternalValue();
+$tmp = $fns['atan']->invoke([$integer])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $integer->call('ceil')->getInternalValue();
+$tmp = $fns['ceil']->invoke([$integer])->getInternalValue();
 Assert::type('int', $tmp);
-$tmp = $integer->call('floor')->getInternalValue();
+$tmp = $fns['floor']->invoke([$integer])->getInternalValue();
 Assert::type('int', $tmp);
-$tmp = $integer->call('round')->getInternalValue();
+$tmp = $fns['round']->invoke([$integer])->getInternalValue();
 Assert::type('int', $tmp);
 
-$tmp = $float->call('sqrt')->getInternalValue();
+$tmp = $fns['sqrt']->invoke([$float])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $float->call('pow', [new NumberValue(4)])->getInternalValue();
+$tmp = $fns['pow']->invoke([$float, new NumberValue(4)])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $float->call('sin')->getInternalValue();
+$tmp = $fns['sin']->invoke([$float])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $float->call('cos')->getInternalValue();
+$tmp = $fns['cos']->invoke([$float])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $float->call('tan')->getInternalValue();
+$tmp = $fns['tan']->invoke([$float])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $float->call('atan')->getInternalValue();
+$tmp = $fns['atan']->invoke([$float])->getInternalValue();
 Assert::type('float', $tmp);
-$tmp = $float->call('ceil')->getInternalValue();
+$tmp = $fns['ceil']->invoke([$float])->getInternalValue();
 Assert::type('int', $tmp);
-$tmp = $float->call('floor')->getInternalValue();
+$tmp = $fns['floor']->invoke([$float])->getInternalValue();
 Assert::type('int', $tmp);
-$tmp = $float->call('round')->getInternalValue();
+$tmp = $fns['round']->invoke([$float])->getInternalValue();
 Assert::type('int', $tmp);

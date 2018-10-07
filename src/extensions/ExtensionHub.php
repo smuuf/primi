@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\FuncValue;
 
@@ -15,12 +14,12 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	 * Optionally pass an array of <PHP class> => <Value class> pairs to
 	 * register multiple extensions at once.
 	 */
-	public static function add($extension, string $target = null) {
+	public static function add($extension) {
 
-		// Handle possible multiple registering.
+		// We allow registering extensions in bulk.
 		if (is_array($extension)) {
-			foreach ($extension as $ext => $target) {
-				self::add($ext, $target);
+			foreach ($extension as $ext) {
+				self::add($ext);
 			}
 			return;
 		}
@@ -29,30 +28,16 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 			throw new \LogicException("'$extension' is not a valid extension.");
 		}
 
-		if (!isset(self::$extensions[$target])) {
-			self::$extensions[$target] = [];
-		}
-
 		$processed = self::process($extension);
-		self::$extensions[$target] = array_replace(self::$extensions[$target], $processed);
+		self::$extensions = array_replace(self::$extensions, $processed);
 
 	}
 
 	/**
-	 * This returns unique clones of each extension method's return values.
-	 * Clones because whatever someone then does to the objects we return from
-	 * here, the changes will be localised.
-	 *
-	 * We need to always return a fresh copy!
+	 * Return array of values provided by all registered extensions.
 	 */
-	public static function get($target): array {
-
-		return self::$extensions[$target]
-			? array_map(function($item) {
-				return clone $item;
-			}, self::$extensions[$target])
-			: [];
-
+	public static function get(): array {
+		return self::$extensions;
 	}
 
 	/**
@@ -72,10 +57,12 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	protected static function process(string $class): array {
 
 		$classRef = new \ReflectionClass($class);
-		$methods = $classRef->getMethods(\ReflectionMethod::IS_PUBLIC);
-		$instance = new $class;
-		$result = [];
+		$methods = $classRef->getMethods(
+			\ReflectionMethod::IS_PUBLIC |
+			\ReflectionMethod::IS_STATIC
+		);
 
+		$result = [];
 		foreach ($methods as $methodRef) {
 
 			$methodName = $methodRef->getName();
@@ -85,12 +72,8 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 				continue;
 			}
 
-			// Extensions must provide return types for its functions.
-			$value = $instance->$methodName();
-			if (!$value instanceof Value) {
-				$value = Value::buildAutomatic($value);
-			}
-
+			$callable = [$class, $methodName];
+			$value = Value::buildAutomatic($callable);
 			$result[$methodName] = $value;
 
 		}

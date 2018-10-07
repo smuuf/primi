@@ -75,7 +75,7 @@ class NumberValue extends Value implements
 		if ($rightOperand instanceof StringValue) {
 			$multiplier = $this->value;
 			if (\is_int($multiplier) && $multiplier >= 0) {
-				return new StringValue(str_repeat($rightOperand->value, $multiplier));
+				return new StringValue(\str_repeat($rightOperand->value, $multiplier));
 			}
 			throw new \TypeError;
 		}

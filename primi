@@ -53,7 +53,9 @@ try {
 	// Run interpreter
 	$interpreter->run($source);
 	if ($config['print_context']) {
-		print_r($context->getVariables());
+		foreach ($context->getVariables() as $name => $value) {
+			echo "$name: {$value->getStringValue()}\n";
+		}
 		die;
 	}
 

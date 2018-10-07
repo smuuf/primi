@@ -3,11 +3,12 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 
 class Chain extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
-	public static function chain(array $node, Context $context, \Smuuf\Primi\Structures\Value $subject) {
+	public static function chain(array $node, Context $context, Value $subject) {
 
 		// Handle the item; pass in the origin subject.
 		$handler = HandlerFactory::get($node['core']['name']);

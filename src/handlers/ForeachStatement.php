@@ -21,7 +21,10 @@ class ForeachStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 		$subject = $leftHandler::handle($node['left'], $context);
 
 		if (!$subject instanceof ISupportsIteration) {
-			throw new \Smuuf\Primi\ErrorException("Cannot iterate over '{$node['left']['text']}' variable", $node);
+			throw new \Smuuf\Primi\ErrorException(
+				"Cannot iterate over '{$node['left']['text']}' variable",
+				$node
+			);
 		}
 
 		$iterator = $subject->getIterator();

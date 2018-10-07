@@ -29,7 +29,7 @@ class ArrayValue extends Value implements
 
 	}
 
-	public function getStringValue(CircularDetector $cd = null): string {
+	public function getStringValue(CircularDetector $cd = \null): string {
 
 		// If this is a root method of getting a string value, create instance
 		// of circular references detector, which we will from now on pass
@@ -44,26 +44,26 @@ class ArrayValue extends Value implements
 
 	private static function convertToString($self, CircularDetector $cd): string {
 
-		$cd->add(spl_object_hash($self));
+		$cd->add(\spl_object_hash($self));
 
 		$return = "[";
 		foreach ($self->value as $key => $item) {
 
-			$key = is_numeric($key) ? $key : "\"$key\"";
+			$key = \is_numeric($key) ? $key : "\"$key\"";
 
 			// This avoids infinite loops with self-nested structures by
 			// checking whether circular detector determined that we
 			// would end up going in (infinite) circles.
-			$hash = spl_object_hash($item);
+			$hash = \spl_object_hash($item);
 			$str = $cd->has($hash)
-				? sprintf("*recursion (%s)*", Common::objectHash($item))
+				? \sprintf("*recursion (%s)*", Common::objectHash($item))
 				: $item->getStringValue($cd);
 
-			$return .= sprintf("%s: %s, ", $key, $str);
+			$return .= \sprintf("%s: %s, ", $key, $str);
 
 		}
 
-		return rtrim($return, ', ') . "]";
+		return \rtrim($return, ', ') . "]";
 
 	}
 

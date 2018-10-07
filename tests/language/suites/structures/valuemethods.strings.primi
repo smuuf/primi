@@ -1,18 +1,18 @@
 
 // First, last.
 a = "ahoj 123, jak se máš? 123";
-b = a.first("j");
-c = a.last("a");
-d = a.first(12);
-e = a.last(23); // After multi-byte characters "áš"
+b = a.str_find_first("j");
+c = a.str_find_last("a");
+d = a.str_find_first(12);
+e = a.str_find_last(23); // After multi-byte characters "áš"
 
 // Length.
-f = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".length;
-g = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.".length;
+f = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".length();
+g = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.".length();
 
 // Count.
-h = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".count("a");
-i = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.".count("á");
+h = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".number_of("a");
+i = "1 gigawattová elektrárna každý den spotřebuje osmdesát vagonů uhlí.".number_of("á");
 
 // Formatting.
 j = "{} can now {} strings, {1} rascal!".format("you", "format");
