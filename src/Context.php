@@ -10,15 +10,17 @@ class Context extends StrictObject implements IContext {
 
 	// use WatchLifecycle;
 
-	const EMPTY_CONTAINER = [
-		'user' => [],
-		'internal' => [],
-	];
+	private static $globals = [];
+	private $vars = [];
 
-	private $container = self::EMPTY_CONTAINER;
+	public function reset(bool $wipeGlobals = false) {
 
-	public function reset() {
-		$this->container = self::EMPTY_CONTAINER;
+		if ($wipeGlobals) {
+			self::$globals = [];
+		}
+
+		$this->vars = [];
+
 	}
 
 	// Variables.
@@ -26,10 +28,15 @@ class Context extends StrictObject implements IContext {
 	public function setVariable(
 		string $name,
 		Value $value,
-		bool $internal = false
+		bool $global = false
 	) {
-		$type = $internal ? 'internal' : 'user';
-		$this->container[$type][$name] = $value;
+
+		if ($global) {
+			self::$globals[$name] = $value;
+		} else {
+			$this->vars[$name] = $value;
+		}
+
 	}
 
 	/**
@@ -37,7 +44,7 @@ class Context extends StrictObject implements IContext {
 	 *
 	 * @param array<string, Value> $pairs
 	 */
-	public function setVariables(array $pairs, bool $internal = false) {
+	public function setVariables(array $pairs, bool $global = false) {
 
 		foreach ($pairs as $name => $value) {
 
@@ -45,7 +52,7 @@ class Context extends StrictObject implements IContext {
 				$value = Value::buildAutomatic($value);
 			}
 
-			$this->setVariable($name, $value, $internal);
+			$this->setVariable($name, $value, $global);
 
 		}
 
@@ -53,12 +60,14 @@ class Context extends StrictObject implements IContext {
 
 	public function getVariable(string $name): Value {
 
-		if (isset($this->container['user'][$name])) {
-			return $this->container['user'][$name];
+		// Variables of current context instance have higher priority than
+		// global variables.
+		if (isset($this->vars[$name])) {
+			return $this->vars[$name];
 		}
 
-		if (isset($this->container['internal'][$name])) {
-			return $this->container['internal'][$name];
+		if (isset(self::$globals[$name])) {
+			return self::$globals[$name];
 		}
 
 		throw new InternalUndefinedVariableException($name);
@@ -66,7 +75,7 @@ class Context extends StrictObject implements IContext {
 	}
 
 	public function getVariables(): array {
-		return $this->container['user'];
+		return $this->vars;
 	}
 
 	// Debugging.
