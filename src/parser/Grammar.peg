@@ -43,6 +43,7 @@ Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" ) vector:Vect
 Mutable: skip:VariableVector | skip:VariableName
 
 ObjectResolutionOperator: "."
+NotOperator: "!"
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
 AssignmentOperator: "="
@@ -53,7 +54,8 @@ Expression: skip:AnonymousFunction | skip:Assignment | skip:Comparison | skip:Ad
 Comparison: left:Addition __ op:ComparisonOperator __ right:Addition
 Assignment: left:Mutable __ op:AssignmentOperator __ right:Expression
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication)*
-Multiplication: operands:Operand ( __ ops:MultiplyOperator __ operands:Operand)*
+Multiplication: operands:Negation ( __ ops:MultiplyOperator __ operands:Negation)*
+Negation: not:NotOperator? core:Operand
 Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value
 Chain: ( core:Dereference | core:Invocation | core:ChainedFunction ) chain:Chain?
 Dereference: "[" __ key:Expression __ "]"
