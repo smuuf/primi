@@ -57,10 +57,14 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	protected static function process(string $class): array {
 
 		$classRef = new \ReflectionClass($class);
-		$methods = $classRef->getMethods(
-			\ReflectionMethod::IS_PUBLIC |
-			\ReflectionMethod::IS_STATIC
-		);
+
+		// We want methods that are both public AND static. And we have to do
+		// this by intersection.
+		// See http://php.net/manual/en/reflectionclass.getmethods.php.
+		// "... all methods with any of the given attributes will be returned."
+		$public = $classRef->getMethods(\ReflectionMethod::IS_PUBLIC);
+		$static = $classRef->getMethods(\ReflectionMethod::IS_STATIC);
+		$methods = array_intersect($static, $public);
 
 		$result = [];
 		foreach ($methods as $methodRef) {
