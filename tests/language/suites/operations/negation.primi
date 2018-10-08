@@ -1,0 +1,17 @@
+a = 1 + 2;
+b = true;
+c = false;
+d = 6 - 6;
+e = "" + "";
+f = "0" + "0";
+g = "0" + "1";
+h = 0 - 5 + 2 + 3;
+
+na = !a; // false
+nb = !b; // false
+nc = !c; // true
+nd = !d; // true
+ne = !e; // true
+nf = !f; // true
+ng = !g; // false
+nh = !h; // true
