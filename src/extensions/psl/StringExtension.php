@@ -18,7 +18,7 @@ class StringExtension extends Extension {
 		return new StringValue((string) $value->value);
 	}
 
-	public static function str_length(StringValue $str): NumberValue {
+	public static function string_length(StringValue $str): NumberValue {
 		return new NumberValue((string) mb_strlen($str->value));
 	}
 
@@ -64,7 +64,7 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function str_replace(StringValue $self, Value $search, StringValue $replace = \null): StringValue {
+	public static function string_replace(StringValue $self, Value $search, StringValue $replace = \null): StringValue {
 
 		// Replacing using array of search-replace pairs.
 		if ($search instanceof ArrayValue) {
@@ -77,7 +77,7 @@ class StringExtension extends Extension {
 				return $item->value;
 			}, $search->value));
 
-			return new StringValue(\str_replace($from, $to, $self->value));
+			return new StringValue(\string_replace($from, $to, $self->value));
 
 		}
 
@@ -88,7 +88,7 @@ class StringExtension extends Extension {
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
 
 			// Handle both string/number values the same way.
-			return new StringValue(\str_replace((string) $search->value, $replace->value, $self->value));
+			return new StringValue(\string_replace((string) $search->value, $replace->value, $self->value));
 
 		} elseif ($search instanceof RegexValue) {
 			return new StringValue(\preg_replace($search->value, $replace->value, $self->value));
@@ -98,7 +98,7 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function str_reverse(StringValue $self): StringValue {
+	public static function string_reverse(StringValue $self): StringValue {
 
 		// strrev() does not support multibyte.
 		// Let's do it ourselves then!
@@ -114,7 +114,7 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function str_split(StringValue $self, Value $delimiter): ArrayValue {
+	public static function string_split(StringValue $self, Value $delimiter): ArrayValue {
 
 		// Allow only some value types.
 		Common::allowTypes($delimiter, StringValue::class, RegexValue::class);
@@ -133,7 +133,7 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function str_contains(StringValue $self, Value $needle): BoolValue {
+	public static function string_contains(StringValue $self, Value $needle): BoolValue {
 
 		// Allow only some value types.
 		Common::allowTypes($needle, StringValue::class, NumberValue::class);
@@ -143,16 +143,16 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function str_number_of(StringValue $self, Value $needle): NumberValue {
+	public static function string_number_of(StringValue $self, Value $needle): NumberValue {
 
 		// Allow only some value types.
 		Common::allowTypes($needle, StringValue::class, NumberValue::class);
 
-		return new NumberValue(\mb_substr_count($self->value, $needle->value));
+		return new NumberValue(\mb_substring_count($self->value, $needle->value));
 
 	}
 
-	public static function str_find_first(StringValue $self, Value $needle): Value {
+	public static function string_find_first(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
 		Common::allowTypes($needle, StringValue::class, NumberValue::class);
@@ -166,7 +166,7 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function str_find_last(StringValue $self, Value $needle): Value {
+	public static function string_find_last(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
 		Common::allowTypes($needle, StringValue::class, NumberValue::class);

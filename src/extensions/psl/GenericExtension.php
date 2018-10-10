@@ -19,11 +19,11 @@ class GenericExtension extends Extension {
 
 		switch (true) {
 			case $self instanceof StringValue:
-				return StringExtension::str_length($self);
+				return StringExtension::string_length($self);
 			case $self instanceof ArrayValue:
 				return ArrayExtension::array_length($self);
 			case $self instanceof NumberValue:
-				return NumberExtension::num_length($self);
+				return NumberExtension::number_length($self);
 		}
 
 		throw new \TypeError;
@@ -34,7 +34,7 @@ class GenericExtension extends Extension {
 
 		switch (true) {
 			case $self instanceof StringValue:
-				return StringExtension::str_reverse($self);
+				return StringExtension::string_reverse($self);
 			case $self instanceof ArrayValue:
 				return ArrayExtension::array_reverse($self);
 		}
@@ -47,7 +47,7 @@ class GenericExtension extends Extension {
 
 		switch (true) {
 			case $self instanceof StringValue:
-				return StringExtension::str_number_of($self, ...$args);
+				return StringExtension::string_number_of($self, ...$args);
 			case $self instanceof ArrayValue:
 				return ArrayExtension::array_number_of($self, ...$args);
 		}
@@ -60,7 +60,7 @@ class GenericExtension extends Extension {
 
 		switch (true) {
 			case $self instanceof StringValue:
-				$tmp = StringExtension::str_number_of($self, ...$args);
+				$tmp = StringExtension::string_number_of($self, ...$args);
 				return new BoolValue((bool) $tmp->value);
 			case $self instanceof ArrayValue:
 				$tmp = ArrayExtension::array_number_of($self, ...$args);
