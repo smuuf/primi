@@ -84,7 +84,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			} catch (\Smuuf\Primi\ErrorException $e) {
 				echo($e->getMessage() . "\n");
 			} catch (\Throwable $e) {
-				echo("PHP ERROR: {$e->getMessage()}\n");
+				echo("PHP ERROR: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n");
 			}
 
 		}
