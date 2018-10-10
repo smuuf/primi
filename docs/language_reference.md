@@ -116,9 +116,26 @@ sub_3(1, 2); // Returns -1
 
 ```
 
+#### Chained functions
+In addition to classical function invocation, Primi additionaly supports [Uniform Function Call Syntax (UFCS)](https://en.wikipedia.org/wiki/Uniform_Function_Call_Syntax) as a way to call functions "on values". Essentially, it means that calling `foo(bar);` is ***equivalent*** to calling `bar.foo()`, or *- to provide an example with additional parameters -* that calling `foo(bar, 1, true, "something");` is ***equivalent*** to calling `bar.foo(1, true, "something")`.
+
+#### Value-type based inference of called function name
+When using chained function invocation, Primi **interpreter will try to find the most fitting function to call**. "Most fitting" meaning that when the client calls `bar()` function on a value having the `string` type, Primi will try to find and use the `string_bar()` first. If such function is not defined, only then will the interpreter use the original `bar()` function.
+
+Consider this *a syntactic sugar* to make coding in Primi a bit more user-friendly. Because of this the user is able to call `"something".length()` on a string the same way as calling `[1, 2, 3].length()` on an array, even though there are in fact two separate functions `string_length()` and `array_length()` invoked behind the scenes.
+
 ## Operators
 Plethora of well known operators can be used to **define relationships** between and/or affect various values. Different operators can have various effects on various data types, some of which are covered down below.
 
+### Negation
+- `!`
+    - Negate the value located after this operator.
+    - Examples:
+        ```
+        a = true;
+        b = !a; // false
+        c = !b; // true
+        ```
 ### Assignment
 - `=`
     - Assign some value to a variable.
