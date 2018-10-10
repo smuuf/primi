@@ -28,8 +28,8 @@ $someKey = "some_key";
 
 // Test behaviour of empty array.
 $arr = new ArrayValue([]);
-Assert::same(0, get_val($fns['length']->invoke([$arr])));
-Assert::same(false, get_val($fns['contains']->invoke([$arr, $something])));
+Assert::same(0, get_val($fns['array_length']->invoke([$arr])));
+Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $something])));
 
 // Test proper exception when accessing non-existing key.
 Assert::exception(function() use ($arr) {
@@ -38,11 +38,11 @@ Assert::exception(function() use ($arr) {
 
 // Test working with insertion proxy.
 $proxy = $arr->getArrayInsertionProxy($someKey);
-Assert::same(0, get_val($fns['length']->invoke([$arr])));
-Assert::same(false, get_val($fns['contains']->invoke([$arr, $anything])));
+Assert::same(0, get_val($fns['array_length']->invoke([$arr])));
+Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $anything])));
 $proxy->commit($anything);
-Assert::same(1, get_val($fns['length']->invoke([$arr])));
-Assert::same(true, get_val($fns['contains']->invoke([$arr, $anything])));
+Assert::same(1, get_val($fns['array_length']->invoke([$arr])));
+Assert::same(true, get_val($fns['array_contains']->invoke([$arr, $anything])));
 
 // Test getting and iterating array object iterator.
 $result = [];
@@ -63,15 +63,15 @@ $arr = new ArrayValue([]);
 
 // Push an item into the array and test stuff.
 $fns['array_push']->invoke([$arr, $anything]);
-Assert::same(1, get_val($fns['length']->invoke([$arr])));
-Assert::same(false, get_val($fns['contains']->invoke([$arr, $something])));
-Assert::same(true, get_val($fns['contains']->invoke([$arr, $anything])));
+Assert::same(1, get_val($fns['array_length']->invoke([$arr])));
+Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $something])));
+Assert::same(true, get_val($fns['array_contains']->invoke([$arr, $anything])));
 
 // Pop an item form the array and test stuff.
 $fns['array_pop']->invoke([$arr]);
-Assert::same(0, get_val($fns['length']->invoke([$arr])));
-Assert::same(false, get_val($fns['contains']->invoke([$arr, $something])));
-Assert::same(false, get_val($fns['contains']->invoke([$arr, $anything])));
+Assert::same(0, get_val($fns['array_length']->invoke([$arr])));
+Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $something])));
+Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $anything])));
 
 // Prepare helper objects.
 $num1 = new NumberValue(1);

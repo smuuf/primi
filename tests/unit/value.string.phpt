@@ -255,27 +255,27 @@ Assert::exception(function() use ($fns) {
 // Test count.
 //
 
-Assert::same(3, get_val($fns['str_number_of']->invoke([$string, new StringValue("i")])));
-Assert::same(2, get_val($fns['str_number_of']->invoke([$string, new StringValue("is")])));
-Assert::same(0, get_val($fns['str_number_of']->invoke([$string, new StringValue("xoxoxo")])));
-Assert::same(0, get_val($fns['str_number_of']->invoke([$string, new NumberValue(1)])));
+Assert::same(3, get_val($fns['string_number_of']->invoke([$string, new StringValue("i")])));
+Assert::same(2, get_val($fns['string_number_of']->invoke([$string, new StringValue("is")])));
+Assert::same(0, get_val($fns['string_number_of']->invoke([$string, new StringValue("xoxoxo")])));
+Assert::same(0, get_val($fns['string_number_of']->invoke([$string, new NumberValue(1)])));
 
 //
 // Test length.
 //
 
-Assert::same(17, get_val($fns['str_length']->invoke([$string])));
-Assert::same(1, get_val($fns['str_length']->invoke([$letterA])));
+Assert::same(17, get_val($fns['string_length']->invoke([$string])));
+Assert::same(1, get_val($fns['string_length']->invoke([$letterA])));
 // Multibyte strings should report length correctly.
-Assert::same(17, get_val($fns['str_length']->invoke([$unicode])));
+Assert::same(17, get_val($fns['string_length']->invoke([$unicode])));
 // "\n" is expanded as newline - that's one character.
-Assert::same(5, get_val($fns['str_length']->invoke([$withNewline])));
+Assert::same(5, get_val($fns['string_length']->invoke([$withNewline])));
 
 //
 // Test replacing.
 //
 
-$fnReplace = $fns['str_replace'];
+$fnReplace = $fns['string_replace'];
 
 // Test replacing with array of needle-replacement.
 $pairs = new ArrayValue([
@@ -296,8 +296,8 @@ Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 // Test first/last occurence search.
 //
 
-$fnFirst = $fns['str_find_first'];
-$fnLast = $fns['str_find_last'];
+$fnFirst = $fns['string_find_first'];
+$fnLast = $fns['string_find_last'];
 
 Assert::same(2, get_val($fnFirst->invoke([$string, new StringValue("is")])));
 Assert::same(5, get_val($fnLast->invoke([$string, new StringValue("is")])));
@@ -313,14 +313,14 @@ Assert::false(get_val($fnLast->invoke([$string, new StringValue("aaa")])));
 
 $string = new StringValue("hello,how,are,you");
 $result = [];
-foreach (get_val($fns['str_split']->invoke([$string, new StringValue(",")])) as $item) {
+foreach (get_val($fns['string_split']->invoke([$string, new StringValue(",")])) as $item) {
 	$result[] = get_val($item);
 }
 Assert::same(["hello", "how", "are", "you"], $result);
 
 $string = new StringValue("well, this ... IS ... awkward!");
 $result = [];
-foreach (get_val($fns['str_split']->invoke([$string, new RegexValue("/[,\s\.]+/")])) as $item) {
+foreach (get_val($fns['string_split']->invoke([$string, new RegexValue("/[,\s\.]+/")])) as $item) {
 	$result[] = get_val($item);
 }
 Assert::same(["well", "this", "IS", "awkward!"], $result);
@@ -329,7 +329,7 @@ Assert::same(["well", "this", "IS", "awkward!"], $result);
 // Test reverse.
 //
 
-$fnReverse = $fns['str_reverse'];
+$fnReverse = $fns['string_reverse'];
 
 // Simple ascii string.
 $string = new StringValue("You wake me up, god damn it!");

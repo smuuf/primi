@@ -12,7 +12,7 @@ class NumberExtension extends Extension {
 		return new NumberValue((string) $value->value);
 	}
 
-	public static function num_length(NumberValue $value): NumberValue {
+	public static function number_length(NumberValue $value): NumberValue {
 		return new NumberValue(\strlen((string) $value->value));
 	}
 
