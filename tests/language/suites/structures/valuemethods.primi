@@ -1,8 +1,8 @@
 a = "ahojkyacauky";
-b = a.str_replace("a", "xxx");
-c = "voleneasijakprase".str_replace("ne", "jo");
-d = c.str_replace("asi", "určitě");
-e = "abcdefghijklmn".str_replace(/[c-g]/, "_");
+b = a.string_replace("a", "xxx");
+c = "voleneasijakprase".string_replace("ne", "jo");
+d = c.string_replace("asi", "určitě");
+e = "abcdefghijklmn".string_replace(/[c-g]/, "_");
 
 _definitions = [
     "á": "a",
@@ -10,12 +10,12 @@ _definitions = [
     "ě": "e"
 ];
 
-f = "rádoby čau".str_replace(_definitions);
+f = "rádoby čau".string_replace(_definitions);
 
 // Method chaining
-g = "vole".str_replace("v", "l").str_replace("o", "i") + "k";
-h = ("číslo je " + 000.cos()).str_replace(["č": "c", "í": "i"]);
-i = "kokot je " + "oo".str_replace("o", "e");
+g = "vole".string_replace("v", "l").string_replace("o", "i") + "k";
+h = ("číslo je " + 000.cos()).string_replace(["č": "c", "í": "i"]);
+i = "kokot je " + "oo".string_replace("o", "e");
 
 // Only first two "a"s should be replaced.
-j = "aaa".str_replace("aa", "c").str_replace("a", "x").str_replace("cx", "whatevs");
+j = "aaa".string_replace("aa", "c").string_replace("a", "x").string_replace("cx", "whatevs");

@@ -19,6 +19,6 @@ xb_2 = b - i_2;
 xc = c - j;
 xc_k = c - k;
 
-l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".str_replace(/ann?o/, "FAIL");
+l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(/ann?o/, "FAIL");
 m = "\ahoj\n\vo\le" - /\\ahoj\s/;
 n = "a/b/c" - /\/b/; // Test proper handling of escaped regex delimiters.

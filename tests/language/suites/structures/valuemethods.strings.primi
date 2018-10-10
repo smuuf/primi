@@ -1,10 +1,10 @@
 
 // First, last.
 a = "ahoj 123, jak se máš? 123";
-b = a.str_find_first("j");
-c = a.str_find_last("a");
-d = a.str_find_first(12);
-e = a.str_find_last(23); // After multi-byte characters "áš"
+b = a.string_find_first("j");
+c = a.string_find_last("a");
+d = a.string_find_first(12);
+e = a.string_find_last(23); // After multi-byte characters "áš"
 
 // Length.
 f = "if you have a one gigawatt coal plant, you need an eighty car train full of coal every day to provide fuel.".length();

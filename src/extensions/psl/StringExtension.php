@@ -77,7 +77,7 @@ class StringExtension extends Extension {
 				return $item->value;
 			}, $search->value));
 
-			return new StringValue(\string_replace($from, $to, $self->value));
+			return new StringValue(\str_replace($from, $to, $self->value));
 
 		}
 
@@ -88,7 +88,7 @@ class StringExtension extends Extension {
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
 
 			// Handle both string/number values the same way.
-			return new StringValue(\string_replace((string) $search->value, $replace->value, $self->value));
+			return new StringValue(\str_replace((string) $search->value, $replace->value, $self->value));
 
 		} elseif ($search instanceof RegexValue) {
 			return new StringValue(\preg_replace($search->value, $replace->value, $self->value));
@@ -148,7 +148,7 @@ class StringExtension extends Extension {
 		// Allow only some value types.
 		Common::allowTypes($needle, StringValue::class, NumberValue::class);
 
-		return new NumberValue(\mb_substring_count($self->value, $needle->value));
+		return new NumberValue(\mb_substr_count($self->value, $needle->value));
 
 	}
 

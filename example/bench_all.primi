@@ -110,7 +110,7 @@ xb = b - i;
 xb_2 = b - i_2;
 xc = c - j;
 xc_k = c - k;
-l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".str_replace(/ann?o/, "FAIL");
+l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(/ann?o/, "FAIL");
 m = "\ahoj\n\vo\le" - /\\ahoj\s/;
 n = "a/b/c" - /\/b/; // Test proper handling of escaped regex delimiters.
 a = 4;
@@ -130,19 +130,19 @@ n = f--;
 o = ++g;
 p = --h;
 a = "ahojkyacauky";
-b = a.str_replace("a", "xxx");
-c = "voleneasijakprase".str_replace("ne", "jo");
-d = c.str_replace("asi", "určitě");
-e = "abcdefghijklmn".str_replace(/[c-g]/, "_");
+b = a.string_replace("a", "xxx");
+c = "voleneasijakprase".string_replace("ne", "jo");
+d = c.string_replace("asi", "určitě");
+e = "abcdefghijklmn".string_replace(/[c-g]/, "_");
 _definitions = [
     "á": "a",
     "č": "c",
     "ě": "e"
 ];
-f = "rádoby čau".str_replace(_definitions);
-g = "vole".str_replace("v", "l").str_replace("o", "i") + "k";
-h = ("číslo je " + 000.cos()).str_replace(["č": "c", "í": "i"]);
-i = "kokot je " + "oo".str_replace("o", "e");
+f = "rádoby čau".string_replace(_definitions);
+g = "vole".string_replace("v", "l").string_replace("o", "i") + "k";
+h = ("číslo je " + 000.cos()).string_replace(["č": "c", "í": "i"]);
+i = "kokot je " + "oo".string_replace("o", "e");
 a_1 = 9.sqrt();
 b_1 = 3.pow();
 b_2 = 3.pow(2);
