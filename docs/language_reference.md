@@ -34,8 +34,8 @@ a = true;
 b = 1 == 2; // false
 c = b == false; // true
 d = c == "hello"; // ERR: Cannot compare: 'bool' and 'string' @ code: c == "hello"
-e = "hello" == /[0-9]/; // false
-f = "hello" == /l{2}/; // true
+e = "hello" == r"[0-9]"; // false
+f = "hello" == r"l{2}"; // true
 ```
 
 ### Number
@@ -58,12 +58,12 @@ c = a + " " + b; // "hello wóóórld!"
 ```
 
 ### Regex
-Regex data type exists for advanced string matching. It is defined between two `/` forward-slash characters and treated as PCRE (Perl-compatible) regular expressions *(the same as within PHP itself)* with Unicode mode enabled.
+Regex data type exists for advanced string matching. It is defined using the `r"..."` literal *(a string literal prefixed with `r`)* and treated as PCRE (Perl-compatible) regular expressions *(the same as within PHP itself)* with Unicode mode enabled.
 
 Example usage:
 ```
 a = "facebook";
-b = /[o]{2}.*/;
+b = r"[o]{2}.*";
 c = a == b; // true
 ```
 
@@ -72,8 +72,8 @@ Arrays are untyped *(PHP-style)* containers that can accomodate multiple values 
 
 Example usage:
 ```
-a = ["abc", 123, 4: true, false, /[A-Z]+/];
-// Resulting array: [0: "abc", 1: 123, 4: true, 5: false, 6: /[A-Z]+/]
+a = ["abc", 123, 4: true, false, r"[A-Z]+"];
+// Resulting array: [0: "abc", 1: 123, 4: true, 5: false, 6: r"[A-Z]+"]
 ```
 
 ### Functions
@@ -145,7 +145,7 @@ Plethora of well known operators can be used to **define relationships** between
         a = 1;
         b = "a word";
         c = false;
-        d = /regul[ar]+/;
+        d = r"regul[ar]+";
         e = ["x", "b": "z"];
         e["c"] = "x"; // e == ["x", "b": "z", "c": "x"]
         ```
@@ -167,7 +167,7 @@ Plethora of well known operators can be used to **define relationships** between
         c = "a word and number " + 5; // "a word and number5"
         d = "a word" + " and one more"; // "a word and one more"
         e = "a word" - "or"; // "a wd"
-        f = "regular expressions" - /regul[ar]+\s*/; // "expressions"
+        f = "regular expressions" - r"regul[ar]+\s*"; // "expressions"
         ```
 - `*`, `/`
     - Perform multiplication (division) of two values.
