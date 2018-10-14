@@ -8,8 +8,12 @@ use \Smuuf\Primi\Extension;
 
 class BoolExtension extends Extension {
 
-	public static function to_bool(Value $value): BoolValue {
-		return new BoolValue((bool) $value->value);
+	public static function bool_not(BoolValue $value): BoolValue {
+		return new BoolValue(!$value->value);
+	}
+
+	public static function bool_and(BoolValue $l, BoolValue $r): BoolValue {
+		return new BoolValue($l->value && $r->value);
 	}
 
 }
