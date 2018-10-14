@@ -8,6 +8,7 @@ use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\IReadlineDriver;
 
 class Repl extends \Smuuf\Primi\StrictObject {
@@ -56,12 +57,19 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	private function loop() {
 
 		$i = $this->interpreter;
+		$c = $i->getContext();
+
 		readline_completion_function(function() { return []; });
+
 		while (true) {
 
 			$input = $this->gatherLines();
 
 			switch (trim($input)) {
+				case '?':
+					$this->printContext($c);
+					continue 2;
+				break;
 				case '':
 					// Ignore (skip) empty input.
 					continue 2;
@@ -91,7 +99,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public function printResult(Value $result = null): void {
+	private function printResult(Value $result = null): void {
 
 		if ($result === null) {
 			return;
@@ -100,18 +108,27 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		printf(
 			"%s %s\n",
 			$result->getStringValue(),
-			!$this->rawOutput ? $this->formatType($result) : null
+			!$this->rawOutput ? self::formatType($result) : null
 		);
 
 	}
 
-	private function formatType(Value $value) {
+	private static function formatType(Value $value) {
 
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",
 			$value::TYPE,
 			Common::objectHash($value)
 		));
+
+	}
+
+	private function printContext(Context $c): void {
+
+		foreach ($c->getVariables() as $name => $value)  {
+			echo "$name: ";
+			$this->printResult($value);
+		}
 
 	}
 
