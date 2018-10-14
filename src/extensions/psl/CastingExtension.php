@@ -29,7 +29,7 @@ class CastingExtension extends Extension {
 	public static function to_regex(Value $value): RegexValue {
 
 		// Allow regexes to be casted to regex.
-		if ($value instanceof Regex) {
+		if ($value instanceof RegexValue) {
 			return $value;
 		}
 

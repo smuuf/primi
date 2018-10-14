@@ -8,7 +8,7 @@ use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
-use \Smuuf\Primi\Context;
+use \Smuuf\Primi\IContext;
 use \Smuuf\Primi\IReadlineDriver;
 
 class Repl extends \Smuuf\Primi\StrictObject {
@@ -123,7 +123,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private function printContext(Context $c): void {
+	private function printContext(IContext $c): void {
 
 		foreach ($c->getVariables() as $name => $value)  {
 			echo "$name: ";
