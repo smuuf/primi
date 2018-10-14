@@ -12,11 +12,21 @@ class RegexValue extends Value implements
 	const TYPE = "regex";
 
 	public function __construct(string $regex) {
-		$this->value = $regex . "u";
+
+		// We'll be using ASCII \x07 (bell) character as delimiters, so
+		// we won't need to deal with any escaping of input.
+		$this->value = "\x07$regex\x07u";
+
 	}
 
 	public function getStringValue(): string {
-		return $this->value;
+
+		// Cut off the first delim and the last delim + "u" modifier.
+		$string = $this->value;
+		$string = \mb_substr($string, 1, \mb_strlen($string) - 3);
+
+		return "r\"{$string}\"";
+
 	}
 
 	public function doComparison(string $operator, Value $rightOperand): BoolValue {

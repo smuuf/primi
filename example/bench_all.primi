@@ -98,21 +98,21 @@ k = 1 + 2 * 3 / 4 - 5 / 6 * 7 + 8;
 a = "abcdefg";
 b = "abc123defg";
 c = "xyz456čaukomňauko";
-d = a == /[cde]d/;
-e = /[cde]d/ == a;
-i = /[c-e]/;
-i_2 = /[ce]/;
-j = /[0-9]+/;
-k = /[čau](ko)+mňau/;
+d = a == r"[cde]d";
+e = r"[cde]d" == a;
+i = r"[c-e]";
+i_2 = r"[ce]";
+j = r"[0-9]+";
+k = r"[čau](ko)+mňau";
 xa = a - i;
 xa_2 = a - i_2;
 xb = b - i;
 xb_2 = b - i_2;
 xc = c - j;
 xc_k = c - k;
-l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(/ann?o/, "FAIL");
-m = "\ahoj\n\vo\le" - /\\ahoj\s/;
-n = "a/b/c" - /\/b/; // Test proper handling of escaped regex delimiters.
+l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(r"ann?o", "FAIL");
+m = "\ahoj\n\vo\le" - r"\\ahoj\s";
+n = "a/b/c" - r"\/b"; // Test proper handling of escaped regex delimiters.
 a = 4;
 b = 5;
 c = 6;
@@ -133,7 +133,7 @@ a = "ahojkyacauky";
 b = a.string_replace("a", "xxx");
 c = "voleneasijakprase".string_replace("ne", "jo");
 d = c.string_replace("asi", "určitě");
-e = "abcdefghijklmn".string_replace(/[c-g]/, "_");
+e = "abcdefghijklmn".string_replace(r"[c-g]", "_");
 _definitions = [
     "á": "a",
     "č": "c",

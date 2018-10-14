@@ -25,7 +25,7 @@ StringLiteral: / (?:".*?(?<!\\)")|(?:'.*?(?<!\\)') /s
 NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
 NullLiteral: "null"
-RegexLiteral: "/" /(\\\/|[^\/])+/ "/"
+RegexLiteral: "r" core:StringLiteral
 Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral

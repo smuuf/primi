@@ -53,15 +53,20 @@ Assert::same('true', $v->getStringValue());
 $v = new BoolValue(false);
 Assert::same('false', $v->getStringValue());
 
-// Regex.
+// Regex 1.
 $v = new RegexValue('/abc/');
-Assert::same('/abc/u', $v->getStringValue());
+Assert::same('r"/abc/"', $v->getStringValue());
+
+// Regex 1.
+$v = new RegexValue('abc');
+Assert::same('r"abc"', $v->getStringValue());
 
 // Array.
 $v = new ArrayValue([
 	Value::buildAutomatic(1),
 	Value::buildAutomatic("xxx"),
 	Value::buildAutomatic(false),
+	new RegexValue('abc'),
 	new RegexValue('/abc/'),
 ]);
-Assert::same('[0: 1, 1: "xxx", 2: false, 3: /abc/u]', $v->getStringValue());
+Assert::same('[0: 1, 1: "xxx", 2: false, 3: r"abc", 4: r"/abc/"]', $v->getStringValue());

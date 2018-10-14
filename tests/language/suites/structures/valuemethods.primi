@@ -2,7 +2,7 @@ a = "ahojkyacauky";
 b = a.string_replace("a", "xxx");
 c = "voleneasijakprase".string_replace("ne", "jo");
 d = c.string_replace("asi", "určitě");
-e = "abcdefghijklmn".string_replace(/[c-g]/, "_");
+e = "abcdefghijklmn".string_replace(r"[c-g]", "_");
 
 _definitions = [
     "á": "a",

@@ -5,10 +5,10 @@ d:BoolValue:true
 e:BoolValue:true
 e_2:BoolValue:true
 e_3:BoolValue:false
-i:RegexValue:/[c-e]/u
-i_2:RegexValue:/[ce]/u
-j:RegexValue:/[0-9]+/u
-k:RegexValue:/[čau](ko)+mňau/u
+i:RegexValue:r"[c-e]"
+i_2:RegexValue:r"[ce]"
+j:RegexValue:r"[0-9]+"
+k:RegexValue:r"[čau](ko)+mňau"
 xa:StringValue:"abfg"
 xa_2:StringValue:"abdfg"
 xb:StringValue:"ab123fg"
@@ -18,3 +18,7 @@ xc_k:StringValue:"xyz456čako"
 l:StringValue:"xoxoxomilFAILbergamo,FAIL:domini. Anno, neštvi ma."
 m:StringValue:"\vo\le"
 n:StringValue:"a/c"
+o:StringValue:"00011"
+p:StringValue:"00011234455"
+q:StringValue:"1"
+r:BoolValue:false

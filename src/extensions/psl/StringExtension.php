@@ -14,15 +14,11 @@ use \Smuuf\Primi\ErrorException;
 
 class StringExtension extends Extension {
 
-	public static function to_string(Value $value): StringValue {
-		return new StringValue((string) $value->value);
-	}
-
 	public static function string_length(StringValue $str): NumberValue {
 		return new NumberValue((string) mb_strlen($str->value));
 	}
 
-	public static function format(StringValue $str, Value ...$items): StringValue {
+	public static function string_format(StringValue $str, Value ...$items): StringValue {
 
 		// Extract PHP values from passed in value objects, because later we
 		// will pass the values to sprintf().
@@ -136,10 +132,14 @@ class StringExtension extends Extension {
 	public static function string_contains(StringValue $self, Value $needle): BoolValue {
 
 		// Allow only some value types.
-		Common::allowTypes($needle, StringValue::class, NumberValue::class);
+		Common::allowTypes($needle, StringValue::class, NumberValue::class, RegexValue::class);
+
+		if ($needle instanceof RegexValue) {
+			return new BoolValue(preg_match($needle->value, $self->value));
+		}
 
 		// Let's search the $needle object in $arr's value (array of objects).
-		return new BoolValue(mb_strpos($self->value, $needle) !== \false);
+		return new BoolValue(mb_strpos($self->value, $needle->value) !== \false);
 
 	}
 

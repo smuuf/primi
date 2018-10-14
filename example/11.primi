@@ -1,4 +1,4 @@
-a = /[a-z]\/[a-z]/;
+a = r"[a-z]/[a-z]";
 b = "ahojkymňauky";
 if (b == a) {
     c = 1;

@@ -48,7 +48,7 @@ Assert::same(
 );
 
 // Subtract regex matching all whitespace.
-$regexWhitespace = new RegexValue("/\s+/");
+$regexWhitespace = new RegexValue("\s+");
 $noSpaces = $noA->doSubtraction($regexWhitespace);
 Assert::same(
 	"thisisstring.",
@@ -71,7 +71,7 @@ Assert::exception(function() use ($string) {
 	$string->doAddition(new BoolValue(false));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
-	$string->doAddition(new RegexValue("/[abc]+/"));
+	$string->doAddition(new RegexValue("[abc]+"));
 }, \TypeError::class);
 Assert::exception(function() use ($string) {
 	$string->doAddition(new ArrayValue([]));
@@ -128,16 +128,16 @@ $tmp = (new StringValue("2.0"))->doComparison("==", new NumberValue(2.0));
 Assert::false(get_val($tmp));
 
 // Equality: Comparing string against matching regex: True.
-$tmp = $string->doComparison("==", new RegexValue("/s[tr]+/"));
+$tmp = $string->doComparison("==", new RegexValue("s[tr]+"));
 Assert::true(get_val($tmp));
 // Inequality: Comparing string against non-matching regex: False.
-$tmp = $string->doComparison("!=", new RegexValue("/\d+/"));
+$tmp = $string->doComparison("!=", new RegexValue("\d+"));
 Assert::true(get_val($tmp));
 // Equality: Comparing Unicode string against matching regex: True.
-$tmp = $unicode->doComparison("==", new RegexValue('/Š[Tř]{2}i/'));
+$tmp = $unicode->doComparison("==", new RegexValue('Š[Tř]{2}i'));
 Assert::true(get_val($tmp));
 // Inquality: Comparing Unicode string against non-matching regex: True.
-$tmp = $unicode->doComparison("!=", new RegexValue('/nuancé/'));
+$tmp = $unicode->doComparison("!=", new RegexValue('nuancé'));
 Assert::true(get_val($tmp));
 
 Assert::exception(function() use ($string) {
@@ -202,7 +202,7 @@ foreach ($iterable->getIterator() as $index => $x) {
 
 
 $template = new StringValue("1:{},2:{},3:{},4:{}");
-$result = $fns['format']->invoke([
+$result = $fns['string_format']->invoke([
 	$template,
 	new StringValue("FIRST"),
 	new StringValue("SECOND"),
@@ -213,7 +213,7 @@ Assert::same("1:FIRST,2:SECOND,3:THIRD,4:FOURTH", get_val($result));
 
 // Test formatting with positions.
 $template = new StringValue("1:{},2:{2},3:{1},4:{}");
-$result = $fns['format']->invoke([
+$result = $fns['string_format']->invoke([
 	$template,
 	new StringValue("FIRST"),
 	new StringValue("SECOND"),
@@ -225,7 +225,7 @@ Assert::same("1:FIRST,2:SECOND,3:FIRST,4:SECOND", get_val($result));
 // Test too-few-parameters.
 Assert::exception(function() use ($fns) {
 	$template = new StringValue("1:{},2:{},3:{},4:{}");
-	$result = $fns['format']->invoke([
+	$result = $fns['string_format']->invoke([
 		$template,
 		new StringValue("FIRST"),
 		new StringValue("SECOND"),
@@ -235,7 +235,7 @@ Assert::exception(function() use ($fns) {
 // Test too-few-parameters with positions.
 Assert::exception(function() use ($fns) {
 	$template = new StringValue("1:{},2:{1},3:{1},4:{}");
-	$result = $fns['format']->invoke([
+	$result = $fns['string_format']->invoke([
 		$template,
 		new StringValue("FIRST")
 	]);
@@ -244,7 +244,7 @@ Assert::exception(function() use ($fns) {
 // Test placeholder index being too high for passed parameters.
 Assert::exception(function() use ($fns) {
 	$template = new StringValue("1:{},2:{1000}");
-	$result = $fns['format']->invoke([
+	$result = $fns['string_format']->invoke([
 		$template,
 		new StringValue("FIRST"),
 		new StringValue("SECOND"),
@@ -320,7 +320,7 @@ Assert::same(["hello", "how", "are", "you"], $result);
 
 $string = new StringValue("well, this ... IS ... awkward!");
 $result = [];
-foreach (get_val($fns['string_split']->invoke([$string, new RegexValue("/[,\s\.]+/")])) as $item) {
+foreach (get_val($fns['string_split']->invoke([$string, new RegexValue("[,\s\.]+")])) as $item) {
 	$result[] = get_val($item);
 }
 Assert::same(["well", "this", "IS", "awkward!"], $result);

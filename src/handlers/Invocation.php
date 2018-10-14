@@ -47,7 +47,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		} catch (\TypeError $e) {
 
-			$msg = "Wrong arguments passed to function";
+			$msg = "Wrong type of argument passed to function";
 			throw new ErrorException($msg, $node);
 
 		}

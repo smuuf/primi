@@ -1,2 +1,2 @@
 EX:Smuuf\Primi\ErrorException
-a:RegexValue:/abc[def]/u
+a:RegexValue:r"abc[def]"

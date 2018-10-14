@@ -2,15 +2,15 @@ a = "abcdefg";
 b = "abc123defg";
 c = "xyz456čaukomňauko";
 
-d = a == /[cde]d/;
-e = /[cde]d/ == a;
-e_2 = /(\d+|[A-Z])/ != a;
-e_3 = "what have we here" != /h[abc]v[def]/;
+d = a == r"[cde]d";
+e = r"[cde]d" == a;
+e_2 = r"(\d+|[A-Z])" != a;
+e_3 = "what have we here" != r"h[abc]v[def]";
 
-i = /[c-e]/;
-i_2 = /[ce]/;
-j = /[0-9]+/;
-k = /[čau](ko)+mňau/;
+i = r"[c-e]";
+i_2 = r"[ce]";
+j = r"[0-9]+";
+k = r"[čau](ko)+mňau";
 
 xa = a - i;
 xa_2 = a - i_2;
@@ -19,6 +19,11 @@ xb_2 = b - i_2;
 xc = c - j;
 xc_k = c - k;
 
-l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(/ann?o/, "FAIL");
-m = "\ahoj\n\vo\le" - /\\ahoj\s/;
-n = "a/b/c" - /\/b/; // Test proper handling of escaped regex delimiters.
+l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(r"ann?o", "FAIL");
+m = "\ahoj\n\vo\le" - r"\\ahoj\s";
+n = "a/b/c" - r"/b"; // Test proper handling of escaped regex delimiters.
+
+o = "[0-9]{5}".to_regex().match("abc00011234455");
+p = "[0-9]+".to_regex().match("abc00011234455");
+q = "[{}-{}]".format(0, 9).to_regex().match("abc123");
+r = "{}-{}".format(0, 9).to_regex().match("abc");

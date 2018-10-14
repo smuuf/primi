@@ -1,1 +1,1 @@
-a = /abc/ * "def"; // Error.
+a = r"abc" * "def"; // Error.

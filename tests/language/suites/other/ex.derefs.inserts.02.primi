@@ -1,2 +1,2 @@
-a = /abc[def]/;
+a = r"abc[def]";
 b = a[1];

@@ -8,10 +8,6 @@ use \Smuuf\Primi\Extension;
 
 class NumberExtension extends Extension {
 
-	public static function to_number(Value $value): NumberValue {
-		return new NumberValue((string) $value->value);
-	}
-
 	public static function number_length(NumberValue $value): NumberValue {
 		return new NumberValue(\strlen((string) $value->value));
 	}
