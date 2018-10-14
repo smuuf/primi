@@ -26,8 +26,8 @@ class Multiplication extends \Smuuf\Primi\StrictObject implements IHandler, IRed
 		} catch (InternalBinaryOperationxception $e) {
 
 			throw new ErrorException(sprintf(
-				"Cannot %s types '%s' and '%s'",
-				$e->getOperator() === "*" ? "multiply" : "divide",
+				"Cannot use operator '%s' with '%s' and '%s'",
+				$e->getOperator(),
 				($e->getLeft())::TYPE,
 				($e->getRight())::TYPE
 			), $node);

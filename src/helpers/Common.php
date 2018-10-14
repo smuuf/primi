@@ -33,7 +33,13 @@ abstract class Common extends \Smuuf\Primi\StrictObject {
 		}
 
 		// The value did not match any of the types provided.
-		throw new \TypeError;
+		$msg = sprintf(
+			"'%s' is not any of these: %s",
+			$value::TYPE,
+			implode(", ", $types)
+		);
+
+		throw new \TypeError($msg);
 
 	}
 

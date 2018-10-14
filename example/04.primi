@@ -1,7 +1,7 @@
 a = 4 / (2 - 1) * 100;
 damn = 153 * 2;
 
-c = "zaplaťte pouze " + a + " Kč za skvělou " + damn;
+c = "zaplaťte pouze " + to_string(a) + " Kč za skvělou " + damn.to_string();
 g = 1;
 
 while (damn > 10) {

@@ -112,13 +112,13 @@ Assert::false(get_val($tmp));
 $tmp = $string->doComparison("!=", new StringValue("boii"));
 Assert::true(get_val($tmp));
 
-// Equality: Comparing string against a number.
+// Equality: Comparing string against a number. (is always false)
 $tmp = $string->doComparison("==", new NumberValue(5));
 Assert::false(get_val($tmp));
 $tmp = (new StringValue("5"))->doComparison("==", new NumberValue(5));
-Assert::true(get_val($tmp));
+Assert::false(get_val($tmp));
 $tmp = (new StringValue("2.1"))->doComparison("==", new NumberValue(2.1));
-Assert::true(get_val($tmp));
+Assert::false(get_val($tmp));
 $tmp = (new StringValue("50"))->doComparison("==", new NumberValue(5));
 Assert::false(get_val($tmp));
 

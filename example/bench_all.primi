@@ -1,9 +1,9 @@
 
 a = 1 + 2;
-b = "1" + 2;
-c = 1 + "2";
-d = "x" + 1;
-e = 1 + "x";
+b = to_number("1") + 2;
+c = to_string(1) + "2";
+d = "x".to_number() + 1;
+e = to_string(1) + "x";
 f = "x" + "1";
 g = "1" + "x";
 h = "abc" + "   def";
@@ -91,8 +91,8 @@ d = 1 * "2";
 e = 1 * "2.4";
 f = 8 / 4;
 g = 4 / 16;
-h = 123 / a;
-i = 123 / b;
+h = 123 / to_number(a);
+i = 123 / to_number(b);
 j = (1 + (3 / (4 - 5)) + 2 / (37 * 2 / 8 - 42));
 k = 1 + 2 * 3 / 4 - 5 / 6 * 7 + 8;
 a = "abcdefg";
@@ -141,7 +141,7 @@ _definitions = [
 ];
 f = "rádoby čau".string_replace(_definitions);
 g = "vole".string_replace("v", "l").string_replace("o", "i") + "k";
-h = ("číslo je " + 000.cos()).string_replace(["č": "c", "í": "i"]);
+h = ("číslo je " + 000.cos().to_string()).string_replace(["č": "c", "í": "i"]);
 i = "kokot je " + "oo".string_replace("o", "e");
 a_1 = 9.sqrt();
 b_1 = 3.pow();

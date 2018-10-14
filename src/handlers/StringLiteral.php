@@ -17,10 +17,6 @@ class StringLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
 		// so do this a little more directly.
 		$value = \mb_substr($content, 1, \mb_strlen($content) - 2);
 
-		if (NumberValue::isNumeric($value)) {
-			return new NumberValue($value);
-		}
-
 		return new StringValue($value);
 
 	}

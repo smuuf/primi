@@ -37,21 +37,24 @@ class StringValue extends Value implements
 
 	public function doAddition(Value $rightOperand) {
 
-		Common::allowTypes($rightOperand, self::class, NumberValue::class);
+		Common::allowTypes($rightOperand, self::class);
 		return new self($this->value . $rightOperand->value);
 
 	}
 
 	public function doSubtraction(Value $rightOperand) {
 
+		// Allow only string at this point (if the operand was a regex, we've
+		// already returned value).
+		Common::allowTypes($rightOperand, self::class, RegexValue::class);
+
 		if ($rightOperand instanceof RegexValue) {
-			return new self(\preg_replace($rightOperand->value, \null, $this->value));
+			$match = \preg_replace($rightOperand->value, \null, $this->value);
+			return new self($match);
 		}
 
-		// Allow only string at this point (if the operand was a regex, we've already returned value).
-		Common::allowTypes($rightOperand, self::class);
-
-		return new self(\str_replace($rightOperand->value, \null, $this->value));
+		$new = \str_replace($rightOperand->value, \null, $this->value);
+		return new self($new);
 
 	}
 
@@ -78,13 +81,21 @@ class StringValue extends Value implements
 			NumberValue::class
 		);
 
+		// Numbers and strings can be only compared for equality.
+		// And are never equal.
+		if ($rightOperand instanceof NumberValue) {
+			if ($op !== "==" && $op !== "!=") {
+				throw new \TypeError;
+			}
+		}
+
 		switch ($op) {
 			case "==":
 
 				if ($rightOperand instanceof RegexValue) {
 					$result = \preg_match($rightOperand->value, $this->value);
 				} else {
-					$result = $this->value === (string) $rightOperand->value;
+					$result = $this->value === $rightOperand->value;
 				}
 
 			break;
@@ -93,7 +104,7 @@ class StringValue extends Value implements
 				if ($rightOperand instanceof RegexValue) {
 					$result = !\preg_match($rightOperand->value, $this->value);
 				} else {
-					$result = $this->value !== (string) $rightOperand->value;
+					$result = $this->value !== $rightOperand->value;
 				}
 
 			break;

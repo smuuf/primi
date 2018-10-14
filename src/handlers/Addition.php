@@ -26,8 +26,8 @@ class Addition extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 		} catch (InternalBinaryOperationxception $e) {
 
 			throw new ErrorException(sprintf(
-				"Cannot %s types '%s' and '%s'",
-				$e->getOperator() === "+" ? "add" : "subtract",
+				"Cannot use operator '%s' with '%s' and '%s'",
+				$e->getOperator(),
 				($e->getLeft())::TYPE,
 				($e->getRight())::TYPE
 			), $node);
