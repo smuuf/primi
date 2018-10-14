@@ -84,22 +84,10 @@ Assert::same(2, $integer->doAddition(new NumberValue(1))->getInternalValue());
 // Addition with a proper negative Number.
 Assert::same(-122, $integer->doAddition(new NumberValue(-123))->getInternalValue());
 
-// String values that are numeric will be added like numbers.
-Assert::same(1, $integer->doAddition(new StringValue("-0"))->getInternalValue());
-Assert::same(-4, $integer->doAddition(new StringValue("-5"))->getInternalValue());
-Assert::same(2.2, $integer->doAddition(new StringValue("+1.2"))->getInternalValue());
-Assert::same(-1.2, $integer->doAddition(new StringValue("-2.2"))->getInternalValue());
-
-// String values that are not numeric will result in concatenation instead of addition.
-$word1 = $integer->doAddition(new StringValue("a word"));
-$word2 = $integer->doAddition(new StringValue("-1 owls"));
-Assert::same("1a word", $word1->getInternalValue());
-Assert::same("1-1 owls", $word2->getInternalValue());
-// The result of number+string is a string value.
-Assert::type(StringValue::class, $word1);
-Assert::type(StringValue::class, $word2);
-
 // Addition with unsupported formats will result in type error.
+Assert::exception(function() use ($integer) {
+	$integer->doAddition(new StringValue("4"));
+}, \TypeError::class);
 Assert::exception(function() use ($integer) {
 	$integer->doAddition(new ArrayValue([]));
 }, \TypeError::class);

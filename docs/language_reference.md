@@ -33,7 +33,7 @@ Example usage:
 a = true;
 b = 1 == 2; // false
 c = b == false; // true
-d = c == "hello"; // ERR: Cannot compare: 'bool' and 'string' @ code: c == "hello"
+d = c == "hello"; // ERR: Cannot compare 'bool' and 'string'
 e = "hello" == r"[0-9]"; // false
 f = "hello" == r"l{2}"; // true
 ```

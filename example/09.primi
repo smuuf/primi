@@ -62,12 +62,12 @@ function sub(x, y) {
 
 }
 
-a = 1 + add(sub(4, 3), 3);
+a = (1 + add(sub(4, 3), 3)).to_string();
 a = a + "\n";
 
 a = 4 / (2 - 1) * 100;
 damn = 153 * 2;
-c = "zaplaťte pouze " + a + " Kč za skvělou " + damn;
+c = "zaplaťte pouze " + a.to_string() + " Kč za skvělou " + to_string(damn);
 
 g = 1;
 d = 2;
@@ -86,7 +86,7 @@ while (damn < 10000) {
 	");
 
 	damn = damn * d - 1 * d;
-	c = g + "0";
+	c = g + to_number("0");
 
 	if (c - 4 * 2)  {
 		if (4 + (123 * 7) / 8) {

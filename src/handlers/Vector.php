@@ -23,7 +23,7 @@ class Vector extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		if (!$subject instanceof ISupportsArrayAccess) {
 			throw new ErrorException(sprintf(
-				"Cannot perform array-like write on '%s'",
+				"Cannot insert into '%s'",
 				$subject::TYPE
 			), $node);
 		}

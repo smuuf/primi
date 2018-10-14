@@ -75,7 +75,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 		} else {
 
 			throw new InternalException(
-				"Cannot parse argument count from unexpected exception."
+				"Cannot parse argument count from unexpected exception"
 			);
 
 		}

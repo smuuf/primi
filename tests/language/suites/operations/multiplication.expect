@@ -1,12 +1,11 @@
 a:NumberValue:2
-b:NumberValue:2
-c:NumberValue:2.8
-d:NumberValue:2
-e:NumberValue:2.4
+b:StringValue:"11"
+c:StringValue:"1.41.4"
+d:StringValue:"2"
+e:StringValue:"2.4"
 f:NumberValue:2
 g:NumberValue:0.25
 h:NumberValue:61.5
-i:NumberValue:61.5
 j:NumberValue:-2.0610687022901
 k:NumberValue:4.6666666666667
 l:StringValue:"ahojahojahojahojahoj"

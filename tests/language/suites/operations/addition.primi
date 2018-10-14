@@ -1,12 +1,7 @@
 // Numbers and numerical strings.
-a = 1 + 2;
-b = "1" + 2;
-c = 1 + "2";
-
-// Strings and numbers.
-d = "x" + 1;
-e = 1 + "x";
-// e_2 = "hitchhiker's guide to the galaxy" - 42; // Error.
+a = 1 + 2; // 3
+b = "1" + "2"; // "12"
+c = 123 + 321; // 444
 
 // Strings together.
 f = "x" + "1";

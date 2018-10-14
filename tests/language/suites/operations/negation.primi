@@ -12,6 +12,6 @@ nb = !b; // false
 nc = !c; // true
 nd = !d; // true
 ne = !e; // true
-nf = !f; // true
+nf = !f; // false
 ng = !g; // false
 nh = !h; // true

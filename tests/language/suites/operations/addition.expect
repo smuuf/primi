@@ -1,8 +1,6 @@
 a:NumberValue:3
-b:NumberValue:3
-c:NumberValue:3
-d:StringValue:"x1"
-e:StringValue:"1x"
+b:StringValue:"12"
+c:NumberValue:444
 f:StringValue:"x1"
 g:StringValue:"1x"
 h:StringValue:"abc   def"

@@ -14,7 +14,7 @@ f = "rádoby čau".string_replace(_definitions);
 
 // Method chaining
 g = "vole".string_replace("v", "l").string_replace("o", "i") + "k";
-h = ("číslo je " + 000.cos()).string_replace(["č": "c", "í": "i"]);
+h = ("číslo je " + 000.cos().to_string()).string_replace(["č": "c", "í": "i"]);
 i = "kokot je " + "oo".string_replace("o", "e");
 
 // Only first two "a"s should be replaced.

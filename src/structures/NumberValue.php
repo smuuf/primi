@@ -53,12 +53,7 @@ class NumberValue extends Value implements
 
 	public function doAddition(Value $rightOperand): Value {
 
-		Common::allowTypes($rightOperand, self::class, StringValue::class);
-
-		if ($rightOperand instanceof StringValue && !self::isNumeric($rightOperand->value)) {
-			return new StringValue($this->value . $rightOperand->value);
-		}
-
+		Common::allowTypes($rightOperand, self::class);
 		return new self($this->value + $rightOperand->value);
 
 	}
@@ -75,7 +70,8 @@ class NumberValue extends Value implements
 		if ($rightOperand instanceof StringValue) {
 			$multiplier = $this->value;
 			if (\is_int($multiplier) && $multiplier >= 0) {
-				return new StringValue(\str_repeat($rightOperand->value, $multiplier));
+				$new = \str_repeat($rightOperand->value, $multiplier);
+				return new StringValue($new);
 			}
 			throw new \TypeError;
 		}
@@ -90,7 +86,7 @@ class NumberValue extends Value implements
 
 		// Avoid division by zero.
 		if ($rightOperand->value === 0) {
-			throw new \Smuuf\Primi\ErrorException("Division by zero.");
+			throw new \Smuuf\Primi\ErrorException("Division by zero");
 		}
 
 		return new self($this->value / $rightOperand->value);
@@ -114,10 +110,20 @@ class NumberValue extends Value implements
 
 		Common::allowTypes($rightOperand, self::class, StringValue::class);
 
+		// Numbers and strings can be only compared for equality.
+		// And are never equal.
+		if ($rightOperand instanceof StringValue) {
+			if ($op !== "==" && $op !== "!=") {
+				throw new \TypeError;
+			}
+		}
+
 		switch ($op) {
 			case "==":
+				// Don't do strict - wrong comparison of float and int.
 				return new BoolValue($this->value == $rightOperand->value);
 			case "!=":
+				// Don't do strict - wrong comparison of float and int.
 				return new BoolValue($this->value != $rightOperand->value);
 			case ">":
 				return new BoolValue($this->value > $rightOperand->value);
