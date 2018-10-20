@@ -50,12 +50,7 @@ class CastingExtension extends Extension {
 			BoolValue::class
 		);
 
-		// Only empty string is considered falsey ("" -> false, "0" -> true).
-		if ($value instanceof StringValue) {
-			return new BoolValue($value->value !== "");
-		}
-
-		return new BoolValue((bool) $value->value);
+		return new BoolValue(Common::isTruthy($value));
 
 	}
 
