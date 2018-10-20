@@ -67,14 +67,6 @@ function get_ast_array_simple(string $text) {
 					'line' => 1,
 					'pos' => 0,
 				),
-				'op' =>
-				array(
-					'name' => 'AssignmentOperator',
-					'text' => '=',
-					'offset' => 2,
-					'line' => 1,
-					'pos' => 2,
-				),
 				'right' =>
 				array(
 					'name' => 'NumberLiteral',
