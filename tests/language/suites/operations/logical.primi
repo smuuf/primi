@@ -1,0 +1,9 @@
+a = true and true; // true
+b = true and false; // false
+c = false and true; // false
+d = false and false; // false
+e = true or true; // true
+f = true or false; // true
+g = false or true; // true
+h = false or false; // false
+
