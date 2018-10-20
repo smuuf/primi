@@ -15,7 +15,7 @@ class Negation extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 		$value = $handler::handle($node['core'], $context);
 
 		// The final truthness is (at least for now) based on PHP's own rules.
-		$truthness = (bool) Common::isTruthy($value);
+		$truthness = Common::isTruthy($value);
 
 		// Should we even handle negation? If there's an even number of negation
 		// operators, the result would always have the same truthness as its

@@ -16,7 +16,7 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 	public static function evaluate(
 		string $op,
-		Value $left,
+		ISupportsComparison $left,
 		Value $right
 	): value {
 
