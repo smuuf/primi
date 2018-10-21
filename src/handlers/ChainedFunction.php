@@ -17,7 +17,7 @@ class ChainedFunction extends \Smuuf\Primi\StrictObject implements IChainedHandl
 	) {
 
 		// 1) We'll extract the function name directly from the "fn" child node.
-		$name = $node['fn']['text'];
+		$name = $node['fn']['core']['text'];
 
 		// 2) We'll try to find type-matching function first.
 		// That is: A function which name is prepended by the subject's type

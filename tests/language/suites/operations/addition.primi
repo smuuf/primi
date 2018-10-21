@@ -1,3 +1,4 @@
+// pragma:one_liners
 // Numbers and numerical strings.
 a = 1 + 2; // 3
 b = "1" + "2"; // "12"

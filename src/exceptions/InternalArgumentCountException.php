@@ -16,12 +16,12 @@ class InternalArgumentCountException extends InternalException {
 
 	}
 
-	public function getPassedCount() {
-		$this->passedCount;
+	public function getPassedCount(): int {
+		return $this->passedCount;
 	}
 
-	public function getExpectedCount() {
-		$this->expectedCount;
+	public function getExpectedCount(): int {
+		return $this->expectedCount;
 	}
 
 }

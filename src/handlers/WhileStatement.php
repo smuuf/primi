@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -15,10 +16,10 @@ class WhileStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 	public static function handle(array $node, Context $context) {
 
 		// Execute the left-hand node and get its return value.
-		$conditionHandler = HandlerFactory::get($node['left']['name']);
+		$condHandler = HandlerFactory::get($node['left']['name']);
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
-		while ($conditionHandler::handle($node['left'], $context)->getInternalValue()) {
+		while (Common::isTruthy($condHandler::handle($node['left'], $context))) {
 			$blockHandler::handle($node['right'], $context);
 		}
 

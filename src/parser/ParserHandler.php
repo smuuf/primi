@@ -4,6 +4,7 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Handlers\IReducer;
 
 use \hafriedlander\Peg\Parser;
 
@@ -122,7 +123,7 @@ class ParserHandler extends CompiledParser {
 				$handler = HandlerFactory::get($name);
 				$reducers[$name] = false;
 
-				if (\is_subclass_of($handler, '\Smuuf\Primi\Handlers\IReducer')) {
+				if (\is_subclass_of($handler, IReducer::class)) {
 					$reducers[$name] = $handler;
 					if ($reduced = $handler::reduce($node)) {
 						return self::reduceNode($reduced);

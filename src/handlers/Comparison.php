@@ -3,6 +3,8 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Helpers\ComparisonLTR;
+use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
@@ -13,35 +15,32 @@ use \Smuuf\Primi\Context;
  * left: A "+" or "-" sign signalling the 'side' of the first operand.
  * right: List of operand nodes.
  */
-class Comparison extends \Smuuf\Primi\StrictObject implements IHandler {
+class Comparison extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 	public static function handle(array $node, Context $context) {
 
-		// Execute the left-hand node and get its return value.
-		$leftHandler = HandlerFactory::get($node['left']['name']);
-		$leftReturn = $leftHandler::handle($node['left'], $context);
-
-		$rightHandler = HandlerFactory::get($node['right']['name']);
-		$rightReturn = $rightHandler::handle($node['right'], $context);
-
-		$op = $node['op']['text'];
-
 		try {
 
-			if ($leftReturn instanceof ISupportsComparison && $rightReturn instanceof Value) {
-				return $leftReturn->doComparison($op, $rightReturn);
-			} else {
-				throw new \TypeError;
-			}
+			return ComparisonLTR::handle($node, $context);
 
-		} catch (\TypeError $e) {
+		} catch (InternalBinaryOperationException $e) {
 
 			throw new ErrorException(sprintf(
-				"Cannot compare '%s' and '%s'",
-				$leftReturn::TYPE,
-				$rightReturn::TYPE
+				"Cannot compare '%s' with '%s'",
+				($e->getLeft())::TYPE,
+				($e->getRight())::TYPE
 			), $node);
 
+		}
+
+	}
+
+	public static function reduce(array $node) {
+
+		// If there is no operator, that means there's only one operand.
+		// In that case, return only the operand node inside.
+		if (!isset($node['ops'])) {
+			return $node['operands'];
 		}
 
 	}

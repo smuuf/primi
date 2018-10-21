@@ -2,13 +2,13 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\InternalBinaryOperationxception;
+use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
 use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\Helpers\BinaryOpHandler;
+use \Smuuf\Primi\Helpers\BinaryLTR;
 
 /**
  * Node fields:
@@ -21,9 +21,9 @@ class Addition extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 		try {
 
-			return BinaryOpHandler::handle($node, $context);
+			return BinaryLTR::handle($node, $context);
 
-		} catch (InternalBinaryOperationxception $e) {
+		} catch (InternalBinaryOperationException $e) {
 
 			throw new ErrorException(sprintf(
 				"Cannot use operator '%s' with '%s' and '%s'",
@@ -40,7 +40,7 @@ class Addition extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 		// No need to represent this kind of node as Addition when there's only one operand.
 		// Take the only operand here and subtitute the Addition node with it.
-		if (isset($node['operands']['name'])) {
+		if (!isset($node['ops'])) {
 			return $node['operands'];
 		}
 

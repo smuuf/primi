@@ -51,45 +51,45 @@ class NumberValue extends Value implements
 			&& (int) $input !== \PHP_INT_MIN;
 	}
 
-	public function doAddition(Value $rightOperand): Value {
+	public function doAddition(Value $right): Value {
 
-		Common::allowTypes($rightOperand, self::class);
-		return new self($this->value + $rightOperand->value);
+		Common::allowTypes($right, self::class);
+		return new self($this->value + $right->value);
 
 	}
 
-	public function doSubtraction(Value $rightOperand): self {
-		Common::allowTypes($rightOperand, self::class);
-		return new self($this->value - $rightOperand->value);
+	public function doSubtraction(Value $right): self {
+		Common::allowTypes($right, self::class);
+		return new self($this->value - $right->value);
 	}
 
-	public function doMultiplication(Value $rightOperand) {
+	public function doMultiplication(Value $right) {
 
-		Common::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes($right, self::class, StringValue::class);
 
-		if ($rightOperand instanceof StringValue) {
+		if ($right instanceof StringValue) {
 			$multiplier = $this->value;
 			if (\is_int($multiplier) && $multiplier >= 0) {
-				$new = \str_repeat($rightOperand->value, $multiplier);
+				$new = \str_repeat($right->value, $multiplier);
 				return new StringValue($new);
 			}
 			throw new \TypeError;
 		}
 
-		return new self($this->value * $rightOperand->value);
+		return new self($this->value * $right->value);
 
 	}
 
-	public function doDivision(Value $rightOperand): self {
+	public function doDivision(Value $right): self {
 
-		Common::allowTypes($rightOperand, self::class);
+		Common::allowTypes($right, self::class);
 
 		// Avoid division by zero.
-		if ($rightOperand->value === 0) {
+		if ($right->value === 0) {
 			throw new \Smuuf\Primi\ErrorException("Division by zero");
 		}
 
-		return new self($this->value / $rightOperand->value);
+		return new self($this->value / $right->value);
 
 	}
 
@@ -106,33 +106,56 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doComparison(string $op, Value $rightOperand): BoolValue {
+	public function doComparison(string $op, Value $right): BoolValue {
 
-		Common::allowTypes($rightOperand, self::class, StringValue::class);
+		Common::allowTypes(
+			$right,
+			self::class,
+			BoolValue::class,
+			StringValue::class
+		);
 
-		// Numbers and strings can be only compared for equality.
-		// And are never equal.
-		if ($rightOperand instanceof StringValue) {
-			if ($op !== "==" && $op !== "!=") {
-				throw new \TypeError;
+		// Numbers and strings can only be compared for equality - never equal.
+		if ($right instanceof StringValue) {
+			switch ($op) {
+				case "==":
+					return new BoolValue(false);
+				case "!=":
+					return new BoolValue(true);
 			}
+			throw new \TypeError;
 		}
+
+		// Numbers and bools can only be compared for equality.
+		if ($right instanceof BoolValue) {
+			$leftTruth = Common::isTruthy($this);
+			switch ($op) {
+				case "==":
+					return new BoolValue($leftTruth === $right->value);
+				case "!=":
+					return new BoolValue($leftTruth !== $right->value);
+			}
+			throw new \TypeError;
+		}
+
+		$l = $this->value;
+		$r = $right->value;
 
 		switch ($op) {
 			case "==":
-				// Don't do strict - wrong comparison of float and int.
-				return new BoolValue($this->value == $rightOperand->value);
+				// Don't do strict comparison - it's wrong for floats and ints.
+				return new BoolValue($l == $r);
 			case "!=":
-				// Don't do strict - wrong comparison of float and int.
-				return new BoolValue($this->value != $rightOperand->value);
+				// Don't do strict comparison - it's wrong for floats and ints.
+				return new BoolValue($l != $r);
 			case ">":
-				return new BoolValue($this->value > $rightOperand->value);
+				return new BoolValue($l > $r);
 			case "<":
-				return new BoolValue($this->value < $rightOperand->value);
+				return new BoolValue($l < $r);
 			case ">=":
-				return new BoolValue($this->value >= $rightOperand->value);
+				return new BoolValue($l >= $r);
 			case "<=":
-				return new BoolValue($this->value <= $rightOperand->value);
+				return new BoolValue($l <= $r);
 			default:
 				throw new \TypeError;
 		}

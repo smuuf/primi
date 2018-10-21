@@ -83,11 +83,6 @@ $arr = new ArrayValue([$num1, $num2, $num3]);
 $val = $fns['array_random']->invoke([$arr]);
 Assert::true($val === $num1 || $val === $num2 || $val === $num3);
 
-$items = get_val($fns['array_shuffle']->invoke([$arr]));
-foreach ($items as $item) {
-	Assert::contains($item, get_val($arr));
-}
-
 // Test cloning the array.
 $copy = $fns['array_copy']->invoke([$arr]);
 Assert::notSame($arr, $copy);

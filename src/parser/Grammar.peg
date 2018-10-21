@@ -43,20 +43,28 @@ Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" ) vector:Vect
 Mutable: skip:VariableVector | skip:VariableName
 
 ObjectResolutionOperator: "."
-NotOperator: "!"
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
 AssignmentOperator: "="
 ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
+AndOperator: "and"
+OrOperator: "or"
+NegationOperator: "!"
 UnaryOperator: "++" | "--"
 
-Expression: skip:AnonymousFunction | skip:Assignment | skip:Comparison | skip:Addition
-Comparison: left:Addition __ op:ComparisonOperator __ right:Addition
-Assignment: left:Mutable __ op:AssignmentOperator __ right:Expression
-Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication)*
-Multiplication: operands:Negation ( __ ops:MultiplyOperator __ operands:Negation)*
-Negation: not:NotOperator? core:Operand
+Expression: skip:AnonymousFunction | skip:Assignment | skip:LogicalOr
+Assignment: left:Mutable __ AssignmentOperator __ right:Expression
+
+# The order of how these rules are nested is very important, as it defines
+# their priority. We also need that they all are left-associative.
+LogicalOr: operands:LogicalAnd ( ] ops:OrOperator ] operands:LogicalAnd )*
+LogicalAnd: operands:Comparison ( ] ops:AndOperator ] operands:Comparison )*
+Comparison: operands:Addition ( __ ops:ComparisonOperator __ operands:Addition )*
+Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication )*
+Multiplication: operands:Negation ( __ ops:MultiplyOperator __ operands:Negation )*
+Negation: ( nots:NegationOperator )* core:Operand
 Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value
+
 Chain: ( core:Dereference | core:Invocation | core:ChainedFunction ) chain:Chain?
 Dereference: "[" __ key:Expression __ "]"
 Invocation: "(" __ args:ArgumentList? __ ")"
@@ -92,7 +100,7 @@ NL: / (?:\/\/[^\n]*)?\n /
 SEP: ";" | NL
 
 # "!/$/" Ensures we won't try to find statements at EOF.
-Program: ( !/$/ __ Statement? > SEP )+ __
+Program: ( !/$/ __ Statement? > SEP )* __
 
 */
 
