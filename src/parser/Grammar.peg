@@ -74,12 +74,12 @@ FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName 
 FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block )
+ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 CommandStatements: skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement
 ReturnStatement: "return" ( [ subject:Expression )?
 BreakStatement: "break"
 ContinueStatement: "continue"
-ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
 
 # &/[A-Za-z]/ Ensures that no sub-rules will be even tried if the string does not start with a letter.
 # And we know that our block statements always start with a letter.

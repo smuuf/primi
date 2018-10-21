@@ -226,3 +226,83 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
         _x = 5 / "4"; // ERR: Cannot use operator '/' with 'number' and 'string'
         _x = "20" / 4; // ERR: Cannot use operator '/' with 'string' and 'number'
         ```
+
+## Control structures
+You can control the flow of your program by using several types of statements Primi provides.
+
+### *if* construct
+
+The *`if`* construct *- as in all other programming languages -* allows you to dynamically branch your program based on some runtime conditions.
+
+#### Examples
+
+```
+a = true;
+if (a) {
+    b = 1;
+}
+// b == 1
+```
+
+```
+a = false;
+b = true;
+c = 5;
+if (a or b) {
+    d = 1;
+    if (d > c) {
+        e = d + c;
+    }
+}
+// d == 1, e == 6
+```
+
+### *for* construct
+
+The *`for`* construct allows you to iterate over a value that supports it *(`array` or `string` values)* while performing a task on that collection's single item.
+
+#### Examples
+
+```
+txt = "123456789";
+result = [];
+for (n in txt) {
+    if (5 > n.to_number() > 0) {
+        result.push(n);
+    }
+}
+// result == [0: "1", 1: "2", 2: "3", 3: "4"]
+```
+
+```
+prices = [100, 200, 300, 600, 1200];
+sentence_template = "This costs {} units of money!";
+results = [];
+for (price in prices) {
+    results.push(sentence_template.format(price));
+}
+// results == [
+//   0: "This costs 100 units of money!",
+//   1: "This costs 200 units of money!",
+//   2: "This costs 300 units of money!",
+//   3: "This costs 600 units of money!",
+//   4: "This costs 1200 units of money!"
+// ]
+```
+
+*Note: The flow of program inside the `for` cycle can be controlled further by using the `continue` and `break` statements.*
+
+### *while* construct
+
+The *`while`* construct does a thing if a specified condition is met (ie. if the expression inside has a *truthy* value).
+
+```
+c = 0;
+while (c < 100) {
+    total = total + c;
+    c = c + 1;
+}
+// total == 4950
+```
+
+*Note: The flow of program inside the `while` cycle can be controlled further by using the `continue` and `break` statements.*
