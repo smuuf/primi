@@ -226,25 +226,3 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
         _x = 5 / "4"; // ERR: Cannot use operator '/' with 'number' and 'string'
         _x = "20" / 4; // ERR: Cannot use operator '/' with 'string' and 'number'
         ```
-
-### Unary operations
-- `++`, `--`
-    - Will add/subtract `1` to a number and, **based on the operator's position**, will return the original *or* the new value.
-    - Examples:
-        ```
-        a = 5;
-        b = ++a;
-        // a == 6, b == 6
-
-        a = 5;
-        b = a++;
-        // a == 6, b == 5
-
-        a = 5;
-        b = --a;
-        // a == 4, b == 4
-
-        a = 5;
-        b = a--;
-        // a == 4, b == 5
-        ```
