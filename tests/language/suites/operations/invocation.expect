@@ -1,0 +1,7 @@
+fn:FuncValue:__function__
+a:NumberValue:1
+fn:FuncValue:__function__
+b:NumberValue:2
+EX:Smuuf\Primi\ErrorException
+fn:FuncValue:__function__
+d:NumberValue:4

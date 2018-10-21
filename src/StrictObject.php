@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi;
 
-class StrictObject {
+abstract class StrictObject {
 
 	/**
 	 * Used when trying to access undeclared or inaccessible property.

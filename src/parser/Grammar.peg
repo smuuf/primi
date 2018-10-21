@@ -100,7 +100,7 @@ NL: / (?:\/\/[^\n]*)?\n /
 SEP: ";" | NL
 
 # "!/$/" Ensures we won't try to find statements at EOF.
-Program: ( !/$/ __ Statement? > SEP )+ __
+Program: ( !/$/ __ Statement? > SEP )* __
 
 */
 

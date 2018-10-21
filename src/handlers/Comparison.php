@@ -4,7 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
-use \Smuuf\Primi\InternalBinaryOperationxception;
+use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
@@ -23,7 +23,7 @@ class Comparison extends \Smuuf\Primi\StrictObject implements IHandler, IReducer
 
 			return ComparisonLTR::handle($node, $context);
 
-		} catch (InternalBinaryOperationxception $e) {
+		} catch (InternalBinaryOperationException $e) {
 
 			throw new ErrorException(sprintf(
 				"Cannot compare '%s' with '%s'",

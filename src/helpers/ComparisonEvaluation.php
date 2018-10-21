@@ -8,7 +8,7 @@ use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ISupportsComparison;
-use \Smuuf\Primi\InternalBinaryOperationxception;
+use \Smuuf\Primi\InternalBinaryOperationException;
 
 class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
@@ -23,7 +23,7 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 		try {
 			return $left->doComparison($op, $right);
 		} catch (\TypeError $e) {
-			throw new InternalBinaryOperationxception($op, $left, $right);
+			throw new InternalBinaryOperationException($op, $left, $right);
 		}
 
 	}
@@ -62,7 +62,7 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 		}
 
-		return new BoolValue($result);
+		return new BoolValue((bool) $result);
 
 	}
 

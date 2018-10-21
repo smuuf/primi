@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\InternalBinaryOperationxception;
+use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
@@ -23,7 +23,7 @@ class Addition extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 			return BinaryLTR::handle($node, $context);
 
-		} catch (InternalBinaryOperationxception $e) {
+		} catch (InternalBinaryOperationException $e) {
 
 			throw new ErrorException(sprintf(
 				"Cannot use operator '%s' with '%s' and '%s'",

@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\InternalBinaryOperationxception;
+use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsMultiplication;
@@ -29,7 +29,7 @@ class BinaryLTR extends LeftToRightEvaluation {
 				case $op === "/" && $left instanceof ISupportsDivision:
 					return $left->doDivision($right);
 				default:
-					// We're not throwing InternalBinaryOperationxception
+					// We're not throwing InternalBinaryOperationException
 					// because we want to unify handling of wrong "op" with
 					// whatever type errors might be thrown from inside the
 					// value's operator methods.
@@ -39,7 +39,7 @@ class BinaryLTR extends LeftToRightEvaluation {
 		} catch (\TypeError $e) {
 
 			// Handle all type errors in one place.
-			throw new InternalBinaryOperationxception($op, $left, $right);
+			throw new InternalBinaryOperationException($op, $left, $right);
 
 		}
 

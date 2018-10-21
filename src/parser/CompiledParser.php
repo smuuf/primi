@@ -2450,13 +2450,12 @@ function match_SEP ($stack = []) {
 }
 
 
-/* Program: ( !/$/ __ Statement? > SEP )+ __ */
+/* Program: ( !/$/ __ Statement? > SEP )* __ */
 protected $match_Program_typestack = array('Program');
 function match_Program ($stack = []) {
 	$matchrule = "Program"; $result = $this->construct($matchrule, $matchrule, \null);
 	$_441 = \null;
 	do {
-		$count = 0;
 		while (\true) {
 			$res_439 = $result;
 			$pos_439 = $this->pos;
@@ -2504,10 +2503,7 @@ function match_Program ($stack = []) {
 				unset( $pos_439 );
 				break;
 			}
-			$count++;
 		}
-		if ($count >= 1) {  }
-		else { $_441 = \false; break; }
 		$matcher = 'match_'.'__'; $key = $matcher; $pos = $this->pos;
 		$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(\array_merge($stack, array($result))) ) );
 		if ($subres !== \false) { $this->store( $result, $subres ); }

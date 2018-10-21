@@ -115,26 +115,31 @@ class NumberValue extends Value implements
 			StringValue::class
 		);
 
-		// Numbers and strings can only be compared for equality.
-		// And are never equal.
+		// Numbers and strings can only be compared for equality - never equal.
 		if ($right instanceof StringValue) {
-
-			if ($op === "==") {
-				return new BoolValue(false);
+			switch ($op) {
+				case "==":
+					return new BoolValue(false);
+				case "!=":
+					return new BoolValue(true);
 			}
-
-			if ($op === "!=") {
-				return new BoolValue(true);
-			}
-
 			throw new \TypeError;
+		}
 
+		// Numbers and bools can only be compared for equality.
+		if ($right instanceof BoolValue) {
+			$leftTruth = Common::isTruthy($this);
+			switch ($op) {
+				case "==":
+					return new BoolValue($leftTruth === $right->value);
+				case "!=":
+					return new BoolValue($leftTruth !== $right->value);
+			}
+			throw new \TypeError;
 		}
 
 		$l = $this->value;
 		$r = $right->value;
-
-		// Numbers and boolean comparison will use default PHP rules.
 
 		switch ($op) {
 			case "==":

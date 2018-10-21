@@ -19,29 +19,48 @@ function test_dir(string $dir) {
 
 }
 
-function run_test($file) {
+function run_test(string $file) {
 
 	$context = new \Smuuf\Primi\Context;
 	$interpreter = new \Smuuf\Primi\Interpreter($context);
 	$outputFile = dirname($file) . "/" . basename($file, ".primi") . ".expect";
 
+	$src = normalize(file_get_contents($file));
+	$options = parse_pragmas($src);
+
 	ob_start();
 
-	try {
+	// Run interpreter. Do whole source at once or one-line-at-a-time,
+	// based on the "one_liners" pragma option.
 
-		// Run interpreter
-		$interpreter->run(file_get_contents($file));
+	if (empty($options["one_liners"])) {
 
-	} catch (\Smuuf\Primi\ErrorException $e) {
-
-		printf("EX:%s\n", get_class($e));
-
-	} finally {
+		try {
+			$interpreter->run($src);
+		} catch (\Smuuf\Primi\ErrorException $e) {
+			printf("EX:%s\n", get_class($e));
+		}
 
 		$vars = $context->getVariables();
 		array_walk($vars, function($x, $k) {
 			printf("%s:%s:%s\n", $k, main_class($x), $x->getStringValue());
 		});
+
+	} else {
+
+		$lines = explode("\n", $src);
+		foreach ($lines as $line) {
+			try {
+				$context->reset();
+				$interpreter->run($line);
+				$vars = $context->getVariables();
+				array_walk($vars, function($x, $k) {
+					printf("%s:%s:%s\n", $k, main_class($x), $x->getStringValue());
+				});
+			} catch (\Smuuf\Primi\ErrorException $e) {
+				printf("EX:%s\n", get_class($e));
+			}
+		}
 
 	}
 
@@ -58,4 +77,27 @@ function normalize(string $string) {
 
 function main_class($instance) {
 	return basename(str_replace('\\', '/', get_class($instance)));
+}
+
+function parse_pragmas(string $src) {
+
+	$options = [
+		"one_liners" => false,
+	];
+
+	$lines = explode("\n", $src);
+	foreach ($lines as $line) {
+		if (preg_match("~^// pragma:(.*)$~", $line, $m)) {
+
+			$name = $m[1];
+
+			if ($name === "one_liners") {
+				$options["one_liners"] = true;
+			}
+
+		}
+	}
+
+	return $options;
+
 }

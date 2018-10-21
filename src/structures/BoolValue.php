@@ -29,21 +29,13 @@ class BoolValue extends Value implements ISupportsComparison {
 		);
 
 		$l = $this->value;
-		$r = $right->value;
+		$r = Common::isTruthy($right);
 
 		switch ($op) {
 			case "==":
-				return new BoolValue($l == $r);
+				return new BoolValue($l === $r);
 			case "!=":
-				return new BoolValue($l != $r);
-			case ">":
-				return new BoolValue($l > $r);
-			case "<":
-				return new BoolValue($l < $r);
-			case ">=":
-				return new BoolValue($l >= $r);
-			case "<=":
-				return new BoolValue($l <= $r);
+				return new BoolValue($l !== $r);
 			default:
 				throw new \TypeError;
 		}

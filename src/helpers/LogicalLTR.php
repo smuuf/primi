@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\InternalBinaryOperationxception;
+use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers\Common;
@@ -27,7 +27,7 @@ class LogicalLTR extends LeftToRightEvaluation {
 				return new BoolValue($l || $r);
 			default:
 				// Unknown operator.
-				throw new InternalBinaryOperationxception($op, $left, $right);
+				throw new InternalBinaryOperationException($op, $left, $right);
 		}
 
 	}

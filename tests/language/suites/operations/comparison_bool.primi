@@ -1,0 +1,29 @@
+// pragma:one_liners
+aa = true == true; // true
+ab = true == false; // false
+ac = false == true; // false
+ad = false == false; // true
+ae = true != true; // false
+af = true != false; // true
+ag = false != true; // true
+ah = false != false; // false
+
+ba = true > 0 // EX
+bb = true < 0 // EX
+bc = true > 1 // EX
+bd = true < 1 // EX
+be = true > -1 // EX
+bf = true < -1 // EX
+bg = true == 1 // true
+bh = true == 0 // false
+bi = true == -1 // true
+
+ca = 0 > true // EX
+cb = 0 < true // EX
+cc = 1 > true // EX
+cd = 1 < true // EX
+ce = -1 > true // EX
+cf = -1 < true // EX
+cg = 1 == true // true
+ch = 0 == true // false
+ci = -1 == true // true

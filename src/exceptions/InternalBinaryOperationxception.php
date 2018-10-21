@@ -4,7 +4,7 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
 
-class InternalBinaryOperationxception extends InternalException {
+class InternalBinaryOperationException extends InternalException {
 
 	protected $op;
 	protected $left;
