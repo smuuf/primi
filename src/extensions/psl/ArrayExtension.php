@@ -34,9 +34,9 @@ class ArrayExtension extends Extension {
 
 		// Do NOT modify the original array argument (as PHP would do).
 		$copy = clone $arr;
-		shuffle($arr->value);
+		shuffle($copy->value);
 
-		return $arr;
+		return $copy;
 
 	}
 
