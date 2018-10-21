@@ -127,6 +127,42 @@ Consider this *a syntactic sugar* to make coding in Primi a bit more user-friend
 ## Operators
 Plethora of well known operators can be used to **define relationships** between and/or affect various values. Different operators can have various effects on various data types, some of which are covered down below.
 
+#### Precedence
+Precedence of various operators is defined as follows *(from highest to lowest)*:
+- `(` ... `)` *(parentheses)*
+- `!` *(logical not)*
+- `*`, `/` *(multiplication/division)*
+- `+`, `-` *(addition/subtraction)*
+- `==`, `!=`, `>=`, `<=`, `>`, `<` *(comparison)*
+- `and` *(logical and)*
+- `or` *(logical not)*
+- `=` *(assignment)*
+
+##### Precedence example
+
+| Raw source | Equivalent to |
+| --- | --- |
+| `1 + 2 + 3 + 4` | `((1 + 2) + 3) + 4` |
+| `1 - 2 + 3 - 4` | `((1 - 2) + 3) - 4` |
+| `1 + 2 * 3 + 4` | `1 + (2 * 3) + 4` |
+| `1 + 2 * 3 / 4` | `1 + ((2 * 3) / 4)` |
+| `1 + -2 * 3 / 4` | `1 + (((-2) * 3) / 4)` |
+| `1 and 2 or 3 and 4` | `(1 and 2) or (3 and 4)` |
+| `1 or 2 or 3 and 4` | `(1 or 2) or (3 and 4)` |
+| `1 or !2 or !3 and 4` | `(1 or (!2)) or ((!3) and 4))` |
+| `x = true or false and true` | `x = (true or (false and true))` |
+| `x = a == b` | `x = (a == b)` |
+| `x = a > 5 and b < 6` | `x = ((a > 5) and (b < 6))` |
+
+
+### Logical operators
+- `and`
+    - Returns `true` if **both** operands are *truthy*.
+    - Otherwise returns `false`.
+- `or`
+    - Returns `true` if **either one (or both)** operand is *truthy*.
+    - Otherwise returns `false`.
+
 ### Negation
 - `!`
     - Negate the value located after this operator.
@@ -135,10 +171,11 @@ Plethora of well known operators can be used to **define relationships** between
         a = true;
         b = !a; // false
         c = !b; // true
+        d = !!b; // false
         ```
 ### Assignment
 - `=`
-    - Assign some value to a variable.
+    - Assigns some value to a variable.
     - Can also be used to insert values to values that support it (eg. arrays).
     - Examples:
         ```
@@ -152,36 +189,42 @@ Plethora of well known operators can be used to **define relationships** between
 
 ### Addition and multiplication
 - `+`, `-`
-    - Perform addition (subtraction) of two values.
+    - Performs addition (subtraction) of two values.
         - Numbers:
             - `+` Add two numbers.
             - `-` Subtract two numbers.
         - Strings:
             - `+` Concatenate two strings.
             - `-` Removes all occurences of the right side from the left side.
-            - `-` **(when right side is a *Regex* value)** Removes all matches of the regex from the left side string.
+            - `-` **(if the right side is a *Regex* value)** Removes all matches of the regex from the left side string.
     - Examples:
         ```
-        a = 5 + "4" // (number) 9
+        a = 5 + 4 // (number) 9
         b = 5 - 4; // (number) 1
-        c = "a word and number " + 5; // "a word and number5"
-        d = "a word" + " and one more"; // "a word and one more"
-        e = "a word" - "or"; // "a wd"
-        f = "regular expressions" - r"regul[ar]+\s*"; // "expressions"
+        c = "a word and number " + 5.to_string(); // (string) "a word and number 5"
+        d = "a word and number {}".format(5); // (string) "a word and number 5"
+        e = "a word" + " and one more"; // (string) "a word and one more"
+        f = "a word" - "or"; // (string) "a wd"
+        g = "regular expressions" - r"regul[ar]+\s*"; // (string) "expressions"
+        _x = 5 + "4" // ERR: Cannot use operator '+' with 'number' and 'string'
+        _x = "a word and number " + 5; // ERR: Cannot use operator '+' with 'number' and 'string'
         ```
 - `*`, `/`
-    - Perform multiplication (division) of two values.
+    - Performs multiplication (division) of two values.
         - Numbers:
             - `+` Multiply two numbers.
             - `-` Divide two numbers.
     - Examples:
         ```
-        a = 1 * 2; // 2
-        b = 2 * "3"; // 6
-        c = "3" * 4; // 12
-        d = 5 / "4"; // 1.25
-        e = 5 / 5; // 1
-        f = "20" / 4; // 5
+        a = 1 * -2; // (number) -2
+        b = 2 * 3; // (number) 6
+        c = 2 * "3"; // (string) "33"
+        d = "3" * 4; // (string) "3333"
+        e = 5 / 4; // (number) 1.25
+        g = 5 / 5; // (number) 1
+        _x = "2" * "3"; // ERR: Cannot use operator '*' with 'string' and 'string'
+        _x = 5 / "4"; // ERR: Cannot use operator '/' with 'number' and 'string'
+        _x = "20" / 4; // ERR: Cannot use operator '/' with 'string' and 'number'
         ```
 
 ### Unary operations
