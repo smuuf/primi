@@ -1,6 +1,6 @@
 d = [1: "abc", 3: "xyz", "a", "abc": "ohh yeah", 2: "bbb", 789: "xyz", "nokey", "kokot": "ohh yeah"];
 xyz = "ahojky";
 x = xyz + "\n";
-foreach (d as b) {
+for (b in d) {
 	b + "\n";
 }

@@ -6,9 +6,6 @@ class FuncValue extends Value {
 
 	const TYPE = "function";
 
-	/** @var FnContainer The function container itself. **/
-	protected $value;
-
 	public function __construct(FnContainer $fn) {
 		$this->value = $fn;
 	}

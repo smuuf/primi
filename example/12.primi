@@ -1,8 +1,8 @@
 text = "jelenovipivonelej";
 count = [];
-foreach (text as char) {
+for (char in text) {
     count[char] = 0;
 }
-foreach (text as char) {
+for (char in text) {
     count[char] = count[char] + 1;
 }

@@ -75,12 +75,12 @@ function no_return(a, b, c) {
 no_return(a, 2, 3);
 x = with_argument(one() * 16);
 y = 0;
-foreach ([1, 2, 3, 4, 5.6] as x) {
+for (x in [1, 2, 3, 4, 5.6]) {
     y = y + x;
 }
 n = "";
 length = 0;
-foreach ("some long string with numbers 123" as m) {
+for (m in "some long string with numbers 123") {
     length++;
     n = n + m;
 }

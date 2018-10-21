@@ -36,10 +36,23 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 		$ast = $this->getSyntaxTree($source);
 
 		// Each node must have two keys: 'name' and 'text'.
-		// These are provided by the PHP-PEG itself, so we should be able to count on it.
+		// These are provided by the PHP-PEG itself, so we should be able to
+		// be counting on it.
 
-		$handler = HandlerFactory::get($ast['name']);
-		return $handler::handle($ast, $this->context);
+		// We begin the process of interpreting a source code simply by
+		// passing the AST's root node to its dedicated handler (determined by
+		// node's "name").
+
+		try {
+
+			$handler = HandlerFactory::get($ast['name']);
+			return $handler::handle($ast, $this->context);
+
+		} catch (ReturnException $e) {
+			throw new ErrorException("Cannot 'return' from global scope");
+		} catch (BreakException $e) {
+			throw new ErrorException("Cannot 'break' from global scope");
+		}
 
 	}
 

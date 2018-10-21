@@ -268,11 +268,11 @@ Přijaté zákony podepisuje předseda Poslanecké sněmovny, prezident republik
 
 result = [];
 splat = constitution.string_split(r"\s+");
-foreach (splat as word) {
+for (word in splat) {
     result[word] = 0;
 }
 
-foreach (splat as word) {
+for (word in splat) {
     result[word] = result[word] + 1;
 }
 

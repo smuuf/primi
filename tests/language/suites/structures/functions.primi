@@ -40,7 +40,7 @@ result_3 = anon(anon_short, 10, 100);
 // Some example from the internet.
 censor = (words) => {
 	filtered = [];
-	foreach (words as word) {
+	for (word in words) {
 		if (word.length() != 4) {
 			filtered.array_push(word);
 		}

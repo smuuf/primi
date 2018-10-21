@@ -3,6 +3,8 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\ISupportsIteration;
+use \Smuuf\Primi\ContinueException;
+use \Smuuf\Primi\BreakException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
@@ -12,7 +14,7 @@ use \Smuuf\Primi\Context;
  * item: Variable name to store the single item in.
  * right: Node representing contents of code to execute while iterating the iterator structure.
  */
-class ForeachStatement extends \Smuuf\Primi\StrictObject implements IHandler {
+class ForStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
@@ -33,8 +35,17 @@ class ForeachStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
 		foreach ($iterator as $i) {
+
 			$context->setVariable($elementVariableName, $i);
-			$blockHandler::handle($node['right'], $context);
+
+			try {
+				$blockHandler::handle($node['right'], $context);
+			} catch (ContinueException $e) {
+				continue;
+			} catch (BreakException $e) {
+				break;
+			}
+
 		}
 
 	}

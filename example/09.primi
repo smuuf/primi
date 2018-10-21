@@ -1,6 +1,6 @@
 function remove_dia(text) {
 	result = tmp = "";
-	foreach (text as c) {
+	for (c in text) {
 		tmp = c;
 		if (c == "á") { tmp = "a"; }
 		if (c == "č") { tmp = "c"; }
