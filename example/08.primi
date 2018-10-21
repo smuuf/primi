@@ -22,7 +22,7 @@ function doublenested(x) {
 		if (add(1, x) > 400) {
 			x = sub(7, x);
 		}
-		c++;
+		c = c + 1;
 	}
 }
 

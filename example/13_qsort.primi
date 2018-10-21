@@ -23,13 +23,13 @@ function partition (arr, low, high) {
     j = low;
     while (j <= high- 1) {
         if (arr[j] <= pivot) {
-            i++;
+            i = i + 1;
             tmp_a = arr[i];
             tmp_b = arr[j];
             arr[i] = tmp_b;
             arr[j] = tmp_a;
         }
-        j++;
+        j = j + 1;
     }
 
     tmp_a = arr[i + 1];

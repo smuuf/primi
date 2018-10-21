@@ -8,14 +8,12 @@ use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsDivision;
-use \Smuuf\Primi\ISupportsUnary;
 
 class NumberValue extends Value implements
 	ISupportsAddition,
 	ISupportsSubtraction,
 	ISupportsMultiplication,
 	ISupportsDivision,
-	ISupportsUnary,
 	ISupportsComparison
 {
 
@@ -90,19 +88,6 @@ class NumberValue extends Value implements
 		}
 
 		return new self($this->value / $right->value);
-
-	}
-
-	public function doUnary(string $op): self {
-
-		switch ($op) {
-			case "++":
-				return new self($this->value + 1);
-			case "--":
-				return new self($this->value - 1);
-			default:
-				throw new \TypeError;
-		}
 
 	}
 

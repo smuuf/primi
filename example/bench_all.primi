@@ -81,7 +81,7 @@ for (x in [1, 2, 3, 4, 5.6]) {
 n = "";
 length = 0;
 for (m in "some long string with numbers 123") {
-    length++;
+    length = length + 1;
     n = n + m;
 }
 a = 1 * 2;
@@ -117,18 +117,10 @@ a = 4;
 b = 5;
 c = 6;
 d = 7;
-i = a++;
-j = b--;
-k = ++c;
-l = --d;
 e = 4.25;
 f = 5.25;
 g = 6.25;
 h = 7.25;
-m = e++;
-n = f--;
-o = ++g;
-p = --h;
 a = "ahojkyacauky";
 b = a.string_replace("a", "xxx");
 c = "voleneasijakprase".string_replace("ne", "jo");

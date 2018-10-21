@@ -6,7 +6,8 @@ fun = (x) => { return x + 1; }
 
 c = 0;
 result = -10000;
-while (c++ <= 10000) {
+while (c <= 10000) {
     result = result + fun(c);
+    c = c + 1;
 }
 

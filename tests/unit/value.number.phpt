@@ -185,19 +185,6 @@ Assert::exception(function() use ($integer) {
 }, \TypeError::class);
 
 //
-// Test unary.
-//
-
-// Unary addition returns new value.
-Assert::same(2, $integer->doUnary("++")->getInternalValue());
-// Unary subtract returns new value.
-Assert::same(0, $integer->doUnary("--")->getInternalValue());
-// Some bogust unary operator throws error.
-Assert::exception(function() use ($integer) {
-	$integer->doUnary("!@=");
-}, \TypeError::class);
-
-//
 // Test comparison.
 //
 
