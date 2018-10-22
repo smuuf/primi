@@ -250,7 +250,7 @@ b = true;
 c = 5;
 if (a or b) {
     d = 1;
-    if (d > c) {
+    if (d < c) {
         e = d + c;
     }
 }
