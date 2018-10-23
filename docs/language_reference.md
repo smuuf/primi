@@ -76,6 +76,25 @@ a = ["abc", 123, 4: true, false, r"[A-Z]+"];
 // Resulting array: [0: "abc", 1: 123, 4: true, 5: false, 6: r"[A-Z]+"]
 ```
 
+#### Ranges
+Simple way of defining ranges between numbers is provided via the `a..[s..]b` *range* syntax.
+
+- `a` is the **from** value.
+- `b` is the **to** value, inclusive, if it't not "skipped" by a bigger *step* (see below).
+- `s` *(optionally)* is the step value which to use.
+
+Example usage:
+```
+a = 1..4; // (array) [0: 1, 1: 2, 4: 3, 5: 4]
+b = 1..2..4; // (array) [0: 1, 1: 3]
+c = 10..4..16; // (array) [0: 10, 1: 14]
+_x = 3
+_y = 6
+_z = 2
+d = _x.._z.._y; // (array) [0: 3, 1: 5]
+```
+Return value of such "range literal" is a new *`array`* having values that are based on the range's parameters.
+
 ### Functions
 Function is a value type that represents *a "unit" of some self-contained logic*. In Primi they have their own type and are treated as first-class citizens: they can be **stored inside variables** and **passed around** as such. Direct invocation of an anonymous function is supported, provided that the anonymous function's definition is enclosed in parentheses. A function *does capture* its surrounding variables.
 
@@ -228,11 +247,11 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
         ```
 
 ## Control structures
-You can control the flow of your program by using several types of statements Primi provides.
+You can control the flow of your program with several kinds of statements the language provides.
 
 ### *if* construct
 
-The *`if`* construct *- as in all other programming languages -* allows you to dynamically branch your program based on some runtime conditions.
+The *`if`* construct *- as in all other programming languages -* allows you to dynamically branch your program flow based on some conditions during runtime.
 
 #### Examples
 
@@ -259,7 +278,7 @@ if (a or b) {
 
 ### *for* construct
 
-The *`for`* construct allows you to iterate over a value that supports it *(`array` or `string` values)* while performing a task on that collection's single item.
+The *`for`* construct allows you to iterate over a value that supports it *(`array` or `string` values)*, while performing a task on that collection's single item.
 
 #### Examples
 
@@ -294,7 +313,7 @@ for (price in prices) {
 
 ### *while* construct
 
-The *`while`* construct does a thing if a specified condition is met (ie. if the expression inside has a *truthy* value).
+The *`while`* construct does *a thing* if a specified condition is met (if the condition expression has a *truthy* value).
 
 ```
 c = 0;
