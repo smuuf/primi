@@ -1,0 +1,25 @@
+a = 1;
+for (_a in [1,2,3]) {
+	a = a + _a;
+}
+
+b = 1;
+while (b < 5) {
+	b = b + 1;
+}
+
+c = 1;
+for (_c in [1,2,3]) {
+	if (c > 1) {
+		continue;
+	}
+	c = c + _c;
+}
+
+d = 1;
+while (d < 5) {
+	d = d + 1;
+	if (d == 3) {
+		break;
+	}
+}
