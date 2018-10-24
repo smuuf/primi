@@ -80,7 +80,7 @@ a = ["abc", 123, 4: true, false, r"[A-Z]+"];
 Simple way of defining ranges between numbers is provided via the `a..[s..]b` *range* syntax.
 
 - `a` is the **from** value.
-- `b` is the **to** value, inclusive, if it't not "skipped" by a bigger *step* (see below).
+- `b` is the **to** value, inclusive, if it is not "skipped" due to a rather large *step* (see below).
 - `s` *(optionally)* is the step value which to use.
 
 Example usage:
