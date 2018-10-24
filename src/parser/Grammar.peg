@@ -26,6 +26,8 @@ NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
 NullLiteral: "null"
 RegexLiteral: "r" core:StringLiteral
+RangeLiteral: left:RangeBoundary > ".." ( step:RangeBoundary ".." )? > right:RangeBoundary
+RangeBoundary: skip:NumberLiteral | skip:Variable
 Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
@@ -36,7 +38,7 @@ AnonymousFunction: "function" __ "(" __ args:FunctionDefinitionArgumentList? __ 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
-Value: skip:Literal | skip:Variable | skip:ArrayDefinition
+Value: skip:RangeLiteral | skip:Literal | skip:Variable | skip:ArrayDefinition
 VariableVector: core:Variable vector:Vector
 Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" ) vector:Vector?
 Mutable: skip:VariableVector | skip:VariableName
