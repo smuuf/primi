@@ -42,7 +42,7 @@ You can either use *Primi* as a **[standalone package](#a-standalone-installatio
 
 ### Convenient installation Oneliner™:
 ```
-git clone https://github.com/smuuf/primi.git && cd primi && composer install && chmod +x ./primi && ./primi -s -c "a = 1 + 2 / 3;"
+git clone https://github.com/smuuf/primi.git && cd primi && composer install && chmod +x ./primi && ./primi -s -c "msg = 'Primi works.';"
 ```
 
 ### Extra stuff:
