@@ -3,3 +3,4 @@ fn = () => { return 1; }; a = fn(1); // 1
 fn = (a) => { return 1 + a; }; b = fn(1); // 2
 fn = (a, b) => { return (1 + a) * b; }; c = fn(1); // EX
 fn = (a, b) => { return (1 + a) * b; }; d = fn(1, 2); // 4
+fn = []; e = fn(1, 2); // EX (not a function)

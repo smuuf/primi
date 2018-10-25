@@ -1,0 +1,2 @@
+// pragma:one_liners
+a = []; for (x in 123) { a.push(x); } // EX

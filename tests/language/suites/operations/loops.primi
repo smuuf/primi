@@ -14,6 +14,9 @@ for (_c in [1,2,3]) {
 		continue;
 	}
 	c = c + _c;
+	if (c == 3) {
+		break;
+	}
 }
 
 d = 1;
@@ -22,4 +25,17 @@ while (d < 5) {
 	if (d == 3) {
 		break;
 	}
+	continue;
+}
+
+e = 0;
+for (_e in [1, 2, 3, 4, 5.6]) {
+    e = e + _e;
+}
+
+f = "";
+_fl = 0;
+for (_f in "some long string with numbers 123") {
+    _fl = _fl + 1;
+    f = f + _f;
 }

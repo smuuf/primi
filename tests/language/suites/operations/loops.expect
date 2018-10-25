@@ -4,3 +4,8 @@ b:NumberValue:5
 c:NumberValue:2
 _c:NumberValue:3
 d:NumberValue:3
+e:NumberValue:15.6
+_e:NumberValue:5.6
+f:StringValue:"some long string with numbers 123"
+_fl:NumberValue:33
+_f:StringValue:"3"

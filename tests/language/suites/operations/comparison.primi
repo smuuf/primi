@@ -30,3 +30,27 @@ y = 5 > -3 < 4; // true
 z = 5 < 3 < 4; // false
 aa = 5 < 3 > 4; // false
 ab = 1 > 0 < 1; // true
+
+// Number is NEVER equal to a string.
+ba = 1 == "1" // false
+bb = "1" == 1 // false
+bc = "1" != 1 // true
+bd = 1 != "1" // true
+
+// Number is NEVER equal to a string.
+be = 1 == "0" // false
+bf = "0" == 1 // false
+bg = "0" != 1 // true
+bh = 1 != "0" // true
+
+// Number is NEVER equal to a string.
+bi = 1 == "0" // false
+bj = "0" == 1 // false
+bk = "0" != 1 // true
+bl = 1 != "0" // true
+
+// Number is NEVER equal to a string.
+bm = 0 == "0" // false
+bn = "0" == 0 // false
+bo = "0" != 0 // true
+bp = 0 != "0" // true

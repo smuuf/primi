@@ -5,3 +5,4 @@ b:NumberValue:2
 EX:Smuuf\Primi\ErrorException
 fn:FuncValue:__function__
 d:NumberValue:4
+EX:Smuuf\Primi\ErrorException
