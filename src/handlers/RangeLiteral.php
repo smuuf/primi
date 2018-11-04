@@ -15,15 +15,15 @@ class RangeLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
 
 	public static function handle(array $node, Context $context) {
 
+		$lValue = HandlerFactory
+			::get($node['left']['name'])
+			::handle($node['left'], $context);
+
+		$rValue = HandlerFactory
+			::get($node['right']['name'])
+			::handle($node['right'], $context);
+
 		try {
-
-			$lValue = HandlerFactory
-				::get($node['left']['name'])
-				::handle($node['left'], $context);
-
-			$rValue = HandlerFactory
-				::get($node['right']['name'])
-				::handle($node['right'], $context);
 
 			Common::allowTypes($lValue, NumberValue::class);
 			Common::allowTypes($rValue, NumberValue::class);

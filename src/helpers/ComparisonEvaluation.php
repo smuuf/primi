@@ -16,12 +16,22 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 	public static function evaluate(
 		string $op,
-		ISupportsComparison $left,
+		Value $left,
 		Value $right
 	): value {
 
 		try {
+
+			if (!$left instanceof ISupportsComparison) {
+				throw new \TypeError;
+			}
+
+			if (!$right instanceof ISupportsComparison) {
+				throw new \TypeError;
+			}
+
 			return $left->doComparison($op, $right);
+
 		} catch (\TypeError $e) {
 			throw new InternalBinaryOperationException($op, $left, $right);
 		}
