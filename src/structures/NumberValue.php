@@ -43,10 +43,7 @@ class NumberValue extends Value implements
 	}
 
 	public static function isNumeric(string $input): bool {
-		return
-			(bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input)
-			&& (int) $input !== \PHP_INT_MAX
-			&& (int) $input !== \PHP_INT_MIN;
+		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
 	}
 
 	public function doAddition(Value $right): Value {
