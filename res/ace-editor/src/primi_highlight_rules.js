@@ -9,12 +9,12 @@ define(function(require, exports, module) {
 
         this.$rules = {
             "start" : [
-               {
+                {
                     token : "comment",
                     regex : /\/\/.*$/
                 }, {
                     token : "constant.language",
-                    regex : /\b(true|false)\b/
+                    regex : /\b(true|false|null)\b/
                 }, {
                     token : "constant.numeric",
                     regex : /-?\d+(\.\d+)?/
@@ -23,10 +23,10 @@ define(function(require, exports, module) {
                     regex : /("(.|\n)*?"|\'(.|\n)*?\')/
                 }, {
                     token : "string.regexp",
-                    regex : /\/(\\\/|[^\/])+\//
+                    regex : /r("(.|\n)*?"|\'(.|\n)*?\')/
                 }, {
                     token : "keyword.control",
-                    regex : /\b(return|if|while|foreach|as)\b/
+                    regex : /\b(return|if|while|for|as|in|continue|break)\b/
                 }, {
                     token : "keyword.storage",
                     regex : /\bfunction\b/
@@ -35,7 +35,7 @@ define(function(require, exports, module) {
                     regex : /{|}|;|\)|\(/
                 }, {
                     token : "keyword.operator",
-                    regex : /\.|\+|-|\*|\/|=|\+=|-=|\*=|\/=|==|!=|>=|<=|>|<|\+\+|--/
+                    regex : /\.|\+|-|\*|\/|=|\+=|-=|\*=|\/=|==|!=|>=|<=|>|<|and|or/
                 }
             ]
         };

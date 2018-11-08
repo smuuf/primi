@@ -14,7 +14,7 @@ define("ace/mode/primi_highlight_rules",["require","exports","module","ace/lib/o
                     regex : /\/\/.*$/
                 }, {
                     token : "constant.language",
-                    regex : /\b(true|false)\b/
+                    regex : /\b(true|false|null)\b/
                 }, {
                     token : "constant.numeric",
                     regex : /-?\d+(\.\d+)?/
@@ -23,10 +23,10 @@ define("ace/mode/primi_highlight_rules",["require","exports","module","ace/lib/o
                     regex : /("(.|\n)*?"|\'(.|\n)*?\')/
                 }, {
                     token : "string.regexp",
-                    regex : /\/(\\\/|[^\/])+\//
+                    regex : /r("(.|\n)*?"|\'(.|\n)*?\')/
                 }, {
                     token : "keyword.control",
-                    regex : /\b(return|if|while|foreach|as)\b/
+                    regex : /\b(return|if|while|for|as|in|continue|break)\b/
                 }, {
                     token : "keyword.storage",
                     regex : /\bfunction\b/
@@ -35,7 +35,7 @@ define("ace/mode/primi_highlight_rules",["require","exports","module","ace/lib/o
                     regex : /{|}|;|\)|\(/
                 }, {
                     token : "keyword.operator",
-                    regex : /\.|\+|-|\*|\/|=|\+=|-=|\*=|\/=|==|!=|>=|<=|>|<|\+\+|--/
+                    regex : /\.|\+|-|\*|\/|=|\+=|-=|\*=|\/=|==|!=|>=|<=|>|<|and|or/
                 }
             ]
         };
