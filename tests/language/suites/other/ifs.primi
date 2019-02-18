@@ -21,3 +21,9 @@ dd = 0;
 if (d) {
     dd = 1;
 }
+
+e = null
+ee = 0;
+if (e) {
+    ee = 1;
+}

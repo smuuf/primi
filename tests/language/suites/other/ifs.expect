@@ -6,3 +6,5 @@ c:BoolValue:true
 cc:NumberValue:1
 d:BoolValue:false
 dd:NumberValue:0
+e:NullValue:null
+ee:NumberValue:0
