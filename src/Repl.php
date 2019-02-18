@@ -147,12 +147,9 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 			$input = $this->driver->readline($prompt);
 
-			if (!empty($input) && $input[-1] === '\\') {
+			if (self::isIncompleteInput($input)) {
 
-				// Consider non-empty line ending with a "\" character as
-				// a part of multiline input. That is: Trim the backslash and
-				// go read another line from the user.
-				$lines .= mb_substr($input, 0, mb_strlen($input) - 1) . "\n";
+				$lines .= $input;
 				$gathering = true;
 
 			} else {
@@ -165,6 +162,24 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 			}
 
+		}
+
+	}
+
+	private function isIncompleteInput(string $i) {
+
+		if (empty($i)) {
+			return false;
+		}
+
+		// Lines ending with opening curly brackets are considered incomplete.
+		if ($i[-1] === "{") {
+			return true;
+		}
+
+		// Lines starting with a SPACE or a TAB are considered incomplete.
+		if (strspn($i, "\t ") !== 0) {
+			return true;
 		}
 
 	}
