@@ -11,8 +11,6 @@ $commands = [
     'b',
 	'a',
 	'?',
-	'c = \\',
-	'"xxx"',
     'exit',
 ];
 
@@ -23,7 +21,6 @@ $expected = [
 	"ERR: Undefined variable 'b' @ line 1, position 0, code: b",
 	"1",
 	"a: 1",
-	'"xxx"',
 ];
 
 $driver = new class implements \Smuuf\Primi\IReadlineDriver {
