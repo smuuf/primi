@@ -4,13 +4,13 @@
 Primi is built with a familiar PHP/JS/C-like syntax. **Statements are separated using the `;` semicolon character**. If there's no need to put multiple statements on a single line, statements can be separated with newline, too. Both of these syntaxes are therefore valid:
 
 - Using semicolons *(recommended)*:
-    ```
+    ```js
     a = 1 + 2; b = a + 3;
     c = b - a;
     ```
 
 - Using newlines:
-    ```
+    ```js
     a = 1 + 2
     b = a + 3
     c = b - a
@@ -29,7 +29,7 @@ Primi has 6 data types:
 This basic type represents a primitive boolean "truth" value. Possible values are `true` and `false`.
 
 Example usage:
-```
+```js
 a = true;
 b = 1 == 2; // false
 c = b == false; // true
@@ -42,7 +42,7 @@ f = "hello" == r"l{2}"; // true
 The general `number` data type represents both integer and float values, whichever is needed. The maximum/minimum integer or float value/precision is determined by PHP version.
 
 Example usage:
-```
+```js
 a = 4 - 3; // 1
 b = a / 3; // 0.333...
 ```
@@ -51,7 +51,7 @@ b = a / 3; // 0.333...
 This data types represents a series of characters. Multi-byte characters (accents, diacritics) are treated properly.
 
 Example usage:
-```
+```js
 a = "hello";
 b = "wóóórld!";
 c = a + " " + b; // "hello wóóórld!"
@@ -61,7 +61,7 @@ c = a + " " + b; // "hello wóóórld!"
 Regex data type exists for advanced string matching. It is defined using the `r"..."` literal *(a string literal prefixed with `r`)* and treated as PCRE (Perl-compatible) regular expressions *(the same as within PHP itself)* with Unicode mode enabled.
 
 Example usage:
-```
+```js
 a = "facebook";
 b = r"[o]{2}.*";
 c = a == b; // true
@@ -71,7 +71,7 @@ c = a == b; // true
 Arrays are untyped *(PHP-style)* containers that can accomodate multiple values of different *(or same)* types. Optionally, array index can be defined for a value. By default, integer index starting from the lowest index found (or from `0`) is used.
 
 Example usage:
-```
+```js
 a = ["abc", 123, 4: true, false, r"[A-Z]+"];
 // Resulting array: [0: "abc", 1: 123, 4: true, 5: false, 6: r"[A-Z]+"]
 ```
@@ -84,7 +84,7 @@ Simple way of defining ranges between numbers is provided via the `a..[s..]b` *r
 - `s` *(optionally)* is the step value which to use.
 
 Example usage:
-```
+```js
 a = 1..4; // (array) [0: 1, 1: 2, 4: 3, 5: 4]
 b = 1..2..4; // (array) [0: 1, 1: 3]
 c = 10..4..16; // (array) [0: 10, 1: 14]
@@ -99,7 +99,7 @@ Return value of such "range literal" is a new *`array`* having values that are b
 Function is a value type that represents *a "unit" of some self-contained logic*. In Primi they have their own type and are treated as first-class citizens: they can be **stored inside variables** and **passed around** as such. Direct invocation of an anonymous function is supported, provided that the anonymous function's definition is enclosed in parentheses. A function *does capture* its surrounding variables.
 
 Example usage:
-```
+```js
 
 // Traditional definition.
 function sub(a, b) {
@@ -186,7 +186,7 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
 - `!`
     - Negate the value located after this operator.
     - Examples:
-        ```
+        ```js
         a = true;
         b = !a; // false
         c = !b; // true
@@ -197,7 +197,7 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
     - Assigns some value to a variable.
     - Can also be used to insert values to values that support it (eg. arrays).
     - Examples:
-        ```
+        ```js
         a = 1;
         b = "a word";
         c = false;
@@ -217,7 +217,7 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
             - `-` Removes all occurences of the right side from the left side.
             - `-` **(if the right side is a *Regex* value)** Removes all matches of the regex from the left side string.
     - Examples:
-        ```
+        ```js
         a = 5 + 4 // (number) 9
         b = 5 - 4; // (number) 1
         c = "a word and number " + 5.to_string(); // (string) "a word and number 5"
@@ -234,7 +234,7 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
             - `+` Multiply two numbers.
             - `-` Divide two numbers.
     - Examples:
-        ```
+        ```js
         a = 1 * -2; // (number) -2
         b = 2 * 3; // (number) 6
         c = 2 * "3"; // (string) "33"
@@ -255,7 +255,7 @@ The *`if`* construct *- as in all other programming languages -* allows you to d
 
 #### Examples
 
-```
+```js
 a = true;
 if (a) {
     b = 1;
@@ -263,7 +263,7 @@ if (a) {
 // b == 1
 ```
 
-```
+```js
 a = false;
 b = true;
 c = 5;
@@ -282,7 +282,7 @@ The *`for`* construct allows you to iterate over a value that supports it *(`arr
 
 #### Examples
 
-```
+```js
 txt = "123456789";
 result = [];
 for (n in txt) {
@@ -293,7 +293,7 @@ for (n in txt) {
 // result == [0: "1", 1: "2", 2: "3", 3: "4"]
 ```
 
-```
+```js
 prices = [100, 200, 300, 600, 1200];
 sentence_template = "This costs {} units of money!";
 results = [];
@@ -315,7 +315,7 @@ for (price in prices) {
 
 The *`while`* construct does *a thing* if a specified condition is met (if the condition expression has a *truthy* value).
 
-```
+```js
 c = 0;
 while (c < 100) {
     total = total + c;
