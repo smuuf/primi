@@ -13,19 +13,14 @@ $loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/temp/");
 $loader->addDirectory(__DIR__ . "/src")->register();
 
 array_shift($argv);
-if (empty($argv[0])) {
-	die_with_help();
-}
-
 $config = parse_arguments($argv);
 
-// Load source, create "VM" context and create the interpreter.
-
+// Create "VM" context and create the interpreter.
 $context = new \Smuuf\Primi\Context;
 $interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
 
-// Get syntax tree.
-if ($config['repl']) {
+// Determine the source. Act as REPL if no source was specified.
+if (empty($config['input'])) {
 	echo header_string('REPL') . "\n";
 	$repl = new \Smuuf\Primi\Repl($interpreter);
 	$repl->start();
@@ -72,14 +67,13 @@ function parse_arguments(array $args): array {
 		'print_context' => false,
 		'input_is_code' => false,
 		'input' => false,
-		'repl' => false,
 	];
 
 	while ($a = array_shift($args)) {
 		switch ($a) {
-			case "-r":
-			case "--repl":
-				$config['repl'] = true;
+			case "-h":
+			case "--help":
+				die_with_help();
 			break;
 			case "-t":
 			case "--tree":
@@ -108,11 +102,10 @@ function die_with_help() {
 	$header = header_string('CLI');
 	$help = <<<HELP
 $header
-Usage: primi <options> <input>
+Usage: primi [<options>] [<input file>]
 Options:
-  -r, --repl     Start REPL (read, eval, print, loop).
   -t, --tree     Only print syntax tree and exit.
-  -s, --source   Treat <input> as string instead of a source file path.
+  -s, --source   Treat <input file> as string instead of a source file path.
   -c, --context  Print contents of primary context after execution.
 
 HELP;
