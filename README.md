@@ -102,7 +102,7 @@ d (string) ... some string extra thing
 ```
 
 # REPL mode
-Primi provides a convenient *"sandbox"* [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) mode which can be launched via `primi -r` and later exited by entering `exit`.
+Primi provides a convenient *"sandbox"* [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) mode which is launched by executing `./primi` without any argument. You can use this for messing around with the language or to test any new stuff you might be trying to implement *(e.g. your own Primi extensions written in PHP)*.
 
 ![REPL example usage](https://raw.githubusercontent.com/smuuf/primi/master/res/repl-sample.gif)
 
