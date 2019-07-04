@@ -13,6 +13,10 @@ use \Smuuf\Primi\Structures\Value;
 
 class CastingExtension extends Extension {
 
+	public static function type(Value $value): StringValue {
+		return new StringValue($value::TYPE);
+	}
+
 	public static function to_string(Value $value): StringValue {
 
 		Common::allowTypes(
