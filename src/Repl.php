@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
@@ -59,7 +60,9 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		$i = $this->interpreter;
 		$c = $i->getContext();
 
-		readline_completion_function(function() { return []; });
+		readline_completion_function(function() use ($c) {
+			return array_keys($c->getVariables());
+		});
 
 		while (true) {
 
@@ -67,7 +70,14 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 			switch (trim($input)) {
 				case '?':
-					$this->printContext($c);
+					// Print defined variables.
+					$this->printContext($c, false);
+					continue 2;
+				break;
+				case '??':
+					// Print all variables, including global ones provided by
+					// extensions.
+					$this->printContext($c, true);
 					continue 2;
 				break;
 				case '':
@@ -88,6 +98,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				// This way users won't have to put it in there themselves.
 				$result = $i->run("$input;");
 				$this->printResult($result);
+				echo "\n";
 
 			} catch (\Smuuf\Primi\ErrorException $e) {
 				echo($e->getMessage() . "\n");
@@ -101,7 +112,8 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	private function printResult(Value $result = null): void {
 
-		if ($result === null) {
+		// Do not print empty or NullValue results.
+		if ($result === null || $result instanceof NullValue) {
 			return;
 		}
 
@@ -123,9 +135,9 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private function printContext(IContext $c): void {
+	private function printContext(IContext $c, bool $includeGlobals): void {
 
-		foreach ($c->getVariables() as $name => $value)  {
+		foreach ($c->getVariables($includeGlobals) as $name => $value)  {
 			echo "$name: ";
 			$this->printResult($value);
 		}
@@ -149,7 +161,10 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 			if (self::isIncompleteInput($input)) {
 
-				$lines .= $input;
+				// Consider non-empty line ending with a "\" character as
+				// a part of multiline input. That is: Trim the backslash and
+				// go read another line from the user.
+				$lines .= mb_substr($input, 0, mb_strlen($input) - 1) . "\n";
 				$gathering = true;
 
 			} else {
@@ -166,19 +181,19 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private function isIncompleteInput(string $i) {
+	private function isIncompleteInput(string $input) {
 
-		if (empty($i)) {
+		if (empty(trim($input))) {
 			return false;
 		}
 
 		// Lines ending with opening curly brackets are considered incomplete.
-		if ($i[-1] === "{") {
+		if ($input[-1] === "{" || $input[-1] === '\\') {
 			return true;
 		}
 
 		// Lines starting with a SPACE or a TAB are considered incomplete.
-		if (strspn($i, "\t ") !== 0) {
+		if (strspn($input, "\t ") !== 0) {
 			return true;
 		}
 

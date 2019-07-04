@@ -74,8 +74,8 @@ class Context extends StrictObject implements IContext {
 
 	}
 
-	public function getVariables(): array {
-		return $this->vars;
+	public function getVariables(bool $includeGlobals = false): array {
+		return $this->vars + ($includeGlobals ? self::$globals : []);
 	}
 
 	// Debugging.
