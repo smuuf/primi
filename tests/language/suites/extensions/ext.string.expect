@@ -12,3 +12,5 @@ k:StringValue:"1 2 3"
 l:BoolValue:true
 m:BoolValue:true
 n:BoolValue:false
+o:StringValue:"1,2,3"
+p:StringValue:"1,nested,stuff-yeah,3"

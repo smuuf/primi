@@ -1,4 +1,19 @@
 // pragma:one_liners
+type_string_null = type(null) // "null"
+type_string_boolA = type(true) // "bool"
+type_string_boolB = type(false) // "bool"
+type_string_numberA = type(1) // "number"
+type_string_numberB = type(-1) // "number"
+type_string_numberC = type(0.123) // "number"
+type_string_stringA = type("") // "string"
+type_string_stringB = type("ahoj") // "string"
+type_string_regexA = type(r"ahoj") // "regex"
+type_string_regexB = type(r"a[ho]j") // "regex"
+type_string_regexC = type(r"") // "regex"
+type_string_function = type(type) // "function"
+type_string_arrayA = type([]) // "array"
+type_string_arrayB = type([1,2,'c']) // "array"
+
 x_number_to_number = 1.to_number() // 1
 x_number_to_string = 1.to_string() // "1"
 x_number_to_bool = 1.to_bool() // true

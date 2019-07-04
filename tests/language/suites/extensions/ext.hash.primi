@@ -1,0 +1,12 @@
+// pragma:one_liners
+a = hash_md5("ahoj");
+b = hash_md5("");
+c = hash_sha256("ahoj");
+d = hash_sha256("");
+
+e = hash_md5(0);
+f = hash_md5(1);
+
+_ex = hash_sha256([]);
+_ex = hash_sha256(true);
+_ex = hash_sha256(null);
