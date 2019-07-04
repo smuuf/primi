@@ -14,6 +14,10 @@ use \Smuuf\Primi\ErrorException;
 
 class StringExtension extends Extension {
 
+	public static function string_shuffle(StringValue $str): StringValue {
+		return new StringValue(str_shuffle((string) $str->value));
+	}
+
 	public static function string_length(StringValue $str): NumberValue {
 		return new NumberValue((string) mb_strlen($str->value));
 	}
