@@ -11,7 +11,7 @@ class FuncValue extends Value {
 	}
 
 	public function getStringValue(): string {
-		return "__function__";
+		return "function";
 	}
 
 	public function invoke(array $args = []) {
