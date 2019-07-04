@@ -2,12 +2,9 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
 use \Smuuf\Primi\InternalBinaryOperationException;
-use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 
 /**

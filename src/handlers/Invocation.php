@@ -8,7 +8,6 @@ use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\InternalArgumentCountException;
-use \Smuuf\Primi\InternalUndefinedVariableException;
 use \Smuuf\Primi\InternalException;
 use \Smuuf\Primi\Context;
 

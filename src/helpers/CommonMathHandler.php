@@ -6,7 +6,6 @@ use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StrictObject;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\BinaryLTR;
 use \Smuuf\Primi\Handlers\IHandler;
 use \Smuuf\Primi\Handlers\IReducer;

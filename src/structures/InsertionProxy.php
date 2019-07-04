@@ -2,9 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\ISupportsArrayAccess;
-
 /**
  * Insertion proxy is a special structure that encapsulates a value object which
  * supports insertion. This proxy is used in situations when we already know

@@ -10,7 +10,6 @@ use \Smuuf\Primi\Structures\ArrayValue;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\ErrorException;
 
 class CastingExtension extends Extension {
 

@@ -9,7 +9,6 @@ use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsArrayAccess;
-use \Smuuf\Primi\ErrorException;
 
 class StringValue extends Value implements
 	ISupportsAddition,

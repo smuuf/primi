@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\ArrayValue;
 use \Smuuf\Primi\Structures\NumberValue;
-use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ErrorException;

@@ -2,12 +2,12 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Psl\ArrayLibrary;
 use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\Helpers\Common;
 
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class ArrayValue extends Value implements
 	ISupportsIteration,
@@ -74,7 +74,7 @@ class ArrayValue extends Value implements
 	public function arrayGet(string $key): Value {
 
 		if (!isset($this->value[$key])) {
-			throw new \Smuuf\Primi\InternalUndefinedIndexException($key);
+			throw new InternalUndefinedIndexException($key);
 		}
 
 		return $this->value[$key];

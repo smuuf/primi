@@ -2,10 +2,10 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\Structures\NumberValue;
+use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\Structures\NullValue;
+use \Smuuf\Primi\Structures\NumberValue;
 
 class BoolValue extends Value implements ISupportsComparison {
 

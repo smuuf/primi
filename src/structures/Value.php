@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Structures\ValueFriends;
 
 abstract class Value extends ValueFriends {

@@ -3,7 +3,6 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\FuncValue;
 
 class ExtensionHub extends \Smuuf\Primi\StrictObject {
 
