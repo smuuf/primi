@@ -44,6 +44,7 @@ class ArrayValue extends Value implements
 
 	private static function convertToString($self, CircularDetector $cd): string {
 
+		// Track current value object with circular detector.
 		$cd->add(\spl_object_hash($self));
 
 		$return = "[";

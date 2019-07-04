@@ -11,8 +11,15 @@ class ArrayInsertionProxy extends InsertionProxy {
 		try {
 			$this->target->arraySet($this->key, $value);
 		} catch (\TypeError $e) {
-			$msg = sprintf("Cannot insert '%s' into '%s'", $value::TYPE, $this->target::TYPE);
+
+			$msg = sprintf(
+				"Cannot insert '%s' into '%s'",
+				$value::TYPE,
+				$this->target::TYPE
+			);
+
 			throw new ErrorException($msg);
+
 		}
 
 	}

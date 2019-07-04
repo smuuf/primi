@@ -41,7 +41,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		} catch (\ArgumentCountError | InternalArgumentCountException $e) {
 
-			$msg = self::buildArgumentCountErrorMessage($e, $fn);
+			$msg = self::buildArgumentCountErrorMessage($e);
 			throw new ErrorException($msg, $node);
 
 		} catch (\TypeError $e) {
@@ -54,8 +54,7 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 	}
 
 	private static function buildArgumentCountErrorMessage(
-		\Throwable $e,
-		FuncValue $fn
+		\Throwable $e
 	): string {
 
 		if ($e instanceof InternalArgumentCountException) {
@@ -79,12 +78,12 @@ class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
 
 		}
 
-		$details = null;
-		if ($expected !== null && $passed !== null) {
-			$details = sprintf(" (%d instead of %d)", $passed, $expected);
-		}
-
-		return sprintf("Too few arguments passed to function%s", $details);
+		return sprintf(
+			"Function expects %d argument%s (got %d)",
+			$expected,
+			(int) $expected === 1 ? '' : 's',
+			$passed
+		);
 
 	}
 
