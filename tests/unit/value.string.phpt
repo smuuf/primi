@@ -211,40 +211,32 @@ $result = $fns['string_format']->invoke([
 ]);
 Assert::same("1:FIRST,2:SECOND,3:THIRD,4:FOURTH", get_val($result));
 
-// Test formatting with positions.
-$template = new StringValue("1:{},2:{2},3:{1},4:{}");
-$result = $fns['string_format']->invoke([
-	$template,
-	new StringValue("FIRST"),
-	new StringValue("SECOND"),
-	new StringValue("THIRD"),
-	new StringValue("FOURTH"),
-]);
-Assert::same("1:FIRST,2:SECOND,3:FIRST,4:SECOND", get_val($result));
+// Test combining positional and non-positional placeholders - forbidden.
+Assert::exception(function() use ($fns) {
+	$template = new StringValue("1:{},2:{2},3:{1},4:{}");
+	$fns['string_format']->invoke([
+		$template,
+		new StringValue("FIRST"),
+		new StringValue("SECOND"),
+		new StringValue("THIRD"),
+		new StringValue("FOURTH"),
+	]);
+}, \Smuuf\Primi\ErrorException::class);
 
 // Test too-few-parameters.
 Assert::exception(function() use ($fns) {
 	$template = new StringValue("1:{},2:{},3:{},4:{}");
-	$result = $fns['string_format']->invoke([
+	$fns['string_format']->invoke([
 		$template,
 		new StringValue("FIRST"),
 		new StringValue("SECOND"),
 	]);
 }, \Smuuf\Primi\ErrorException::class);
 
-// Test too-few-parameters with positions.
-Assert::exception(function() use ($fns) {
-	$template = new StringValue("1:{},2:{1},3:{1},4:{}");
-	$result = $fns['string_format']->invoke([
-		$template,
-		new StringValue("FIRST")
-	]);
-}, \Smuuf\Primi\ErrorException::class);
-
 // Test placeholder index being too high for passed parameters.
 Assert::exception(function() use ($fns) {
-	$template = new StringValue("1:{},2:{1000}");
-	$result = $fns['string_format']->invoke([
+	$template = new StringValue("1:{0},2:{1000}");
+	$fns['string_format']->invoke([
 		$template,
 		new StringValue("FIRST"),
 		new StringValue("SECOND"),

@@ -26,35 +26,76 @@ class StringExtension extends Extension {
 			$i = $i->value;
 		});
 
-		$count = \count($items);
-
-		// We need to count how many non-positional placeholders are currently
-		// used, so we know when to throw an error.
-		$used = 0;
+		$passedCount = \count($items);
+		$expectedCount = 0;
+		$indexedMode = null;
 
 		// Convert {} syntax to a something sprintf() understands.
-		// {} will be converted to "%s"
-		// Positional {456} will be converted to "%456$s"
-		$prepared = \preg_replace_callback("#\{(\d+)?\}#", function($match) use ($count, &$used) {
+		// {} will be converted to "%s", positional {456} will be converted to
+		// "%456$s".
+		$prepared = \preg_replace_callback("#\{(\d+)?\}#", function($m) use (
+			$passedCount,
+			&$indexedMode,
+			&$expectedCount
+		) {
 
-			if (isset($match[1])) {
-				if ($match[1] > $count) {
+			if (isset($m[1])) {
+
+				if ($indexedMode === false) {
+					// A positional placeholder was used when a non-positional
+					// one is already present.
 					throw new ErrorException(
-						sprintf("Position (%s) does not match the number of parameters (%s).", $match[1], $count)
+						sprintf("Cannot combine positional and non-positional placeholders.")
 					);
 				}
-				return "%{$match[1]}\$s";
+
+				$indexedMode = true;
+				$index = $m[1];
+
+				if ($index < 0) {
+					throw new ErrorException(
+						sprintf("Position (%s) cannot be less than 0.", $index)
+					);
+				}
+
+				if ($index > $passedCount) {
+					throw new ErrorException(
+						sprintf("Position (%s) does not match the number of parameters (%s).", $index, $passedCount)
+					);
+				}
+
+				$converted = "%{$index}\$s";
+
+			} else {
+
+				if ($indexedMode === true) {
+					// A non-positional placeholder was used when a positional
+					// one is already present.
+					throw new ErrorException(
+						sprintf("Cannot combine positional and non-positional placeholders.")
+					);
+				}
+
+				$indexedMode = false;
+				$converted = "%s";
+
 			}
 
-			if (++$used > $count) {
-				throw new ErrorException(
-					sprintf("Not enough parameters (%s) to match placeholder count (%s).", $count, $used)
-				);
-			}
-
-			return "%s";
+			$expectedCount++;
+			return $converted;
 
 		}, $str->value);
+
+		// If there are more args expected than passed, throw error.
+		if ($expectedCount > $passedCount) {
+			throw new ErrorException(
+				sprintf(
+					"Not enough arguments passed (expected %s, got %s).",
+					$expectedCount,
+					$passedCount
+				)
+			);
+		}
 
 		return new StringValue(\sprintf($prepared, ...$items));
 
