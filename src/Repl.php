@@ -168,13 +168,14 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			}
 
 			$input = $this->driver->readline($prompt);
+			[$incomplete, $trim] = self::isIncompleteInput($input);
 
-			if (self::isIncompleteInput($input)) {
+			if ($incomplete) {
 
 				// Consider non-empty line ending with a "\" character as
 				// a part of multiline input. That is: Trim the backslash and
 				// go read another line from the user.
-				$lines .= mb_substr($input, 0, mb_strlen($input) - 1) . "\n";
+				$lines .= mb_substr($input, 0, mb_strlen($input) - $trim) . "\n";
 				$gathering = true;
 
 			} else {
@@ -194,17 +195,23 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	private function isIncompleteInput(string $input) {
 
 		if (empty(trim($input))) {
-			return false;
+			return [false, 0];
 		}
 
 		// Lines ending with opening curly brackets are considered incomplete.
-		if ($input[-1] === "{" || $input[-1] === '\\') {
-			return true;
+		if ($input[-1] === "{") {
+			return [true, 0];
+		}
+
+		// Lines ending with backslashes are considered incomplete.
+		// And such backslashes at the EOL are to be trimmed from real input.
+		if ($input[-1] === '\\') {
+			return [true, 1];
 		}
 
 		// Lines starting with a SPACE or a TAB are considered incomplete.
 		if (strspn($input, "\t ") !== 0) {
-			return true;
+			return [true, 0];
 		}
 
 	}
