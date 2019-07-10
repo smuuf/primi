@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\InternalUndefinedTruthnessException;
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\HandlerFactory;
@@ -14,8 +16,15 @@ class Negation extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 		$handler = HandlerFactory::get($node['core']['name']);
 		$value = $handler::handle($node['core'], $context);
 
-		// The final truthness is (at least for now) based on PHP's own rules.
-		$truthness = Common::isTruthy($value);
+		try {
+
+			// The final truthness is (at least for now) based on PHP's own
+			// rules.
+			$truthness = Common::isTruthy($value);
+
+		} catch (InternalUndefinedTruthnessException $e) {
+			throw new ErrorException($e->getMessage(), $node);
+		}
 
 		// Should we even handle negation? If there's an even number of negation
 		// operators, the result would always have the same truthness as its

@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\InternalUndefinedTruthnessException;
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
@@ -19,11 +21,17 @@ class IfStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 		$leftHandler = HandlerFactory::get($node['left']['name']);
 		$return = $leftHandler::handle($node['left'], $context);
 
-		// If the result of the left hand equals to truthy value,
-		// execute the code branch stored in the right-hand node.
-		if (Common::isTruthy($return)) {
-			$rightHandler = HandlerFactory::get($node['right']['name']);
-			$rightHandler::handle($node['right'], $context);
+		try {
+
+			// If the result of the left hand equals to truthy value,
+			// execute the code branch stored in the right-hand node.
+			if (Common::isTruthy($return)) {
+				$rightHandler = HandlerFactory::get($node['right']['name']);
+				$rightHandler::handle($node['right'], $context);
+			}
+
+		} catch (InternalUndefinedTruthnessException $e) {
+			throw new ErrorException($e->getMessage(), $node);
 		}
 
 	}

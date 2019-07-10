@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\InternalUndefinedTruthnessException;
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ContinueException;
 use \Smuuf\Primi\BreakException;
@@ -16,14 +18,22 @@ class WhileStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 		$condHandler = HandlerFactory::get($node['left']['name']);
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
-		while (Common::isTruthy($condHandler::handle($node['left'], $context))) {
-			try {
-				$blockHandler::handle($node['right'], $context);
-			} catch (ContinueException $e) {
-				continue;
-			} catch (BreakException $e) {
-				break;
+		try {
+
+			while (
+				Common::isTruthy($condHandler::handle($node['left'], $context))
+			) {
+				try {
+					$blockHandler::handle($node['right'], $context);
+				} catch (ContinueException $e) {
+					continue;
+				} catch (BreakException $e) {
+					break;
+				}
 			}
+
+		} catch (InternalUndefinedTruthnessException $e) {
+			throw new ErrorException($e->getMessage(), $node);
 		}
 
 	}
