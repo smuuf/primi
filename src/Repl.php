@@ -105,9 +105,15 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				echo "\n";
 
 			} catch (\Smuuf\Primi\ErrorException $e) {
-				echo($e->getMessage() . "\n");
+				$msg = $this->rawOutput
+					? "ERR: {$e->getMessage()}\n"
+					: Colors::get("{red}ERR:{_} {$e->getMessage()}\n");
+				echo($msg);
 			} catch (\Throwable $e) {
-				echo("PHP ERROR: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n");
+				$msg = $this->rawOutput
+					? "PHP ERROR: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n"
+					: "{red}PHP ERROR:{_} {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
+				echo($msg);
 			}
 
 		}

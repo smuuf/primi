@@ -39,7 +39,7 @@ class ErrorException extends InternalException {
 
 		}
 
-		parent::__construct("ERR: $msg");
+		parent::__construct($msg);
 
 	}
 
