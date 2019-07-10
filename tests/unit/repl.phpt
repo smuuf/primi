@@ -11,7 +11,8 @@ $commands = [
     'b',
 	'a',
 	'?',
-    'exit',
+	"(a, b) => {\n    return a + b;\n}",
+	'exit',
 ];
 
 // This is expected output. This will be compared with actual output down below.
@@ -20,7 +21,8 @@ $expected = [
 	"1",
 	"ERR: Undefined variable 'b' @ line 1, position 0, code: b",
 	"1",
-	"a: 1",
+	"a: 1\n_: 1",
+	"function",
 ];
 
 $driver = new class implements \Smuuf\Primi\IReadlineDriver {

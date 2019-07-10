@@ -97,6 +97,10 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				// Ensure that there's a semicolon at the end.
 				// This way users won't have to put it in there themselves.
 				$result = $i->run("$input;");
+
+				// Store the result into _ variable for quick'n'easy retrieval.
+				$c->setVariable('_', $result);
+
 				$this->printResult($result);
 				echo "\n";
 

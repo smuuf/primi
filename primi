@@ -118,5 +118,6 @@ function header_string(string $env = null) {
 	$env = $env ? "($env)" : null;
 	return "Primi language {$env}, Copyright (c) Premysl Karbula\n" .
 		"Type 'exit' to exit.\n" .
-		"Type '?' or '??' to print local or global variables respectively.";
+		"Type '?' to print local variables or '??' to print all variables.\n" .
+		"The latest result is stored in '_' variable.\n";
 }
