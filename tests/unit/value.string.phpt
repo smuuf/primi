@@ -253,6 +253,13 @@ Assert::same(0, get_val($fns['string_number_of']->invoke([$string, new StringVal
 Assert::same(0, get_val($fns['string_number_of']->invoke([$string, new NumberValue(1)])));
 
 //
+// Test shuffle.
+//
+
+Assert::same(17, mb_strlen(get_val($fns['string_shuffle']->invoke([$string]))));
+Assert::same(17, mb_strlen(get_val($fns['string_shuffle']->invoke([$unicode]))));
+
+//
 // Test length.
 //
 

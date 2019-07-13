@@ -15,7 +15,20 @@ use \Smuuf\Primi\ErrorException;
 class StringExtension extends Extension {
 
 	public static function string_shuffle(StringValue $str): StringValue {
-		return new StringValue(str_shuffle((string) $str->value));
+
+		// str_shuffle() doesn't work with unicode, so let's do this ourselves.
+		$original = $str->value;
+		$length = mb_strlen($original);
+		$indices = range(0, $length - 1);
+		shuffle($indices);
+		$result = "";
+
+		while (($i = array_pop($indices)) !== null) {
+			$result .= mb_substr($original, $i, 1);
+		}
+
+		return new StringValue($result);
+
 	}
 
 	public static function string_length(StringValue $str): NumberValue {
