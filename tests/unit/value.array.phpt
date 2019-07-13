@@ -30,6 +30,7 @@ $someKey = "some_key";
 $arr = new ArrayValue([]);
 Assert::same(0, get_val($fns['array_length']->invoke([$arr])));
 Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $something])));
+Assert::same(false, get_val($fns['array_has']->invoke([$arr, new StringValue($someKey)])));
 
 // Test proper exception when accessing non-existing key.
 Assert::exception(function() use ($arr) {
@@ -43,6 +44,7 @@ Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $anything])));
 $proxy->commit($anything);
 Assert::same(1, get_val($fns['array_length']->invoke([$arr])));
 Assert::same(true, get_val($fns['array_contains']->invoke([$arr, $anything])));
+Assert::same(true, get_val($fns['array_has']->invoke([$arr, new StringValue($someKey)])));
 
 // Test getting and iterating array object iterator.
 $result = [];
@@ -66,12 +68,17 @@ $fns['array_push']->invoke([$arr, $anything]);
 Assert::same(1, get_val($fns['array_length']->invoke([$arr])));
 Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $something])));
 Assert::same(true, get_val($fns['array_contains']->invoke([$arr, $anything])));
+Assert::same(true, get_val($fns['array_has']->invoke([$arr, new NumberValue('0')])));
+Assert::same($anything, $fns['array_get']->invoke([$arr, new NumberValue('0')]));
 
 // Pop an item form the array and test stuff.
 $fns['array_pop']->invoke([$arr]);
 Assert::same(0, get_val($fns['array_length']->invoke([$arr])));
 Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $something])));
 Assert::same(false, get_val($fns['array_contains']->invoke([$arr, $anything])));
+Assert::same(false, get_val($fns['array_has']->invoke([$arr, new NumberValue('0')])));
+Assert::same(null, get_val($fns['array_get']->invoke([$arr, new NumberValue('0')])));
+Assert::same('default_value_bruh', get_val($fns['array_get']->invoke([$arr, new NumberValue('0'), new StringValue('default_value_bruh')])));
 
 // Prepare helper objects.
 $num1 = new NumberValue(1);

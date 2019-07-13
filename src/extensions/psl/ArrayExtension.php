@@ -7,10 +7,10 @@ use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Structures\ArrayValue;
+use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\ErrorException;
 
 class ArrayExtension extends Extension {
 
@@ -58,6 +58,24 @@ class ArrayExtension extends Extension {
 
 		// Let's search the $needle object in $arr's value (array of objects).
 		return new BoolValue(\array_search($needle, $arr->value) !== \false);
+
+	}
+
+	public static function array_has(ArrayValue $arr, Value $key): BoolValue {
+
+		// Allow only some value types.
+		Common::allowTypes($key, StringValue::class, NumberValue::class);
+
+		// Return true if the key exists in this array.
+		return new BoolValue(isset($arr->value[$key->value]));
+
+	}
+
+	public static function array_get(ArrayValue $arr, Value $key, Value $default = null): Value {
+
+		// Allow only some value types.
+		Common::allowTypes($key, StringValue::class, NumberValue::class);
+		return $arr->value[$key->value] ?? $default ?? new NullValue;
 
 	}
 
