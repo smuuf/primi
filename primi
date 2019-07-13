@@ -21,7 +21,7 @@ $interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
 
 // Determine the source. Act as REPL if no source was specified.
 if (empty($config['input'])) {
-	echo header_string('REPL') . "\n";
+	echo header_string('REPL');
 	$repl = new \Smuuf\Primi\Repl($interpreter);
 	$repl->start();
 	die;
@@ -116,8 +116,5 @@ HELP;
 
 function header_string(string $env = null) {
 	$env = $env ? "($env)" : null;
-	return "Primi language {$env}, Copyright (c) Premysl Karbula\n" .
-		"Type 'exit' to exit.\n" .
-		"Type '?' to print local variables or '??' to print all variables.\n" .
-		"The latest result is stored in '_' variable.\n";
+	return "Primi language {$env}, Copyright (c) Premysl Karbula\n";
 }

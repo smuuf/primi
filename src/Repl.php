@@ -36,11 +36,24 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		$rawOutput = false
 	) {
 
+		self::printHelp();
+
 		$this->interpreter = $interpreter;
 		$this->rawOutput = $rawOutput;
 		$this->driver = $driver ?: new \Smuuf\Primi\Readline;
 		$this->historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 		$this->loadHistory();
+
+	}
+
+	protected static function printHelp() {
+
+		echo Colors::get("\n".
+			"{green}Use '{_}exit{green}' to exit.\n" .
+			"Use '{_}?{green}' to view local variables " .
+			"or '{_}??{green}' to view all variables.\n" .
+			"The latest result is stored in '{_}_{green}' variable.\n\n"
+		);
 
 	}
 
