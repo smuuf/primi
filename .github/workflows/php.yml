@@ -13,4 +13,4 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
     - name: Run tests
-      run: ./bin/test --coverage
+      run: chmod +x ./primi ./bin/*; ./bin/test --coverage
