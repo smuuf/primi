@@ -3,14 +3,28 @@ name: PHP Tests
 on: [push]
 
 jobs:
-  test:
+  install:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+    - name: Install
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        composer install --optimize-autoloader
+        chmod +x ./primi ./bin/* ./cc-test-reporter
+     
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Prepare
+      run: ./cc-test-reporter before-build
     - name: Run tests
       run: chmod +x ./primi ./bin/*; ./bin/test --coverage
+    - name: Run benchmarks
+      run: ./bin/bench  
+    - name: Run static analysis
+      run: ./bin/phpstan
+    - name: Gather test results
+      run: |
+        ./cc-test-reporter format-coverage --output=./coverage.json --input-type=clover ./coverage.xml
+        ./cc-test-reporter upload-coverage --input=./coverage.json
