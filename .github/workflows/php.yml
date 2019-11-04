@@ -9,6 +9,10 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install
       run: |
+        export
+        ll $GITHUB_WORKSPACE
+        ls -R /github/ | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//- /g' -e 's/^/   /' -e 's/-/|/'
+        ls -R /home/runner/ | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//- /g' -e 's/^/   /' -e 's/-/|/'        
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $GITHUB_WORKSPACE/cc-test-reporter
         composer install --optimize-autoloader
         chmod +x ./primi ./bin/* $GITHUB_WORKSPACE/cc-test-reporter
@@ -17,6 +21,12 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     steps:
+    - name: test
+      run: |
+        export
+        ll $GITHUB_WORKSPACE
+        ls -R /github/ | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//- /g' -e 's/^/   /' -e 's/-/|/'
+        ls -R /home/runner/ | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//- /g' -e 's/^/   /' -e 's/-/|/'               
     - name: Prepare
       run: $GITHUB_WORKSPACE/cc-test-reporter before-build
     - name: Run tests
