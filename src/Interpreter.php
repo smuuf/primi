@@ -16,7 +16,7 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 		string $tempDir = null
 	) {
 
-		$this->tempDir = $tempDir ?: false;
+		$this->tempDir = rtrim($tempDir, "/") ?: "";
 		$this->context = $context ?: new Context;
 
 		self::applyExtensions($this->context);

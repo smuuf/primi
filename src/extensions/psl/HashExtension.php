@@ -14,7 +14,7 @@ class HashExtension extends Extension {
 
 	public static function hash_md5(Value $val): StringValue {
 		Common::allowTypes($val, StringValue::class, NumberValue::class);
-		$hash = md5((string) (string) $val->value);
+		$hash = md5((string) $val->value);
 		return new StringValue($hash);
 	}
 
