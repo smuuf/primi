@@ -3,30 +3,17 @@ name: PHP Tests
 on: [push]
 
 jobs:
-  install:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Install
       run: |
-        export
-        ls -l $GITHUB_WORKSPACE
-        ls -R /home/ | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//- /g' -e 's/^/   /' -e 's/-/|/'        
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $GITHUB_WORKSPACE/cc-test-reporter
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $HOME/cc-test-reporter
         composer install --optimize-autoloader
-        chmod +x ./primi ./bin/* $GITHUB_WORKSPACE/cc-test-reporter
-     
-  test:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-    - name: test
-      run: |
-        export
-        ls -l $GITHUB_WORKSPACE
-        ls -R /home/ | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//- /g' -e 's/^/   /' -e 's/-/|/'                    
+        chmod +x ./primi ./bin/* $HOME/cc-test-reporter
     - name: Prepare
-      run: $GITHUB_WORKSPACE/cc-test-reporter before-build
+      run: $HOME/cc-test-reporter before-build
     - name: Run tests
       run: chmod +x ./primi ./bin/*; ./bin/test --coverage
     - name: Run benchmarks
@@ -35,5 +22,5 @@ jobs:
       run: ./bin/phpstan
     - name: Gather test results
       run: |
-        $GITHUB_WORKSPACE/cc-test-reporter format-coverage --output=./coverage.json --input-type=clover ./coverage.xml
-        $GITHUB_WORKSPACE/cc-test-reporter upload-coverage --input=./coverage.json
+        $HOME/cc-test-reporter format-coverage --output=./coverage.json --input-type=clover ./coverage.xml
+        $HOME/cc-test-reporter upload-coverage --input=./coverage.json
