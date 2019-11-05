@@ -12,7 +12,7 @@
 
 Travis CI | Code Climate | Packagist
 --- | --- | ---
-[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/maintainability)](https://codeclimate.com/github/smuuf/primi/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/13c3d5b429d281de5947/test_coverage)](https://codeclimate.com/github/smuuf/primi/test_coverage) | [![Latest Stable Version](https://poser.pugx.org/smuuf/primi/v/stable)](https://packagist.org/packages/smuuf/primi) [![License](https://poser.pugx.org/smuuf/primi/license)](https://packagist.org/packages/smuuf/primi) [![Total Downloads](https://poser.pugx.org/smuuf/primi/downloads)](https://packagist.org/packages/smuuf/primi)
+[![Build Status](https://travis-ci.org/smuuf/primi.svg?branch=master)](https://travis-ci.org/smuuf/primi) | [![Maintainability](https://api.codeclimate.com/v1/badges/cc57c0b228363ec2198a/maintainability)](https://codeclimate.com/repos/5dc0b4187e66f500c90003e0/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/cc57c0b228363ec2198a/test_coverage)](https://codeclimate.com/repos/5dc0b4187e66f500c90003e0/test_coverage) | [![Latest Stable Version](https://poser.pugx.org/smuuf/primi/v/stable)](https://packagist.org/packages/smuuf/primi) [![License](https://poser.pugx.org/smuuf/primi/license)](https://packagist.org/packages/smuuf/primi) [![Total Downloads](https://poser.pugx.org/smuuf/primi/downloads)](https://packagist.org/packages/smuuf/primi)
 
 ---
 
