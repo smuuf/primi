@@ -264,6 +264,16 @@ if (a) {
 ```
 
 ```js
+c = false;
+if (c) {
+    d = 1;
+} else {
+    d = 2;
+}
+// d == 2
+```
+
+```js
 a = false;
 b = true;
 c = 5;
