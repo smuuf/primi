@@ -27,3 +27,19 @@ ee = 0;
 if (e) {
     ee = 1;
 }
+
+f = null
+ff = 0;
+if (f) {
+    ff = 1;
+} else {
+    ff = 2;
+}
+
+g = 1
+gg = 0;
+if (g) {
+    gg = 1;
+} else {
+    gg = 2;
+}

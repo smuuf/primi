@@ -28,6 +28,9 @@ class IfStatement extends \Smuuf\Primi\StrictObject implements IHandler {
 			if (Common::isTruthy($return)) {
 				$rightHandler = HandlerFactory::get($node['right']['name']);
 				$rightHandler::handle($node['right'], $context);
+			} elseif (isset($node['else'])) {
+				$elseHandler = HandlerFactory::get($node['else']['name']);
+				$elseHandler::handle($node['else'], $context);
 			}
 
 		} catch (InternalUndefinedTruthnessException $e) {
