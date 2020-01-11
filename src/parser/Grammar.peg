@@ -75,7 +75,7 @@ ArgumentList: args:Expression ( __ "," __ args:Expression )*
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block
 
-IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block )
+IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
 ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 CommandStatements: skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement
