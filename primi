@@ -17,14 +17,18 @@ $config = parse_arguments($argv);
 
 // Create "VM" context and create the interpreter.
 $context = new \Smuuf\Primi\Context;
-$interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
 
 // Determine the source. Act as REPL if no source was specified.
 if (empty($config['input'])) {
+
 	echo header_string('REPL');
+
+	// REPL uses interpreter without cache.
+	$interpreter = new \Smuuf\Primi\Interpreter($context);
 	$repl = new \Smuuf\Primi\Repl($interpreter);
 	$repl->start();
 	die;
+
 }
 
 if ($config['input_is_code']) {
@@ -38,6 +42,9 @@ if ($config['input_is_code']) {
 }
 
 try {
+
+	// Create interpreter - with cache.
+	$interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
 
 	// Get syntax tree.
 	if ($config['tree']) {

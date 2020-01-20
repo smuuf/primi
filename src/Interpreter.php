@@ -12,8 +12,8 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 	private $context;
 
 	public function __construct(
-		IContext $context = null,
-		string $tempDir = null
+		?IContext $context = null,
+		string $tempDir = ''
 	) {
 
 		$this->tempDir = rtrim($tempDir, "/") ?: "";
@@ -65,11 +65,10 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 		$parser = new ParserHandler($source);
 		$ast = $parser->run();
 
-		if (!$this->tempDir) {
-			return $ast;
+		if ($this->tempDir) {
+			$this->storeCachedAST($ast, $source);
 		}
 
-		$this->storeCachedAST($ast, $source);
 		return $ast;
 
 	}
