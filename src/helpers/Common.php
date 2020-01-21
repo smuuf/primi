@@ -39,14 +39,14 @@ abstract class Common extends \Smuuf\Primi\StrictObject {
 	}
 
 	/**
-	 * Throw new TypeException when the value does not match any of the types
+	 * Throw new TypeError when the value does not match any of the types
 	 * provided.
 	 *
 	 * We're using this helper e.g. in value methods for performing easy
 	 * checks against allowed set of types of values. If PHP ever supports union
 	 * types, I guess this helper method might become unnecessary.
 	 *
-	 * @throws \TypeException
+	 * @throws \TypeError
 	 */
 	public static function allowTypes(?Value $value, string ...$types) {
 

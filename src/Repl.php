@@ -60,7 +60,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	public function start() {
 
 		// Allow saving history even on serious errors.
-		register_shutdown_function(function() {
+		register_shutdown_function(function(): void {
 			$this->saveHistory();
 		});
 
@@ -86,21 +86,17 @@ class Repl extends \Smuuf\Primi\StrictObject {
 					// Print defined variables.
 					$this->printContext($c, false);
 					continue 2;
-				break;
 				case '??':
 					// Print all variables, including global ones provided by
 					// extensions.
 					$this->printContext($c, true);
 					continue 2;
-				break;
 				case '':
 					// Ignore (skip) empty input.
 					continue 2;
-				break;
 				case 'exit':
 					// Catch a non-command 'exit'.
 					break 2;
-				break;
 			}
 
 			$this->driver->readlineAddHistory($input);

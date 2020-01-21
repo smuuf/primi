@@ -93,7 +93,8 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		$passPhpValues = \true;
 		if (
 			$r->hasReturnType()
-			&& \is_a((string) $r->getReturnType(), Value::class, \true)
+			&& $r->getReturnType() instanceof \ReflectionNamedType
+			&& \is_a($r->getReturnType()->getName(), Value::class, \true)
 		) {
 			$passPhpValues = \false;
 		}

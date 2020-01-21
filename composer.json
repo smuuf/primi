@@ -17,12 +17,13 @@
 		 "classmap": ["src/"]
 	},
 	"require": {
+		"php": ">=7.1",
 		"smuuf/php-peg": "^2.1"
 	},
 	"require-dev": {
 		"smuuf/koloader": "dev-master",
 		"smuuf/phpcb": "dev-master",
 		"nette/tester": "^2.0",
-		"phpstan/phpstan": "^0.9.1"
+		"phpstan/phpstan": "^0.12"
 	}
 }

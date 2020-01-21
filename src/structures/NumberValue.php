@@ -20,7 +20,11 @@ class NumberValue extends Value implements
 	const TYPE = "number";
 
 	public function __construct(string $value) {
-		$this->value = self::isNumericInt($value) ? (int) $value : (float) $value;
+
+		$this->value = self::isNumericInt($value)
+			? (int) $value
+			: (float) $value;
+
 	}
 
 	public function getStringValue(): string {
