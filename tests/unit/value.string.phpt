@@ -23,6 +23,7 @@ $string = new StringValue("this is a string.");
 $letterA = new StringValue("a");
 $unicode = new StringValue("ťhiš íš á ŠTřing.");
 $withNewline = new StringValue('a \n b');
+$withNewlineLiteral = new StringValue('a \\\n b');
 
 //
 // Test sequence expanding...
@@ -269,6 +270,8 @@ Assert::same(1, get_val($fns['string_length']->invoke([$letterA])));
 Assert::same(17, get_val($fns['string_length']->invoke([$unicode])));
 // "\n" is expanded as newline - that's one character.
 Assert::same(5, get_val($fns['string_length']->invoke([$withNewline])));
+// "\\n" should not be expanded as newline
+Assert::same(6, get_val($fns['string_length']->invoke([$withNewlineLiteral])));
 
 //
 // Test replacing.
