@@ -159,8 +159,12 @@ class StringValue extends Value implements
 	protected static function expandSequences(string $string) {
 
 		// Primi strings support some escape sequences.
-		return \str_replace('\n', "\n", $string);
-
+		$string = \str_replace('\\\\n', '__NEWLINE__', $string);
+		$string = \str_replace('\n', "\n", $string);
+		$string = \str_replace('__NEWLINE__', '\n', $string);
+    
+		return $string;
+    
 	}
 
 	/**

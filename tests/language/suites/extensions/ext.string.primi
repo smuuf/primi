@@ -23,3 +23,6 @@ n = "ahoj ahoj ahoj!".contains(r"(čau ){2}!?");
 
 o = ",".join([1, 2, 3]);
 p = ",".join([1, ['nested', "stuff-{}".format("yeah")], 3]);
+
+q = "\n"
+r = "\\n"
