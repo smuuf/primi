@@ -21,8 +21,10 @@ class StringValue extends Value implements
 
 	const TYPE = "string";
 
+	const NEWLINE = '__NEWLINE__';
+
 	public function __construct(string $value) {
-		$this->value = self::expandSequences($value);
+		$this->value = $value;
 	}
 
 	public function getStringValue(): string {
@@ -30,8 +32,16 @@ class StringValue extends Value implements
 		// We are about to put double-quotes around the return value,
 		// so let's "escape" double-quotes present in the string value.
 		$escaped = \str_replace('"', '\"', $this->value);
+
+		$escaped = self::expandSequences($escaped);
+
 		return "\"$escaped\"";
 
+	}
+
+	public function getInternalValue()
+	{
+		return self::expandSequences($this->value);
 	}
 
 	public function doAddition(Value $rightOperand) {
@@ -48,11 +58,11 @@ class StringValue extends Value implements
 		Common::allowTypes($rightOperand, self::class, RegexValue::class);
 
 		if ($rightOperand instanceof RegexValue) {
-			$match = \preg_replace($rightOperand->value, \null, $this->value);
+			$match = \preg_replace($rightOperand->getInternalValue(), \null, $this->getInternalValue());
 			return new self($match);
 		}
 
-		$new = \str_replace($rightOperand->value, \null, $this->value);
+		$new = \str_replace($rightOperand->getInternalValue(), \null, $this->getInternalValue());
 		return new self($new);
 
 	}
@@ -159,12 +169,13 @@ class StringValue extends Value implements
 	protected static function expandSequences(string $string) {
 
 		// Primi strings support some escape sequences.
-		$string = \str_replace('\\\\n', '__NEWLINE__', $string);
+
+		$string = \str_replace('\\\\n', self::NEWLINE, $string);
 		$string = \str_replace('\n', "\n", $string);
-		$string = \str_replace('__NEWLINE__', '\n', $string);
-    
+		$string = \str_replace(self::NEWLINE, '\n', $string);
+
 		return $string;
-    
+
 	}
 
 	/**

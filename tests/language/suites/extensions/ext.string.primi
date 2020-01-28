@@ -26,3 +26,5 @@ p = ",".join([1, ['nested', "stuff-{}".format("yeah")], 3]);
 
 q = "\n"
 r = "\\n"
+s = "\n" + "\n"
+t = "\\n" + "\\n"
