@@ -269,9 +269,9 @@ Assert::same(1, get_val($fns['string_length']->invoke([$letterA])));
 // Multibyte strings should report length correctly.
 Assert::same(17, get_val($fns['string_length']->invoke([$unicode])));
 // "\n" is expanded as newline - that's one character.
-Assert::same(6, $fns['string_length']->invoke([$withNewline])->getInternalValue());
+Assert::same(5, $fns['string_length']->invoke([$withNewline])->getInternalValue());
 // "\\n" should not be expanded as newline
-Assert::same(7, $fns['string_length']->invoke([$withNewlineLiteral])->getInternalValue());
+Assert::same(6, $fns['string_length']->invoke([$withNewlineLiteral])->getInternalValue());
 
 //
 // Test replacing.

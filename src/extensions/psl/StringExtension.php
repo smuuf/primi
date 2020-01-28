@@ -32,7 +32,7 @@ class StringExtension extends Extension {
 	}
 
 	public static function string_length(StringValue $str): NumberValue {
-		return new NumberValue((string) mb_strlen($str->value));
+		return new NumberValue((string) mb_strlen($str->getInternalValue()));
 	}
 
 	public static function string_format(StringValue $str, Value ...$items): StringValue {
