@@ -170,9 +170,7 @@ class StringValue extends Value implements
 
 		// Primi strings support some escape sequences.
 
-		$string = \str_replace('\\\\n', self::NEWLINE, $string);
-		$string = \str_replace('\n', "\n", $string);
-		$string = \str_replace(self::NEWLINE, '\n', $string);
+		$string = preg_replace(['#(?<!\\\)\\\n#', '/\\\\\\\n/'], ["\n", '\n'], $string);
 
 		return $string;
 
