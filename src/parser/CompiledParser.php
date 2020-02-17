@@ -14,11 +14,11 @@ class CompiledParser extends Parser\Packrat {
 	/** @var string **/
 	public $string;
 
-/* StringLiteral: / (?:".*?(?<!\\)")|(?:'.*?(?<!\\)') /s */
+/* StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s */
 protected $match_StringLiteral_typestack = array('StringLiteral');
 function match_StringLiteral ($stack = []) {
 	$matchrule = "StringLiteral"; $result = $this->construct($matchrule, $matchrule, \null);
-	if (( $subres = $this->rx( '/ (?:".*?(?<!\\\\)")|(?:\'.*?(?<!\\\\)\') /s' ) ) !== \false) {
+	if (( $subres = $this->rx( '/ ("[^"\\\\]*(\\\\.[^"\\\\]*)*")|(\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\') /s' ) ) !== \false) {
 		$result["text"] .= $subres;
 		return $this->finalise($result);
 	}

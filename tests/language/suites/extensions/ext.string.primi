@@ -24,7 +24,8 @@ n = "ahoj ahoj ahoj!".contains(r"(čau ){2}!?");
 o = ",".join([1, 2, 3]);
 p = ",".join([1, ['nested', "stuff-{}".format("yeah")], 3]);
 
-q = "\n"
-r = "\\n"
-s = "\n" + "\n"
-t = "\\n" + "\\n"
+esc_1 = "\n"
+esc_2 = "\\n"
+esc_3 = "\n" + "\n"
+esc_4 = "\\n" + "\\n"
+esc_5 = "\n" + "\\n\t\\"
