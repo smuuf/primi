@@ -14,10 +14,8 @@ m:BoolValue:true
 n:BoolValue:false
 o:StringValue:"1,2,3"
 p:StringValue:"1,nested,stuff-yeah,3"
-q:StringValue:"
-"
-r:StringValue:"\n"
-s:StringValue:"
-
-"
-t:StringValue:"\n\n"
+esc_1:StringValue:"\n"
+esc_2:StringValue:"\\n"
+esc_3:StringValue:"\n\n"
+esc_4:StringValue:"\\n\\n"
+esc_5:StringValue:"\n\\n\t\\"

@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Helpers\StringEscaping;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
@@ -21,8 +22,6 @@ class StringValue extends Value implements
 
 	const TYPE = "string";
 
-	const NEWLINE = '__NEWLINE__';
-
 	public function __construct(string $value) {
 		$this->value = $value;
 	}
@@ -31,17 +30,9 @@ class StringValue extends Value implements
 
 		// We are about to put double-quotes around the return value,
 		// so let's "escape" double-quotes present in the string value.
-		$escaped = \str_replace('"', '\"', $this->value);
-
-		$escaped = self::expandSequences($escaped);
-
+		$escaped = StringEscaping::escapeString($this->value, '"');
 		return "\"$escaped\"";
 
-	}
-
-	public function getInternalValue()
-	{
-		return self::expandSequences($this->value);
 	}
 
 	public function doAddition(Value $rightOperand) {
@@ -58,11 +49,11 @@ class StringValue extends Value implements
 		Common::allowTypes($rightOperand, self::class, RegexValue::class);
 
 		if ($rightOperand instanceof RegexValue) {
-			$match = \preg_replace($rightOperand->getInternalValue(), \null, $this->getInternalValue());
+			$match = \preg_replace($rightOperand->value, \null, $this->value);
 			return new self($match);
 		}
 
-		$new = \str_replace($rightOperand->getInternalValue(), \null, $this->getInternalValue());
+		$new = \str_replace($rightOperand->value, \null, $this->value);
 		return new self($new);
 
 	}
@@ -169,10 +160,10 @@ class StringValue extends Value implements
 	protected static function expandSequences(string $string) {
 
 		// Primi strings support some escape sequences.
-
-		$string = preg_replace(['#(?<!\\\)\\\n#', '/\\\\\\\n/'], ["\n", '\n'], $string);
-
-		return $string;
+		//return \str_replace('\n', "\n", $string);
+		//return \preg_replace('#(?<!\\\\)\\\\n#', "\n", $string);
+		$string = \preg_replace('#(?<!\\\\)\\\\n#', "\n", $string);
+		return \str_replace('\\\\', "\\", $string);
 
 	}
 

@@ -20,7 +20,7 @@ xc = c - j;
 xc_k = c - k;
 
 l = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(r"ann?o", "FAIL");
-m = "\ahoj\n\vo\le" - r"\\ahoj\s";
+m = "\\ahoj\n\\vo\\le" - r"\\ahoj\s";
 n = "a/b/c" - r"/b"; // Test proper handling of escaped regex delimiters.
 
 o = "[0-9]{5}".to_regex().match("abc00011234455");

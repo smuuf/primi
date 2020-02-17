@@ -21,7 +21,7 @@ class CompiledParser extends Parser\Packrat {
 
 # Carefully crafted (or stolen somewhere?) string matching regex which supports
 # both " and ' quotes, doesn't cause JIT stack overflow and also supports escaped quotes.
-StringLiteral: / (?:".*?(?<!\\)")|(?:'.*?(?<!\\)') /s
+StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
 NumberLiteral: /-?\d+(\.\d+)?/
 BoolLiteral: "true" | "false"
 NullLiteral: "null"

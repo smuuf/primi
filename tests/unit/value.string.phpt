@@ -22,14 +22,33 @@ $fns = ExtensionHub::get();
 $string = new StringValue("this is a string.");
 $letterA = new StringValue("a");
 $unicode = new StringValue("ťhiš íš á ŠTřing.");
-$withNewline = new StringValue('a \n b');
-$withNewlineLiteral = new StringValue('a \\\n b');
 
 //
-// Test sequence expanding...
+// Escaping sequences are NOT handled inside StringValue, but instead during the
+// handling of source code string literal.
 //
 
-Assert::same(2, count(explode("\n", get_val($withNewline))));
+$stringsWithEscapeSequences = [
+	'a\nb',
+	'a \n b',
+	'a \\n b',
+	'a\\n\nb',
+	'a\\\n\t\\tb',
+];
+foreach ($stringsWithEscapeSequences as $s) {
+	Assert::same($s, get_val(new StringValue($s)));
+}
+
+// Get correct repr - things should be quoted and escaped properly.
+// REMEMBER: Escape characters are NOT HANDLED when creating StringValue
+// objects. Whatever is put into StringValue as argument will literally be
+// what's inside.
+Assert::same('"\""', (new StringValue('"'))->getStringValue());
+Assert::same('"\\\\\""', (new StringValue('\\"'))->getStringValue());
+Assert::same('"\\\\\'"', (new StringValue("\'"))->getStringValue());
+Assert::same('"\\\\\\\\\'"', (new StringValue("\\\\'"))->getStringValue());
+Assert::same('"\\\\n"', (new StringValue('\n'))->getStringValue());
+Assert::same('"\\n"', (new StringValue("\n"))->getStringValue());
 
 //
 // Test adding and subtracting...
@@ -268,10 +287,6 @@ Assert::same(17, get_val($fns['string_length']->invoke([$string])));
 Assert::same(1, get_val($fns['string_length']->invoke([$letterA])));
 // Multibyte strings should report length correctly.
 Assert::same(17, get_val($fns['string_length']->invoke([$unicode])));
-// "\n" is expanded as newline - that's one character.
-Assert::same(5, get_val($fns['string_length']->invoke([$withNewline])));
-// "\\n" should not be expanded as newline
-Assert::same(6, get_val($fns['string_length']->invoke([$withNewlineLiteral])));
 
 //
 // Test replacing.
