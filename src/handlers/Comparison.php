@@ -2,17 +2,18 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
 use \Smuuf\Primi\InternalBinaryOperationException;
-use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\Context;
 
 /**
  * Node fields:
  * left: A "+" or "-" sign signalling the 'side' of the first operand.
  * right: List of operand nodes.
  */
-class Comparison extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
+class Comparison extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 
@@ -32,13 +33,15 @@ class Comparison extends \Smuuf\Primi\StrictObject implements IHandler, IReducer
 
 	}
 
-	public static function reduce(array $node) {
+	public static function reduce(array $node): ?array {
 
 		// If there is no operator, that means there's only one operand.
 		// In that case, return only the operand node inside.
 		if (!isset($node['ops'])) {
 			return $node['operands'];
 		}
+
+		return null;
 
 	}
 

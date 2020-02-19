@@ -2,11 +2,11 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\FuncValue;
-use \Smuuf\Primi\Structures\FnContainer;
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\Structures\FuncValue;
+use \Smuuf\Primi\Structures\FnContainer;
 
 /**
  * Node fields:
@@ -14,7 +14,9 @@ use \Smuuf\Primi\Helpers\Common;
  * args: List of arguments.
  * body: Node representing contents of code to execute as a function..
  */
-class FunctionDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
+class FunctionDefinition extends SimpleHandler {
+
+	const NODE_NEEDS_TEXT = true;
 
 	public static function handle(array $node, Context $context) {
 

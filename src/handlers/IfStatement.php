@@ -2,18 +2,19 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
-use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
 /**
  * Node fields:
  * left: A comparison expression node.
  * right: Node representing contents of code to execute if left-hand result is truthy.
  */
-class IfStatement extends \Smuuf\Primi\StrictObject implements IHandler {
+class IfStatement extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

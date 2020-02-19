@@ -2,7 +2,9 @@
 
 namespace Smuuf\Primi\Structures;
 
-class FuncValue extends Value {
+use \Smuuf\Primi\ISupportsInvocation;
+
+class FuncValue extends Value implements ISupportsInvocation {
 
 	const TYPE = "function";
 

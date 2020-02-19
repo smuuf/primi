@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
@@ -11,6 +11,7 @@ use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\IContext;
 use \Smuuf\Primi\IReadlineDriver;
+use \Smuuf\Primi\ErrorException;
 
 class Repl extends \Smuuf\Primi\StrictObject {
 
@@ -18,22 +19,22 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	const PRIMARY_PROMPT = '>>> ';
 	const MULTILINE_PROMPT = '... ';
 
-	/** @var string Full path to readline history file. **/
+	/** @var string Full path to readline history file. */
 	private $historyFilePath;
 
-	/** @var \Smuuf\Primi\Interpreter **/
+	/** @var Interpreter */
 	protected $interpreter;
 
-	/** @var \Smuuf\Primi\IReadlineDriver **/
+	/** @var IReadlineDriver */
 	protected $driver;
 
-	/** @var bool**/
+	/** @var bool */
 	protected $rawOutput = false;
 
 	public function __construct(
 		Interpreter $interpreter,
 		IReadlineDriver $driver = null,
-		$rawOutput = false
+		bool $rawOutput = false
 	) {
 
 		self::printHelp();
@@ -113,7 +114,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				$this->printResult($result);
 				echo "\n";
 
-			} catch (\Smuuf\Primi\ErrorException $e) {
+			} catch (ErrorException $e) {
 				$msg = $this->rawOutput
 					? "ERR: {$e->getMessage()}\n"
 					: Colors::get("{red}ERR:{_} {$e->getMessage()}\n");
@@ -121,7 +122,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			} catch (\Throwable $e) {
 				$msg = $this->rawOutput
 					? "PHP ERROR: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n"
-					: "{red}PHP ERROR:{_} {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
+					: Colors::get("{red}PHP ERROR:{_} {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n");
 				echo($msg);
 			}
 

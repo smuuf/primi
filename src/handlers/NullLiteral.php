@@ -2,10 +2,11 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\Structures\NullValue;
 
-class NullLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
+class NullLiteral extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 		return new NullValue;

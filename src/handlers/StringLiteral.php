@@ -1,14 +1,17 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\StringValue;
-use \Smuuf\Primi\Helpers\StringEscaping;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\Helpers\StringEscaping;
+use \Smuuf\Primi\Structures\StringValue;
 
-class StringLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
+class StringLiteral extends SimpleHandler {
+
+	const NODE_NEEDS_TEXT = true;
 
 	public static function handle(array $node, Context $context) {
 

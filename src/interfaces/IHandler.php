@@ -9,6 +9,8 @@ use \Smuuf\Primi\Context;
  */
 interface IHandler {
 
+	const NODE_NEEDS_TEXT = false;
+
 	public static function handle(array $node, Context $context);
 
 }

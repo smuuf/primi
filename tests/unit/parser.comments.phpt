@@ -50,14 +50,12 @@ function get_ast_array_simple(string $text) {
 
 	return array(
 		'name' => 'Program',
-		'text' => $text . "\n", // \n is added by ParserHandler::sanitizeSource()
 		'offset' => 0,
 		'nodes' =>
 		array(
 			0 =>
 			array(
 				'name' => 'Assignment',
-				'text' => 'a = 1',
 				'offset' => 0,
 				'left' =>
 				array(

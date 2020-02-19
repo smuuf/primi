@@ -2,16 +2,16 @@
 
 namespace Smuuf\Primi;
 
-use hafriedlander\Peg\Parser;
+use \hafriedlander\Peg\Parser;
 
 class CompiledParser extends Parser\Packrat {
 
 	// Add these properties so PHPStan doesn't complain about undefined properties.
 
-	/** @var int **/
+	/** @var int */
 	public $pos;
 
-	/** @var string **/
+	/** @var string */
 	public $string;
 
 /* StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s */

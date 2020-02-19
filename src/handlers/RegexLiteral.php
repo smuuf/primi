@@ -2,10 +2,11 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\Structures\RegexValue;
 
-class RegexLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
+class RegexLiteral extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

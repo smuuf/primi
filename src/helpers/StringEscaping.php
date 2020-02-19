@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
@@ -15,7 +15,7 @@ class StringEscaping extends \Smuuf\Primi\StrictObject {
 	 * supported escape sequence. Right side represents a result of such
 	 * sequence.
 	 *
-	 * @const
+	 * @const array
 	 */
 	private const ESCAPE_PAIRS = [
 		'\\\\' => "\\",
@@ -73,7 +73,7 @@ class StringEscaping extends \Smuuf\Primi\StrictObject {
 	 */
 	public static function escapeString(
 		string $str,
-		string $quoteChar = null
+		string $quoteChar = \null
 	): string {
 
 		foreach (self::ESCAPE_PAIRS as $out => $in) {
@@ -82,8 +82,8 @@ class StringEscaping extends \Smuuf\Primi\StrictObject {
 			// $out = '\n'
 
 			if (
-				$quoteChar !== null
-				&& in_array($in, self::QUOTE_CHARS, true)
+				$quoteChar !== \null
+				&& \in_array($in, self::QUOTE_CHARS, \true)
 				&& $in !== $quoteChar
 			) {
 				// Do not escape quote characters that aren't necessary to be
@@ -91,7 +91,7 @@ class StringEscaping extends \Smuuf\Primi\StrictObject {
 				continue;
 			}
 
-			$str = str_replace($in, $out, $str);
+			$str = \str_replace($in, $out, $str);
 
 		}
 

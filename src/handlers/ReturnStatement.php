@@ -2,11 +2,12 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ReturnException;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 
-class ReturnStatement extends \Smuuf\Primi\StrictObject implements IHandler {
+class ReturnStatement extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

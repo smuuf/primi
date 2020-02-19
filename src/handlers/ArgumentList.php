@@ -2,10 +2,10 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 
 /**
  * Node fields:
@@ -13,7 +13,7 @@ use \Smuuf\Primi\Helpers\Common;
  * args: List of arguments.
  * body: Node representing contents of code to execute as a function..
  */
-class ArgumentList extends \Smuuf\Primi\StrictObject implements IHandler {
+class ArgumentList extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

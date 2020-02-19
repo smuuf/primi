@@ -2,17 +2,21 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\ContinueException;
 use \Smuuf\Primi\BreakException;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\ContinueException;
+use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
-class WhileStatement extends \Smuuf\Primi\StrictObject implements IHandler {
+class WhileStatement extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	public static function handle(
+		array $node,
+		Context $context
+	) {
 
 		// Execute the left-hand node and get its return value.
 		$condHandler = HandlerFactory::get($node['left']['name']);

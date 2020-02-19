@@ -2,13 +2,14 @@
 
 namespace Smuuf\Primi\Handlers;
 
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\ArrayValue;
 use \Smuuf\Primi\Structures\NumberValue;
-use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Common;
 
-class ArrayDefinition extends \Smuuf\Primi\StrictObject implements IHandler {
+class ArrayDefinition extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

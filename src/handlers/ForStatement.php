@@ -2,11 +2,12 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ContinueException;
-use \Smuuf\Primi\BreakException;
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\BreakException;
+use \Smuuf\Primi\ContinueException;
+use \Smuuf\Primi\ISupportsIteration;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 
 /**
  * Node fields:
@@ -14,7 +15,7 @@ use \Smuuf\Primi\Context;
  * item: Variable name to store the single item in.
  * right: Node representing contents of code to execute while iterating the iterator structure.
  */
-class ForStatement extends \Smuuf\Primi\StrictObject implements IHandler {
+class ForStatement extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

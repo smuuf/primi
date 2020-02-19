@@ -12,10 +12,10 @@ use \Smuuf\Primi\InternalArgumentCountException;
 
 class FnContainer extends \Smuuf\Primi\StrictObject {
 
-	/** @var \Closure Closure wrapping the function itself. **/
+	/** @var \Closure Closure wrapping the function itself. */
 	protected $closure;
 
-	/** @var int Number of parameters the function is aware of. **/
+	/** @var int Number of parameters the function is aware of. */
 	protected $argsCount = 0;
 
 	/**

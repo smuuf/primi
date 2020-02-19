@@ -2,17 +2,21 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\InternalUndefinedIndexException;
-use \Smuuf\Primi\UndefinedIndexException;
-use \Smuuf\Primi\ISupportsArrayAccess;
-
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\Helpers\ChainedHandler;
+use \Smuuf\Primi\UndefinedIndexException;
+use \Smuuf\Primi\InternalUndefinedIndexException;
 
-class Dereference extends \Smuuf\Primi\StrictObject implements IChainedHandler {
+class Dereference extends ChainedHandler {
 
-	public static function chain(array $node, Context $context, \Smuuf\Primi\Structures\Value $subject) {
+	public static function chain(
+		array $node,
+		Context $context,
+		Value $subject
+	) {
 
 		if (!$subject instanceof ISupportsArrayAccess) {
 			throw new \Smuuf\Primi\ErrorException(\sprintf(

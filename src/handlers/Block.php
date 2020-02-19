@@ -2,19 +2,19 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 
-class Block extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
+class Block extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 
 		// This handler shouldn't even be needed, if it had an inside node.
-		// This method is here just to implement the IHandler interface.
+		// This method is here just to fulfill the handler abstact function.
 
 	}
 
-	public static function reduce(array $node) {
+	public static function reduce(array $node): ?array {
 
 		// ParserHandler reduces the "skip" node automatically.
 		// But if it is not present, a more complex node would be returned,

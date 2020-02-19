@@ -4,8 +4,9 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\BreakException;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 
-class BreakStatement extends \Smuuf\Primi\StrictObject implements IHandler {
+class BreakStatement extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 		throw new BreakException;

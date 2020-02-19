@@ -4,9 +4,6 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\Handlers\IReducer;
-
-use \hafriedlander\Peg\Parser;
 
 class ParserHandler extends CompiledParser {
 
@@ -64,7 +61,7 @@ class ParserHandler extends CompiledParser {
 		$pos = \false;
 
 		if ($position !== \false) {
-			list($line, $pos) = Common::getPositionEstimate($this->source, $position);
+			[$line, $pos] = Common::getPositionEstimate($this->source, $position);
 		}
 
 		throw new SyntaxErrorException($msg, $line, $pos);
@@ -97,41 +94,27 @@ class ParserHandler extends CompiledParser {
 	 */
 	protected static function reduceNode(array $node) {
 
-		static $reducers = [];
+		static $handlers = [];
 
 		// If node has "skip" node defined, replace the whole node with the
 		// "skip" subnode.
-		if (isset($node['skip'])) {
-			return self::reduceNode($node['skip']);
+		while ($inner = ($node['skip'] ?? false)) {
+			$node = $inner;
 		}
 
-		$name = $node['name'] ?? false;
-		if ($name !== false) {
+		if ($name = $node['name'] ?? false) {
+			if ($handler = HandlerFactory::get($name)) {
 
-			// We have a reducer existence state saved in cache.
-			if (isset($reducers[$name])) {
-
-				// Reducer does really exists.
-				if ($reducers[$name] !== false) {
-					if ($reduced = $reducers[$name]::reduce($node)) {
-						return self::reduceNode($reduced);
-					}
+				if (!$handler::NODE_NEEDS_TEXT) {
+					unset($node['text']);
 				}
 
-			} else {
-
-				$handler = HandlerFactory::get($name);
-				$reducers[$name] = false;
-
-				if (\is_subclass_of($handler, IReducer::class)) {
-					$reducers[$name] = $handler;
-					if ($reduced = $handler::reduce($node)) {
-						return self::reduceNode($reduced);
-					}
+				$reduced = $handler::reduce($node);
+				if ($reduced !== null) {
+					$node = self::reduceNode($reduced);
 				}
 
 			}
-
 		}
 
 		unset($node['_matchrule']);

@@ -155,17 +155,7 @@ class StringValue extends Value implements
 		return self::utfSplit($this->value);
 	}
 
-	// Helpers
-
-	protected static function expandSequences(string $string) {
-
-		// Primi strings support some escape sequences.
-		//return \str_replace('\n', "\n", $string);
-		//return \preg_replace('#(?<!\\\\)\\\\n#', "\n", $string);
-		$string = \preg_replace('#(?<!\\\\)\\\\n#', "\n", $string);
-		return \str_replace('\\\\', "\\", $string);
-
-	}
+	// Helpers.
 
 	/**
 	 * Return a generator yielding each of this string's characters as

@@ -105,9 +105,9 @@ class NumberValue extends Value implements
 		if ($right instanceof StringValue) {
 			switch ($op) {
 				case "==":
-					return new BoolValue(false);
+					return new BoolValue(\false);
 				case "!=":
-					return new BoolValue(true);
+					return new BoolValue(\true);
 			}
 			throw new \TypeError;
 		}

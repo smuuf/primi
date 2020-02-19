@@ -2,14 +2,15 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Context;
+use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
-class Negation extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
+class Negation extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 
@@ -36,13 +37,15 @@ class Negation extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 	}
 
-	public static function reduce(array $node) {
+	public static function reduce(array $node): ?array {
 
 		// If this truly has a negation, do not reduce this node.
 		// If not, return only core.
 		if (!isset($node['nots'])) {
 			return $node['core'];
 		}
+
+		return null;
 
 	}
 

@@ -6,7 +6,7 @@ use \Smuuf\Primi\Structures\NullValue;
 
 class ReturnException extends InternalException {
 
-	/** @var mixed **/
+	/** @var mixed */
 	protected $value;
 
 	public function __construct($value) {

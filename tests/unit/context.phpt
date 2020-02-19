@@ -6,7 +6,7 @@ use \Smuuf\Primi\Structures\FnContainer;
 
 require __DIR__ . '/../bootstrap.php';
 
-/** @testcase **/
+/** @testcase */
 (new class extends \Tester\TestCase {
 
 	public function testVariables() {

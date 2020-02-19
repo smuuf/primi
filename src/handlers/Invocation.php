@@ -2,20 +2,25 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\FuncValue;
-use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\InternalArgumentCountException;
+use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\InternalException;
-use \Smuuf\Primi\Context;
+use \Smuuf\Primi\ISupportsInvocation;
+use \Smuuf\Primi\Helpers\ChainedHandler;
+use \Smuuf\Primi\InternalArgumentCountException;
 
-class Invocation extends \Smuuf\Primi\StrictObject implements IChainedHandler {
+class Invocation extends ChainedHandler {
 
-	public static function chain(array $node, Context $context, Value $fn) {
+	public static function chain(
+		array $node,
+		Context $context,
+		Value $fn
+	) {
 
-		if (!$fn instanceof FuncValue) {
+		if (!$fn instanceof ISupportsInvocation) {
 			throw new ErrorException(
 				sprintf("Trying to invoke a non-function '%s'", $fn::TYPE),
 				$node

@@ -5,10 +5,11 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\InternalUndefinedVariableException;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\UndefinedVariableException;
+use \Smuuf\Primi\InternalUndefinedVariableException;
 
-class Variable extends \Smuuf\Primi\StrictObject implements IHandler {
+class Variable extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

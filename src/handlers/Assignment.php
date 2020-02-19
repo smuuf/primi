@@ -2,15 +2,12 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\InsertionProxy;
 
-use \Smuuf\Primi\ISupportsArrayAccess;
-use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Context;
-
-class Assignment extends \Smuuf\Primi\StrictObject implements IHandler {
+class Assignment extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 

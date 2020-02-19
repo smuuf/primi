@@ -2,10 +2,11 @@
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 
-class Operand extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
+class Operand extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 
@@ -23,11 +24,11 @@ class Operand extends \Smuuf\Primi\StrictObject implements IHandler, IReducer {
 
 	}
 
-	public static function reduce(array $node) {
+	public static function reduce(array $node): ?array {
 
 		// If this node has a value method call with it, don't reduce it.
 		if (isset($node['chain'])) {
-			return;
+			return null;
 		}
 
 		// Otherwise reduce it to just the core node.

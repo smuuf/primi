@@ -3,10 +3,13 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\NumberValue;
+use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
 
-class NumberLiteral extends \Smuuf\Primi\StrictObject implements IHandler {
+class NumberLiteral extends SimpleHandler {
+
+	const NODE_NEEDS_TEXT = true;
 
 	public static function handle(array $node, Context $context) {
 

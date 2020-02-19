@@ -6,9 +6,10 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Handlers\Variable;
+use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\UndefinedVariableException;
 
-class ChainedFunction extends \Smuuf\Primi\StrictObject implements IChainedHandler {
+class ChainedFunction extends ChainedHandler {
 
 	public static function chain(
 		array $node,

@@ -17,9 +17,9 @@ $commands = [
 
 // This is expected output. This will be compared with actual output down below.
 $expected = [
-	"ERR: Undefined variable 'a' @ line 1, position 0, code: a",
+	"ERR: Undefined variable 'a' @ line 1, position 0",
 	"1",
-	"ERR: Undefined variable 'b' @ line 1, position 0, code: b",
+	"ERR: Undefined variable 'b' @ line 1, position 0",
 	"1",
 	"a: 1\n_: 1",
 	"function",
