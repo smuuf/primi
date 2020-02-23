@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d85ace6c33c5e1598cc7ceb81b3ad6f",
+    "content-hash": "c0b80335570fe88dd5879f272b19a332",
     "packages": [
         {
             "name": "smuuf/php-peg",
-            "version": "2.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smuuf/php-peg.git",
-                "reference": "a50922612302a9366a62f7541649e85dee504af3"
+                "reference": "146375d8655450d149fe730738b7cd8c0a050af3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/a50922612302a9366a62f7541649e85dee504af3",
-                "reference": "a50922612302a9366a62f7541649e85dee504af3",
+                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/146375d8655450d149fe730738b7cd8c0a050af3",
+                "reference": "146375d8655450d149fe730738b7cd8c0a050af3",
                 "shasum": ""
             },
             "require": {
@@ -46,6 +46,10 @@
                     "role": "Developer"
                 },
                 {
+                    "name": "Premysl Karbula",
+                    "role": "Developer"
+                },
+                {
                     "name": "Johannes Künsebeck",
                     "email": "kuensebeck@googlemail.com",
                     "role": "Developer"
@@ -53,10 +57,6 @@
                 {
                     "name": "Dan Phillimore",
                     "email": "dan@ovms.co",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Premysl Karbula",
                     "role": "Developer"
                 }
             ],
@@ -68,7 +68,10 @@
                 "parser",
                 "peg"
             ],
-            "time": "2018-03-08T00:01:30+00:00"
+            "support": {
+                "source": "https://github.com/smuuf/php-peg/tree/2.1.2"
+            },
+            "time": "2020-02-23T01:01:34+00:00"
         }
     ],
     "packages-dev": [
@@ -133,20 +136,24 @@
                 "testing",
                 "unit"
             ],
+            "support": {
+                "issues": "https://github.com/nette/tester/issues",
+                "source": "https://github.com/nette/tester/tree/master"
+            },
             "time": "2019-11-19T13:19:16+00:00"
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.7",
+            "version": "0.12.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "07fa7958027fd98c567099bbcda5d6a0f2ec5197"
+                "reference": "ca5f2b7cf81c6d8fba74f9576970399c5817e03b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/07fa7958027fd98c567099bbcda5d6a0f2ec5197",
-                "reference": "07fa7958027fd98c567099bbcda5d6a0f2ec5197",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ca5f2b7cf81c6d8fba74f9576970399c5817e03b",
+                "reference": "ca5f2b7cf81c6d8fba74f9576970399c5817e03b",
                 "shasum": ""
             },
             "require": {
@@ -172,7 +179,11 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-01-20T21:59:06+00:00"
+            "support": {
+                "issues": "https://github.com/phpstan/phpstan/issues",
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.11"
+            },
+            "time": "2020-02-16T14:00:29+00:00"
         },
         {
             "name": "smuuf/koloader",
@@ -201,13 +212,6 @@
             "license": [
                 "MIT"
             ],
-            "authors": [
-                {
-                    "name": "Premysl Karbula",
-                    "email": "premavansmuuf@gmail.com",
-                    "homepage": "http://www.premyslkarbula.cz"
-                }
-            ],
             "description": "A lightweight directory-sniffing autoloader with caching.",
             "time": "2016-01-28T05:22:45+00:00"
         },
@@ -232,12 +236,6 @@
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Premysl Karbula",
-                    "email": "premavansmuuf@gmail.com"
-                }
-            ],
             "description": "PHP Code Benchmark",
             "time": "2017-10-05T22:41:27+00:00"
         }
