@@ -49,9 +49,7 @@ require __DIR__ . '/../bootstrap.php';
 		], $context->getVariables());
 
 		// Test accessing undefined variable.
-		Assert::exception(function() use ($context) {
-			$context->getVariable('some_undefined_variable');
-		}, \Smuuf\Primi\InternalUndefinedVariableException::class);
+		Assert::null($context->getVariable('some_undefined_variable'));
 
 		// Test automatic value creation from scalars.
 		$context->setVariables([
@@ -104,9 +102,7 @@ require __DIR__ . '/../bootstrap.php';
 		], $context->getVariables());
 
 		// Test accessing undefined function.
-		Assert::exception(function() use ($context) {
-			$context->getVariable('some_undefined_function');
-		}, \Smuuf\Primi\InternalUndefinedVariableException::class);
+		Assert::null($context->getVariable('some_undefined_function'));
 
 	}
 

@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\BinaryLTR;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\InternalBinaryOperationException;
@@ -34,15 +35,15 @@ abstract class CommonMathHandler extends SimpleHandler {
 
 	}
 
-	public static function reduce(array $node): ?array {
+	public static function reduce(array &$node): void {
 
 		// If there is no operator, then there's no need to keep this as
 		// a complex node of this type. Reduce this node to its only operand.
 		if (!isset($node['ops'])) {
-			return $node['operands'];
+			$node = $node['operands'];
+		} else {
+			$node['ops'] = Common::ensureIndexed($node['ops']);
 		}
-
-		return null;
 
 	}
 

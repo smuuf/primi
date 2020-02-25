@@ -8,32 +8,33 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
 
-/**
- * Node fields:
- * function: Function name.
- * args: List of arguments.
- * body: Node representing contents of code to execute as a function..
- */
 class FunctionDefinition extends SimpleHandler {
 
 	const NODE_NEEDS_TEXT = true;
 
 	public static function handle(array $node, Context $context) {
 
-		$functionName = $node['function']['text'];
-		$argumentList = [];
+		$fnc = FnContainer::build($node['body'], $node['params'], $context);
+		$context->setVariable($node['fnName'], new FuncValue($fnc));
 
-		if (isset($node['args'])) {
+	}
 
-			Common::ensureIndexed($node['args']);
-			foreach ($node['args'] as $a) {
-				$argumentList[] = $a['text'];
+	public static function reduce(array &$node): void {
+
+		// Prepare function name.
+		$node['fnName'] = $node['function']['text'];
+		unset($node['function']);
+
+		// Prepare list of parameters.
+		$params = [];
+		if (isset($node['params'])) {
+			// Make sure this is always list, even with one item.
+			$node['params'] = Common::ensureIndexed($node['params']);
+			foreach ($node['params'] as $a) {
+				$params[] = $a['text'];
 			}
-
 		}
-
-		$fnc = FnContainer::build($node['body'], $argumentList, $context);
-		$context->setVariable($functionName, new FuncValue($fnc));
+		$node['params'] = $params;
 
 	}
 

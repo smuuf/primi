@@ -8,28 +8,28 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
 
-/**
- * Node fields:
- * function: Function name.
- * args: List of arguments.
- * body: Node representing contents of code to execute as a function..
- */
 class AnonymousFunction extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 
-		$argumentList = [];
-		if (isset($node['args'])) {
+		$fn = FnContainer::build($node['body'], $node['params'], $context);
+		return new FuncValue($fn);
 
-			Common::ensureIndexed($node['args']);
-			foreach ($node['args'] as $a) {
-				$argumentList[] = $a['text'];
+	}
+
+	public static function reduce(array &$node): void {
+
+		// Prepare list of parameters.
+		$params = [];
+		if (isset($node['params'])) {
+			// Make sure this is always list, even with one item.
+			$node['params'] = Common::ensureIndexed($node['params']);
+			foreach ($node['params'] as $p) {
+				$params[] = $p['text'];
 			}
-
 		}
 
-		$fn = FnContainer::build($node['body'], $argumentList, $context);
-		return new FuncValue($fn);
+		$node['params'] = $params;
 
 	}
 

@@ -32,13 +32,13 @@ Assert::same(get_ast_array_simple($code), get_ast($code));
 //
 
 $code = 'a = "after // slashes"';
-Assert::same('"after // slashes"', get_ast($code)['nodes'][0]['right']['text']);
+Assert::same('after // slashes', get_ast($code)['stmts'][0]['right']['text']);
 
 $code = 'a = "after // slashes"//with comment';
-Assert::same('"after // slashes"', get_ast($code)['nodes'][0]['right']['text']);
+Assert::same('after // slashes', get_ast($code)['stmts'][0]['right']['text']);
 
 $code = 'a = "after // slashes//";//with comment';
-Assert::same('"after // slashes//"', get_ast($code)['nodes'][0]['right']['text']);
+Assert::same('after // slashes//', get_ast($code)['stmts'][0]['right']['text']);
 
 // Helpers.
 
@@ -46,39 +46,35 @@ function get_ast(string $source) {
 	return (new \Smuuf\Primi\ParserHandler($source))->run();
 }
 
-function get_ast_array_simple(string $text) {
+function get_ast_array_simple() {
 
 	return array(
 		'name' => 'Program',
-		'offset' => 0,
-		'nodes' =>
+		'stmts' =>
 		array(
 			0 =>
 			array(
 				'name' => 'Assignment',
-				'offset' => 0,
 				'left' =>
 				array(
 					'name' => 'VariableName',
 					'text' => 'a',
-					'offset' => 0,
-					'line' => 1,
-					'pos' => 0,
+					'_l' => 1,
+					'_p' => 0,
 				),
 				'right' =>
 				array(
 					'name' => 'NumberLiteral',
 					'text' => '1',
-					'offset' => 4,
-					'line' => 1,
-					'pos' => 4,
+					'_l' => 1,
+					'_p' => 4,
 				),
-				'line' => 1,
-				'pos' => 0,
+				'_l' => 1,
+				'_p' => 0,
 			),
 		),
-		'line' => 1,
-		'pos' => 0,
+		'_l' => 1,
+		'_p' => 0,
 	); // thx to var_export();
 
 }

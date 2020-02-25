@@ -17,7 +17,6 @@ class ArrayDefinition extends SimpleHandler {
 			return new ArrayValue([]);
 		}
 
-		Common::ensureIndexed($node['items']);
 		return new ArrayValue(self::buildArray($node['items'], $context));
 
 	}
@@ -59,6 +58,15 @@ class ArrayDefinition extends SimpleHandler {
 		}
 
 		return $result;
+
+	}
+
+	public static function reduce(array &$node): void {
+
+		// Make sure this is always list, even with one item.
+		if (isset($node['items'])) {
+			$node['items'] = Common::ensureIndexed($node['items']);
+		}
 
 	}
 

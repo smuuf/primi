@@ -58,7 +58,7 @@ class Context extends StrictObject implements IContext {
 
 	}
 
-	public function getVariable(string $name): Value {
+	public function getVariable(string $name): ?Value {
 
 		// Variables of current context instance have higher priority than
 		// global variables.
@@ -70,7 +70,9 @@ class Context extends StrictObject implements IContext {
 			return self::$globals[$name];
 		}
 
-		throw new InternalUndefinedVariableException($name);
+		// This should be slightly faster than throwsin exceptions for undefined
+		// variables.
+		return null;
 
 	}
 

@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsComparison;
 
-class RegexValue extends Value implements
-	ISupportsComparison
-{
+class RegexValue extends Value implements ISupportsComparison {
 
 	const TYPE = "regex";
 
@@ -34,11 +34,11 @@ class RegexValue extends Value implements
 		Common::allowTypes($rightOperand, StringValue::class, NumberValue::class);
 
 		if ($operator === "==") {
-			return new BoolValue(\preg_match($this->value, $rightOperand->value));
+			return new BoolValue((bool) \preg_match($this->value, $rightOperand->value));
 		}
 
 		if ($operator === "!=") {
-			return new BoolValue(!\preg_match($this->value, $rightOperand->value));
+			return new BoolValue((bool) !\preg_match($this->value, $rightOperand->value));
 		}
 
 		throw new \TypeError;

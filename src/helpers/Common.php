@@ -74,12 +74,8 @@ abstract class Common extends \Smuuf\Primi\StrictObject {
 	 * This comes handy if we want to be sure that multiple sub-nodes (which PHP-PEG parser returns) are universally
 	 * iterable.
 	 */
-	public static function ensureIndexed(array &$array): void {
-
-		if (!isset($array[0])) {
-			$array = [$array];
-		}
-
+	public static function ensureIndexed(array $array): array {
+		return !isset($array[0]) ? [$array] : $array;
 	}
 
 	public static function hash(...$args): string {

@@ -7,30 +7,8 @@ use \Smuuf\Primi\Helpers\Common;
 
 class ParserHandler extends CompiledParser {
 
-	const RESERVED_WORDS = [
-		'echo',
-	];
-
 	private $source;
 	protected $tree = [];
-
-	// Begin.
-
-	public function Program__construct(&$result) {
-		$result['nodes'] = [];
-	}
-
-	public function Program_Statement(&$result, $s) {
-		$result['nodes'][] = $s;
-	}
-
-	public function VariableCore__finalise(&$result) {
-		if (\in_array($result['text'], self::RESERVED_WORDS)) {
-			$this->error(sprintf("Syntax error: '%s' is a reserved word", $result['text']), $this->pos);
-		}
-	}
-
-	// End.
 
 	public function __construct($source) {
 
@@ -81,10 +59,31 @@ class ParserHandler extends CompiledParser {
 
 	protected static function processAST(array $ast, string $source): array {
 
+		$ast = self::preprocessNode($ast);
 		$ast = self::reduceNode($ast);
 		$ast = self::addPositions($ast, $source);
 
 		return $ast;
+
+	}
+	/**
+	 * Go recursively through each of the nodes and strip unecessary data
+	 * in the abstract syntax tree.
+	 */
+	protected static function preprocessNode(array $node) {
+
+		// If node has "skip" node defined, replace the whole node with the
+		// "skip" subnode.
+		foreach ($node as $key => &$item) {
+			if ($key === 'skip') {
+				return self::preprocessNode($item);
+			}
+			if (\is_array($item)) {
+				$item = self::preprocessNode($item);
+			}
+		}
+
+		return $node;
 
 	}
 
@@ -94,37 +93,36 @@ class ParserHandler extends CompiledParser {
 	 */
 	protected static function reduceNode(array $node) {
 
-		static $handlers = [];
-
-		// If node has "skip" node defined, replace the whole node with the
-		// "skip" subnode.
-		while ($inner = ($node['skip'] ?? false)) {
+		while ($inner = ($node['skip'] ?? \false)) {
 			$node = $inner;
 		}
 
-		if ($name = $node['name'] ?? false) {
-			if ($handler = HandlerFactory::get($name)) {
-
-				if (!$handler::NODE_NEEDS_TEXT) {
-					unset($node['text']);
-				}
-
-				$reduced = $handler::reduce($node);
-				if ($reduced !== null) {
-					$node = self::reduceNode($reduced);
-				}
-
-			}
-		}
-
-		unset($node['_matchrule']);
-
-		foreach ($node as &$item) {
-			if (is_array($item)) {
+		foreach ($node as $key => &$item) {
+			if (\is_array($item)) {
 				$item = self::reduceNode($item);
 			}
 		}
 
+		if (
+			($name = $node['name'] ?? \false)
+			&& ($handler = HandlerFactory::get($name, \false))
+		) {
+
+			// Remove text from nodes that don't need it.
+			if (!$handler::NODE_NEEDS_TEXT) {
+				unset($node['text']);
+			}
+
+			// If a handler knows how to reduce its node, let it.
+			$reduced = $handler::reduce($node);
+			// If anything changed, reduce that node further.
+			$node = $reduced !== \null && $reduced !== $node
+				? self::reduceNode($reduced)
+				: $node;
+
+		}
+
+		unset($node['_matchrule']);
 		return $node;
 
 	}
@@ -137,15 +135,21 @@ class ParserHandler extends CompiledParser {
 
 		if (isset($node['offset'])) {
 
-			list($line, $pos) = Common::getPositionEstimate($source, $node['offset']);
-			$node['line'] = $line;
-			$node['pos'] = $pos;
+			[$line, $pos] = Common::getPositionEstimate(
+				$source, $node['offset']
+			);
+
+			$node['_l'] = $line;
+			$node['_p'] = $pos;
+
+			// Offset no longer necessary.
+			unset($node['offset']);
 
 		}
 
-		foreach ($node as $k => &$v) {
-			if (\is_array($v)) {
-				$v = self::addPositions($v, $source);
+		foreach ($node as &$item) {
+			if (\is_array($item)) {
+				$item = self::addPositions($item, $source);
 			}
 		}
 

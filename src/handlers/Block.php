@@ -8,21 +8,8 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 class Block extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
-
 		// This handler shouldn't even be needed, if it had an inside node.
 		// This method is here just to fulfill the handler abstact function.
-
-	}
-
-	public static function reduce(array $node): ?array {
-
-		// ParserHandler reduces the "skip" node automatically.
-		// But if it is not present, a more complex node would be returned,
-		// because it's not going to be automatically reduced.
-
-		// We don't want that. Return an empty array instead.
-		return [];
-
 	}
 
 }
