@@ -18,9 +18,6 @@ abstract class LeftToRightEvaluation extends \Smuuf\Primi\StrictObject {
 
 	public static function handle(array $node, Context $context): Value {
 
-		// Make sure even a single operand can be processed via foreach.
-		Common::ensureIndexed($node['ops']);
-
 		$operands = $node['operands'];
 
 		$firstOperand = array_shift($operands);

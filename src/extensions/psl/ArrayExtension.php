@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
@@ -21,20 +23,19 @@ class ArrayExtension extends Extension {
 	public static function array_length(ArrayValue $arr): NumberValue {
 		return new NumberValue((string) count($arr->value));
 	}
-
 	public static function array_reverse(ArrayValue $arr): Value {
-		return new ArrayValue(array_reverse($arr->value));
+		return new ArrayValue(\array_reverse($arr->value));
 	}
 
 	public static function array_random(ArrayValue $arr): Value {
-		return $arr->value[array_rand($arr->value)];
+		return $arr->value[\array_rand($arr->value)];
 	}
 
 	public static function array_shuffle(ArrayValue $arr): ArrayValue {
 
 		// Do NOT modify the original array argument (as PHP would do).
 		$copy = clone $arr;
-		shuffle($copy->value);
+		\shuffle($copy->value);
 
 		return $copy;
 
@@ -71,7 +72,7 @@ class ArrayExtension extends Extension {
 
 	}
 
-	public static function array_get(ArrayValue $arr, Value $key, Value $default = null): Value {
+	public static function array_get(ArrayValue $arr, Value $key, Value $default = \null): Value {
 
 		// Allow only some value types.
 		Common::allowTypes($key, StringValue::class, NumberValue::class);
@@ -86,7 +87,7 @@ class ArrayExtension extends Extension {
 
 		// We must convert Primi values back to PHP values for the
 		// array_count_values function to work.
-		$phpValues = array_map(function($item) {
+		$phpValues = \array_map(function($item) {
 			return $item->value;
 		}, $arr->value);
 
@@ -97,9 +98,9 @@ class ArrayExtension extends Extension {
 
 	}
 
-	public static function array_push(ArrayValue $arr, Value $value): Value {
+	public static function array_push(ArrayValue $arr, Value $value): NullValue {
 		$arr->value[] = $value;
-		return $value;
+		return new NullValue;
 	}
 
 	public static function array_pop(ArrayValue $arr): Value {

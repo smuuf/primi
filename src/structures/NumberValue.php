@@ -32,18 +32,7 @@ class NumberValue extends Value implements
 	}
 
 	public static function isNumericInt(string $input) {
-
-		// Trim any present sign, because it screws up the detection.
-		// "+1" _is_ int, but the equation below would wrongly return false,
-		// because it's casted to (int) and the sign disappears there -> false.
-		$input = \ltrim($input, "+-");
-
-		// The same with zeroes at the beginning.
-		// But only if the input is not a zero.
-		$input = $input !== "0" ? \ltrim($input, "0") : $input;
-
-		return (string) (int) $input === (string) $input;
-
+		return \ctype_digit(\ltrim($input, "+-"));
 	}
 
 	public static function isNumeric(string $input): bool {
@@ -58,8 +47,10 @@ class NumberValue extends Value implements
 	}
 
 	public function doSubtraction(Value $right): self {
+
 		Common::allowTypes($right, self::class);
 		return new self($this->value - $right->value);
+
 	}
 
 	public function doMultiplication(Value $right) {

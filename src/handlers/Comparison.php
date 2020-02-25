@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
 use \Smuuf\Primi\InternalBinaryOperationException;
@@ -33,15 +34,15 @@ class Comparison extends SimpleHandler {
 
 	}
 
-	public static function reduce(array $node): ?array {
+	public static function reduce(array &$node): void {
 
 		// If there is no operator, that means there's only one operand.
 		// In that case, return only the operand node inside.
 		if (!isset($node['ops'])) {
-			return $node['operands'];
+			$node = $node['operands'];
+		} else {
+			$node['ops'] = Common::ensureIndexed($node['ops']);
 		}
-
-		return null;
 
 	}
 

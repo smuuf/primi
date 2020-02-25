@@ -40,9 +40,6 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 	public static function handle(array $node, Context $context): BoolValue {
 
-		// Make sure even a single operand can be processed via foreach.
-		Common::ensureIndexed($node['ops']);
-
 		$operands = $node['operands'];
 		$result = true;
 

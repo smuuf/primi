@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Structures\StringValue;
@@ -19,9 +21,7 @@ class RegexExtension extends Extension {
 		StringValue $haystack
 	): Value {
 
-		$match = \preg_match($regex->value, $haystack->value, $matches);
-
-		if (!$match) {
+		if (!\preg_match($regex->value, $haystack->value, $matches)) {
 			return new BoolValue(false);
 		}
 

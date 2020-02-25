@@ -18,7 +18,7 @@
 	},
 	"require": {
 		"php": ">=7.1",
-		"smuuf/php-peg": "^2"
+		"smuuf/php-peg": "=2.1.2"
 	},
 	"require-dev": {
 		"smuuf/koloader": "dev-master",

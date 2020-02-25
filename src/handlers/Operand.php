@@ -24,15 +24,12 @@ class Operand extends SimpleHandler {
 
 	}
 
-	public static function reduce(array $node): ?array {
+	public static function reduce(array &$node): void {
 
 		// If this node has a value method call with it, don't reduce it.
-		if (isset($node['chain'])) {
-			return null;
+		if (!isset($node['chain'])) {
+			$node = $node['core'];
 		}
-
-		// Otherwise reduce it to just the core node.
-		return $node['core'];
 
 	}
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
@@ -18,13 +20,13 @@ class StringExtension extends Extension {
 
 		// str_shuffle() doesn't work with unicode, so let's do this ourselves.
 		$original = $str->value;
-		$length = mb_strlen($original);
-		$indices = range(0, $length - 1);
-		shuffle($indices);
+		$length = \mb_strlen($original);
+		$indices = \range(0, $length - 1);
+		\shuffle($indices);
 		$result = "";
 
-		while (($i = array_pop($indices)) !== null) {
-			$result .= mb_substr($original, $i, 1);
+		while (($i = \array_pop($indices)) !== \null) {
+			$result .= \mb_substr($original, $i, 1);
 		}
 
 		return new StringValue($result);
@@ -45,7 +47,7 @@ class StringExtension extends Extension {
 
 		$passedCount = \count($items);
 		$expectedCount = 0;
-		$indexedMode = null;
+		$indexedMode = \null;
 
 		// Convert {} syntax to a something sprintf() understands.
 		// {} will be converted to "%s", positional {456} will be converted to
@@ -58,26 +60,26 @@ class StringExtension extends Extension {
 
 			if (isset($m[1])) {
 
-				if ($indexedMode === false) {
+				if ($indexedMode === \false) {
 					// A positional placeholder was used when a non-positional
 					// one is already present.
 					throw new ErrorException(
-						sprintf("Cannot combine positional and non-positional placeholders.")
+						\sprintf("Cannot combine positional and non-positional placeholders.")
 					);
 				}
 
-				$indexedMode = true;
+				$indexedMode = \true;
 				$index = $m[1];
 
 				if ($index < 0) {
 					throw new ErrorException(
-						sprintf("Position (%s) cannot be less than 0.", $index)
+						\sprintf("Position (%s) cannot be less than 0.", $index)
 					);
 				}
 
 				if ($index > $passedCount) {
 					throw new ErrorException(
-						sprintf("Position (%s) does not match the number of parameters (%s).", $index, $passedCount)
+						\sprintf("Position (%s) does not match the number of parameters (%s).", $index, $passedCount)
 					);
 				}
 
@@ -85,7 +87,7 @@ class StringExtension extends Extension {
 
 			} else {
 
-				if ($indexedMode === true) {
+				if ($indexedMode === \true) {
 					// A non-positional placeholder was used when a positional
 					// one is already present.
 					throw new ErrorException(
@@ -93,7 +95,7 @@ class StringExtension extends Extension {
 					);
 				}
 
-				$indexedMode = false;
+				$indexedMode = \false;
 				$converted = "%s";
 
 			}
@@ -106,7 +108,7 @@ class StringExtension extends Extension {
 		// If there are more args expected than passed, throw error.
 		if ($expectedCount > $passedCount) {
 			throw new ErrorException(
-				sprintf(
+				\sprintf(
 					"Not enough arguments passed (expected %s, got %s).",
 					$expectedCount,
 					$passedCount
@@ -140,12 +142,18 @@ class StringExtension extends Extension {
 		}
 
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
-
 			// Handle both string/number values the same way.
-			return new StringValue(\str_replace((string) $search->value, $replace->value, $self->value));
-
+			return new StringValue(
+				\str_replace(
+					(string) $search->value, $replace->value, $self->value
+				)
+			);
 		} elseif ($search instanceof RegexValue) {
-			return new StringValue(\preg_replace($search->value, $replace->value, $self->value));
+			return new StringValue(
+				\preg_replace(
+					$search->value, $replace->value, $self->value
+				)
+			);
 		} else {
 			throw new \TypeError;
 		}
@@ -158,10 +166,10 @@ class StringExtension extends Extension {
 		// Let's do it ourselves then!
 
 		$result = '';
-		$len = mb_strlen($self->value);
+		$len = \mb_strlen($self->value);
 
 		for ($i = $len; $i-- > 0;) {
-			$result .= mb_substr($self->value, $i, 1);
+			$result .= \mb_substr($self->value, $i, 1);
 		}
 
 		return new StringValue($result);
@@ -174,11 +182,11 @@ class StringExtension extends Extension {
 		Common::allowTypes($delimiter, StringValue::class, RegexValue::class);
 
 		if ($delimiter instanceof RegexValue) {
-			$splat = preg_split($delimiter->value, $self->value);
+			$splat = \preg_split($delimiter->value, $self->value);
 		}
 
 		if ($delimiter instanceof StringValue) {
-			$splat = explode($delimiter->value, $self->value);
+			$splat = \explode($delimiter->value, $self->value);
 		}
 
 		return new ArrayValue(array_map(function($part) {
@@ -190,14 +198,20 @@ class StringExtension extends Extension {
 	public static function string_contains(StringValue $self, Value $needle): BoolValue {
 
 		// Allow only some value types.
-		Common::allowTypes($needle, StringValue::class, NumberValue::class, RegexValue::class);
+		Common::allowTypes(
+			$needle, StringValue::class, NumberValue::class, RegexValue::class
+		);
 
 		if ($needle instanceof RegexValue) {
-			return new BoolValue(preg_match($needle->value, $self->value));
+			return new BoolValue(
+				(bool) \preg_match((string) $needle->value, (string) $self->value)
+			);
 		}
 
 		// Let's search the $needle object in $arr's value (array of objects).
-		return new BoolValue(mb_strpos($self->value, $needle->value) !== \false);
+		return new BoolValue(
+			\mb_strpos((string) $self->value, (string) $needle->value) !== \false
+		);
 
 	}
 
@@ -206,7 +220,11 @@ class StringExtension extends Extension {
 		// Allow only some value types.
 		Common::allowTypes($needle, StringValue::class, NumberValue::class);
 
-		return new NumberValue(\mb_substr_count($self->value, $needle->value));
+		return new NumberValue(
+			(string) \mb_substr_count(
+				(string) $self->value, (string) $needle->value
+			)
+		);
 
 	}
 
@@ -217,7 +235,7 @@ class StringExtension extends Extension {
 
 		$pos = \mb_strpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return new NumberValue($pos);
+			return new NumberValue((string) $pos);
 		} else {
 			return new BoolValue(\false);
 		}
@@ -231,7 +249,7 @@ class StringExtension extends Extension {
 
 		$pos = \mb_strrpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return new NumberValue($pos);
+			return new NumberValue((string) $pos);
 		} else {
 			return new BoolValue(\false);
 		}
@@ -248,7 +266,7 @@ class StringExtension extends Extension {
 			Common::allowTypes($item, StringValue::class, NumberValue::class,
 				BoolValue::class, ArrayValue::class);
 
-			switch (true) {
+			switch (\true) {
 				case $item instanceof ArrayValue:
 					return self::string_join($self, $item)->value;
 				case $item instanceof BoolValue:
@@ -259,7 +277,7 @@ class StringExtension extends Extension {
 
 		}, $array->value);
 
-		return new StringValue(implode($self->value, $prepared));
+		return new StringValue(\implode($self->value, $prepared));
 
 	}
 

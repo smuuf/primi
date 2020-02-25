@@ -21,8 +21,6 @@ class ArgumentList extends SimpleHandler {
 			return [];
 		}
 
-		Common::ensureIndexed($node['args']);
-
 		$list = [];
 		foreach ($node['args'] as $a) {
 			$handler = HandlerFactory::get($a['name']);
@@ -30,6 +28,15 @@ class ArgumentList extends SimpleHandler {
 		}
 
 		return $list;
+
+	}
+
+	public static function reduce(array &$node): void {
+
+		// Make sure this is always list, even with one item.
+		if (isset($node['args'])) {
+			$node['args'] = Common::ensureIndexed($node['args']);
+		}
 
 	}
 

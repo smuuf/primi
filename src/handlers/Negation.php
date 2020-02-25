@@ -30,22 +30,21 @@ class Negation extends SimpleHandler {
 		// Should we even handle negation? If there's an even number of negation
 		// operators, the result would always have the same truthness as its
 		// input.
-		Common::ensureIndexed($node['nots']);
 		$isNegation = count($node['nots'] ?? []) % 2;
 
 		return new BoolValue($isNegation ? !$truthness : $truthness);
 
 	}
 
-	public static function reduce(array $node): ?array {
+	public static function reduce(array &$node): void {
 
 		// If this truly has a negation, do not reduce this node.
 		// If not, return only core.
 		if (!isset($node['nots'])) {
-			return $node['core'];
+			$node = $node['core'];
+		} else {
+			$node['nots'] = Common::ensureIndexed($node['nots']);
 		}
-
-		return null;
 
 	}
 

@@ -17,8 +17,8 @@ abstract class BaseHandler extends StrictObject {
 
 	const NODE_NEEDS_TEXT = false;
 
-	public static function reduce(array $node): ?array {
-		return null;
+	public static function reduce(array &$node): void {
+		// Nothing by default.
 	}
 
 }

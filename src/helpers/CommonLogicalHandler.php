@@ -2,11 +2,12 @@
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\LogicalLTR;
 use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
 /**
  * Common ancestor of LogicalAnd and LogicalOr handlers, both of which have
@@ -25,13 +26,13 @@ abstract class CommonLogicalHandler extends SimpleHandler {
 
 	}
 
-	public static function reduce(array $node): ?array {
+	public static function reduce(array &$node): void {
 
 		if (!isset($node['ops'])) {
-			return $node['operands'];
+			$node = $node['operands'];
+		} else {
+			$node['ops'] = Common::ensureIndexed($node['ops']);
 		}
-
-		return null;
 
 	}
 

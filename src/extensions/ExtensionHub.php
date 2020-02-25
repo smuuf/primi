@@ -16,7 +16,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	public static function add($extension) {
 
 		// We allow registering extensions in bulk.
-		if (is_array($extension)) {
+		if (\is_array($extension)) {
 			foreach ($extension as $ext) {
 				self::add($ext);
 			}
@@ -28,7 +28,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 		}
 
 		$processed = self::process($extension);
-		self::$extensions = array_replace(self::$extensions, $processed);
+		self::$extensions = \array_replace(self::$extensions, $processed);
 
 	}
 
@@ -63,7 +63,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 		// "... all methods with any of the given attributes will be returned."
 		$public = $classRef->getMethods(\ReflectionMethod::IS_PUBLIC);
 		$static = $classRef->getMethods(\ReflectionMethod::IS_STATIC);
-		$methods = array_intersect($static, $public);
+		$methods = \array_intersect($static, $public);
 
 		$result = [];
 		foreach ($methods as $methodRef) {
@@ -71,7 +71,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 			$methodName = $methodRef->getName();
 
 			// Skip magic methods.
-			if (strpos($methodName, '__') === 0) {
+			if (\strpos($methodName, '__') === 0) {
 				continue;
 			}
 

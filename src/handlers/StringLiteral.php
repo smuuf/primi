@@ -14,16 +14,17 @@ class StringLiteral extends SimpleHandler {
 	const NODE_NEEDS_TEXT = true;
 
 	public static function handle(array $node, Context $context) {
+		return new StringValue(StringEscaping::unescapeString($node['text']));
+	}
 
-		$content = $node['text'];
+	public static function reduce(array &$node): void {
 
 		// Trim quotes from the start and the end using substr().
 		// Using trim("\"'", ...) would make "abc'" into abc instead of abc',
 		// so do this a little more directly.
-		$value = \mb_substr($content, 1, \mb_strlen($content) - 2);
-		$value = StringEscaping::unescapeString($value);
-
-		return new StringValue($value);
+		$node['text'] = \mb_substr(
+			$node['text'], 1, \mb_strlen($node['text']) - 2
+		);
 
 	}
 

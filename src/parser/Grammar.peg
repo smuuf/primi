@@ -33,7 +33,7 @@ Nothing: ""
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
 VariableName: / ([a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
-AnonymousFunction: "function" __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ args:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
+AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
 
 ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
@@ -73,7 +73,7 @@ ChainedFunction: ObjectResolutionOperator fn:Variable invo:Invocation
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
-FunctionDefinition: "function" [ function:VariableName __ "(" __ args:FunctionDefinitionArgumentList? __ ")" __ body:Block
+FunctionDefinition: "function" [ function:VariableName __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
 ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
@@ -101,7 +101,7 @@ NL: / (?:\/\/[^\n]*)?\n /
 SEP: ";" | NL
 
 # "!/$/" Ensures we won't try to find statements at EOF.
-Program: ( !/$/ __ Statement? > SEP )* __
+Program: ( !/$/ __ stmts:Statement? > SEP )* __
 
 */
 
