@@ -6,11 +6,13 @@ use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\Helpers\Common;
 
 use \Smuuf\Primi\ISupportsIteration;
+use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsArrayAccess;
 use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class ArrayValue extends Value implements
 	ISupportsIteration,
+	ISupportsComparison,
 	ISupportsArrayAccess
 {
 
@@ -94,6 +96,34 @@ class ArrayValue extends Value implements
 
 	public function getArrayInsertionProxy(?string $key): ArrayInsertionProxy {
 		return new ArrayInsertionProxy($this, $key);
+	}
+
+	public function doComparison(string $op, Value $right): BoolValue {
+
+		Common::allowTypes(
+			$right,
+			self::class
+		);
+
+		// Simple comparison of both arrays should be sufficient.
+		// PHP manual describes object (which are in these arrays) comparison:
+		// Two object instances are equal if they have the same attributes and
+		// values (values are compared with ==).
+		// See https://www.php.net/manual/en/language.oop5.object-comparison.php.
+
+		switch ($op) {
+			case "==":
+				$result = $this->value == $right->value;
+				break;
+			case "!=":
+				$result = $this->value != $right->value;
+				break;
+			default:
+				throw new \TypeError;
+		}
+
+		return new BoolValue($result);
+
 	}
 
 }

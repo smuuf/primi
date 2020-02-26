@@ -1,9 +1,0 @@
-function fibb(a, b, limit) {
-	if (b > limit) {
-		return;
-	}
-	result = a + b;
-	fibb(b, result, limit);
-}
-
-fibb(1, 0, 20000000);

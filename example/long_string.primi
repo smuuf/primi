@@ -265,15 +265,20 @@ Přijaté zákony podepisuje předseda Poslanecké sněmovny, prezident republik
 
 (1) Každý poslanec má právo interpelovat vládu nebo její členy ve věcech jejich působnosti.
 (2) Interpelovaní členové vlády odpovědí na interpelaci do třiceti dnů ode dne jejího podání.";
+assert(constitution.length() == 17528, 'String with unicode characters returns correct length')
 
 result = [];
-splat = constitution.string_split(r"\s+");
-for (word in splat) {
-    result[word] = 0;
-}
 
+//
+// Iterating over list of words built by separating long string with whitespace characters.
+//
+
+splat = constitution.split(r"\s+");
 for (word in splat) {
+    if (!result.get('word')) {
+        result[word] = 0
+    }
     result[word] = result[word] + 1;
 }
 
-constitution = "";
+assert(result.length() == 1110, 'Counting distinct words')

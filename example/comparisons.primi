@@ -1,0 +1,239 @@
+//
+// Comparing numbers with numbers.
+//
+
+x = 0 < 2
+assert(x == true)
+
+x = 2 < 0
+assert(x == false)
+
+x = -2 > 0
+assert(x == false)
+
+x = -2 < 0
+assert(x == true)
+
+x = 0 > -2
+assert(x == true)
+
+x = 0 < -2
+assert(x == false)
+
+x = 1 < 2
+assert(x == true)
+
+x = 2 < 1
+assert(x == false)
+
+x = 2 > 1
+assert(x == true)
+
+x = 1 > 2
+assert(x == false)
+
+x = 0 == 0
+assert(x == true)
+
+x = 0 == 1
+assert(x == false)
+
+x = 0 == -1
+assert(x == false)
+
+x = 1 == -1
+assert(x == false)
+
+x = 0 != 0
+assert(x == false)
+
+x = 1 != 1
+assert(x == false)
+
+x = 1 != 0
+assert(x == true)
+
+x = 0 != 1
+assert(x == true)
+
+// Comparing numbers with decimal point.
+
+x = 1.5 < 1.50001
+assert(x == true)
+
+x = 2.001 < 2.002
+assert(x == true)
+
+x = 2.001 > 2
+assert(x == true)
+
+x = 1.001 > 1.999
+assert(x == false)
+
+// Chained comparisons.
+
+x = 1 < 2 < 3
+assert(x == true)
+
+x = 1 < 2 < 3 < 400
+assert(x == true)
+
+x = 1 < 2 < 3 > 400
+assert(x == false)
+
+x = 2 < 1 < 3
+assert(x == false)
+
+x = -1 < 0 < 1
+assert(x == true)
+
+x = 4 < 40 < 400
+assert(x == true)
+
+x = 400 > 40 > 4
+assert(x == true)
+
+x = 5 > 3 < 4
+assert(x == true)
+
+x = 5 > -3 < 4
+assert(x == true)
+
+x = 5 < 3 < 4
+assert(x == false)
+
+x = 5 < 3 > 4
+assert(x == false)
+
+x = 1 > 0 < 1
+assert(x == true)
+
+// Comparing numbers with numeric strings (always NOT equal).
+
+x = 1 == "1"
+assert(x == false)
+
+x = "1" == 1
+assert(x == false)
+
+x = "1" != 1
+assert(x == true)
+
+x = 1 != "1"
+assert(x == true)
+
+x = 1 == "0"
+assert(x == false)
+
+x = "0" == 1
+assert(x == false)
+
+x = "0" != 1
+assert(x == true)
+
+x = 1 != "0"
+assert(x == true)
+
+x = 1 == "0"
+assert(x == false)
+
+x = "0" == 1
+assert(x == false)
+
+x = "0" != 1
+assert(x == true)
+
+x = 1 != "0"
+assert(x == true)
+
+x = 0 == "0"
+assert(x == false)
+
+x = "0" == 0
+assert(x == false)
+
+x = "0" != 0
+assert(x == true)
+
+x = 0 != "0"
+assert(x == true)
+
+//
+// Comparing booleans with booleans.
+//
+
+x = true == true
+assert(x == true)
+
+x = true == false
+assert(x == false)
+
+x = false == true
+assert(x == false)
+
+x = false == false
+assert(x == true)
+
+x = true != true
+assert(x == false)
+
+x = true != false
+assert(x == true)
+
+x = false != true
+assert(x == true)
+
+x = false != false
+assert(x == false)
+
+// Comparing booleans with numbers.
+
+x = true == 1
+assert(x == true)
+
+x = true == 0
+assert(x == false)
+
+x = true == -1
+assert(x == true)
+
+x = 1 == true
+assert(x == true)
+
+x = 0 == true
+assert(x == false)
+
+x = -1 == true
+assert(x == true)
+
+// Comparing booleans with nulls.
+
+x = null and true
+assert(x == false)
+
+x = null and false
+assert(x == false)
+
+x = true and null
+assert(x == false)
+
+x = false and null
+assert(x == false)
+
+x = null and null
+assert(x == false)
+
+x = null or true
+assert(x == true)
+
+x = null or false
+assert(x == false)
+
+x = true or null
+assert(x == true)
+
+x = false or null
+assert(x == false)
+
+x = null or null
+assert(x == false)

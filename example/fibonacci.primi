@@ -1,0 +1,19 @@
+// Were going to collect results from the function below.
+collected = []
+function collector(item) {
+	collected.push(item)
+}
+
+// Whoa, a recursive Fibonacci function!
+function fib(a, b, limit) {
+	result = a + b;
+	if (result > limit) {
+		return
+	}
+	collector(result)
+	fib(b, result, limit);
+}
+
+fib(1, 0, 20000000);
+assert(collected.length() == 36, 'Total of 36 numbers in Fibonacci sequence that are under 20 million')
+assert(collected[35] == 14930352, 'Correct 36th number in Fibonacci sequence')

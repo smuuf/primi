@@ -22,7 +22,7 @@ class CompiledParser extends Parser\Packrat {
 # Carefully crafted (or stolen somewhere?) string matching regex which supports
 # both " and ' quotes, doesn't cause JIT stack overflow and also supports escaped quotes.
 StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
-NumberLiteral: /-?\d+(\.\d+)?/
+NumberLiteral: /-?\d[\d_]*(\.[\d_]+)?/
 BoolLiteral: "true" | "false"
 NullLiteral: "null"
 RegexLiteral: "r" core:StringLiteral
@@ -79,7 +79,9 @@ IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else
 ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 CommandStatements: skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement
-ReturnStatement: "return" ( [ subject:Expression )?
+# &SEP in the second branch matches a 'return' followed by separator, without consuming the
+# separator - which is needed for the Program rule to finish parsing properly.
+ReturnStatement: ( "return" [ ( subject:Expression )? ) | ( "return" &SEP )
 BreakStatement: "break"
 ContinueStatement: "continue"
 

@@ -1,0 +1,124 @@
+// No semicolons anywhere.
+
+global_variable = 'globál'
+c = 100
+
+function add(x, y) {
+	assert(global_variable == 'globál', 'Function block inherits variables from outer scope')
+	assert(c == 100, 'Declaring variable inside function block overwrites the variable from outer scope')
+	return x + y
+}
+assert(type(add) == 'function', 'Declaring ordinary function')
+
+function sub(x, y) {
+	return x - y
+}
+assert(type(sub) == 'function', 'Declaring ordinary function')
+
+a = 1 + add(sub(4, 3), 5)
+assert(a == 7, 'Passing result of function as argument into another function yields correct result')
+
+function nested(a) {
+	assert(type(add) == 'function', 'Function block inherits functions from outer scope')
+	assert(type(sub) == 'function', 'Function block inherits functions from outer scope')
+	return add(a, sub(5, 2))
+}
+
+// Anonymous function assigned to variable.
+// The result is the same as ordinary function definition.
+double_nested = (input, fn) => {
+
+	a = fn(input)
+	counter = 0
+
+	while (a > -5) {
+		a = a - 3
+		counter = counter + 1
+	}
+
+
+	return [a, counter]
+
+}
+assert(type(double_nested) == 'function')
+
+result = double_nested(4, nested)
+assert(result[0] == -5, "'a' variable")
+assert(result[1] == 4, "'counter' variable")
+
+decorator = (fn) => {
+	// Decorator returns a new function that wraps some function passed into it.
+	return (arg) => {
+		return "<prefix>" + fn(arg) + "<suffix>"
+	}
+}
+assert(type(decorator) == 'function')
+
+function reverser(text) {
+	result = ""
+	for (c in text) {
+		result = c + result
+	}
+	return result
+}
+assert(type(reverser) == 'function')
+
+reversed = reverser('JELEN')
+assert(reversed == 'NELEJ')
+
+// Decorate the reverser function with decorator function.
+decorated = decorator(reverser)
+d = decorated('hello!')
+assert(d == '<prefix>!olleh<suffix>', 'Decorated function returns correct value')
+
+a = 0
+function one() {
+	return 1
+}
+
+function no_return(a, b, c) {
+	a = a + 1
+}
+
+result = no_return(a, 2, 3)
+assert(result == null, 'Function without explicit return returns null')
+assert(a == 0, 'What happened in function, stays in function')
+
+// Anonymous function, full syntax.
+anon = function(x, y, z) {
+	return x(1) + y + z
+}
+
+result = anon(function(number) {
+	return number * 3
+}, 4, 5)
+
+// Anonymous function, short syntax.
+anon_short = (i) => {
+	if (i == 0) {
+		return 1
+	}
+	return 2
+}
+
+result_2 = anon_short(1)
+result_3 = anon(anon_short, 10, 100)
+
+// Some example from the internet.
+censor = (words) => {
+	filtered = []
+	for (word in words) {
+		if (word.length() != 4) {
+			filtered.array_push(word)
+		}
+	}
+	return filtered
+}
+
+censored = censor([
+	'haha',
+	'very_safe',
+	'voldemort',
+	'damn',
+])
+assert(censored == ['very_safe', 'voldemort'])

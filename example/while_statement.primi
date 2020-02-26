@@ -1,0 +1,21 @@
+// No semicolons anywhere!
+
+a = 5
+counter = 0
+while (a) {
+   counter = counter + 1
+   x = a
+   a = a - 1
+}
+assert(a == 0)
+assert(counter == 5)
+
+a = 10
+c = 0
+while (10 <= a < 20) {
+   a = a + 2
+   c = c + 1
+}
+
+assert(a == 20)
+assert(c == 5)

@@ -1,0 +1,3 @@
+// pragma:one_liners
+fn = (a, b) => { return (1 + a) * b; }; c = fn(1); // EX
+fn = []; e = fn(1, 2); // EX (not a function)

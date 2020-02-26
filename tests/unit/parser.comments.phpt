@@ -65,7 +65,7 @@ function get_ast_array_simple() {
 				'right' =>
 				array(
 					'name' => 'NumberLiteral',
-					'text' => '1',
+					'number' => '1',
 					'_l' => 1,
 					'_p' => 4,
 				),

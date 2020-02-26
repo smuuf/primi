@@ -44,16 +44,15 @@ class Invocation extends ChainedHandler {
 
 			return $fn->invoke($arguments);
 
+		} catch (ErrorException $e) {
+			throw new ErrorException($e->getMessage(), $node);
 		} catch (\ArgumentCountError | InternalArgumentCountException $e) {
-
 			$msg = self::buildArgumentCountErrorMessage($e);
 			throw new ErrorException($msg, $node);
-
 		} catch (\TypeError $e) {
-
-			$msg = "Wrong type of argument passed to function";
-			throw new ErrorException($msg, $node);
-
+			throw new ErrorException(
+				"Wrong type of argument passed to function", $node
+			);
 		}
 
 	}
