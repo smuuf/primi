@@ -1,0 +1,163 @@
+// Truthy/non-truthy values as conditions.
+
+	x = 1;
+	if (x) {
+		x = 'WAS_INSIDE_IF';
+	}
+	assert(x == 'WAS_INSIDE_IF')
+
+	x = 0;
+	if (x) {
+		x = 'WAS_INSIDE_IF';
+	}
+	assert(x == 0)
+
+	x = true;
+	if (x) {
+		x = 'WAS_INSIDE_IF';
+	}
+	assert(x == 'WAS_INSIDE_IF')
+
+	x = false;
+	if (x) {
+		x = 'WAS_INSIDE_IF';
+	}
+	assert(x == false)
+
+	x = null
+	if (x) {
+		x = 'WAS_INSIDE_IF';
+	}
+	assert(x == null)
+
+// Or.
+
+	x = 0
+	if (true or false) {
+		x = 1
+	}
+	assert(x == 1)
+
+
+	x = 0
+	if (false or true) {
+		x = 1
+	}
+	assert(x == 1)
+
+	x = 0
+	if (false or false) {
+		x = 1
+	}
+	assert(x == 0)
+
+// And.
+
+	x = 0
+	if (true and false) {
+		x = 1
+	}
+	assert(x == 0)
+
+	x = 0
+	if (false and true) {
+		x = 1
+	}
+	assert(x == 0)
+
+	x = 0
+	if (false and false) {
+		x = 1
+	}
+	assert(x == 0)
+
+// Mixed.
+
+	x = 0
+	if (true and (false or true)) {
+		x = 1
+	}
+	assert(x == 1)
+
+	x = 0
+	if (false or (true or false)) {
+		x = 1
+	}
+	assert(x == 1)
+
+	x = 0
+	if (false and (true or false)) {
+		x = 1
+	}
+	assert(x == 0)
+
+	x = 0
+	if (true and (true and false)) {
+		x = 1
+	}
+	assert(x == 0)
+
+	// No parentheses (priority should remain the same).
+
+		x = 0
+		if (true and false or true) {
+			x = 1
+		}
+		assert(x == 1)
+
+		x = 0
+		if (false or true or false) {
+			x = 1
+		}
+		assert(x == 1)
+
+		x = 0
+		if (false and true or false) {
+			x = 1
+		}
+		assert(x == 0)
+
+		x = 0
+		if (true and true and false) {
+			x = 1
+		}
+		assert(x == 0)
+
+// Elses!
+
+	// if (true)
+
+	else_result_A = ''
+	else_result_B = ''
+	if (true) {
+		else_result_A = 'block_A'
+	} else {
+		else_result_B = 'block_B'
+	}
+	assert(else_result_A == 'block_A', 'if (true): First block was executed')
+	assert(else_result_B == '', 'if (true): Second block was not executed')
+
+	// if (false)
+
+	else_result_A = ''
+	else_result_B = ''
+	if (false) {
+		else_result_A = 'block_A'
+	} else {
+		else_result_B = 'block_B'
+	}
+	assert(else_result_A == '', 'if (false): First block was not executed')
+	assert(else_result_B == 'block_B', 'if (false): Second block was executed')
+
+	// if (null)
+
+	else_result_A = ''
+	else_result_B = ''
+	if (null) {
+		else_result_A = 'block_A'
+	} else {
+		else_result_B = 'block_B'
+	}
+	assert(else_result_A == '', 'if (null): First block was not executed')
+	assert(else_result_B == 'block_B', 'if (null): Second block was executed')
+

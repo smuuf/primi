@@ -1,8 +1,0 @@
-text = "jelenovipivonelej";
-count = [];
-for (char in text) {
-    count[char] = 0;
-}
-for (char in text) {
-    count[char] = count[char] + 1;
-}

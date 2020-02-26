@@ -1,0 +1,127 @@
+//
+// Types of different values.
+//
+
+result = type(null)
+assert(result == "null")
+
+result = type(true)
+assert(result == "bool")
+
+result = type(false)
+assert(result == "bool")
+
+result = type(1)
+assert(result == "number")
+
+result = type(-1)
+assert(result == "number")
+
+result = type(0.123)
+assert(result == "number")
+
+result = type("")
+assert(result == "string")
+
+result = type("ahoj")
+assert(result == "string")
+
+result = type(r"ahoj")
+assert(result == "regex")
+
+result = type(r"a[ho]j")
+assert(result == "regex")
+
+result = type(r"")
+assert(result == "regex")
+
+result = type(type)
+assert(result == "function")
+
+result = type([])
+assert(result == "array")
+
+result = type([1,2,'c'])
+assert(result == "array")
+
+//
+// Casting nubmbers.
+//
+
+result = 1.to_number()
+assert(result == 1)
+
+result = 1.to_string()
+assert(result == "1")
+
+result = 1.to_bool()
+assert(result == true)
+
+result = 1.to_regex()
+assert(result == r"1")
+
+//
+// Casting strings.
+//
+
+result = "a".to_number()
+assert(result == 0)
+
+result = "a".to_string()
+assert(result == "a")
+
+result = "a".to_bool()
+assert(result == true)
+
+result = "a".to_regex()
+assert(result == r"a")
+
+//
+// Casting bools.
+//
+
+// Casting true
+
+result = true.to_number()
+assert(result == 1)
+
+result = true.to_string()
+assert(result == "1")
+
+result = true.to_bool()
+assert(result == true)
+
+// Casting false
+
+result = false.to_number()
+assert(result == 0)
+
+result = false.to_string()
+assert(result == "")
+
+result = false.to_bool()
+assert(result == false)
+
+//
+// Casting arrays.
+//
+
+result = ["a"].to_bool()
+assert(result == true)
+
+result = [].to_bool()
+assert(result == false)
+
+result = ["a"].to_array()
+assert(result == [0: "a"])
+
+//
+// Casting regexes.
+//
+
+result = r"a".to_string()
+assert(result == "a")
+
+result = r"a".to_regex()
+assert(result == r"a")
+

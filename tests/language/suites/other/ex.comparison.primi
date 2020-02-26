@@ -1,1 +1,0 @@
-r"abc" == r"def"; // Error (cannot compare two regexes.

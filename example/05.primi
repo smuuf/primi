@@ -1,5 +1,0 @@
-h = 5;
-while (h) {
-   x = h; // 3 spaces to indent works (does nothing) like a charm.
-   h = h - 1;
-}

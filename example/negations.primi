@@ -1,0 +1,34 @@
+//
+// Negating values.
+//
+
+x = 1 + 2
+assert(!x == false)
+
+x = true
+assert(!x == false)
+
+x = false
+assert(!x == true)
+
+x = 6 - 6
+assert(!x == true)
+
+x = "" + ""
+assert(!x == true)
+
+x = "0" + "0"
+assert(!x == false)
+
+x = "0" + "1"
+assert(!x == false)
+
+x = 0 - 5 + 2 + 3
+assert(!x == true)
+
+empty_array = []
+negated_empty_array = !empty_array
+double_negated_empty_array = !!empty_array
+assert(empty_array.to_bool() == false) // Arrays currently need explicit to_bool cast to be able to be compared with bool.
+assert(negated_empty_array == true)
+assert(double_negated_empty_array == false)

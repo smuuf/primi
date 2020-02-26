@@ -31,13 +31,19 @@ class RegexValue extends Value implements ISupportsComparison {
 
 	public function doComparison(string $operator, Value $rightOperand): BoolValue {
 
-		Common::allowTypes($rightOperand, StringValue::class, NumberValue::class);
+		Common::allowTypes($rightOperand, StringValue::class, NumberValue::class, RegexValue::class);
 
 		if ($operator === "==") {
+			if ($rightOperand instanceof RegexValue) {
+				return new BoolValue($this->value === $rightOperand->value);
+			}
 			return new BoolValue((bool) \preg_match($this->value, $rightOperand->value));
 		}
 
 		if ($operator === "!=") {
+			if ($rightOperand instanceof RegexValue) {
+				return new BoolValue($this->value !== $rightOperand->value);
+			}
 			return new BoolValue((bool) !\preg_match($this->value, $rightOperand->value));
 		}
 

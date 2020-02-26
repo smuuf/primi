@@ -1,0 +1,123 @@
+// No unnecessary semicolons anywhere!
+
+//
+// String concatenation.
+//
+
+result = "abc" + "xyz"
+assert(result == 'abcxyz')
+
+result = "xyz" + "abc"
+assert(result == 'xyzabc')
+
+result = "xyz" + 5.to_string()
+assert(result == 'xyz5')
+
+result = "xyzZAQ:" + 5.123.to_string()
+assert(result == 'xyzZAQ:5.123')
+
+//
+// String formatting.
+//
+
+a = 4 / (2 - 1) * 100
+damn = 153 * 2
+x = "zaplaťte pouze {} Kč za skvělou {}".format(a, damn)
+assert(x == "zaplaťte pouze 400 Kč za skvělou 306", "String formatting with concatenation")
+
+//
+// String vs string comparison.
+//
+
+result = "abc" == "xyz"
+assert(result == false)
+
+result = "xyz" == "abc"
+assert(result == false)
+
+result = "abc" == "abc"
+assert(result == true)
+
+result = "abc" == "abc"
+assert(result == true)
+
+result = "xyz" == "xyzz"
+assert(result == false)
+
+result = "xyzz" == "xyz"
+assert(result == false)
+
+//
+// String vs regex comparison.
+//
+
+x = "ahojahojahojahojahoj"
+if (x == r'(ahoj){5}') { // A little bit of regex sneaked in here.
+	x = "nazdárek!"
+}
+assert(x == "nazdárek!", "String vs regex matching")
+
+//
+// String vs string subtraction.
+//
+
+x = x - "ek"
+assert(x == 'nazdár!', "Subtracting a substring from strings")
+
+//
+// Multiplication of strings.
+//
+
+x = "ahóóój" * 6
+assert(x == 'ahóóójahóóójahóóójahóóójahóóójahóóój', "Multiplying strings STRING * NUMBER")
+assert(x - "óó" == 'ahójahójahójahójahójahój', "Subtracting is aligned to the left")
+
+x = 6 * "ahóóój"
+assert(x == 'ahóóójahóóójahóóójahóóójahóóójahóóój', "Multiplying strings NUMBER * STRING")
+assert(x - "óó" == 'ahójahójahójahójahójahój', "Subtracting is aligned to the left")
+
+//
+// Multiline strings.
+//
+
+xyz = "ahojky"
+x = xyz + "\n"
+
+// These can be written both ways...
+assert(x == 'ahojky
+', 'Even assertion works with literal multiline strings')
+assert(x == 'ahojky\n', 'Even assertion works with new-line escape sequences')
+
+//
+// Iteration over string.
+//
+
+string = "Když začínáme myslet, nemáme k dispozici nic jiného než myšlenku v " +
+	     "její čisté neurčenosti, neboť k určení již patří jedno nebo nějaké " +
+		 "jiné, ale na začátku ještě nemáme žádné jiné..."
+
+result = ""
+tmp = ""
+changes = 0
+for (c in string) {
+
+	tmp = c
+
+	// Semicolons necessary with single line IF blocks.
+	if (c == "ě") { tmp = "e"; }
+	if (c == "ž") { tmp = "z"; }
+	if (c == "č") { tmp = "c"; }
+	if (c == "í") { tmp = "i"; }
+
+	if (tmp != c) {
+		changes = changes + 1
+	}
+
+	result = result + tmp
+
+}
+
+assert(changes == 15)
+assert(result == "Kdyz zacináme myslet, nemáme k dispozici nic jiného nez myšlenku v " +
+	"jeji cisté neurcenosti, neboť k urceni jiz patři jedno nebo nejaké " +
+	"jiné, ale na zacátku ješte nemáme zádné jiné...")

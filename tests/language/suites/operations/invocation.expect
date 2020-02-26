@@ -1,8 +1,0 @@
-fn:FuncValue:function
-a:NumberValue:1
-fn:FuncValue:function
-b:NumberValue:2
-EX:Smuuf\Primi\ErrorException
-fn:FuncValue:function
-d:NumberValue:4
-EX:Smuuf\Primi\ErrorException

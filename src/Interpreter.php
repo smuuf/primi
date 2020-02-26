@@ -96,6 +96,7 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 }
 
 ExtensionHub::add([
+	\Smuuf\Primi\Psl\StandardExtension::class,
 	\Smuuf\Primi\Psl\StringExtension::class,
 	\Smuuf\Primi\Psl\NumberExtension::class,
 	\Smuuf\Primi\Psl\ArrayExtension::class,

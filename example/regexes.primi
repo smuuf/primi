@@ -1,0 +1,97 @@
+a = r"[a-z]/[a-z]"
+b = "ahojkymňauky"
+c0 = 0
+if (b == a) {
+    c0 = 1
+}
+if (a == b) {
+    c0 = 1
+}
+assert(c0 == 0)
+
+a = r"[abc][čřž][xyz]{4,}"; b = 'ačxxx'; c1 = 0
+if (b == a or a == b) {
+    c1 = 1
+}
+if (b == a or a == b) {
+    c1 = 1
+}
+assert(c1 == 0)
+
+a = r"[abc][čřž][xyz]{4,}"; b = 'ačxxxx'; c2 = 0
+if (b == a or a == b) {
+    c2 = c2 + 1
+}
+if (b == a or a == b) {
+    c2 = c2 + 1
+}
+assert(c2 == 2)
+
+a = r"[abc][čřž][xyz]{4,}"; b = 'cžxyzx'; c3 = 0
+if (b == a and a == b) {
+    c3 = c3 + 2
+}
+if (b == a and a == b) {
+    c3 = c3 + 2
+}
+assert(c3 == 4)
+
+a = r"[abc][čřž][xyz]{4,}"; b = 'cžvole'; c4 = 0
+if (b != a and a != b) {
+    c4 = c4 + 3
+}
+if (b != a or a != b) {
+    c4 = c4 + 3
+}
+assert(c4 == 6)
+
+str_a = "abcdefg"
+str_b = "abc123defg"
+str_c = "xyz456čaukomňauko"
+
+x = str_a == r"[cde]d"
+assert(x == true)
+x = r"[cde]d" == str_a
+assert(x == true)
+x = r"(\d+|[A-Z])" != str_a
+assert(x == true)
+x = "what have we here" != r"h[abc]v[def]"
+assert(x == false)
+
+rx_i = r"[c-e]"
+assert(rx_i == r"[c-e]")
+rx_j = r"[ce]"
+assert(rx_j == r"[ce]")
+rx_k = r"[0-9]+"
+assert(rx_k == r"[0-9]+")
+rx_l = r"[čau](ko)+mňau"
+assert(rx_l == r"[čau](ko)+mňau")
+
+x = str_a - rx_i
+assert(x == "abfg")
+x = str_a - rx_j
+assert(x == "abdfg")
+x = str_b - rx_i
+assert(x == "ab123fg")
+x = str_b - rx_j
+assert(x == "ab123dfg")
+x = str_c - rx_k
+assert(x == "xyzčaukomňauko")
+x = str_c - rx_l
+assert(x == "xyz456čako")
+
+x = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(r"ann?o", "FAIL")
+assert(x == "xoxoxomilFAILbergamo,FAIL:domini. Anno, neštvi ma.")
+x = "\\ahoj\n\\vo\\le" - r"\\ahoj\s"
+assert(x == "\\vo\\le")
+x = "a/b/c" - r"/b" // Test proper handling of escaped regex delimiters.
+assert(x == "a/c")
+
+x = "[0-9]{5}".to_regex().match("abc00011234455")
+assert(x == "00011")
+x = "[0-9]+".to_regex().match("abc00011234455")
+assert(x == "00011234455")
+x = "[{}-{}]".format(0, 9).to_regex().match("abc123")
+assert(x == "1")
+x = "{}-{}".format(0, 9).to_regex().match("abc")
+assert(x == false)
