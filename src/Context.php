@@ -70,7 +70,7 @@ class Context extends StrictObject implements IContext {
 			return self::$globals[$name];
 		}
 
-		// This should be slightly faster than throwsin exceptions for undefined
+		// This should be slightly faster than throwing exceptions for undefined
 		// variables.
 		return null;
 
