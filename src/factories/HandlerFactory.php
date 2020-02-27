@@ -8,21 +8,20 @@ class HandlerFactory extends \Smuuf\Primi\StrictObject {
 
 	public static function get(string $name, ?bool $strict = true) {
 
-		// Using caching should be faster than repeatedly building strings and checking classes and stuff.
-		if (isset(self::$cache[$name])) {
-			return self::$cache[$name];
+		// Using caching is faster than repeatedly building strings and checking
+		// classes and stuff.
+		$class = self::$cache[$name] ?? (
+			class_exists($class = __NAMESPACE__ . "\\Handlers\\$name")
+				? $class
+				: false
+		);
+
+		if ($class === false && $strict) {
+			throw new \LogicException("Handler '$name' not found.");
 		}
 
-		$className = __NAMESPACE__ . "\\Handlers\\$name";
-		if (!class_exists($className)) {
-			if ($strict) {
-				throw new \LogicException("Handler '$className' not found.");
-			}
-			$className = false;
-		}
-
-		self::$cache[$name] = $className;
-		return $className;
+		self::$cache[$name] = $class;
+		return $class;
 
 	}
 

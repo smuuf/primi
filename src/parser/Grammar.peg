@@ -35,7 +35,7 @@ VariableName: / ([a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
 AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
 
-ArrayItem: ( key:Expression __ ":" )? __ value:Expression )
+ArrayItem: ( __ key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
 Value: skip:RangeLiteral | skip:Literal | skip:Variable | skip:ArrayDefinition
@@ -52,11 +52,12 @@ AndOperator: "and"
 OrOperator: "or"
 NegationOperator: "!"
 
-Expression: skip:AnonymousFunction | skip:Assignment | skip:LogicalOr
+Expression: skip:AnonymousFunction | skip:Assignment | skip:CondExpr
 Assignment: left:Mutable __ AssignmentOperator __ right:Expression
 
 # The order of how these rules are nested is very important, as it defines
 # their priority. We also need that they all are left-associative.
+CondExpr: true:LogicalOr ( ] "if" __ "(" __ cond:Expression __ ")" __ "else" ] false:LogicalOr )?
 LogicalOr: operands:LogicalAnd ( ] ops:OrOperator ] operands:LogicalAnd )*
 LogicalAnd: operands:Comparison ( ] ops:AndOperator ] operands:Comparison )*
 Comparison: operands:Addition ( __ ops:ComparisonOperator __ operands:Addition )*
@@ -78,6 +79,7 @@ FunctionDefinition: "function" [ function:VariableName __ "(" __ params:Function
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
 ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
+TryStatement: "try" __ main:Block __ "on error" __ onerror:Block
 CommandStatements: skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement
 # &SEP in the second branch matches a 'return' followed by separator, without consuming the
 # separator - which is needed for the Program rule to finish parsing properly.
@@ -87,14 +89,14 @@ ContinueStatement: "continue"
 
 # &/[A-Za-z]/ Ensures that no sub-rules will be even tried if the string does not start with a letter.
 # And we know that our block statements always start with a letter.
-BlockStatements: &/[A-Za-z]/ ( skip:IfStatement | skip:WhileStatement | skip:ForStatement | skip:FunctionDefinition )
+BlockStatements: &/[A-Za-z]/ ( skip:IfStatement | skip:WhileStatement | skip:ForStatement | skip:TryStatement | skip:FunctionDefinition )
 
 # !/[\s\{\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
 Statement: !/[\s\{\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )
 Block: "{" __ ( skip:Program )? "}"
 
 # Matches any optional whitespace or newline.
-__: / [\s\n]* /
+__: / [\s\n]*(?:\/\/[^\n]*)? /
 
 # Matches newline, takes care of optional // comments at EOL.
 NL: / (?:\/\/[^\n]*)?\n /

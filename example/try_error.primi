@@ -1,0 +1,15 @@
+//
+// try..on error block catches any errors.
+//
+
+was_error = false
+executed_after_error = false
+try {
+	// Division by zero, bruh!
+	1 / 0
+	executed_after_error = true
+} on error {
+	was_error = true
+}
+assert(was_error, 'Raised error was caught')
+assert(!executed_after_error, 'Code after error was not executed')
