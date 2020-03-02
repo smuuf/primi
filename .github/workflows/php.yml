@@ -17,7 +17,7 @@ jobs:
     - name: Run tests
       run: chmod +x ./primi ./bin/*; ./bin/test --coverage
     - name: Run benchmarks
-      run: ./bin/bench  
+      run: sudo phpdismod xdebug; ./bin/bench  
     - name: Run static analysis
       run: ./bin/phpstan || true # Ignore phpstan error exit code.
     - name: Gather test results
