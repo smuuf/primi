@@ -1,0 +1,93 @@
+//
+// Wrong square-brackets-inserts (for example in wrong data types) raise errors.
+//
+
+variables = [
+	['number', 123],
+	['string', 'abc'],
+	['regex', r'\d+'],
+	['array', [1, 2, 3]],
+	['bool', true],
+	['null', null],
+]
+
+// Matrix of expected results.
+// true: Operation is valid.
+// false: Operation is invalid - raises error.
+expected = [
+	// Inserting into...
+	"number": [
+		// Inserting what...
+		"number": false,
+		"string": false,
+		"regex": false,
+		"array": false,
+		"bool": false,
+		"null": false,
+	],
+	"string": [
+		"number": true,
+		"string": true,
+		"regex": false,
+		"array": false,
+		"bool": false,
+		"null": false,
+	],
+	"regex": [
+		"number": false,
+		"string": false,
+		"regex": false,
+		"array": false,
+		"bool": false,
+		"null": false,
+	],
+	"array": [
+		"number": true,
+		"string": true,
+		"regex": true,
+		"array": true,
+		"bool": true,
+		"null": true,
+	],
+	"bool": [
+		"number": false,
+		"string": false,
+		"regex": false,
+		"array": false,
+		"bool": false,
+		"null": false,
+	],
+	"null": [
+		"number": false,
+		"string": false,
+		"regex": false,
+		"array": false,
+		"bool": false,
+		"null": false,
+	],
+]
+
+for (target_tuple in variables) {
+	target_type = target_tuple[0]
+	target_value = target_tuple[1]
+
+	for (inject_tuple in variables) {
+		inject_type = inject_tuple[0]
+		inject_value = inject_tuple[1]
+
+		try {
+			was_valid = true
+			target_value[0] = inject_value
+		} on error {
+			was_valid = false
+		}
+
+		state = 'Operation was {}'.format('valid' if (was_valid) else 'invalid')
+
+		assert(
+			expected[target_type][inject_type] == was_valid,
+			"Unexpected result when inserting '{}' into '{}': {}".format(
+				inject_type, target_type, state)
+		)
+	}
+}

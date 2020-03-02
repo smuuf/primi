@@ -1,0 +1,39 @@
+//
+// Invoking non-functions raises an error.
+//
+
+try {
+	was_error = false
+	123()
+} on error { was_error = true; }
+assert(was_error, 'Invoking a number as function raises error')
+
+try {
+	was_error = false
+	'something'()
+} on error { was_error = true; }
+assert(was_error, 'Invoking a string as function raises error')
+
+try {
+	was_error = false
+	true()
+} on error { was_error = true; }
+assert(was_error, 'Invoking a bool as function raises error')
+
+try {
+	was_error = false
+	null()
+} on error { was_error = true; }
+assert(was_error, 'Invoking a null as function raises error')
+
+try {
+	was_error = false
+	[]()
+} on error { was_error = true; }
+assert(was_error, 'Invoking an array as function raises error')
+
+try {
+	was_error = false
+	r"\d+"()
+} on error { was_error = true; }
+assert(was_error, 'Invoking a regex as function raises error')
