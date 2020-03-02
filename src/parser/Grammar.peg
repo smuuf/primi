@@ -80,16 +80,16 @@ IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else
 ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 TryStatement: "try" __ main:Block __ "on error" __ onerror:Block
-CommandStatements: skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement
+# &/[rbc]/ - Don't even try any of the subrules if this doesn't start with expected letters.
+CommandStatements: &/[rbc]/ ( skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement )
 # &SEP in the second branch matches a 'return' followed by separator, without consuming the
 # separator - which is needed for the Program rule to finish parsing properly.
 ReturnStatement: ( "return" [ ( subject:Expression )? ) | ( "return" &SEP )
 BreakStatement: "break"
 ContinueStatement: "continue"
 
-# &/[A-Za-z]/ Ensures that no sub-rules will be even tried if the string does not start with a letter.
-# And we know that our block statements always start with a letter.
-BlockStatements: &/[A-Za-z]/ ( skip:IfStatement | skip:WhileStatement | skip:ForStatement | skip:TryStatement | skip:FunctionDefinition )
+# &/[iwft]/ - No sub-rules will be even tried if the string does not start with a expected letter.
+BlockStatements: &/[iwft]/ ( skip:IfStatement | skip:WhileStatement | skip:ForStatement | skip:FunctionDefinition | skip:TryStatement)
 
 # !/[\s\{\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
 Statement: !/[\s\{\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )

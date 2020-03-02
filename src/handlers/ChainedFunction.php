@@ -7,7 +7,6 @@ use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Handlers\Variable;
 use \Smuuf\Primi\Helpers\ChainedHandler;
-use \Smuuf\Primi\UndefinedVariableException;
 
 class ChainedFunction extends ChainedHandler {
 
@@ -29,13 +28,15 @@ class ChainedFunction extends ChainedHandler {
 		// specified name.
 		$typedName = self::inferTypedName($name, $subject);
 
-		try {
-			$fn = Variable::fetch($typedName, $node, $context);
-		} catch (UndefinedVariableException $e) {
+		// Optimization: Get the inferred function directly, without risk of
+		// exception being thrown - missing inferred function is not an error
+		// and is quite expected, so don't complicate things with exceptions.
+		$fn = $context->getVariable($typedName);
+		if ($fn === null) {
 			$fn = Variable::fetch($name, $node, $context);
 		}
 
-		// Modify the invocation node to contain the subject. It's handler will
+		// Modify the invocation node to contain the subject. Its handler will
 		// know what to do. Not a particulary pretty solution, so if you manage
 		// to come up with something better, do it.
 		$invocation = $node['invo'];

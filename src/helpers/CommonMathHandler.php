@@ -19,18 +19,14 @@ abstract class CommonMathHandler extends SimpleHandler {
 	public static function handle(array $node, Context $context) {
 
 		try {
-
 			return BinaryLTR::handle($node, $context);
-
 		} catch (InternalBinaryOperationException $e) {
-
 			throw new ErrorException(sprintf(
 				"Cannot use operator '%s' with '%s' and '%s'",
 				$e->getOperator(),
 				($e->getLeft())::TYPE,
 				($e->getRight())::TYPE
 			), $node);
-
 		}
 
 	}

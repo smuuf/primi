@@ -19,17 +19,13 @@ class Comparison extends SimpleHandler {
 	public static function handle(array $node, Context $context) {
 
 		try {
-
 			return ComparisonLTR::handle($node, $context);
-
 		} catch (InternalBinaryOperationException $e) {
-
 			throw new ErrorException(sprintf(
 				"Cannot compare '%s' with '%s'",
 				($e->getLeft())::TYPE,
 				($e->getRight())::TYPE
 			), $node);
-
 		}
 
 	}
