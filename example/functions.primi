@@ -122,3 +122,43 @@ censored = censor([
 	'damn',
 ])
 assert(censored == ['very_safe', 'voldemort'])
+
+//
+// Calling function without all arguments raises error.
+//
+
+was_error = false
+try {
+	// Dummy function.
+	fn = (a, b) => {
+		return [a, b]
+	}
+	// Call without all expected arguments.
+	fn(1)
+} on error {
+	was_error = true
+}
+assert(was_error, 'Calling function without all arguments raises error')
+
+//
+// Iterating over function raises error.
+//
+
+was_error = false
+will_not_happen_A = true
+will_not_happen_B = true
+try {
+	// Dummy function.
+	fn = () => {}
+	// Try to iterate over it.
+	for (x in fn) {
+		will_not_happen_A = false
+	}
+	will_not_happen_B = false
+} on error {
+	was_error = true
+}
+assert(was_error, 'Iterating over function raises error')
+_ = 'No code after error was executed'
+assert(will_not_happen_A, _)
+assert(will_not_happen_B, _)
