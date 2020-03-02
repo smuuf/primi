@@ -1,0 +1,38 @@
+max_iter = 500000
+
+function bench_function_calls() {
+
+	adder = function(x, y) {
+		return x + y
+	}
+
+	result = -1024
+	c = 0
+	while (c < max_iter) {
+		result = result + adder(c, 1)
+		c = c + 1
+	}
+
+	return c
+
+}
+
+function bench_regex_matches() {
+
+	haystack = "Když začínáme myslet, nemáme k dispozici nic jiného než myšlenku v " +
+		"její čisté neurčenosti, neboť k určení již patří jedno nebo nějaké " +
+		"jiné, ale na začátku ještě nemáme žádné jiné..."
+
+	result = 0
+	c = 0
+	while (c < max_iter) {
+		result = result + (haystack == r"^.*(zač).*(,)?.*?(\.)").to_number()
+		c = c + 1
+	}
+
+	return c
+
+}
+
+bench_function_calls()
+bench_regex_matches()
