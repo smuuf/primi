@@ -41,6 +41,7 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 	public static function handle(array $node, Context $context): BoolValue {
 
 		$operands = $node['operands'];
+		$lastRight = false;
 		$result = true;
 
 		foreach ($node['ops'] as $index => $opNode) {
@@ -48,24 +49,23 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 			$lOperandNode = $operands[$index];
 			$rOperandNode = $operands[$index + 1];
 
-			$left = HandlerFactory
-				::get($lOperandNode['name'])
+			// Optimization: If we're not in the first iteration, do not
+			// evaluate the previously 'right' expression node again, but just
+			// reuse it as 'left' now.
+			$left = $lastRight ?: HandlerFactory::get($lOperandNode['name'])
 				::handle($lOperandNode, $context);
-
-			$right = HandlerFactory
-				::get($rOperandNode['name'])
+			$right = HandlerFactory::get($rOperandNode['name'])
 				::handle($rOperandNode, $context);
 
-			// Extract the text of the assigned operator node.
-			$op = $opNode['text'];
-
-			$resultValue = static::evaluate($op, $left, $right);
+			$resultValue = static::evaluate($opNode['text'], $left, $right);
 			$result &= Common::isTruthy($resultValue);
 
 			// Short-circuiting, if any of the results is already false.
 			if (!$result) {
 				return new BoolValue(false);
 			}
+
+			$lastRight = $right;
 
 		}
 

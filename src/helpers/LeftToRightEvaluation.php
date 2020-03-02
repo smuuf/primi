@@ -20,7 +20,7 @@ abstract class LeftToRightEvaluation extends \Smuuf\Primi\StrictObject {
 
 		$operands = $node['operands'];
 
-		$firstOperand = array_shift($operands);
+		$firstOperand = $operands[0];
 		$handler = HandlerFactory::get($firstOperand['name']);
 		$result = $handler::handle($firstOperand, $context);
 
@@ -29,13 +29,15 @@ abstract class LeftToRightEvaluation extends \Smuuf\Primi\StrictObject {
 		// operator determining the operands's effect on the result has always
 		// the "n" index. (It would be "n-1" but we shifted the first operand
 		// already.)
-		foreach ($operands as $index => $operandNode) {
+		$opCount = count($operands);
+		for ($i = 1; $i < $opCount; $i++) {
 
-			$handler = HandlerFactory::get($operandNode['name']);
-			$next = $handler::handle($operandNode, $context);
+			$opNode = $operands[$i];
+			$handler = HandlerFactory::get($opNode['name']);
+			$next = $handler::handle($opNode, $context);
 
 			// Extract the text of the assigned operator node.
-			$op = $node['ops'][$index]['text'];
+			$op = $node['ops'][$i - 1]['text'];
 			$result = static::evaluate($op, $result, $next);
 
 			if (static::SHORT_CIRCUIT && !Common::isTruthy($result)) {

@@ -11,14 +11,12 @@ class ReturnStatement extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 
-		$returnValue = \null;
-
-		if (isset($node['subject'])) {
-			$handler = HandlerFactory::get($node['subject']['name']);
-			$returnValue = $handler::handle($node['subject'], $context);
+		if (!isset($node['subject'])) {
+			throw new ReturnException(\null);
 		}
 
-		throw new ReturnException($returnValue);
+		$handler = HandlerFactory::get($node['subject']['name']);
+		throw new ReturnException($handler::handle($node['subject'], $context));
 
 	}
 
