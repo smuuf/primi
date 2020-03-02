@@ -5,38 +5,69 @@ cd $(dirname $0)/..
 # Time format for 'time' command.
 TIMEFORMAT=%R
 
-iterations=10
-echo "Iterations: $iterations"
-
 echo "Clearing AST cache ..."
 rm ./temp/ast*.json 2>/dev/null
 rm bench.out 2>/dev/null
 
-simplefiles=$(find ./example -iname "bench*.primi")
-simpletime=0
+ITERS=3
+PERF_STANDARD_PATH='./tests/bench/perf_standard.php'
+BENCH_FILES=$(find ./tests/bench/ -iname "bench*.primi")
+SIMPLE_TIME=0
+TOTAL_TIME=0
+AVG_SCORE=0
 
-function timeit {
-    echo `{ time ./primi $1 >> bench.out; } 2>&1`
+function get_precise_time {
+    date +%s.%N
 }
 
-echo "Running benchmark ..."
-for i in $(seq $iterations)
+function measure_time {
+    # We probably should measure only user+kernel time our process really took
+    # (without I/O waits and stuff), but /usr/bin/time, which is handy, returns
+    # insufficient precision (only 2 decimal points).
+    # So lets measure everything.
+    START=`get_precise_time`
+    TMP=`$1 > /dev/null`
+    END=`get_precise_time`
+    perl -e "printf('%.8f', $END - $START);"
+}
+
+function timeit_php {
+    echo `measure_time "php $1"`
+}
+
+function timeit_primi {
+    echo `measure_time "./primi $1"`
+}
+
+echo -n "Measuring perf standard ... "
+PERF_STD=`timeit_php $PERF_STANDARD_PATH`
+echo "$PERF_STD s"
+
+echo "Running benchmarks ..."
+for i in $(seq $ITERS)
 do
-    echo "█ ($i / $iterations) "
-    for f in $simplefiles
+    [[ "$i" == "1" ]] && STATE='parsing' || STATE='cached'
+
+    [[ "$STATE" == "parsing" ]] && DESC="With AST parsing" || DESC="With cached AST"
+    echo "█ $DESC ($i / $ITERS)"
+
+    for f in $BENCH_FILES
     do
         echo -n "$f ... "
-        tmp=$(timeit $f)
-        echo "$tmp s";
-        simpletime=$(perl -e "printf('%.2f', $simpletime + $tmp);")
+        SIMPLE_TIME=$(timeit_primi $f)
+        SCORE=$(perl -e "printf('%.2f', $SIMPLE_TIME / $PERF_STD)")
+        TOTAL_SCORE=$(perl -e "printf('%.2f', $SCORE + $TOTAL_TIME)")
+        TOTAL_TIME=$(perl -e "printf('%.2f', $SIMPLE_TIME + $TOTAL_TIME)")
+        echo "$SIMPLE_TIME s (${SCORE}x slower)";
     done
 done
 
+AVG_TIME=`perl -e "printf('%.2f', $TOTAL_TIME / $ITERS);"`
+AVG_SCORE=`perl -e "printf('%.2f', $TOTAL_SCORE / $ITERS);"`
 printf \
 "Results:\n"\
-"- Total: $simpletime"" s \n"\
-"- AVG  : "`perl -e "printf('%.2f', $simpletime / $iterations);"`" s \n"
+"- Total: $TOTAL_TIME s\n"\
+"- AVG  : $AVG_TIME s\n"
 
-nowdate=`date +"%d.%m.%Y %H:%M"`
-average=`perl -e "printf('%.2f', $simpletime / $iterations);"`
-echo "$nowdate,$iterations,$simpletime,$average" >> "bench_progress.csv"
+TODAY=`date +"%d.%m.%Y %H:%M"`
+echo "$TODAY, ${AVG_TIME//,/.}, perf ${AVG_SCORE//,/.}x slower vs ${PERF_STD//,/.}" >> "bench_progress.csv"
