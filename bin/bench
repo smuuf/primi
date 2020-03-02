@@ -10,7 +10,7 @@ rm ./temp/ast*.json 2>/dev/null
 rm bench.out 2>/dev/null
 
 ITERS=3
-PERF_STANDARD_PATH='./tests/bench/perf_standard.php'
+PERF_STANDARD_PATH='./tests/bench/standard_perf.php'
 BENCH_FILES=$(find ./tests/bench/ -iname "bench*.primi")
 SIMPLE_TIME=0
 TOTAL_TIME=0
