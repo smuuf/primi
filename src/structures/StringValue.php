@@ -163,11 +163,10 @@ class StringValue extends Value implements
 	 */
 	private static function utfSplit(string $string): \Generator {
 
+		static $set = "UTF-8";
 		$strlen = \mb_strlen($string);
-		while ($strlen) {
-			yield new self(\mb_substr($string, 0, 1, "UTF-8"));
-			$string = \mb_substr($string, 1, $strlen, "UTF-8");
-			$strlen = \mb_strlen($string);
+		for ($i = 0; $i < $strlen; $i++) {
+			yield new self(\mb_substr($string, $i, 1));
 		}
 
 	}
