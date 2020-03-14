@@ -8,6 +8,8 @@ use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ISupportsArrayAccess;
 use \Smuuf\Primi\Helpers\ChainedHandler;
+use \Smuuf\Primi\UndefinedIndexException;
+use \Smuuf\Primi\InternalUndefinedIndexException;
 
 /**
  * This handler returns a final part of the chain - a value object that's
@@ -35,16 +37,22 @@ class Vector extends ChainedHandler {
 		$key = $handler::handle($node['arrayKey'], $context, $subject);
 		$key = $key->getInternalValue();
 
-		// Are we going to handle this node as a leaf node?
-		if (!isset($node['vector'])) {
-			// If this is a leaf node, return an insertion proxy.
-			return $subject->getArrayInsertionProxy($key);
-		}
+		try {
 
-		// This is not a leaf node, so just dereference the chain a bit deeper,
-		// so we can ultimately end up with some leaf node. (that situation
-		// will be handled by the code above).
-		$next = $subject->arrayGet($key);
+			// Are we going to handle this node as a leaf node?
+			if (!isset($node['vector'])) {
+				// If this is a leaf node, return an insertion proxy.
+				return $subject->getArrayInsertionProxy($key);
+			}
+
+			// This is not a leaf node, so just dereference the chain a bit deeper,
+			// so we can ultimately end up with some leaf node. (that situation
+			// will be handled by the code above).
+			$next = $subject->arrayGet($key);
+
+		} catch (InternalUndefinedIndexException $e) {
+			throw new UndefinedIndexException($e->getMessage(), $node);
+		}
 
 		// At this point we know there's some another, deeper part of vector,
 		// so process it.

@@ -6,9 +6,11 @@ namespace Smuuf\Primi\Psl;
 
 use Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Extension;
+use Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\BoolValue;
+use Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Structures\StringValue;
 
 class StandardExtension extends Extension {
@@ -41,6 +43,10 @@ class StandardExtension extends Extension {
 
 		return new BoolValue(true);
 
+	}
+
+	public static function length(ISupportsLength $value): NumberValue {
+		return new NumberValue((string) $value->getLength());
 	}
 
 }

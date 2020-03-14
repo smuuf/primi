@@ -7,6 +7,7 @@ use \Smuuf\Primi\Helpers\StringEscaping;
 use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
+use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsArrayAccess;
@@ -17,13 +18,18 @@ class StringValue extends Value implements
 	ISupportsMultiplication,
 	ISupportsIteration,
 	ISupportsComparison,
-	ISupportsArrayAccess
+	ISupportsArrayAccess,
+	ISupportsLength
 {
 
 	const TYPE = "string";
 
 	public function __construct(string $value) {
 		$this->value = $value;
+	}
+
+	public function getLength(): int {
+		return \mb_strlen($this->value);
 	}
 
 	public function getStringValue(): string {

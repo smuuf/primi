@@ -4,8 +4,12 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\UndefinedIndexException;
 use \Smuuf\Primi\Structures\InsertionProxy;
+use \Smuuf\Primi\InternalUndefinedIndexException;
+
 
 class Assignment extends SimpleHandler {
 
@@ -24,10 +28,22 @@ class Assignment extends SimpleHandler {
 				$context->setVariable($node['left']['text'], $return);
 			break;
 			case $target instanceof InsertionProxy:
+
 				// Vector handler returns a proxy with the key being
 				// pre-configured. Commit the value to that key into the correct
 				// value object.
-				$target->commit($return);
+				try {
+					$target->commit($return);
+				} catch (InternalUndefinedIndexException $e) {
+					throw new UndefinedIndexException($e->getMessage(), $node);
+				} catch (\TypeError $e) {
+					throw new ErrorException(sprintf(
+						"Cannot insert '%s' into '%s'",
+						$return::TYPE,
+						$target->getTarget()::TYPE
+					));
+				}
+
 			break;
 		}
 

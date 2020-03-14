@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\Structures\StringValue;
-use \Smuuf\Primi\Structures\NumberValue;
+use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\ArrayValue;
 use \Smuuf\Primi\Structures\RegexValue;
-use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Structures\StringValue;
+use \Smuuf\Primi\Structures\NumberValue;
 
 class StringExtension extends Extension {
 
@@ -31,10 +31,6 @@ class StringExtension extends Extension {
 
 		return new StringValue($result);
 
-	}
-
-	public static function string_length(StringValue $str): NumberValue {
-		return new NumberValue((string) mb_strlen($str->value));
 	}
 
 	public static function string_format(StringValue $str, Value ...$items): StringValue {

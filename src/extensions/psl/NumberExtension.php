@@ -2,15 +2,10 @@
 
 namespace Smuuf\Primi\Psl;
 
-use \Smuuf\Primi\Structures\NumberValue;
-use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\Structures\NumberValue;
 
 class NumberExtension extends Extension {
-
-	public static function number_length(NumberValue $value): NumberValue {
-		return new NumberValue(\strlen((string) $value->value));
-	}
 
 	public static function round(NumberValue $num, NumberValue $precision = \null): NumberValue {
 		return new NumberValue(\round($num->value, $precision ? $precision->value : 0));

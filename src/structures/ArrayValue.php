@@ -2,18 +2,21 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\Helpers\Common;
-
+use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsComparison;
+
+use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class ArrayValue extends Value implements
 	ISupportsIteration,
 	ISupportsComparison,
-	ISupportsArrayAccess
+	ISupportsArrayAccess,
+	ISupportsLength
 {
 
 	const TYPE = "array";
@@ -29,6 +32,10 @@ class ArrayValue extends Value implements
 			$item = clone $item;
 		});
 
+	}
+
+	public function getLength(): int {
+		return \count($this->value);
 	}
 
 	public function getStringValue(CircularDetector $cd = \null): string {
