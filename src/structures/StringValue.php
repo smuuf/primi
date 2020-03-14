@@ -11,6 +11,7 @@ use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class StringValue extends Value implements
 	ISupportsAddition,
@@ -55,11 +56,11 @@ class StringValue extends Value implements
 		Common::allowTypes($rightOperand, self::class, RegexValue::class);
 
 		if ($rightOperand instanceof RegexValue) {
-			$match = \preg_replace($rightOperand->value, \null, $this->value);
+			$match = \preg_replace($rightOperand->value, '', $this->value);
 			return new self($match);
 		}
 
-		$new = \str_replace($rightOperand->value, \null, $this->value);
+		$new = \str_replace($rightOperand->value, '', $this->value);
 		return new self($new);
 
 	}
@@ -127,7 +128,7 @@ class StringValue extends Value implements
 		$index = (int) $index;
 
 		if (!isset($this->value[$index])) {
-			throw new \Smuuf\Primi\InternalUndefinedIndexException($index);
+			throw new \Smuuf\Primi\InternalUndefinedIndexException((string) $index);
 		}
 
 		return new self($this->value[$index]);
