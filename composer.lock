@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "718b7ef44d635e66349bbeb8185c9220",
+    "content-hash": "defa350bb393c67b61edbc8691dbbf43",
     "packages": [
         {
             "name": "smuuf/php-peg",
-            "version": "2.1.2",
+            "version": "2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smuuf/php-peg.git",
-                "reference": "146375d8655450d149fe730738b7cd8c0a050af3"
+                "reference": "134e20af61b3dd5afef4eb61c193413926477960"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/146375d8655450d149fe730738b7cd8c0a050af3",
-                "reference": "146375d8655450d149fe730738b7cd8c0a050af3",
+                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/134e20af61b3dd5afef4eb61c193413926477960",
+                "reference": "134e20af61b3dd5afef4eb61c193413926477960",
                 "shasum": ""
             },
             "require": {
@@ -68,29 +68,30 @@
                 "parser",
                 "peg"
             ],
-            "support": {
-                "source": "https://github.com/smuuf/php-peg/tree/2.1.2"
-            },
-            "time": "2020-02-23T01:01:34+00:00"
+            "time": "2020-03-27T21:40:40+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "nette/tester",
-            "version": "v2.3.1",
+            "version": "v2.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/tester.git",
-                "reference": "c3bd1b2c1074dfb957288b716c06aa7b4b5295a8"
+                "reference": "793aa4bb87872319902a569ed84a64844fdc1549"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/tester/zipball/c3bd1b2c1074dfb957288b716c06aa7b4b5295a8",
-                "reference": "c3bd1b2c1074dfb957288b716c06aa7b4b5295a8",
+                "url": "https://api.github.com/repos/nette/tester/zipball/793aa4bb87872319902a569ed84a64844fdc1549",
+                "reference": "793aa4bb87872319902a569ed84a64844fdc1549",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1"
+            },
+            "require-dev": {
+                "ext-simplexml": "*",
+                "phpstan/phpstan": "^0.12"
             },
             "bin": [
                 "src/tester"
@@ -109,8 +110,8 @@
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause",
-                "GPL-2.0",
-                "GPL-3.0"
+                "GPL-2.0-only",
+                "GPL-3.0-only"
             ],
             "authors": [
                 {
@@ -136,24 +137,20 @@
                 "testing",
                 "unit"
             ],
-            "support": {
-                "issues": "https://github.com/nette/tester/issues",
-                "source": "https://github.com/nette/tester/tree/master"
-            },
-            "time": "2019-11-19T13:19:16+00:00"
+            "time": "2020-03-06T15:55:57+00:00"
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.11",
+            "version": "0.12.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "ca5f2b7cf81c6d8fba74f9576970399c5817e03b"
+                "reference": "1ce27fe29c8660a27926127d350d53d80c4d4286"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ca5f2b7cf81c6d8fba74f9576970399c5817e03b",
-                "reference": "ca5f2b7cf81c6d8fba74f9576970399c5817e03b",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1ce27fe29c8660a27926127d350d53d80c4d4286",
+                "reference": "1ce27fe29c8660a27926127d350d53d80c4d4286",
                 "shasum": ""
             },
             "require": {
@@ -179,11 +176,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "support": {
-                "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.11"
-            },
-            "time": "2020-02-16T14:00:29+00:00"
+            "time": "2020-03-22T16:51:47+00:00"
         },
         {
             "name": "smuuf/koloader",
@@ -191,12 +184,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/smuuf/koloader.git",
-                "reference": "5583069cf678807aa32a045bf0fd95b6136cf62c"
+                "reference": "5ecb46f65d751b00d18b7ca10f4be772349ece90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smuuf/koloader/zipball/5583069cf678807aa32a045bf0fd95b6136cf62c",
-                "reference": "5583069cf678807aa32a045bf0fd95b6136cf62c",
+                "url": "https://api.github.com/repos/smuuf/koloader/zipball/5ecb46f65d751b00d18b7ca10f4be772349ece90",
+                "reference": "5ecb46f65d751b00d18b7ca10f4be772349ece90",
                 "shasum": ""
             },
             "require": {
@@ -212,8 +205,15 @@
             "license": [
                 "MIT"
             ],
+            "authors": [
+                {
+                    "name": "Premysl Karbula",
+                    "email": "premavansmuuf@gmail.com",
+                    "homepage": "http://www.premyslkarbula.cz"
+                }
+            ],
             "description": "A lightweight directory-sniffing autoloader with caching.",
-            "time": "2016-01-28T05:22:45+00:00"
+            "time": "2020-03-14T23:36:45+00:00"
         },
         {
             "name": "smuuf/phpcb",

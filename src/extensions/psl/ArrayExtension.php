@@ -20,9 +20,6 @@ class ArrayExtension extends Extension {
 		return clone $arr;
 	}
 
-	public static function array_length(ArrayValue $arr): NumberValue {
-		return new NumberValue((string) count($arr->value));
-	}
 	public static function array_reverse(ArrayValue $arr): Value {
 		return new ArrayValue(\array_reverse($arr->value));
 	}
