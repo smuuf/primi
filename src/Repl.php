@@ -139,7 +139,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 		printf(
 			"%s %s\n",
-			$result->getStringValue(),
+			$result->getStringRepr(),
 			!$this->rawOutput ? self::formatType($result) : null
 		);
 

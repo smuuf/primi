@@ -37,29 +37,37 @@ Assert::same(FuncValue::TYPE, Value::buildAutomatic(function($x, $y) { return 1;
 // Getting string representation of values.
 //
 
-// String - will have double quotes around it.
+// String - 'repr' will have double quotes around it.
 $v = new StringValue("hel\"lo!");
-Assert::same('"hel\"lo!"', $v->getStringValue());
+Assert::same('"hel\"lo!"', $v->getStringRepr());
+
+// String - 'value' will NOT have double quotes around it.
+$v = new StringValue("hel\"lo!");
+Assert::same('hel"lo!', $v->getStringValue());
 
 // Number.
 $v = new NumberValue("123");
-Assert::same('123', $v->getStringValue());
+Assert::same('123', $v->getStringRepr());
+// Number which floats.
+$v = new NumberValue("123.789");
+Assert::same('123.789', $v->getStringRepr());
+// Number which floats 2.
+$v = new NumberValue("000123.789");
+Assert::same('123.789', $v->getStringRepr());
 
 // Bool: True.
 $v = new BoolValue(true);
-Assert::same('true', $v->getStringValue());
-
+Assert::same('true', $v->getStringRepr());
 // Bool: False
 $v = new BoolValue(false);
-Assert::same('false', $v->getStringValue());
+Assert::same('false', $v->getStringRepr());
 
 // Regex 1.
 $v = new RegexValue('/abc/');
-Assert::same('r"/abc/"', $v->getStringValue());
-
-// Regex 1.
+Assert::same('r"/abc/"', $v->getStringRepr());
+// Regex 2.
 $v = new RegexValue('abc');
-Assert::same('r"abc"', $v->getStringValue());
+Assert::same('r"abc"', $v->getStringRepr());
 
 // Array.
 $v = new ArrayValue([
@@ -69,4 +77,4 @@ $v = new ArrayValue([
 	new RegexValue('abc'),
 	new RegexValue('/abc/'),
 ]);
-Assert::same('[0: 1, 1: "xxx", 2: false, 3: r"abc", 4: r"/abc/"]', $v->getStringValue());
+Assert::same('[0: 1, 1: "xxx", 2: false, 3: r"abc", 4: r"/abc/"]', $v->getStringRepr());

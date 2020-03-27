@@ -259,16 +259,14 @@ class StringExtension extends Extension {
 
 		$prepared = \array_map(function(&$item) use ($self) {
 
-			Common::allowTypes($item, StringValue::class, NumberValue::class,
-				BoolValue::class, ArrayValue::class);
+			// Common::allowTypes($item, StringValue::class, NumberValue::class,
+			// 	BoolValue::class, ArrayValue::class);
 
 			switch (\true) {
 				case $item instanceof ArrayValue:
 					return self::string_join($self, $item)->value;
-				case $item instanceof BoolValue:
-					return $item->getStringValue();
 				default:
-					return $item->value;
+					return $item->getStringValue();
 			}
 
 		}, $array->value);

@@ -34,6 +34,10 @@ class StringValue extends Value implements
 	}
 
 	public function getStringValue(): string {
+		return $this->value;
+	}
+
+	public function getStringRepr(): string {
 
 		// We are about to put double-quotes around the return value,
 		// so let's "escape" double-quotes present in the string value.

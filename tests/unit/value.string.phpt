@@ -43,12 +43,19 @@ foreach ($stringsWithEscapeSequences as $s) {
 // REMEMBER: Escape characters are NOT HANDLED when creating StringValue
 // objects. Whatever is put into StringValue as argument will literally be
 // what's inside.
-Assert::same('"\""', (new StringValue('"'))->getStringValue());
-Assert::same('"\\\\\""', (new StringValue('\\"'))->getStringValue());
-Assert::same('"\\\\\'"', (new StringValue("\'"))->getStringValue());
-Assert::same('"\\\\\\\\\'"', (new StringValue("\\\\'"))->getStringValue());
-Assert::same('"\\\\n"', (new StringValue('\n'))->getStringValue());
-Assert::same('"\\n"', (new StringValue("\n"))->getStringValue());
+Assert::same('"\""', (new StringValue('"'))->getStringRepr());
+Assert::same('"\\\\\""', (new StringValue('\\"'))->getStringRepr());
+Assert::same('"\\\\\'"', (new StringValue("\'"))->getStringRepr());
+Assert::same('"\\\\\\\\\'"', (new StringValue("\\\\'"))->getStringRepr());
+Assert::same('"\\\\n"', (new StringValue('\n'))->getStringRepr());
+Assert::same('"\\n"', (new StringValue("\n"))->getStringRepr());
+// Correct value - NOT repr. Should be the same as input.
+Assert::same('"', (new StringValue('"'))->getStringValue());
+Assert::same('\\"', (new StringValue('\\"'))->getStringValue());
+Assert::same("\'", (new StringValue("\'"))->getStringValue());
+Assert::same("\\\\'", (new StringValue("\\\\'"))->getStringValue());
+Assert::same('\n', (new StringValue('\n'))->getStringValue());
+Assert::same("\n",(new StringValue("\n"))->getStringValue());
 
 //
 // Test adding and subtracting...

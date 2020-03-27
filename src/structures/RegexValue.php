@@ -19,7 +19,7 @@ class RegexValue extends Value implements ISupportsComparison {
 
 	}
 
-	public function getStringValue(): string {
+	public function getStringRepr(): string {
 
 		// Cut off the first delim and the last delim + "u" modifier.
 		$string = $this->value;

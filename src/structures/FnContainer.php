@@ -18,6 +18,9 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	/** @var int Number of parameters the function is aware of. */
 	protected $argsCount = 0;
 
+	/** @var bool Does this function originate from Primi or its provided by engine? */
+	protected $isPhpFunction = 0;
+
 	/**
 	 * Build and return a closure wrapper around a Primi function (represented
 	 * by its node tree).
@@ -76,7 +79,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($closure, \count($definitionArgs));
+		return new self($closure, false, \count($definitionArgs));
 
 	}
 
@@ -117,16 +120,21 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($wrapper, $argsCount);
+		return new self($wrapper, true, $argsCount);
 
 	}
 
 	/**
 	 * Disallow direct instantiation. Always use the static factories above.
 	 */
-	private function __construct(\Closure $closure, int $argsCount = 0) {
+	private function __construct(
+		\Closure $closure,
+		bool $isPhpFunction,
+		int $argsCount
+	) {
 		$this->closure = $closure;
 		$this->argsCount = $argsCount;
+		$this->isPhpFunction = $isPhpFunction;
 	}
 
 	public function getClosure(): \Closure {
@@ -135,6 +143,10 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 	public function getArgsCount(): int {
 		return $this->argsCount;
+	}
+
+	public function isPhpFunction(): bool {
+		return $this->isPhpFunction;
 	}
 
 }

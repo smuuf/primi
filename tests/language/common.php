@@ -43,7 +43,7 @@ function run_test(string $file) {
 
 		$vars = $context->getVariables();
 		array_walk($vars, function($x, $k) {
-			printf("%s:%s:%s\n", $k, main_class($x), $x->getStringValue());
+			printf("%s:%s:%s\n", $k, main_class($x), $x->getStringRepr());
 		});
 
 	} else {
@@ -55,7 +55,7 @@ function run_test(string $file) {
 				$interpreter->run($line);
 				$vars = $context->getVariables();
 				array_walk($vars, function($x, $k) {
-					printf("%s:%s:%s\n", $k, main_class($x), $x->getStringValue());
+					printf("%s:%s:%s\n", $k, main_class($x), $x->getStringRepr());
 				});
 			} catch (\Smuuf\Primi\ErrorException $e) {
 				printf("EX:%s\n", get_class($e));

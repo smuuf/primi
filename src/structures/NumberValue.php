@@ -27,7 +27,7 @@ class NumberValue extends Value implements
 
 	}
 
-	public function getStringValue(): string {
+	public function getStringRepr(): string {
 		return (string) $this->value;
 	}
 

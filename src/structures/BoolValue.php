@@ -15,7 +15,7 @@ class BoolValue extends Value implements ISupportsComparison {
 		$this->value = $value;
 	}
 
-	public function getStringValue(): string {
+	public function getStringRepr(): string {
 		return $this->value ? 'true' : 'false';
 	}
 

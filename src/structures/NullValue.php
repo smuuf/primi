@@ -11,7 +11,7 @@ class NullValue extends Value implements ISupportsComparison {
 
 	const TYPE = "null";
 
-	public function getStringValue(): string {
+	public function getStringRepr(): string {
 		return "null";
 	}
 

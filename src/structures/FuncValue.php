@@ -12,8 +12,11 @@ class FuncValue extends Value implements ISupportsInvocation {
 		$this->value = $fn;
 	}
 
-	public function getStringValue(): string {
-		return "function";
+	public function getStringRepr(): string {
+		return sprintf(
+			"<function: %s>",
+			$this->value->isPhpFunction() ? 'native' : 'user'
+		);
 	}
 
 	public function invoke(array $args = []) {

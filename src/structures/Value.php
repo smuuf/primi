@@ -31,10 +31,25 @@ abstract class Value extends ValueFriends {
 
 	}
 
-	public function getInternalValue() {
+	/**
+	 * Returns the core PHP value of this Primi value object.
+	 */
+	final public function getInternalValue() {
 		return $this->value;
 	}
 
-	abstract public function getStringValue(): string;
+	/**
+	 * Returns a string representation of internal value.
+	 */
+	public function getStringValue(): string {
+		return $this->getStringRepr();
+	}
+
+	/**
+	 * Returns an unambiguous string representation of internal value in such
+	 * form that it can be used as Primi source code to recreate that value.
+	 * If possible.
+	 */
+	abstract public function getStringRepr(): string;
 
 }

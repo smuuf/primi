@@ -38,7 +38,7 @@ class ArrayValue extends Value implements
 		return \count($this->value);
 	}
 
-	public function getStringValue(CircularDetector $cd = \null): string {
+	public function getStringRepr(CircularDetector $cd = \null): string {
 
 		// If this is a root method of getting a string value, create instance
 		// of circular references detector, which we will from now on pass
@@ -67,7 +67,7 @@ class ArrayValue extends Value implements
 			$hash = \spl_object_hash($item);
 			$str = $cd->has($hash)
 				? \sprintf("*recursion (%s)*", Common::objectHash($item))
-				: $item->getStringValue($cd);
+				: $item->getStringRepr($cd);
 
 			$return .= \sprintf("%s: %s, ", $key, $str);
 
