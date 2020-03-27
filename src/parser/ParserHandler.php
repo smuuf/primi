@@ -49,7 +49,7 @@ class ParserHandler extends CompiledParser {
 	protected static function sanitizeSource(string $s) {
 
 		// Unify new-lines.
-		$s = \preg_replace('#(\r\n)#u', "\n", $s);
+		$s = str_replace("\r\n", "\n", $s);
 
 		// Ensure newline at the end (parser needs this to be able to correctly
 		// parse comments in one line source codes.)

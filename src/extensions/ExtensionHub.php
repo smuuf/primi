@@ -57,16 +57,19 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 
 		$classRef = new \ReflectionClass($class);
 
-		// We want methods that are both public AND static. And we have to do
-		// this by intersection.
-		// See http://php.net/manual/en/reflectionclass.getmethods.php.
-		// "... all methods with any of the given attributes will be returned."
-		$public = $classRef->getMethods(\ReflectionMethod::IS_PUBLIC);
-		$static = $classRef->getMethods(\ReflectionMethod::IS_STATIC);
-		$methods = \array_intersect($static, $public);
+		// We want methods that are both public AND static.
+		// Seems like the fastest way to do it is to get static methods and then
+		// filter out non-public when processing them.
+		// (At least xdebug profiling says so; yes, I know, measuring can change
+		// the outcome...)
+		$methods = $classRef->getMethods(\ReflectionMethod::IS_STATIC);
 
 		$result = [];
 		foreach ($methods as $methodRef) {
+
+			if (!$methodRef->isPublic()) {
+				continue;
+			}
 
 			$methodName = $methodRef->getName();
 
