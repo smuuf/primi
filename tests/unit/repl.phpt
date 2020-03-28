@@ -22,7 +22,7 @@ $expected = [
 	"ERR: Undefined variable 'b' @ line 1, position 0",
 	"1",
 	"a: 1\n_: 1",
-	"<function: primi>",
+	"<function: user>",
 ];
 
 $driver = new class implements \Smuuf\Primi\IReadlineDriver {
