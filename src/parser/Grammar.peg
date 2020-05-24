@@ -22,16 +22,18 @@ class CompiledParser extends Parser\Packrat {
 # Carefully crafted (or stolen somewhere?) string matching regex which supports
 # both " and ' quotes, doesn't cause JIT stack overflow and also supports escaped quotes.
 StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
-NumberLiteral: /-?\d[\d_]*(\.[\d_]+)?/
-BoolLiteral: "true" | "false"
-NullLiteral: "null"
+NumberLiteral: / -?\d[\d_]*(\.[\d_]+)? /
+# Literals for true|false must NOT be followed by any possible characters representing variable name.
+BoolLiteral: ( "true" | "false" ) !/[a-zA-Z0-9_]/
+# Literal for null must NOT be followed by any possible characters representing variable name.
+NullLiteral: "null" !/[a-zA-Z0-9_]/
 RegexLiteral: "r" core:StringLiteral
 RangeLiteral: left:RangeBoundary > ".." ( step:RangeBoundary ".." )? > right:RangeBoundary
 RangeBoundary: skip:NumberLiteral | skip:Variable
 Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
-VariableName: / ([a-zA-Z_][a-zA-Z0-9_]*) /
+VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
 AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
 
@@ -96,7 +98,7 @@ Statement: !/[\s\{\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:E
 Block: "{" __ ( skip:Program )? "}"
 
 # Matches any optional whitespace or newline.
-__: / [\s\n]*(?:\/\/[^\n]*)? /
+__: / [\s]*+(?:\/\/[^\n]*+(?:\s*+))? /
 
 # Matches newline, takes care of optional // comments at EOL.
 NL: / (?:\/\/[^\n]*)?\n /
