@@ -19,6 +19,10 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	const PRIMARY_PROMPT = '>>> ';
 	const MULTILINE_PROMPT = '... ';
 
+	private const PHP_ERROR_HEADER = "PHP ERROR:";
+	private const ERROR_REPORT_PLEA = "This is probably a bug in Primi or any of "
+		. "its components. Please report this to the maintainer.";
+
 	/** @var string Full path to readline history file. */
 	private $historyFilePath;
 
@@ -115,15 +119,9 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				echo "\n";
 
 			} catch (ErrorException $e) {
-				$msg = $this->rawOutput
-					? "ERR: {$e->getMessage()}\n"
-					: Colors::get("{red}ERR:{_} {$e->getMessage()}\n");
-				echo($msg);
+				echo Colors::get("{red}ERR:{_} {$e->getMessage()}\n");
 			} catch (\Throwable $e) {
-				$msg = $this->rawOutput
-					? "PHP ERROR: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n"
-					: Colors::get("{red}PHP ERROR:{_} {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n");
-				echo($msg);
+				$this->printPhpTraceback($e);
 			}
 
 		}
@@ -161,6 +159,18 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			echo "$name: ";
 			$this->printResult($value);
 		}
+
+	}
+
+	private static function printPhpTraceback(\Throwable $e) {
+
+		$msg = Colors::get(sprintf("\n{white}{-red}%s", self::PHP_ERROR_HEADER));
+		$msg .= " {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
+		echo $msg;
+
+		// Best and easiest to get version of backtrace I can think of.
+		echo $e->getTraceAsString();
+		echo Colors::get(sprintf("\n{yellow}%s\n", self::ERROR_REPORT_PLEA));
 
 	}
 
