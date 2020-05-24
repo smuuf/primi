@@ -28,8 +28,6 @@ BoolLiteral: ( "true" | "false" ) !/[a-zA-Z0-9_]/
 # Literal for null must NOT be followed by any possible characters representing variable name.
 NullLiteral: "null" !/[a-zA-Z0-9_]/
 RegexLiteral: "r" core:StringLiteral
-RangeLiteral: left:RangeBoundary > ".." ( step:RangeBoundary ".." )? > right:RangeBoundary
-RangeBoundary: skip:NumberLiteral | skip:Variable
 Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
@@ -40,7 +38,7 @@ AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? _
 ArrayItem: ( __ key:Expression __ ":" )? __ value:Expression )
 ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
 
-Value: skip:RangeLiteral | skip:Literal | skip:Variable | skip:ArrayDefinition
+Value: skip:Literal | skip:Variable | skip:ArrayDefinition
 VariableVector: core:Variable vector:Vector
 Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" ) vector:Vector?
 Mutable: skip:VariableVector | skip:VariableName

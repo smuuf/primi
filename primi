@@ -13,17 +13,15 @@ set_error_handler(function($severity, $message, $file, $line) {
 $loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/temp/");
 $loader->addDirectory(__DIR__ . "/src")->register();
 
-array_shift($argv);
 $config = parse_arguments($argv);
-
-// Create "VM" context and create the interpreter.
-$context = new \Smuuf\Primi\Context;
 
 // Determine the source. Act as REPL if no source was specified.
 if (empty($config['input'])) {
 
 	echo header_string('REPL');
 
+	// Create "VM" context.
+	$context = new \Smuuf\Primi\Context;
 	// REPL uses interpreter without cache.
 	$interpreter = new \Smuuf\Primi\Interpreter($context);
 	$repl = new \Smuuf\Primi\Repl($interpreter);
@@ -33,8 +31,10 @@ if (empty($config['input'])) {
 }
 
 if ($config['input_is_code']) {
+	// Input is passed as a string of Primi source code.
 	$source = $config['input'];
 } else {
+	// Input is passed as a filename of file containing Primi source code.
 	$filepath = $config['input'];
 	if (!is_file($filepath)) {
 		die("Input file '$filepath' not found.\n");
@@ -44,6 +44,8 @@ if ($config['input_is_code']) {
 
 try {
 
+	// Create "VM" context.
+	$context = new \Smuuf\Primi\Context;
 	// Create interpreter - with cache.
 	$interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
 
@@ -63,12 +65,13 @@ try {
 	}
 
 } catch (\Smuuf\Primi\ErrorException $e) {
-
 	die($e->getMessage() . "\n");
-
 }
 
 function parse_arguments(array $args): array {
+
+	// Get rid of the first './primi' script argument.
+	array_shift($args);
 
 	$config = [
 		'tree' => false,

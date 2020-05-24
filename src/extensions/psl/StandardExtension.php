@@ -47,6 +47,39 @@ class StandardExtension extends Extension {
 
 	public static function length(ISupportsLength $value): NumberValue {
 		return new NumberValue((string) $value->getLength());
+
+	}
+
+	public static function range(
+		NumberValue $start,
+		?NumberValue $end = null,
+		?NumberValue $step = null
+	): ArrayValue {
+
+		if (
+			!Common::isNumericInt((string) $start->value)
+			|| ($end && !Common::isNumericInt((string) $end->value))
+			|| ($step && !Common::isNumericInt((string) $step->value))
+		) {
+			throw new ErrorException("All arguments must be integers.");
+		}
+
+		// If only one agrument is passed, the range will go from 0 to that
+		// number.
+		if ($end === null) {
+			$range = range(0, $start->value);
+		} else {
+			$range = range(
+				$start->value,
+				$end->value,
+				$step ? $step->value : 1
+			);
+		}
+
+		return new ArrayValue(
+			array_map([Value::class, 'buildAutomatic'], $range)
+		);
+
 	}
 
 }
