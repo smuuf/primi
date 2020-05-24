@@ -135,7 +135,7 @@ try {
 	}
 	// Call without all expected arguments.
 	fn(1)
-} on error {
+} catch {
 	was_error = true
 }
 assert(was_error, 'Calling function without all arguments raises error')
@@ -155,7 +155,7 @@ try {
 		will_not_happen_A = false
 	}
 	will_not_happen_B = false
-} on error {
+} catch {
 	was_error = true
 }
 assert(was_error, 'Iterating over function raises error')
