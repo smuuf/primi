@@ -56,13 +56,17 @@ class Colors extends \Smuuf\Primi\StrictObject {
 
 		return preg_replace_callback(
 			'#(?<!\\\\)\{([a-z_-][a-z-]*)\}#i',
-			'self::handler',
+			[self::class, 'handler'],
 			$string . ($revert ? '{_}' : null) // Insert reset character if we should reset styles on end.
 		);
 
 	}
 
 	private static function handler(array $m): string {
+
+		if (getenv('NO_COLOR') !== false) {
+			return '';
+		}
 
 		$color = $m[1];
 

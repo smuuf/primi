@@ -4,6 +4,8 @@ use \Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
+putenv('NO_COLOR=1');
+
 $counter = 0;
 $commands = [
     'a',
