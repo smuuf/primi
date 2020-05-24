@@ -2,7 +2,7 @@
 _a = ["aaa"]; // Stays [0: "aaa"]
 a = _a.copy();
 a.push("bbb"); // New array [0: "aaa", 1:"bbb"]
-x_length = a.length() // 2
+x_length = a.len() // 2
 x_reverse = a.reverse() // [0: "bbb", 1:"aaa"]
 x_random_item = a.random() == r"^(aaa|bbb)$" // true
 x_shuffled_item = a.shuffle()[0] == r"^(aaa|bbb)$" // true

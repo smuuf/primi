@@ -8,11 +8,13 @@ use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsDivision;
+use \Smuuf\Primi\ISupportsLength;
 
 class NumberValue extends Value implements
 	ISupportsAddition,
 	ISupportsSubtraction,
 	ISupportsMultiplication,
+	ISupportsLength,
 	ISupportsDivision,
 	ISupportsComparison
 {
@@ -31,6 +33,9 @@ class NumberValue extends Value implements
 		return (string) $this->value;
 	}
 
+	public function getLength(): int {
+		return strlen((string) $this->value);
+	}
 	public static function isNumericInt(string $input) {
 		return \ctype_digit(\ltrim($input, "+-"));
 	}
