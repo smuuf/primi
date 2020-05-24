@@ -108,8 +108,8 @@ result_3 = anon(anon_short, 10, 100)
 censor = (words) => {
 	filtered = []
 	for (word in words) {
-		if (word.length() != 4) {
-			filtered.array_push(word)
+		if (word.len() != 4) {
+			filtered.append(word)
 		}
 	}
 	return filtered

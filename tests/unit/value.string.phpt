@@ -290,10 +290,10 @@ Assert::same(17, mb_strlen(get_val($fns['string_shuffle']->invoke([$unicode]))))
 // Test length.
 //
 
-Assert::same(17, get_val($fns['length']->invoke([$string])));
-Assert::same(1, get_val($fns['length']->invoke([$letterA])));
+Assert::same(17, get_val($fns['len']->invoke([$string])));
+Assert::same(1, get_val($fns['len']->invoke([$letterA])));
 // Multibyte strings should report length correctly.
-Assert::same(17, get_val($fns['length']->invoke([$unicode])));
+Assert::same(17, get_val($fns['len']->invoke([$unicode])));
 
 //
 // Test replacing.

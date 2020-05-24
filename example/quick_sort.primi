@@ -1,8 +1,8 @@
-function qsort_wrapper(arr) {
+function qsort_wrapper(lst) {
 
     low = 0
-    high = arr.length() - 1
-    qsort(arr, low, high)
+    high = len(lst) - 1
+    qsort(lst, low, high)
 
 }
 

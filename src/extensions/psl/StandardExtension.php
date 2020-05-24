@@ -45,7 +45,23 @@ class StandardExtension extends Extension {
 
 	}
 
-	public static function length(ISupportsLength $value): NumberValue {
+	/**
+	 * Returns length of a value.
+	 *
+	 * ```js
+	 * "hello, Česká Třebová".len() == 20
+	 * len(123456) == 6
+	 * [1, 2, 3].len() == 3
+	 * len({'a': 1, 'b': 'c'}) == 2
+	 * ```
+	 */
+	public static function len(Value $value): NumberValue {
+
+		if (!$value instanceof ISupportsLength) {
+			$type = $value::TYPE;
+			throw new ErrorException("Type '$type' does not support length.");
+		}
+
 		return new NumberValue((string) $value->getLength());
 
 	}
