@@ -78,7 +78,7 @@ for (target_tuple in variables) {
 		try {
 			was_valid = true
 			target_value[0] = inject_value
-		} on error {
+		} catch {
 			was_valid = false
 		}
 

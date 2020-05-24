@@ -8,7 +8,7 @@ try {
 	// Division by zero, bruh!
 	1 / 0
 	executed_after_error = true
-} on error {
+} catch {
 	was_error = true
 }
 assert(was_error, 'Raised error was caught')
