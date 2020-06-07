@@ -13,8 +13,12 @@ use \Smuuf\Primi\Extension;
 class RegexExtension extends Extension {
 
 	/**
-	 * Regular expression match. Returns the first matching string. Otherwise
-	 * returns false.
+	 * Regular expression match. Returns the first matching string. Otherwise \
+	 * returns `false`.
+	 *
+	 * ```js
+	 * r"[xyz]+".match("abbcxxyzzdeef") == "xxyzz"
+	 * ```
 	 */
 	public static function regex_match(
 		RegexValue $regex,

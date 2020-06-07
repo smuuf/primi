@@ -42,13 +42,14 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		) {
 
 			// If there's a parent/definition context, clone a new context from
-			// it, so the function does not operate in the global scope..
+			// it, so the function does not mutate the outer scope.
 			if ($definitionContext) {
 				$context = clone $definitionContext;
 			} else {
 				$context = new Context;
 			}
 
+			// Chack number of passed arguments.
 			$args = \array_splice($args, 0, \count($definitionArgs));
 			if (\count($definitionArgs) > \count($args)) {
 				throw new InternalArgumentCountException(

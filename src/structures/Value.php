@@ -46,9 +46,10 @@ abstract class Value extends ValueFriends {
 	}
 
 	/**
-	 * Returns an unambiguous string representation of internal value in such
-	 * form that it can be used as Primi source code to recreate that value.
-	 * If possible.
+	 * Returns an unambiguous string representation of internal value.
+	 *
+	 * If possible, is should be in such form that it the result of this
+	 * method can be used as Primi source code to recreate that value.
 	 */
 	abstract public function getStringRepr(): string;
 
