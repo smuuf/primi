@@ -2,6 +2,8 @@
 
 cd $(dirname $0)/..
 
+INTERPRETER="php"
+
 # Time format for 'time' command.
 TIMEFORMAT=%R
 
@@ -32,7 +34,7 @@ function measure_time {
 }
 
 function timeit_php {
-    echo `measure_time "php $1"`
+    echo `measure_time "$INTERPRETER $1"`
 }
 
 function timeit_primi {
