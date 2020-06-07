@@ -19,6 +19,10 @@ class BoolValue extends Value implements ISupportsComparison {
 		return $this->value ? 'true' : 'false';
 	}
 
+	public function isTruthy(): bool {
+		return $this->value;
+	}
+
 	public function doComparison(string $op, Value $right): BoolValue {
 
 		Common::allowTypes(
@@ -30,9 +34,9 @@ class BoolValue extends Value implements ISupportsComparison {
 
 		switch ($op) {
 			case "==":
-				return new BoolValue($this->value === Common::isTruthy($right));
+				return $this->value === $right->isTruthy();
 			case "!=":
-				return new BoolValue($this->value !== Common::isTruthy($right));
+				return $this->value !== $right->isTruthy();
 			default:
 				throw new \TypeError;
 		}

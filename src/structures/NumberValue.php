@@ -29,13 +29,18 @@ class NumberValue extends Value implements
 
 	}
 
-	public function getStringRepr(): string {
-		return (string) $this->value;
+	public function isTruthy(): bool {
+		return (bool) $this->value;
 	}
 
 	public function getLength(): int {
 		return strlen((string) $this->value);
 	}
+
+	public function getStringRepr(): string {
+		return (string) $this->value;
+	}
+
 	public static function isNumericInt(string $input) {
 		return \ctype_digit(\ltrim($input, "+-"));
 	}

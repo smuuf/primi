@@ -11,12 +11,23 @@ class RegexValue extends Value implements ISupportsComparison {
 
 	const TYPE = "regex";
 
+	/**
+	 * Prepared string for 'truthiness' evaluation.
+	 * Regex value is truthy if the actual 'internal' regex, without delimiters
+	 * and unicode modifier, is empty.
+	 */
+	const EMPTY_REGEX = "\x07\x07u";
+
 	public function __construct(string $regex) {
 
 		// We'll be using ASCII \x07 (bell) character as delimiters, so
 		// we won't need to deal with any escaping of input.
 		$this->value = "\x07$regex\x07u";
 
+	}
+
+	public function isTruthy(): bool {
+		return $this->value !== self::EMPTY_REGEX;
 	}
 
 	public function getStringRepr(): string {

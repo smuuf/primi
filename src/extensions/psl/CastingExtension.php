@@ -46,15 +46,7 @@ class CastingExtension extends Extension {
 	}
 
 	public static function to_bool(Value $value): BoolValue {
-
-		Common::allowTypes(
-			$value,
-			StringValue::class, NumberValue::class, ArrayValue::class,
-			BoolValue::class
-		);
-
-		return new BoolValue(Common::isTruthy($value));
-
+		return new BoolValue($value->isTruthy());
 	}
 
 	public static function to_number(Value $value): NumberValue {

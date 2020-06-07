@@ -15,6 +15,9 @@ class NullValue extends Value implements ISupportsComparison {
 		return "null";
 	}
 
+	public function isTruthy(): bool {
+		return false;
+	}
 	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
 		Common::allowTypes($rightOperand, self::class, BoolValue::class);

@@ -2,37 +2,9 @@
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Structures\StringValue;
-use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\Structures\NullValue;
-use \Smuuf\Primi\Structures\NumberValue;
-use \Smuuf\Primi\Structures\ArrayValue;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
 abstract class Common extends \Smuuf\Primi\StrictObject {
-
-	public static function isTruthy(Value $value): bool {
-
-		$v = $value->getInternalValue();
-
-		switch (true) {
-			case $value instanceof StringValue:
-				return $v !== "";
-			case $value instanceof BoolValue:
-				return $v;
-			case $value instanceof NumberValue:
-				return (bool) $v;
-			case $value instanceof NullValue:
-				return false;
-			case $value instanceof ArrayValue:
-				return (bool) $v;
-		}
-
-		$msg = sprintf("Cannot determine truthness of type '%s'", $value::TYPE);
-		throw new InternalUndefinedTruthnessException($msg);
-
-	}
 
 	public static function objectHash($o): string {
 		return substr(md5(spl_object_hash($o)), 0, 6);

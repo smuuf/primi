@@ -58,7 +58,7 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 				::handle($rOperandNode, $context);
 
 			$resultValue = static::evaluate($opNode['text'], $left, $right);
-			$result &= Common::isTruthy($resultValue);
+			$result &= $resultValue->isTruthy();
 
 			// Short-circuiting, if any of the results is already false.
 			if (!$result) {

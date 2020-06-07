@@ -52,4 +52,12 @@ abstract class Value extends ValueFriends {
 	 */
 	abstract public function getStringRepr(): string;
 
+	/**
+	 * All values must be able to tell if they're truthy or falsey.
+	 * All values are truthy unless they tell otherwise.
+	 */
+	public function isTruthy(): bool {
+		return true;
+	}
+
 }

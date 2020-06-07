@@ -5,7 +5,6 @@ namespace Smuuf\Primi\Helpers;
 use \Smuuf\Primi\InternalBinaryOperationException;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Helpers\Common;
 
 class LogicalLTR extends LeftToRightEvaluation {
 
@@ -17,8 +16,8 @@ class LogicalLTR extends LeftToRightEvaluation {
 		Value $right
 	): value {
 
-		$l = Common::isTruthy($left);
-		$r = Common::isTruthy($right);
+		$l = $left->isTruthy();
+		$r = $right->isTruthy();
 
 		switch (true) {
 			case $op === "and":
