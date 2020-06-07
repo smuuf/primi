@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . "/../../../vendor/autoload.php";
+require __DIR__ . "/../../vendor/autoload.php";
 $bench = new \Smuuf\Phpcb\PhpBenchmark(new \Smuuf\Phpcb\SerialEngine);
 
 // Was the winner.
@@ -49,4 +49,4 @@ $bench->addBench(function() {
 
 });
 
-$bench->run(1e7);
+$bench->run(1e6);
