@@ -3,13 +3,11 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\BreakException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ContinueException;
 use \Smuuf\Primi\Helpers\SimpleHandler;
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
 class WhileStatement extends SimpleHandler {
 
@@ -22,22 +20,18 @@ class WhileStatement extends SimpleHandler {
 		$condHandler = HandlerFactory::get($node['left']['name']);
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
-		try {
+		while (
+			$condHandler::handle($node['left'], $context)->isTruthy()
+		) {
 
-			while (
-				Common::isTruthy($condHandler::handle($node['left'], $context))
-			) {
-				try {
-					$blockHandler::handle($node['right'], $context);
-				} catch (ContinueException $e) {
-					continue;
-				} catch (BreakException $e) {
-					break;
-				}
+			try {
+				$blockHandler::handle($node['right'], $context);
+			} catch (ContinueException $e) {
+				continue;
+			} catch (BreakException $e) {
+				break;
 			}
 
-		} catch (InternalUndefinedTruthnessException $e) {
-			throw new ErrorException($e->getMessage(), $node);
 		}
 
 	}

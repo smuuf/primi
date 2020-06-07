@@ -12,6 +12,10 @@ class FuncValue extends Value implements ISupportsInvocation {
 		$this->value = $fn;
 	}
 
+	public function isTruthy(): bool {
+		return true;
+	}
+
 	public function getStringRepr(): string {
 		return sprintf(
 			"<function: %s>",

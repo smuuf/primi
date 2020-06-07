@@ -33,6 +33,10 @@ class StringValue extends Value implements
 		return \mb_strlen($this->value);
 	}
 
+	public function isTruthy(): bool {
+		return $this->value !== '';
+	}
+
 	public function getStringValue(): string {
 		return $this->value;
 	}

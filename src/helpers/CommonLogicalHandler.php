@@ -3,11 +3,9 @@
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\LogicalLTR;
 use \Smuuf\Primi\Helpers\SimpleHandler;
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
 /**
  * Common ancestor of LogicalAnd and LogicalOr handlers, both of which have
@@ -17,13 +15,7 @@ use \Smuuf\Primi\InternalUndefinedTruthnessException;
 abstract class CommonLogicalHandler extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
-
-		try {
-			return LogicalLTR::handle($node, $context);
-		} catch (InternalUndefinedTruthnessException $e) {
-			throw new ErrorException($e->getMessage(), $node);
-		}
-
+		return LogicalLTR::handle($node, $context);
 	}
 
 	public static function reduce(array &$node): void {

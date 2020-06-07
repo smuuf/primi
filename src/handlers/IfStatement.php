@@ -7,7 +7,6 @@ use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\SimpleHandler;
-use \Smuuf\Primi\InternalUndefinedTruthnessException;
 
 /**
  * Node fields:
@@ -22,20 +21,14 @@ class IfStatement extends SimpleHandler {
 		$leftHandler = HandlerFactory::get($node['left']['name']);
 		$return = $leftHandler::handle($node['left'], $context);
 
-		try {
-
-			// If the result of the left hand equals to truthy value,
-			// execute the code branch stored in the right-hand node.
-			if (Common::isTruthy($return)) {
-				$rightHandler = HandlerFactory::get($node['right']['name']);
-				$rightHandler::handle($node['right'], $context);
-			} elseif (isset($node['else'])) {
-				$elseHandler = HandlerFactory::get($node['else']['name']);
-				$elseHandler::handle($node['else'], $context);
-			}
-
-		} catch (InternalUndefinedTruthnessException $e) {
-			throw new ErrorException($e->getMessage(), $node);
+		// If the result of the left hand equals to truthy value,
+		// execute the code branch stored in the right-hand node.
+		if ($return->isTruthy()) {
+			$rightHandler = HandlerFactory::get($node['right']['name']);
+			$rightHandler::handle($node['right'], $context);
+		} elseif (isset($node['else'])) {
+			$elseHandler = HandlerFactory::get($node['else']['name']);
+			$elseHandler::handle($node['else'], $context);
 		}
 
 	}

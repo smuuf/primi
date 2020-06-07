@@ -40,7 +40,7 @@ abstract class LeftToRightEvaluation extends \Smuuf\Primi\StrictObject {
 			$op = $node['ops'][$i - 1]['text'];
 			$result = static::evaluate($op, $result, $next);
 
-			if (static::SHORT_CIRCUIT && !Common::isTruthy($result)) {
+			if (static::SHORT_CIRCUIT && !$result->isTruthy()) {
 				return $result;
 			}
 
