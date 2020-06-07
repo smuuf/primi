@@ -4,27 +4,69 @@
 require __DIR__ . "/../../vendor/autoload.php";
 $bench = new \Smuuf\Phpcb\PhpBenchmark(new \Smuuf\Phpcb\ChaoticEngine);
 
-// Was the winner.
 $bench->addBench(function() {
-
 	$c = 0;
-	$z = true;
-
-	if ($z) {
+	$bool = true;
+	if ($bool) {
 		$c++;
 	}
-
 });
 
 $bench->addBench(function() {
-
 	$c = 0;
-	$z = true;
-
-	if ($z === true) {
+	$bool = true;
+	if ($bool === true) {
 		$c++;
 	}
-
 });
 
-$bench->run(1e8);
+$bench->addBench(function() {
+	$c = 0;
+	$string = '0';
+	if ($string) {
+		$c++;
+	}
+});
+
+$bench->addBench(function() {
+	$c = 0;
+	$string = '1';
+	if ($string) {
+		$c++;
+	}
+});
+
+$bench->addBench(function() {
+	$c = 0;
+	$string = '';
+	if ($string) {
+		$c++;
+	}
+});
+
+$bench->addBench(function() {
+	$c = 0;
+	$string = 'X';
+	if ($string) {
+		$c++;
+	}
+});
+
+$bench->addBench(function() {
+	$c = 0;
+	$int = 0;
+	if ($int) {
+		$c++;
+	}
+});
+
+$bench->addBench(function() {
+	$c = 0;
+	$int = 1;
+	if ($int) {
+		$c++;
+	}
+});
+
+
+$bench->run(1e6);

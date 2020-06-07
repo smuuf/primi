@@ -1,28 +1,22 @@
 <?php
 
-require __DIR__ . "/../../../vendor/autoload.php";
+require __DIR__ . "/../../vendor/autoload.php";
 $bench = new \Smuuf\Phpcb\PhpBenchmark;
 
-$arr = ["key" => 1];
-$arr2 = ["foo" => 1];
-$arr3 = ["key" => null];
+$arr =  ['x' => 1, 'y' => 2, 'z' => false, "key" => 1, 'a' => 'b', 'c' => 0];
+$arr2 = ['x' => 1, 'y' => 2, 'z' => false, "foo" => 1, 'a' => 'b', 'c' => 0];
+$arr3 = ['x' => 1, 'y' => 2, 'z' => false, "key" => null, 'a' => 'b', 'c' => 0];
 
 $bench->addBench(function() use ($arr) {
-	if (!isset($arr['key'])) {
-		$x = array_key_exists("key", $arr);
-	}
+	$x = isset($arr['key']);
 });
 
 $bench->addBench(function() use ($arr2) {
-	if (!isset($arr2['key'])) {
-		$x = array_key_exists("key", $arr2);
-	}
+	$x = isset($arr2['key']);
 });
 
 $bench->addBench(function() use ($arr3) {
-	if (!isset($arr3['key'])) {
-		$x = array_key_exists("key", $arr3);
-	}
+	$x = isset($arr3['key']);
 });
 
 $bench->addBench(function() use ($arr) {
