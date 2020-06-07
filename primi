@@ -9,6 +9,12 @@ set_error_handler(function($severity, $message, $file, $line) {
 	throw new \ErrorException($message, 0, $severity, $file, $line);
 }, E_ALL);
 
+set_exception_handler(function($ex) {
+	echo "PHP ERROR: " . get_class($ex);
+	echo ": {$ex->getMessage()} @ {$ex->getFile()}:{$ex->getLine()}\n";
+	echo $ex->getTraceAsString() . "\n";
+});
+
 // Autoloader.
 $loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/temp/");
 $loader->addDirectory(__DIR__ . "/src")->register();

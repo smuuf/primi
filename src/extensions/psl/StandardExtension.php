@@ -16,8 +16,8 @@ use \Smuuf\Primi\Structures\StringValue;
 class StandardExtension extends Extension {
 
 	/**
-	 * Prints value if in Primi is run in CLI. Does nothing otherwise.
-	 * Always returns null.
+	 * Prints value to standard output when Primi is run in \
+	 * [CLI](https://w.wiki/QPE), otherwise does nothing.
 	 */
 	public static function print(Value $value): NullValue {
 
@@ -30,9 +30,9 @@ class StandardExtension extends Extension {
 	}
 
 	/**
-	 * This function returns true if anything passed into it is true and throws
-	 * error if not. Optional string decription can be provided and it will
-	 * be shown in the eventual error message.
+	 * This function returns true if a boolean value passed into it is `true` \
+	 * and throws error if it's `false`. Optional string decription can be \
+	 * provided, which will be visible in the eventual error message.
 	 */
 	public static function assert(BoolValue $truth, ?StringValue $desc = null): BoolValue {
 

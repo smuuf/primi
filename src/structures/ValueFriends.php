@@ -8,7 +8,8 @@ namespace Smuuf\Primi\Structures;
  * Value and Extension classes extend from this.
  *
  * This way both Value and Extension objects can access the value directly and
- * thus we avoid unnecessary overhead when accessing the value, which is often.
+ * thus we avoid unnecessary overhead when accessing the value via getter
+ * method, which would be often.
  */
 abstract class ValueFriends extends \Smuuf\Primi\StrictObject {
 

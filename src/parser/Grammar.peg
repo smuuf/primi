@@ -14,6 +14,23 @@ class CompiledParser extends Parser\Packrat {
 	/** @var string */
 	public $string;
 
+	private const RESERVED_WORDS = [
+		'false', 'true', 'null', 'if', 'else', 'return', 'for', 'and', 'or',
+		'function', 'break', 'continue', 'while', 'try', 'catch'
+	];
+
+	/**
+	 * Prevent parsing variable name which has the same name as some reserved
+	 * word.
+	 * Setting result to false will tell the parser that is should try other
+	 * parser rules.
+	 */
+	protected function Mutable__finalise(&$result) {
+		if (\in_array($result['text'], self::RESERVED_WORDS, \true)) {
+			$result = \false;
+		}
+	}
+
 /*!* Primi
 
 # Previous StringLiteral regex causing PREG_JIT_STACKLIMIT_ERROR
@@ -24,9 +41,9 @@ class CompiledParser extends Parser\Packrat {
 StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
 NumberLiteral: / -?\d[\d_]*(\.[\d_]+)? /
 # Literals for true|false must NOT be followed by any possible characters representing variable name.
-BoolLiteral: ( "true" | "false" ) !/[a-zA-Z0-9_]/
+BoolLiteral: "true" | "false"
 # Literal for null must NOT be followed by any possible characters representing variable name.
-NullLiteral: "null" !/[a-zA-Z0-9_]/
+NullLiteral: "null"
 RegexLiteral: "r" core:StringLiteral
 Nothing: ""
 
@@ -43,7 +60,6 @@ VariableVector: core:Variable vector:Vector
 Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" ) vector:Vector?
 Mutable: skip:VariableVector | skip:VariableName
 
-ObjectResolutionOperator: "."
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
 AssignmentOperator: "="
@@ -66,10 +82,10 @@ Multiplication: operands:Negation ( __ ops:MultiplyOperator __ operands:Negation
 Negation: ( nots:NegationOperator )* core:Operand
 Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value
 
-Chain: ( core:Dereference | core:Invocation | core:ChainedFunction ) chain:Chain?
+Chain: &/[\[\(\.]/ ( core:Dereference | core:Invocation | core:ChainedFunction ) chain:Chain?
 Dereference: "[" __ key:Expression __ "]"
 Invocation: "(" __ args:ArgumentList? __ ")"
-ChainedFunction: ObjectResolutionOperator fn:Variable invo:Invocation
+ChainedFunction: "." fn:Variable invo:Invocation
 
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
@@ -89,10 +105,10 @@ BreakStatement: "break"
 ContinueStatement: "continue"
 
 # &/[iwft]/ - No sub-rules will be even tried if the string does not start with a expected letter.
-BlockStatements: &/[iwft]/ ( skip:IfStatement | skip:WhileStatement | skip:ForStatement | skip:FunctionDefinition | skip:TryStatement)
+BlockStatements: &/[iwft]/ ( skip:IfStatement | skip:WhileStatement | skip:FunctionDefinition | skip:ForStatement | skip:TryStatement)
 
-# !/[\s\{\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
-Statement: !/[\s\{\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )
+# !/[\s\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
+Statement: !/[\s\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )
 Block: "{" __ ( skip:Program )? "}"
 
 # Matches any optional whitespace or newline.
