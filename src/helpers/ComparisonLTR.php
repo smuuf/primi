@@ -4,39 +4,14 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ISupportsComparison;
-use \Smuuf\Primi\InternalBinaryOperationException;
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\UndefinedRelationException;
 
 class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 	const SHORT_CIRCUIT = true;
-
-	public static function evaluate(
-		string $op,
-		Value $left,
-		Value $right
-	): value {
-
-		try {
-
-			if (!$left instanceof ISupportsComparison) {
-				throw new \TypeError;
-			}
-
-			if (!$right instanceof ISupportsComparison) {
-				throw new \TypeError;
-			}
-
-			return $left->doComparison($op, $right);
-
-		} catch (\TypeError $e) {
-			throw new InternalBinaryOperationException($op, $left, $right);
-		}
-
-	}
 
 	public static function handle(array $node, Context $context): BoolValue {
 
@@ -44,34 +19,104 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 		$lastRight = false;
 		$result = true;
 
-		foreach ($node['ops'] as $index => $opNode) {
+		try {
 
-			$lOperandNode = $operands[$index];
-			$rOperandNode = $operands[$index + 1];
+			foreach ($node['ops'] as $index => $opNode) {
 
-			// Optimization: If we're not in the first iteration, do not
-			// evaluate the previously 'right' expression node again, but just
-			// reuse it as 'left' now.
-			$left = $lastRight ?: HandlerFactory::get($lOperandNode['name'])
-				::handle($lOperandNode, $context);
-			$right = HandlerFactory::get($rOperandNode['name'])
-				::handle($rOperandNode, $context);
+				$leftNode = $operands[$index];
+				$rightNode = $operands[$index + 1];
 
-			$resultValue = static::evaluate($opNode['text'], $left, $right);
-			$result &= $resultValue->isTruthy();
+				// Optimization: If we're not in the first iteration, do not
+				// evaluate the previously 'right' expression node again, but just
+				// reuse it as 'left' now.
+				$left = $lastRight ?: HandlerFactory::get($leftNode['name'])
+					::handle($leftNode, $context);
+				$right = HandlerFactory::get($rightNode['name'])
+					::handle($rightNode, $context);
 
-			// Short-circuiting, if any of the results is already false.
-			if (!$result) {
-				return new BoolValue(false);
+				$resultValue = static::evaluate($opNode['text'], $left, $right);
+				$result &= $resultValue->isTruthy();
+
+				// Short-circuiting, if any of the results is already false.
+				if (!$result) {
+					return new BoolValue(false);
+				}
+
+				$lastRight = $right;
+
 			}
 
-			$lastRight = $right;
-
+		} catch (UndefinedRelationException $e) {
+			throw new ErrorException($e->getMessage(), $node);
 		}
 
 		return new BoolValue((bool) $result);
 
 	}
+
+	public static function evaluate(
+		string $op,
+		Value $left,
+		Value $right
+	): Value {
+
+		switch ($op) {
+			case '==':
+			case '!=':
+				return new BoolValue(self::evaluateEquality($op, $left, $right));
+			case '>':
+			case '<':
+			case '>=':
+			case '<=':
+				return new BoolValue(self::evaluateRelation($op, $left, $right));
+			default:
+				throw new ErrorException("Unknown operator '$op'");
+		}
+
+	}
+
+	public static function evaluateEquality(
+		string $op,
+		Value $left,
+		Value $right
+	): bool {
+
+		$result = $left->isEqualTo($right);
+
+		// If the left side didn't know how to evaluate equality with the right
+		// side (the first call returned null), switch operands and try again.
+		if ($result === null) {
+			$result = $right->isEqualTo($left);
+		}
+
+		// If both sides did not know how to evaluate equality with themselves,
+		// the equality is false.
+		$result = $result ?? false;
+
+		return $op === '=='
+			? $result
+			: !$result;
+
+	}
+
+	public static function evaluateRelation(
+		string $op,
+		Value $left,
+		Value $right
+	): bool {
+
+		$result = $left->hasRelationTo($op, $right);
+
+		// If the left side didn't know how to evaluate equality with the right
+		// side (the first call returned null), switch operands and try again.
+		if ($result === null) {
+			throw new UndefinedRelationException($op, $left, $right);
+		}
+
+		return $result;
+
+	}
+
 
 }
 

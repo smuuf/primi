@@ -127,56 +127,33 @@ Assert::exception(function() use ($unicode) {
 //
 
 // Equality: Two different instances containing the same "string": True.
-$tmp = $string->doComparison("==", new StringValue("this is a string."));
-Assert::true(get_val($tmp));
+Assert::true($string->isEqualTo(new StringValue("this is a string.")));
 // Inequality: Two different instances containing the same "string": False.
-$tmp = $string->doComparison("!=", new StringValue("this is a string."));
-Assert::false(get_val($tmp));
+Assert::false(!$string->isEqualTo(new StringValue("this is a string.")));
 // Equality: Two different instances containing different "string": False.
-$tmp = $string->doComparison("==", new StringValue("dayum"));
-Assert::false(get_val($tmp));
+Assert::false($string->isEqualTo(new StringValue("dayum")));
 // Inequality: Two different instances containing different string": True.
-$tmp = $string->doComparison("!=", new StringValue("boii"));
-Assert::true(get_val($tmp));
+Assert::true(!$string->isEqualTo(new StringValue("boii")));
 
-// Equality: Comparing string against a number. (is always false)
-$tmp = $string->doComparison("==", new NumberValue(5));
-Assert::false(get_val($tmp));
-$tmp = (new StringValue("5"))->doComparison("==", new NumberValue(5));
-Assert::false(get_val($tmp));
-$tmp = (new StringValue("2.1"))->doComparison("==", new NumberValue(2.1));
-Assert::false(get_val($tmp));
-$tmp = (new StringValue("50"))->doComparison("==", new NumberValue(5));
-Assert::false(get_val($tmp));
+// Equality: Comparing string against matching regex.
+Assert::true($string->isEqualTo(new RegexValue("s[tr]+")));
+Assert::true(!$string->isEqualTo(new RegexValue("\d+")));
+Assert::true($unicode->isEqualTo(new RegexValue('Š[Tř]{2}i')));
+Assert::true(!$unicode->isEqualTo(new RegexValue('nuancé')));
 
-// Equality: This is weird, but probably valid (albeit pretty unexpected, maybe
-// a TO DO for future?). Number 2.0 is casted to "2" and "2.0" == "2" is false.
-$tmp = (new StringValue("2.0"))->doComparison("==", new NumberValue(2.0));
-Assert::false(get_val($tmp));
+// Equality with numbers: Strings do not know about numbers, so all
+// these are null (i.e. a string value doesn't know how to resolve equality
+// with number values.)
+Assert::null($string->isEqualTo(new NumberValue(5)));
+Assert::null((new StringValue("5"))->isEqualTo(new NumberValue(5)));
+Assert::null((new StringValue("2.1"))->isEqualTo(new NumberValue(2.1)));
+Assert::null((new StringValue("50"))->isEqualTo(new NumberValue(5)));
+Assert::null((new StringValue("2.0"))->isEqualTo(new NumberValue(2.0)));
 
-// Equality: Comparing string against matching regex: True.
-$tmp = $string->doComparison("==", new RegexValue("s[tr]+"));
-Assert::true(get_val($tmp));
-// Inequality: Comparing string against non-matching regex: False.
-$tmp = $string->doComparison("!=", new RegexValue("\d+"));
-Assert::true(get_val($tmp));
-// Equality: Comparing Unicode string against matching regex: True.
-$tmp = $unicode->doComparison("==", new RegexValue('Š[Tř]{2}i'));
-Assert::true(get_val($tmp));
-// Inquality: Comparing Unicode string against non-matching regex: True.
-$tmp = $unicode->doComparison("!=", new RegexValue('nuancé'));
-Assert::true(get_val($tmp));
-
-Assert::exception(function() use ($string) {
-	$string->doComparison("!=", new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($string) {
-	$string->doComparison("==", new ArrayValue([]));
-}, \TypeError::class);
-// Test that completely bogus operator throws error.
-Assert::exception(function() use ($string) {
-	$string->doComparison("@==!", new StringValue("wtf"));
-}, \TypeError::class);
+Assert::null($string->isEqualTo(new BoolValue(false)));
+Assert::null($string->isEqualTo(new NullValue()));
+Assert::null($string->isEqualTo(new ListValue([])));
+Assert::null($string->isEqualTo(new DictValue([])));
 
 //
 // Test dereferencing and insertion...

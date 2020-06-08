@@ -2,12 +2,9 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsComparison;
-use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 
-class NullValue extends Value implements ISupportsComparison {
+class NullValue extends Value {
 
 	const TYPE = "null";
 
@@ -18,18 +15,14 @@ class NullValue extends Value implements ISupportsComparison {
 	public function isTruthy(): bool {
 		return false;
 	}
-	public function doComparison(string $op, Value $rightOperand): BoolValue {
 
-		Common::allowTypes($rightOperand, self::class, BoolValue::class);
+	public function isEqualTo(Value $right): ?bool {
 
-		switch ($op) {
-			case "==":
-				return new BoolValue($this->value == $rightOperand->value);
-			case "!=":
-				return new BoolValue($this->value != $rightOperand->value);
-			default:
-				throw new \TypeError;
+		if (!$right instanceof self) {
+			return null;
 		}
+
+		return $this->value === $right->value;
 
 	}
 

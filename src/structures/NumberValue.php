@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsMultiplication;
-use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsDivision;
@@ -16,7 +15,6 @@ class NumberValue extends Value implements
 	ISupportsMultiplication,
 	ISupportsLength,
 	ISupportsDivision,
-	ISupportsComparison
 {
 
 	const TYPE = "number";
@@ -93,58 +91,29 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doComparison(string $op, Value $right): BoolValue {
+	public function isEqualTo(Value $right): ?bool {
 
-		Common::allowTypes(
-			$right,
-			self::class,
-			BoolValue::class,
-			StringValue::class
-		);
+        if (!Common::isAnyOfTypes($right, NumberValue::class, BoolValue::class)) {
+            return null;
+        }
 
-		// Numbers and strings can only be compared for equality - never equal.
-		if ($right instanceof StringValue) {
-			switch ($op) {
-				case "==":
-					return new BoolValue(\false);
-				case "!=":
-					return new BoolValue(\true);
-			}
-			throw new \TypeError;
-		}
+        return $this->value == $right->value;
+	}
 
-		// Numbers and bools can only be compared for equality.
-		if ($right instanceof BoolValue) {
-			$leftTruth = Common::isTruthy($this);
-			switch ($op) {
-				case "==":
-					return new BoolValue($leftTruth === $right->value);
-				case "!=":
-					return new BoolValue($leftTruth !== $right->value);
-			}
-			throw new \TypeError;
-		}
+	public function hasRelationTo(string $operator, $right): ?bool {
 
 		$l = $this->value;
 		$r = $right->value;
 
-		switch ($op) {
-			case "==":
-				// Don't do strict comparison - it's wrong for floats and ints.
-				return new BoolValue($l == $r);
-			case "!=":
-				// Don't do strict comparison - it's wrong for floats and ints.
-				return new BoolValue($l != $r);
+		switch ($operator) {
 			case ">":
-				return new BoolValue($l > $r);
+				return $l > $r;
 			case "<":
-				return new BoolValue($l < $r);
+				return $l < $r;
 			case ">=":
-				return new BoolValue($l >= $r);
+				return $l >= $r;
 			case "<=":
-				return new BoolValue($l <= $r);
-			default:
-				throw new \TypeError;
+				return $l <= $r;
 		}
 
 	}

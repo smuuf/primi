@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\StringEscaping;
-use \Smuuf\Primi\ISupportsComparison;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsLength;
@@ -18,7 +17,6 @@ class StringValue extends Value implements
 	ISupportsSubtraction,
 	ISupportsMultiplication,
 	ISupportsIteration,
-	ISupportsComparison,
 	ISupportsArrayAccess,
 	ISupportsLength
 {
@@ -87,47 +85,35 @@ class StringValue extends Value implements
 
 	}
 
-	public function doComparison(string $op, Value $rightOperand): BoolValue {
+	public function isEqualTo(Value $right): ?bool {
 
-		Common::allowTypes(
-			$rightOperand,
-			self::class,
-			RegexValue::class,
-			NumberValue::class
-		);
-
-		// Numbers and strings can be only compared for equality.
-		// And are never equal.
-		if ($rightOperand instanceof NumberValue) {
-			if ($op !== "==" && $op !== "!=") {
-				throw new \TypeError;
-			}
+		if (!Common::isAnyOfTypes($right, StringValue::class, RegexValue::class)) {
+			return null;
 		}
 
-		switch ($op) {
-			case "==":
-
-				if ($rightOperand instanceof RegexValue) {
-					$result = \preg_match($rightOperand->value, $this->value);
-				} else {
-					$result = $this->value === $rightOperand->value;
-				}
-
-			break;
-			case "!=":
-
-				if ($rightOperand instanceof RegexValue) {
-					$result = !\preg_match($rightOperand->value, $this->value);
-				} else {
-					$result = $this->value !== $rightOperand->value;
-				}
-
-			break;
-			default:
-				throw new \TypeError;
+		if ($right instanceof RegexValue) {
+			return (bool) \preg_match($right->value, $this->value);
+		} else {
+			return $this->value === $right->value;
 		}
 
-		return new BoolValue($result);
+	}
+
+	public function hasRelationTo(string $operator, $right): ?bool {
+
+		$l = $this->value;
+		$r = $right->value;
+
+		switch ($operator) {
+			case ">":
+				return $l > $r;
+			case "<":
+				return $l < $r;
+			case ">=":
+				return $l >= $r;
+			case "<=":
+				return $l <= $r;
+		}
 
 	}
 
