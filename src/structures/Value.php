@@ -54,11 +54,34 @@ abstract class Value extends ValueFriends {
 	abstract public function getStringRepr(): string;
 
 	/**
+	 * All values support comparison.
+	 *
+	 * Default implementation below says that two values are equal if they're
+	 * the same PHP object.
+	 */
+	public function isEqualTo(
+		Value $right
+	): ?bool {
+		return $this === $right;
+	}
+
+	/**
 	 * All values must be able to tell if they're truthy or falsey.
 	 * All values are truthy unless they tell otherwise.
 	 */
 	public function isTruthy(): bool {
 		return true;
+	}
+
+	/**
+	 * If a value knows how to evaluate relation to other values, it shall
+	 * define that by overriding this default logic. (By default a value does
+	 * not know anything about its relation to itself other values.)
+	 *
+	 * Relation in this context means the result of <, >, <=, >= operations.
+	 */
+	public function hasRelationTo(string $operator, $right): ?bool {
+		return null;
 	}
 
 }

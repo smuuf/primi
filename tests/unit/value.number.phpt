@@ -13,6 +13,10 @@ use \Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
+function get_val(Value $v) {
+	return $v->getInternalValue();
+}
+
 $fns = ExtensionHub::get();
 
 $integer = new NumberValue("1");
@@ -188,36 +192,32 @@ Assert::exception(function() use ($integer) {
 // Test comparison.
 //
 
-function extract_bool_value(BoolValue $b) {
-	return $b->getInternalValue();
-}
+$tmp = $integer->isEqualTo(new NumberValue("-1"));
+Assert::false($tmp);
 
-$tmp = $integer->doComparison("==", new NumberValue("-1"));
-Assert::false(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("-1"));
+Assert::true(!$tmp);
 
-$tmp = $integer->doComparison("!=", new NumberValue("-1"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("1"));
+Assert::true($tmp);
 
-$tmp = $integer->doComparison("==", new NumberValue("1"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("1.0"));
+Assert::true($tmp);
 
-$tmp = $integer->doComparison("==", new NumberValue("1.0"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("2"));
+Assert::true(!$tmp);
 
-$tmp = $integer->doComparison("!=", new NumberValue("2"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo(">", new NumberValue("2"));
+Assert::true($tmp);
 
-$tmp = $float->doComparison(">", new NumberValue("2"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo("<", new NumberValue("2.3"));
+Assert::false($tmp);
 
-$tmp = $float->doComparison("<", new NumberValue("2.3"));
-Assert::false(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo(">=", new NumberValue("2.31"));
+Assert::false($tmp);
 
-$tmp = $float->doComparison(">=", new NumberValue("2.31"));
-Assert::false(extract_bool_value($tmp));
-
-$tmp = $float->doComparison("<=", new NumberValue("2.31"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo("<=", new NumberValue("2.31"));
+Assert::true($tmp);
 
 //
 // Methods...

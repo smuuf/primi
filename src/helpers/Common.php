@@ -11,6 +11,30 @@ abstract class Common extends \Smuuf\Primi\StrictObject {
 	}
 
 	/**
+	 * Throw new InternalTypeErrorException when the value does not match any of
+	 * the types provided.
+	 *
+	 * We're using this helper e.g. in value methods for performing easy
+	 * checks against allowed set of types of values. If PHP ever supports union
+	 * types, I guess this helper method might become unnecessary.
+	 *
+	 * @throws InternalTypeErrorException
+	 */
+	public static function isAnyOfTypes(?Value $value, string ...$types): bool {
+
+		// If any of the "instanceof" checks is true,
+		// the type is allowed - return without throwing exception.
+		foreach ($types as $type) {
+			if ($value instanceof $type) {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
+	/**
 	 * Throw new TypeError when the value does not match any of the types
 	 * provided.
 	 *

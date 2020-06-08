@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\ISupportsComparison;
 
-class RegexValue extends Value implements ISupportsComparison {
+class RegexValue extends Value {
 
 	const TYPE = "regex";
 
@@ -40,25 +39,17 @@ class RegexValue extends Value implements ISupportsComparison {
 
 	}
 
-	public function doComparison(string $operator, Value $rightOperand): BoolValue {
+	public function isEqualTo(Value $right): ?bool {
 
-		Common::allowTypes($rightOperand, StringValue::class, NumberValue::class, RegexValue::class);
-
-		if ($operator === "==") {
-			if ($rightOperand instanceof RegexValue) {
-				return new BoolValue($this->value === $rightOperand->value);
-			}
-			return new BoolValue((bool) \preg_match($this->value, $rightOperand->value));
+		if (!Common::isAnyOfTypes($right, StringValue::class, RegexValue::class)) {
+			return null;
 		}
 
-		if ($operator === "!=") {
-			if ($rightOperand instanceof RegexValue) {
-				return new BoolValue($this->value !== $rightOperand->value);
-			}
-			return new BoolValue((bool) !\preg_match($this->value, $rightOperand->value));
+		if ($right instanceof RegexValue) {
+			return $this->value === $right->value;
 		}
 
-		throw new \TypeError;
+		return (bool) \preg_match($this->value, $right->value);
 
 	}
 
