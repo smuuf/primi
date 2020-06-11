@@ -33,8 +33,8 @@ class Vector extends ChainedHandler {
 
 		$key = \null;
 
-		$handler = HandlerFactory::get($node['arrayKey']['name']);
-		$key = $handler::handle($node['arrayKey'], $context, $subject);
+		$handler = HandlerFactory::get($node['index']['name']);
+		$key = $handler::handle($node['index'], $context, $subject);
 		$key = $key->getInternalValue();
 
 		try {

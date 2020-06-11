@@ -109,7 +109,7 @@ censor = (words) => {
 	filtered = []
 	for (word in words) {
 		if (word.len() != 4) {
-			filtered.append(word)
+			filtered.push(word)
 		}
 	}
 	return filtered

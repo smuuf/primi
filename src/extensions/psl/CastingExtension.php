@@ -6,27 +6,41 @@ use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
-use \Smuuf\Primi\Structures\ArrayValue;
+use \Smuuf\Primi\Structures\DictValue;
+use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 
 class CastingExtension extends Extension {
 
+	/**
+	 * Return type of value as string.
+	 *
+	 * ```js
+	 * type(true) == 'bool'
+	 * type("hello") == 'string'
+	 * type(type) == 'function'
+	 * ```
+	 */
 	public static function type(Value $value): StringValue {
 		return new StringValue($value::TYPE);
 	}
 
+	/**
+	 * Return a string representation of value.
+	 *
+	 * ```js
+	 * to_string(true) == 'true'
+	 * to_string([]) == '[]'
+	 * to_string(3.14) == '3.14'
+	 * {'a': 1, 'b': 'c'}.to_string() == '{"a": 1, "b": "c"}'
+	 * "hello there!".to_string() == "hello there!"
+	 * to_string(to_string) == "<function: native>"
+	 * ```
+	 */
 	public static function to_string(Value $value): StringValue {
-
-		Common::allowTypes(
-			$value,
-			StringValue::class, NumberValue::class, BoolValue::class
-			// "Regex to string" casting is done in specific method below.
-		);
-
-		return new StringValue((string) $value->value);
-
+		return new StringValue($value->getStringValue());
 	}
 
 	public static function to_regex(Value $value): RegexValue {
@@ -36,7 +50,8 @@ class CastingExtension extends Extension {
 			return $value;
 		}
 
-		Common::allowTypes(
+		Common::allowArgumentTypes(
+			0,
 			$value,
 			StringValue::class, NumberValue::class
 		);
@@ -51,7 +66,8 @@ class CastingExtension extends Extension {
 
 	public static function to_number(Value $value): NumberValue {
 
-		Common::allowTypes(
+		Common::allowArgumentTypes(
+			0,
 			$value,
 			StringValue::class, NumberValue::class, BoolValue::class
 		);
@@ -60,7 +76,21 @@ class CastingExtension extends Extension {
 
 	}
 
-	public static function to_array(ArrayValue $value): ArrayValue {
+	public static function to_list(Value $value): ListValue {
+
+		Common::allowArgumentTypes(0, $value, ListValue::class, StringValue::class);
+
+		if ($value instanceof StringValue) {
+			return new ListValue(iterator_to_array($value->getIterator()));
+		}
+
+		// Allow arrays to be casted to array (no other conversions allowed).
+		// And do NOT break references inside the array (arbitrary decision).
+		return $value;
+
+	}
+
+	public static function to_dict(DictValue $value): DictValue {
 
 		// Allow arrays to be casted to array (no other conversions allowed).
 		// And do NOT break references inside the array (arbitrary decision).

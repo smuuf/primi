@@ -6,36 +6,36 @@ function qsort_wrapper(lst) {
 
 }
 
-function qsort(arr, low, high) {
+function qsort(lst, low, high) {
 
     if (low < high) {
-        pi = partition(arr, low, high)
-        qsort(arr, low, pi - 1)
-        qsort(arr, pi + 1, high)
+        pi = partition(lst, low, high)
+        qsort(lst, low, pi - 1)
+        qsort(lst, pi + 1, high)
     }
 
 }
 
-function partition(arr, low, high) {
+function partition(lst, low, high) {
 
-    pivot = arr[high]
+    pivot = lst[high]
     i = (low - 1)
     j = low
     while (j <= high- 1) {
-        if (arr[j] <= pivot) {
+        if (lst[j] <= pivot) {
             i = i + 1
-            tmp_a = arr[i]
-            tmp_b = arr[j]
-            arr[i] = tmp_b
-            arr[j] = tmp_a
+            tmp_a = lst[i]
+            tmp_b = lst[j]
+            lst[i] = tmp_b
+            lst[j] = tmp_a
         }
         j = j + 1
     }
 
-    tmp_a = arr[i + 1]
-    tmp_b = arr[high]
-    arr[i + 1] = tmp_b
-    arr[high] = tmp_a
+    tmp_a = lst[i + 1]
+    tmp_b = lst[high]
+    lst[i + 1] = tmp_b
+    lst[high] = tmp_a
 
     return i + 1
 

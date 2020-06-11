@@ -6,7 +6,8 @@ variables = [
 	['number', 123],
 	['string', 'abc'],
 	['regex', r'\d+'],
-	['array', [1, 2, 3]],
+	['list', [1, 2, 3]],
+	['dict', {'a': 'aa', 'b': 'bb', 'c': 'cc'}],
 	['bool', true],
 	['null', null],
 ]
@@ -14,58 +15,73 @@ variables = [
 // Matrix of expected results.
 // true: Operation is valid.
 // false: Operation is invalid - raises error.
-expected = [
+expected = {
 	// Inserting into...
-	"number": [
+	"number": {
 		// Inserting what...
 		"number": false,
 		"string": false,
 		"regex": false,
-		"array": false,
+		"list": false,
+		"dict": false,
 		"bool": false,
 		"null": false,
-	],
-	"string": [
-		"number": true,
-		"string": true,
-		"regex": false,
-		"array": false,
-		"bool": false,
-		"null": false,
-	],
-	"regex": [
+	},
+	"string": {
 		"number": false,
 		"string": false,
 		"regex": false,
-		"array": false,
+		"list": false,
+		"dict": false,
 		"bool": false,
 		"null": false,
-	],
-	"array": [
+	},
+	"regex": {
+		"number": false,
+		"string": false,
+		"regex": false,
+		"list": false,
+		"dict": false,
+		"bool": false,
+		"null": false,
+	},
+	"list": {
 		"number": true,
 		"string": true,
 		"regex": true,
-		"array": true,
+		"list": true,
+		"dict": true,
 		"bool": true,
 		"null": true,
-	],
-	"bool": [
+	},
+	"dict": {
+		"number": true,
+		"string": true,
+		"regex": true,
+		"list": true,
+		"dict": true,
+		"bool": true,
+		"null": true,
+	},
+	"bool": {
 		"number": false,
 		"string": false,
 		"regex": false,
-		"array": false,
+		"list": false,
+		"dict": false,
 		"bool": false,
 		"null": false,
-	],
-	"null": [
+	},
+	"null": {
 		"number": false,
 		"string": false,
 		"regex": false,
-		"array": false,
+		"list": false,
+		"dict": false,
 		"bool": false,
 		"null": false,
-	],
-]
+	},
+}
 
 for (target_tuple in variables) {
 	target_type = target_tuple[0]

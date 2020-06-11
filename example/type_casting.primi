@@ -39,10 +39,16 @@ result = type(type)
 assert(result == "function")
 
 result = type([])
-assert(result == "array")
+assert(result == "list")
 
 result = type([1,2,'c'])
-assert(result == "array")
+assert(result == "list")
+
+result = type({})
+assert(result == "dict")
+
+result = type({1: 'a', 2: 'b', 'c': 'd'})
+assert(result == "dict")
 
 //
 // Casting nubmbers.
@@ -86,7 +92,7 @@ result = true.to_number()
 assert(result == 1)
 
 result = true.to_string()
-assert(result == "1")
+assert(result == "true")
 
 result = true.to_bool()
 assert(result == true)
@@ -97,13 +103,13 @@ result = false.to_number()
 assert(result == 0)
 
 result = false.to_string()
-assert(result == "")
+assert(result == "false")
 
 result = false.to_bool()
 assert(result == false)
 
 //
-// Casting arrays.
+// Casting lists.
 //
 
 result = ["a"].to_bool()
@@ -112,8 +118,8 @@ assert(result == true)
 result = [].to_bool()
 assert(result == false)
 
-result = ["a"].to_array()
-assert(result == [0: "a"])
+result = "ab c".to_list()
+assert(result == ["a", "b", " ", "c"])
 
 //
 // Casting regexes.
@@ -124,4 +130,57 @@ assert(result == "a")
 
 result = r"a".to_regex()
 assert(result == r"a")
+
+//
+// Examples of invalid casts.
+//
+
+function true_if_error(fn) {
+
+	try {
+		fn()
+		success = true
+	} catch {
+		success = false
+	}
+
+	return !success
+
+}
+
+assert(true_if_error(() => {
+	x_number_to_list = 1.to_list()
+}))
+
+assert(true_if_error(() => {
+	x_bool_true_to_list = true.to_list()
+}))
+
+assert(true_if_error(() => {
+	x_bool_true_to_regex = true.to_regex()
+}))
+
+assert(true_if_error(() => {
+	x_bool_false_to_list = false.to_list()
+}))
+
+assert(true_if_error(() => {
+	x_bool_false_to_regex = false.to_regex()
+}))
+
+assert(true_if_error(() => {
+	x_list_to_number = ["a"].to_number()
+}))
+
+assert(true_if_error(() => {
+	x_list_to_regex = ["a"].to_regex()
+}))
+
+assert(true_if_error(() => {
+	x_regex_to_number = r"a".to_number()
+}))
+
+assert(true_if_error(() => {
+	x_regex_to_list = r"a".to_list()
+}))
 

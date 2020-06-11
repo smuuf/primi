@@ -1,34 +1,32 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
-use \Smuuf\Primi\Structures\ArrayValue;
+use \Smuuf\Primi\Structures\DictValue;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
 
-class ArrayExtension extends Extension {
+class DictExtension extends Extension {
 
-	public static function array_copy(ArrayValue $arr): ArrayValue {
+	public static function dict_copy(DictValue $arr): DictValue {
 		return clone $arr;
 	}
 
-	public static function array_reverse(ArrayValue $arr): Value {
-		return new ArrayValue(\array_reverse($arr->value));
+	public static function dict_reverse(DictValue $arr): Value {
+		return new DictValue(\array_reverse($arr->value));
 	}
 
-	public static function array_random(ArrayValue $arr): Value {
+	public static function dict_random(DictValue $arr): Value {
 		return $arr->value[\array_rand($arr->value)];
 	}
 
-	public static function array_shuffle(ArrayValue $arr): ArrayValue {
+	public static function dict_shuffle(DictValue $arr): DictValue {
 
 		// Do NOT modify the original array argument (as PHP would do).
 		$copy = clone $arr;
@@ -38,49 +36,49 @@ class ArrayExtension extends Extension {
 
 	}
 
-	public static function array_map(ArrayValue $arr, FuncValue $fn): ArrayValue {
+	public static function dict_map(DictValue $arr, FuncValue $fn): DictValue {
 
 		$result = [];
 		foreach ($arr->value as $k => $v) {
 			$result[$k] = $fn->invoke([$v]);
 		}
 
-		return new ArrayValue($result);
+		return new DictValue($result);
 
 	}
 
-	public static function array_contains(ArrayValue $arr, Value $needle): BoolValue {
+	public static function dict_contains(DictValue $arr, Value $needle): BoolValue {
 
 		// Allow only some value types.
-		Common::allowTypes($needle, StringValue::class, NumberValue::class);
+		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class);
 
 		// Let's search the $needle object in $arr's value (array of objects).
 		return new BoolValue(\array_search($needle, $arr->value) !== \false);
 
 	}
 
-	public static function array_has(ArrayValue $arr, Value $key): BoolValue {
+	public static function dict_has(DictValue $arr, Value $key): BoolValue {
 
 		// Allow only some value types.
-		Common::allowTypes($key, StringValue::class, NumberValue::class);
+		Common::allowArgumentTypes(1, $key, StringValue::class, NumberValue::class);
 
 		// Return true if the key exists in this array.
 		return new BoolValue(isset($arr->value[$key->value]));
 
 	}
 
-	public static function array_get(ArrayValue $arr, Value $key, Value $default = \null): Value {
+	public static function dict_get(DictValue $arr, Value $key, Value $default = \null): Value {
 
 		// Allow only some value types.
-		Common::allowTypes($key, StringValue::class, NumberValue::class);
+		Common::allowArgumentTypes(1, $key, StringValue::class, NumberValue::class);
 		return $arr->value[$key->value] ?? $default ?? new NullValue;
 
 	}
 
-	public static function array_number_of(ArrayValue $arr, Value $needle): NumberValue {
+	public static function dict_number_of(DictValue $arr, Value $needle): NumberValue {
 
 		// Allow only some value types.
-		Common::allowTypes($needle, StringValue::class, NumberValue::class);
+		Common::allowArgumentTypes(1, $needle,	StringValue::class, NumberValue::class);
 
 		// We must convert Primi values back to PHP values for the
 		// array_count_values function to work.
@@ -95,12 +93,12 @@ class ArrayExtension extends Extension {
 
 	}
 
-	public static function array_push(ArrayValue $arr, Value $value): NullValue {
+	public static function dict_push(DictValue $arr, Value $value): NullValue {
 		$arr->value[] = $value;
 		return new NullValue;
 	}
 
-	public static function array_pop(ArrayValue $arr): Value {
+	public static function dict_pop(DictValue $arr): Value {
 		return \array_pop($arr->value);
 	}
 

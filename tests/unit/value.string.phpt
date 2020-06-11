@@ -1,11 +1,14 @@
 <?php
 
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
 	RegexValue,
-	ArrayValue,
+	NullValue,
+	DictValue,
+	ListValue,
 	BoolValue,
 	Value
 };
@@ -174,22 +177,17 @@ Assert::exception(function() use ($string) {
 
 // Test that inserting does happen on the same instance of the value object.
 $copy = clone $string;
-// Test classic insertion.
-$copy->arraySet(0, new StringValue("x"));
-Assert::same("xhis is a string.", get_val($copy));
-$copy->arraySet(2, new StringValue("u"));
-Assert::same("xhus is a string.", get_val($copy));
-// Test insertion without specifying index - Single letter.
-$copy->arraySet(null, new StringValue("A"));
-Assert::same("xhus is a string.A", get_val($copy));
-// Test insertion without specifying index - Multiple letters.
-$copy->arraySet(null, new StringValue("BBB"));
-Assert::same("xhus is a string.ABBB", get_val($copy));
 
-// Test creating insertion proxy and commiting it.
-$proxy = $copy->getArrayInsertionProxy(4);
-$proxy->commit(new StringValue("O"));
-Assert::same("xhusOis a string.ABBB", get_val($copy));
+// Test classic insertion - which is forbidden for strings, as it would be
+// unclear (for user) if it is mutated in the process or not.
+Assert::exception(function() use ($copy)  {
+	$copy->arraySet(0, new StringValue("x"));
+}, ErrorException::class, 'String does not support assignment.');
+
+// Test creating insertion proxy and commiting it - also forbidden.
+Assert::exception(function() use ($copy) {
+	$copy->getArrayInsertionProxy(4);
+}, ErrorException::class, 'String does not support assignment.');
 
 // Test iteration of strings.
 $sourceString = "abc\ndef";
@@ -279,7 +277,7 @@ Assert::same(17, get_val($fns['len']->invoke([$unicode])));
 $fnReplace = $fns['string_replace'];
 
 // Test replacing with array of needle-replacement.
-$pairs = new ArrayValue([
+$pairs = new DictValue([
 	"is" => new StringValue("A"),
 	"i" => new StringValue("B"),
 	"." => new StringValue("ščř"),

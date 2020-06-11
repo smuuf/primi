@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\Structures\Value;
 
 /**
  * Insertion proxy is a special structure that encapsulates a value object which
@@ -26,7 +27,7 @@ abstract class InsertionProxy extends \Smuuf\Primi\StrictObject {
 
 	abstract public function commit(Value $value);
 
-	public function getTarget(): ISupportsArrayAccess {
+	public function getTarget(): Value {
 		return $this->target;
 	}
 
