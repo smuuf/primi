@@ -2,23 +2,58 @@
 
 namespace Smuuf\Primi\Helpers;
 
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\InternalArgumentTypeErrorException;
 use \Smuuf\Primi\Structures\Value;
 
 abstract class Common extends \Smuuf\Primi\StrictObject {
+
+	/**
+	 * Returns false if the passed array has contignuous numeric keys starting
+	 * from 0 (i.e. it is a "list"). Returns true otherwise (i.e. it is a
+	 * "dictionary).
+	 *
+	 * The solution was chosen based on 'array_list_dict' phpcb benchmark.
+	 */
+	public static function isArrayDict(array $input): bool {
+
+		// Let's say that empty PHP array is not a dictionary.
+		if (!$input) {
+			return false;
+		}
+
+		$c = 0;
+		foreach ($input as $i => $_) {
+			if ($c++ !== $i) {
+				return false;
+			}
+		}
+
+		return true;
+
+	}
+
+	public static function isNumericInt(string $input): bool {
+		// Solution based on 'numeric_int' phpcb benchmark results.
+		return (bool) preg_match("#^[+-]?\d+$#", $input);
+	}
+
+	public static function isNumeric(string $input): bool {
+		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
+	}
 
 	public static function objectHash($o): string {
 		return substr(md5(spl_object_hash($o)), 0, 6);
 	}
 
 	/**
-	 * Throw new InternalTypeErrorException when the value does not match any of
-	 * the types provided.
+	 * Return true if the value passed as first argument is any of the types
+	 * passed as the rest of variadic arguments.
 	 *
 	 * We're using this helper e.g. in value methods for performing easy
 	 * checks against allowed set of types of values. If PHP ever supports union
-	 * types, I guess this helper method might become unnecessary.
+	 * types, I guess this helper method might become unnecessary (?).
 	 *
-	 * @throws InternalTypeErrorException
 	 */
 	public static function isAnyOfTypes(?Value $value, string ...$types): bool {
 
@@ -35,33 +70,31 @@ abstract class Common extends \Smuuf\Primi\StrictObject {
 	}
 
 	/**
-	 * Throw new TypeError when the value does not match any of the types
-	 * provided.
-	 *
-	 * We're using this helper e.g. in value methods for performing easy
-	 * checks against allowed set of types of values. If PHP ever supports union
-	 * types, I guess this helper method might become unnecessary.
-	 *
-	 * @throws \TypeError
+	 * Helper for easy type-checking inside Primi extensions.
+	 * Checks if a N-th parameter value is of a certain allowed type(s) and
+	 * throws a InternalArgumentTypeErrorException if it's not.
+	 * The exception is handled by Primi's function-invoking logic and converted
+	 * into a user-readable error.
 	 */
-	public static function allowTypes(?Value $value, string ...$types) {
+	public static function allowArgumentTypes(
+		int $index,
+		Value $arg,
+		string ...$allowedTypes
+	) {
 
 		// If any of the "instanceof" checks is true,
 		// the type is allowed - return without throwing exception.
-		foreach ($types as $type) {
-			if ($value instanceof $type) {
+		foreach ($allowedTypes as $type) {
+			if ($arg instanceof $type) {
 				return;
 			}
 		}
 
-		// The value did not match any of the types provided.
-		$msg = sprintf(
-			"'%s' is not any of these: %s",
-			$value::TYPE,
-			implode(", ", $types)
+		throw new InternalArgumentTypeErrorException(
+			$index,
+			$arg::TYPE,
+			$allowedTypes
 		);
-
-		throw new \TypeError($msg);
 
 	}
 

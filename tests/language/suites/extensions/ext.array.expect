@@ -1,12 +1,12 @@
-_a:ArrayValue:[0: "aaa"]
-a:ArrayValue:[0: "aaa", 1: "bbb"]
+_a:ListValue:["aaa"]
+a:ListValue:["aaa", "bbb"]
 x_length:NumberValue:2
-x_reverse:ArrayValue:[0: "bbb", 1: "aaa"]
+x_reverse:ListValue:["bbb", "aaa"]
 x_random_item:BoolValue:true
 x_shuffled_item:BoolValue:true
-x_mapped:ArrayValue:[0: 1, 1: 1]
+x_mapped:ListValue:[1, 1]
 x_contains_true:BoolValue:true
 x_contains_false:BoolValue:false
-x_number_of_yes:NumberValue:1
-x_number_of_no:NumberValue:0
+x_count_yes:NumberValue:1
+x_count_no:NumberValue:0
 x_popped:StringValue:"bbb"

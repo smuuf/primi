@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsAddition;
@@ -14,14 +15,14 @@ class NumberValue extends Value implements
 	ISupportsSubtraction,
 	ISupportsMultiplication,
 	ISupportsLength,
-	ISupportsDivision,
+	ISupportsDivision
 {
 
 	const TYPE = "number";
 
 	public function __construct(string $value) {
 
-		$this->value = self::isNumericInt($value)
+		$this->value = Common::isNumericInt($value)
 			? (int) $value
 			: (float) $value;
 
@@ -39,13 +40,6 @@ class NumberValue extends Value implements
 		return (string) $this->value;
 	}
 
-	public static function isNumericInt(string $input) {
-		return \ctype_digit(\ltrim($input, "+-"));
-	}
-
-	public static function isNumeric(string $input): bool {
-		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
-	}
 
 	public function doAddition(Value $right): Value {
 
@@ -84,7 +78,7 @@ class NumberValue extends Value implements
 
 		// Avoid division by zero.
 		if ($right->value === 0) {
-			throw new \Smuuf\Primi\ErrorException("Division by zero");
+			throw new ErrorException("Division by zero");
 		}
 
 		return new self($this->value / $right->value);

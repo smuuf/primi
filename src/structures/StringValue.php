@@ -130,26 +130,11 @@ class StringValue extends Value implements
 	}
 
 	public function arraySet(?string $index, Value $value) {
-
-		// Allow only strings to be inserted.
-		Common::allowTypes($value, self::class, NumberValue::class);
-
-		if ($index === \null) {
-
-			// An empty index will cause the value to be appended to the end.
-			$this->value .= $value->value;
-
-		} else {
-
-			// If index is specified, PHP own rules for inserting into strings apply.
-			$this->value[(int) $index] = $value->value;
-
-		}
-
+		throw new ErrorException("String does not support assignment.");
 	}
 
 	public function getArrayInsertionProxy(?string $index): ArrayInsertionProxy {
-		return new ArrayInsertionProxy($this, $index);
+		throw new ErrorException("String does not support assignment.");
 	}
 
 	public function getIterator(): \Iterator {

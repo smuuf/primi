@@ -8,7 +8,7 @@ $data = [false, '+1', '-1', +1, 0, 1, 42, -1024, 0.2, -0.2, -0.7, 0.7, true, "ah
 $bench->addBench(function() use ($data) {
 	$result = [];
 	foreach ($data as $x) {
-		$result[] = (bool) preg_match("#^(\+|-)?\d+$#", $x);
+		$result[] = (bool) preg_match("#^[+-]?\d+$#", $x);
 	}
 	return $result;
 });

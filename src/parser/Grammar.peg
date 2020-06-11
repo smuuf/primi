@@ -41,9 +41,9 @@ class CompiledParser extends Parser\Packrat {
 StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
 NumberLiteral: / -?\d[\d_]*(\.[\d_]+)? /
 # Literals for true|false must NOT be followed by any possible characters representing variable name.
-BoolLiteral: "true" | "false"
+BoolLiteral: ( "true" | "false" ) !VariableName
 # Literal for null must NOT be followed by any possible characters representing variable name.
-NullLiteral: "null"
+NullLiteral: "null" !VariableName
 RegexLiteral: "r" core:StringLiteral
 Nothing: ""
 
@@ -52,12 +52,13 @@ VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
 AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
 
-ArrayItem: ( __ key:Expression __ ":" )? __ value:Expression )
-ArrayDefinition: "[" __ ( items:ArrayItem ( __ "," __ items:ArrayItem )* )? __ ( "," __ )? "]"
+DictItem: __ key:Expression __ ":" __ value:Expression __
+DictDefinition: "{" __ ( items:DictItem ( __ "," __ items:DictItem )* )? __ ( "," __ )? "}"
+ListDefinition: "[" __ ( items:Expression ( __ "," __ items:Expression )* )? __ ( "," __ )? "]"
 
-Value: skip:Literal | skip:Variable | skip:ArrayDefinition
+Value: skip:Literal | skip:Variable | skip:ListDefinition | skip:DictDefinition
 VariableVector: core:Variable vector:Vector
-Vector: ( "[" __ ( arrayKey:Expression | arrayKey:Nothing ) __ "]" ) vector:Vector?
+Vector: ( "[" __ ( index:Expression | index:Nothing ) __ "]" ) vector:Vector?
 Mutable: skip:VariableVector | skip:VariableName
 
 AddOperator: "+" | "-"

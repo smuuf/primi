@@ -6,10 +6,12 @@ namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\Structures\ArrayValue;
+use \Smuuf\Primi\Structures\DictValue;
+use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
@@ -119,11 +121,11 @@ class StringExtension extends Extension {
 	public static function string_replace(StringValue $self, Value $search, StringValue $replace = \null): StringValue {
 
 		// Replacing using array of search-replace pairs.
-		if ($search instanceof ArrayValue) {
+		if ($search instanceof DictValue) {
 
 			$from = \array_keys($search->value);
 
-			// Values in ArrayValues are stored as Value objects,
+			// Values in DictValues are stored as Value objects,
 			// so we need to extract the real PHP values from it.
 			$to = \array_values(\array_map(function($item) {
 				return $item->value;
@@ -172,20 +174,31 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function string_split(StringValue $self, Value $delimiter): ArrayValue {
+	public static function string_split(
+		StringValue $self,
+		?Value $delimiter = \null
+	): ListValue {
+
+		// Split by whitespaces by default.
+		if ($delimiter === \null) {
+			$delimiter = new RegexValue('\s+');
+		}
 
 		// Allow only some value types.
-		Common::allowTypes($delimiter, StringValue::class, RegexValue::class);
+		Common::allowArgumentTypes(1, $delimiter, StringValue::class, RegexValue::class);
 
 		if ($delimiter instanceof RegexValue) {
 			$splat = \preg_split($delimiter->value, $self->value);
 		}
 
 		if ($delimiter instanceof StringValue) {
+			if ($delimiter->value === '') {
+				throw new ErrorException("String delimiter must not be empty.");
+			}
 			$splat = \explode($delimiter->value, $self->value);
 		}
 
-		return new ArrayValue(array_map(function($part) {
+		return new ListValue(\array_map(function($part) {
 			return new StringValue($part);
 		}, $splat ?? []));
 
@@ -194,9 +207,7 @@ class StringExtension extends Extension {
 	public static function string_contains(StringValue $self, Value $needle): BoolValue {
 
 		// Allow only some value types.
-		Common::allowTypes(
-			$needle, StringValue::class, NumberValue::class, RegexValue::class
-		);
+		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class, RegexValue::class);
 
 		if ($needle instanceof RegexValue) {
 			return new BoolValue(
@@ -214,7 +225,7 @@ class StringExtension extends Extension {
 	public static function string_number_of(StringValue $self, Value $needle): NumberValue {
 
 		// Allow only some value types.
-		Common::allowTypes($needle, StringValue::class, NumberValue::class);
+		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class);
 
 		return new NumberValue(
 			(string) \mb_substr_count(
@@ -227,7 +238,7 @@ class StringExtension extends Extension {
 	public static function string_find_first(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
-		Common::allowTypes($needle, StringValue::class, NumberValue::class);
+		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {
@@ -241,7 +252,7 @@ class StringExtension extends Extension {
 	public static function string_find_last(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
-		Common::allowTypes($needle, StringValue::class, NumberValue::class);
+		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strrpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {
@@ -254,22 +265,29 @@ class StringExtension extends Extension {
 
 	public static function string_join(
 		StringValue $self,
-		ArrayValue $array
+		Value $value
 	): StringValue {
 
-		$prepared = \array_map(function(&$item) use ($self) {
+		if (!$value instanceof ISupportsIteration) {
+			$type = $value::TYPE;
+			throw new ErrorException("Cannot join unsupported type '$type'");
+		}
 
-			// Common::allowTypes($item, StringValue::class, NumberValue::class,
-			// 	BoolValue::class, ArrayValue::class);
+		$prepared = [];
 
+		foreach ($value->getIterator() as $item) {
 			switch (\true) {
-				case $item instanceof ArrayValue:
-					return self::string_join($self, $item)->value;
+				case $item instanceof DictValue:
+					$prepared[] = self::string_join($self, $item)->value;
+					break;
+				case $item instanceof ListValue:
+						$prepared[] = self::string_join($self, $item)->value;
+					break;
 				default:
-					return $item->getStringValue();
+					$prepared[] = $item->getStringValue();
+					break;
 			}
-
-		}, $array->value);
+		}
 
 		return new StringValue(\implode($self->value, $prepared));
 

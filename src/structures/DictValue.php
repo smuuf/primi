@@ -5,21 +5,18 @@ namespace Smuuf\Primi\Structures;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ISupportsComparison;
 
-use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\ISupportsArrayAccess;
 use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\InternalUndefinedIndexException;
 
-class ArrayValue extends Value implements
+class DictValue extends Value implements
 	ISupportsIteration,
-	ISupportsComparison,
 	ISupportsArrayAccess,
 	ISupportsLength
 {
 
-	const TYPE = "array";
+	const TYPE = "dict";
 
 	public function __construct(array $arr) {
 		$this->value = $arr;
@@ -27,15 +24,11 @@ class ArrayValue extends Value implements
 
 	public function __clone() {
 
-		// ArrayValue is really a PHP array of other Primi value objects, so we need to do deep copy.
+		// DictValue is really a PHP array of other Primi value objects, so we need to do deep copy.
 		\array_walk($this->value, function(&$item) {
 			$item = clone $item;
 		});
 
-	}
-
-	public function getLength(): int {
-		return \count($this->value);
 	}
 
 	public function getStringRepr(CircularDetector $cd = \null): string {
@@ -51,12 +44,20 @@ class ArrayValue extends Value implements
 
 	}
 
+	public function getLength(): int {
+		return \count($this->value);
+	}
+
+	public function isTruthy(): bool {
+		return (bool) $this->value;
+	}
+
 	private static function convertToString($self, CircularDetector $cd): string {
 
 		// Track current value object with circular detector.
 		$cd->add(\spl_object_hash($self));
 
-		$return = "[";
+		$return = "{";
 		foreach ($self->value as $key => $item) {
 
 			$key = \is_numeric($key) ? $key : "\"$key\"";
@@ -73,7 +74,7 @@ class ArrayValue extends Value implements
 
 		}
 
-		return \rtrim($return, ', ') . "]";
+		return \rtrim($return, ', ') . "}";
 
 	}
 
@@ -105,31 +106,18 @@ class ArrayValue extends Value implements
 		return new ArrayInsertionProxy($this, $key);
 	}
 
-	public function doComparison(string $op, Value $right): BoolValue {
+	public function isEqualTo(Value $right): ?bool {
 
-		Common::allowTypes(
-			$right,
-			self::class
-		);
+		if (!$right instanceof self) {
+			return null;
+		}
 
 		// Simple comparison of both arrays should be sufficient.
 		// PHP manual describes object (which are in these arrays) comparison:
 		// Two object instances are equal if they have the same attributes and
 		// values (values are compared with ==).
 		// See https://www.php.net/manual/en/language.oop5.object-comparison.php.
-
-		switch ($op) {
-			case "==":
-				$result = $this->value == $right->value;
-				break;
-			case "!=":
-				$result = $this->value != $right->value;
-				break;
-			default:
-				throw new \TypeError;
-		}
-
-		return new BoolValue($result);
+		return $this->value == $right->value;
 
 	}
 

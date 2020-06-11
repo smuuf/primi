@@ -1,0 +1,149 @@
+// No semicolons anywhere!
+
+function true_if_error(fn) {
+
+	try {
+		fn()
+		success = true
+	} catch {
+		success = false
+	}
+
+	return !success
+
+}
+
+list_of_words = [
+	"abc", // Can have a comment here.
+	"xyz", "a", "ohh yeah", // Or a comment here.
+	"bbb", "xyz",
+	"ohh yesh"
+	// Or here.
+] // Or here.
+
+text = ""
+for (word in list_of_words) {
+	text = text + word + "..."
+}
+
+assert(
+	text == "abc...xyz...a...ohh yeah...bbb...xyz...ohh yesh...",
+	'String collected using array iteration.'
+)
+
+//
+// Splitting string into list and back into string.
+//
+
+sentence = "You will be assimilated.\n   Resistance is futile."
+splat = sentence.split() // No argument splits by all whitespaces.
+
+assert(type(splat) == 'list')
+assert(splat[0] == 'You')
+assert(splat[1] == 'will')
+assert(splat[3] == 'assimilated.')
+assert(splat[4] == 'Resistance')
+
+recreated = ','.join(splat)
+assert(recreated == 'You,will,be,assimilated.,Resistance,is,futile.')
+
+//
+// List value access via square brackets notation.
+//
+
+some_list = ["first_item", 0, 1, "a", "b", ["inner_a", "inner_b"], true, "last_item"]
+
+assert(len(some_list) == 8) // Equivalent to the line below.
+assert(some_list.len() == 8) // Equivalent to the line above.
+assert(some_list[0] == "first_item")
+assert(some_list[5] == ["inner_a", "inner_b"])
+assert(some_list[5][0] == "inner_a")
+assert(some_list[5][-1] == "inner_b")
+
+// Index higher than the list length-1 throws error.
+assert(true_if_error(() => {
+	tmp = some_list[9]
+}), 'Correct error on accessing out-of-bounds index.')
+
+// Negative indexes can be used to access items from the end.
+assert(some_list[-1] == "last_item", "Using index -1 to access last item using a negative index.")
+assert(some_list[-8] == "first_item", "Using index -8 to access first item using a negative index.")
+
+// Only a single "layer" of negative indexes can be used, not more.
+assert(true_if_error(() => {
+	tmp = some_list[-9]
+}), 'Correct error on accessing negative out-of-bounds index.')
+
+//
+// List mutation via square notation.
+//
+
+some_list[0] = "new_first_item"
+assert(some_list[0] == "new_first_item")
+
+some_list[-1] = "new_last_item"
+assert(some_list[7] == "new_last_item")
+
+// Inner values can also be mutated.
+some_list[5][-1] = "new_inner_b"
+assert(some_list[5] == ["inner_a", "new_inner_b"])
+
+//
+// Comparison of lists.
+//
+
+assert(['a', 'b'] == ['a', 'b'])
+assert([['a'], ['b', 'c']] == [['a'], ['b', 'c']])
+assert(
+	['a', 123] != [123, 'b'],
+	'List order matters when comparing.'
+)
+assert(
+	[['a'], ['b', 'c']] != [['a'], ['c', 'b']],
+	'Inner list order matters when comparing outer lists.'
+)
+
+//
+// Adding (joining) lists.
+//
+
+list_a = [1, 2, 3]
+list_b = ['x', 'y', 'z']
+assert(
+	list_a + list_b == [1, 2, 3, 'x', 'y', 'z'],
+	'Lists can be joined and the order is preserved.'
+)
+
+assert(
+	list_b + list_a == ['x', 'y', 'z', 1, 2, 3],
+	'Lists can be joined and the order is preserved.'
+)
+
+//
+// Subtracting lists is not permitted.
+//
+
+assert(true_if_error(() => {
+	result = list_a - list_b
+}), 'Subtracting lists is not permitted.')
+
+//
+// Multiplying lists.
+//
+
+// Multiplying by a positive integer.
+list_a = [1, 2, 3]
+multiplier = 4
+result = list_a * multiplier
+assert(
+	result == [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3],
+	'List can be multiplied by integer number.'
+)
+
+// Multipliying by a negative integer.
+multiplier = -3
+result = list_a * multiplier
+assert(
+	result == [],
+	'List multiplied by a negative number results in an empty list.'
+)

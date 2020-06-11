@@ -6,7 +6,8 @@ use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
 	RegexValue,
-	ArrayValue,
+	DictValue,
+	ListValue,
 	FuncValue,
 	BoolValue
 };
@@ -27,11 +28,14 @@ Assert::same(StringValue::TYPE, Value::buildAutomatic("-1 squirrels")::TYPE);
 Assert::same(BoolValue::TYPE, Value::buildAutomatic(true)::TYPE);
 Assert::same(BoolValue::TYPE, Value::buildAutomatic(false)::TYPE);
 
-Assert::same(ArrayValue::TYPE, Value::buildAutomatic([])::TYPE);
-Assert::same(ArrayValue::TYPE, Value::buildAutomatic([1])::TYPE);
+Assert::same(ListValue::TYPE, Value::buildAutomatic([])::TYPE);
+Assert::same(ListValue::TYPE, Value::buildAutomatic([1])::TYPE);
+
+Assert::same(DictValue::TYPE, Value::buildAutomatic([4 => 'a', 5 => 'b'])::TYPE);
+Assert::same(DictValue::TYPE, Value::buildAutomatic(['a' => 'x', 'y' => 'z'])::TYPE);
 
 Assert::same(FuncValue::TYPE, Value::buildAutomatic(function() {})::TYPE);
-Assert::same(FuncValue::TYPE, Value::buildAutomatic(function($x, $y) { return 1; })::TYPE);
+Assert::same(FuncValue::TYPE, Value::buildAutomatic(function(NumberValue $x, DictValue $y) { return 1; })::TYPE);
 
 //
 // Getting string representation of values.
@@ -69,12 +73,23 @@ Assert::same('r"/abc/"', $v->getStringRepr());
 $v = new RegexValue('abc');
 Assert::same('r"abc"', $v->getStringRepr());
 
-// Array.
-$v = new ArrayValue([
+// List.
+$v = new ListValue([
 	Value::buildAutomatic(1),
 	Value::buildAutomatic("xxx"),
 	Value::buildAutomatic(false),
 	new RegexValue('abc'),
 	new RegexValue('/abc/'),
 ]);
-Assert::same('[0: 1, 1: "xxx", 2: false, 3: r"abc", 4: r"/abc/"]', $v->getStringRepr());
+Assert::same('[1, "xxx", false, r"abc", r"/abc/"]', $v->getStringRepr());
+
+// Dict.
+$v = new DictValue([
+	'aaa' => Value::buildAutomatic(1),
+	'bbb' => Value::buildAutomatic("xxx"),
+	'ccc' => Value::buildAutomatic(false),
+	'ddd' => new RegexValue('abc'),
+	'___' => new RegexValue('/abc/'),
+]);
+Assert::same('{"aaa": 1, "bbb": "xxx", "ccc": false, "ddd": r"abc", "___": r"/abc/"}', $v->getStringRepr());
+

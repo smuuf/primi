@@ -2,11 +2,12 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\ValueFriends;
 
 abstract class Value extends ValueFriends {
 
-	const TYPE = "__no_type__";
+	const TYPE = "any";
 
 	public static function buildAutomatic($value) {
 
@@ -21,8 +22,12 @@ abstract class Value extends ValueFriends {
 				return new FuncValue(FnContainer::buildFromClosure($value));
 			case \is_array($value):
 				$inner = \array_map([self::class, 'buildAutomatic'], $value);
-				return new ArrayValue($inner);
-			case NumberValue::isNumeric($value):
+				if (Common::isArrayDict($value)) {
+					return new DictValue($inner);
+				} else {
+					return new ListValue($inner);
+				}
+			case Common::isNumeric($value):
 				// Must be after "is_array" case.
 				return new NumberValue($value);
 			default:

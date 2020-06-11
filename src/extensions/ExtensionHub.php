@@ -2,7 +2,8 @@
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\FnContainer;
+use \Smuuf\Primi\Structures\FuncValue;
 
 class ExtensionHub extends \Smuuf\Primi\StrictObject {
 
@@ -79,7 +80,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 			}
 
 			$callable = [$class, $methodName];
-			$value = Value::buildAutomatic($callable);
+			$value = new FuncValue(FnContainer::buildFromClosure($callable));
 			$result[$methodName] = $value;
 
 		}

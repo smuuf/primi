@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Psl;
 
-use Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Extension;
-use Smuuf\Primi\ISupportsLength;
+use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\ISupportsLength;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\BoolValue;
-use Smuuf\Primi\Structures\NumberValue;
+use \Smuuf\Primi\Structures\ListValue;
+use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Structures\StringValue;
 
 class StandardExtension extends Extension {
@@ -34,9 +36,13 @@ class StandardExtension extends Extension {
 	 * and throws error if it's `false`. Optional string decription can be \
 	 * provided, which will be visible in the eventual error message.
 	 */
-	public static function assert(BoolValue $truth, ?StringValue $desc = null): BoolValue {
+	public static function assert(
+		BoolValue $assumption,
+		?StringValue $description = null
+	): BoolValue {
 
-		if ($truth->value !== true) {
+		$desc = $description;
+		if ($assumption->value !== true) {
 			$desc = ($desc && $desc->value !== '') ? " ($desc->value)" : '';
 			throw new ErrorException(sprintf("Assertion failed%s", $desc));
 		}
@@ -70,7 +76,7 @@ class StandardExtension extends Extension {
 		NumberValue $start,
 		?NumberValue $end = null,
 		?NumberValue $step = null
-	): ArrayValue {
+	): ListValue {
 
 		if (
 			!Common::isNumericInt((string) $start->value)
@@ -92,7 +98,7 @@ class StandardExtension extends Extension {
 			);
 		}
 
-		return new ArrayValue(
+		return new ListValue(
 			array_map([Value::class, 'buildAutomatic'], $range)
 		);
 

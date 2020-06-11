@@ -1,14 +1,15 @@
-// Copying makes a new array.
-_a = ["aaa"]; // Stays [0: "aaa"]
+// pragma:one_liner
+// Copying makes a new list.
+_a = ["aaa"]; // Stays ["aaa"]
 a = _a.copy();
-a.push("bbb"); // New array [0: "aaa", 1:"bbb"]
-x_length = a.len() // 2
+a.push("bbb"); // New list ["aaa", "bbb"]
+x_length = len(a) // 2
 x_reverse = a.reverse() // [0: "bbb", 1:"aaa"]
 x_random_item = a.random() == r"^(aaa|bbb)$" // true
 x_shuffled_item = a.shuffle()[0] == r"^(aaa|bbb)$" // true
 x_mapped = a.map((x) => { return 1;}) // [0: 1, 1: 1]
 x_contains_true = a.contains("bbb") // true
 x_contains_false = a.contains("ccc") // false
-x_number_of_yes = a.number_of("aaa") // 1
-x_number_of_no = a.number_of("ccc") // 0
+x_count_yes = a.count("aaa") // 1
+x_count_no = a.count("ccc") // 0
 x_popped = a.copy().pop() // "bbb"
