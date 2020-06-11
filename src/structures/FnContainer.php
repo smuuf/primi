@@ -5,6 +5,7 @@ namespace Smuuf\Primi\Structures;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\HandlerFactory;
 
 use \Smuuf\Primi\ReturnException;
@@ -19,7 +20,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	protected $argsCount = 0;
 
 	/** @var bool Does this function originate from Primi or its provided by engine? */
-	protected $isPhpFunction = 0;
+	protected $isPhpFunction = false;
 
 	/**
 	 * Build and return a closure wrapper around a Primi function (represented
@@ -88,32 +89,32 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		$closure = \Closure::fromCallable($fn);
 
-		$r = new \ReflectionFunction($closure);
-		$argsCount = $r->getNumberOfRequiredParameters();
+		$rf = new \ReflectionFunction($closure);
+		$paramCount = $rf->getNumberOfParameters();
+		$expectedTypes = Common::getPrimiParameterTypesFromFunction($rf);
 
-		// If the callable does not have a return type of Value, we will
-		// handle consider the function as handling PHP values instead of
-		// Primi value objects.
-		$passPhpValues = \true;
-		if (
-			$r->hasReturnType()
-			&& $r->getReturnType() instanceof \ReflectionNamedType
-			&& \is_a($r->getReturnType()->getName(), Value::class, \true)
-		) {
-			$passPhpValues = \false;
-		}
+		$wrapper = function(Value ...$args) use ($closure, $expectedTypes) {
 
-		$wrapper = function(...$args) use ($closure, $passPhpValues) {
+			$maxIndex = count($expectedTypes) - 1;
+			// Do our own type checking prior to the invocation.
+			// If we were only detecting ordinary \TypeErrors by PHP, we
+			// wouldn't be able to tell where exactly those type errors
+			// occured (for example we wouldn't be able to differentiate
+			// argument type errors from return value type errors).
+			foreach ($args as $i => $arg) {
 
-			if ($passPhpValues) {
-				$args = \array_map(function(Value $value) {
-					return $value->getInternalValue();
-				}, $args);
+				// Handle variadic parameters - actual number of arguments
+				// can be higher than the expected number of parameters.
+				// In that case, the type of the last (variadic) parameter
+				// must be the same for all remaining arguments.
+				$expectedType = $expectedTypes[$i] ?? $expectedTypes[$maxIndex];
+				Common::allowArgumentTypes($i, $arg, $expectedType);
+
 			}
 
 			$result = $closure(...$args);
 
-			if ($passPhpValues && !$result instanceof Value) {
+			if (!$result instanceof Value) {
 				return Value::buildAutomatic($result);
 			}
 
@@ -121,7 +122,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($wrapper, true, $argsCount);
+		return new self($wrapper, true, $paramCount);
 
 	}
 

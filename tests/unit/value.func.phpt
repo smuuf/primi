@@ -24,20 +24,16 @@ $five = new NumberValue(5);
 // Function invocation.
 //
 
+// Primi functions created from callables can be only created from callables
+// that typehint its parameters as Primi's Value class or its descendants.
+
+$closure = function(NumberValue $a, NumberValue $b) {
+	return new NumberValue($a->getInternalValue() * $b->getInternalValue() ** 2);
+};
+
 // Create Primi function from a native PHP function.
 // This directly returns a Primi value. (Kind of optional low-levelness.)
-$fn = new FuncValue(FnContainer::buildFromClosure(function($a, $b) {
-	return new NumberValue($a * $b ** 2);
-}));
-
-Assert::same(4, get_val($fn->invoke([$one, $two])));
-Assert::same(45, get_val($fn->invoke([$five, $three])));
-
-// This returns a PHP value and thus should be automatically converted
-// to Primi value after returning.
-$fn = new FuncValue(FnContainer::buildFromClosure(function($a, $b) {
-	return $a * $b ** 2;
-}));
+$fn = new FuncValue(FnContainer::buildFromClosure($closure));
 
 Assert::same(4, get_val($fn->invoke([$one, $two])));
 Assert::same(45, get_val($fn->invoke([$five, $three])));
