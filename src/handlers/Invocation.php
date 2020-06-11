@@ -11,6 +11,7 @@ use \Smuuf\Primi\InternalException;
 use \Smuuf\Primi\ISupportsInvocation;
 use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\InternalArgumentCountException;
+use \Smuuf\Primi\InternalTypeErrorException;
 
 class Invocation extends ChainedHandler {
 

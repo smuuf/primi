@@ -149,4 +149,52 @@ abstract class Common extends \Smuuf\Primi\StrictObject {
 
 	}
 
+	/**
+	 * Returns array of Primi value types (PHP class names) of parameters
+	 * for a PHP function of which the \ReflectionFunction is provided.
+	 *
+	 * In another words: This function returns which Primi types a PHP function
+	 * expects.
+	 */
+	public static function getPrimiParameterTypesFromFunction(
+		\ReflectionFunction $rf
+	): array {
+
+		$types = [];
+		foreach ($rf->getParameters() as $rp) {
+
+			$type = $rp->getType();
+
+			// a) No typehint or b) typehint not hinting some Value class
+			// means invalid type - gonna throw exception in that case.
+			$invalidType = $type === null
+				|| !is_a($type->getName(), Value::class, true);
+
+			if ($invalidType) {
+
+				$declClass = $rp->getDeclaringClass();
+				$class = $declClass
+					? $declClass->getName()
+					: null;
+
+				$method = $rp->getDeclaringFunction()->getName();
+				$paramName = $rp->getName();
+				$paramPosition = $rp->getPosition();
+				$fqn = $class ? "{$class}::{$method}()" : "{$method}()";
+
+				$msg = "Parameter '\${$paramName}' (#{$paramPosition}) of "
+					. "{$fqn} doesn't have Primi value class typehint.";
+
+				throw new ErrorException($msg);
+
+			};
+
+			$types[] = $type->getName();
+
+		}
+
+		return $types;
+
+	}
+
 }
