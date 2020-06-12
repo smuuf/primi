@@ -11,7 +11,7 @@ class VariableVector extends SimpleHandler {
 	/**
 	 * This handler returns a final part of the chain - a value object that's
 	 * derived from the vector and which supports insertion. All values but the
-	 * last part of the chain also must support dereferencing.
+	 * last part of the chain also must support key access.
 	 */
 	public static function handle(array $node, Context $context) {
 

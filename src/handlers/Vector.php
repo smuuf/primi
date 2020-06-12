@@ -6,7 +6,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\UndefinedIndexException;
 use \Smuuf\Primi\InternalUndefinedIndexException;
@@ -24,7 +24,7 @@ class Vector extends ChainedHandler {
 		Value $subject
 	) {
 
-		if (!$subject instanceof ISupportsArrayAccess) {
+		if (!$subject instanceof ISupportsKeyAccess) {
 			throw new ErrorException(sprintf(
 				"Cannot insert into '%s'",
 				$subject::TYPE
@@ -42,7 +42,7 @@ class Vector extends ChainedHandler {
 			// Are we going to handle this node as a leaf node?
 			if (!isset($node['vector'])) {
 				// If this is a leaf node, return an insertion proxy.
-				return $subject->getArrayInsertionProxy($key);
+				return $subject->getInsertionProxy($key);
 			}
 
 			// This is not a leaf node, so just dereference the chain a bit deeper,

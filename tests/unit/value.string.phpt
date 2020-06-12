@@ -186,7 +186,7 @@ Assert::exception(function() use ($copy)  {
 
 // Test creating insertion proxy and commiting it - also forbidden.
 Assert::exception(function() use ($copy) {
-	$copy->getArrayInsertionProxy(4);
+	$copy->getInsertionProxy(4);
 }, ErrorException::class, 'String does not support assignment.');
 
 // Test iteration of strings.

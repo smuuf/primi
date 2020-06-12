@@ -5,7 +5,7 @@ namespace Smuuf\Primi\Handlers;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\UndefinedIndexException;
 use \Smuuf\Primi\InternalUndefinedIndexException;
@@ -18,7 +18,7 @@ class Dereference extends ChainedHandler {
 		Value $subject
 	) {
 
-		if (!$subject instanceof ISupportsArrayAccess) {
+		if (!$subject instanceof ISupportsKeyAccess) {
 			throw new \Smuuf\Primi\ErrorException(\sprintf(
 				"Type '%s' does not support dereferencing",
 				$subject::TYPE
