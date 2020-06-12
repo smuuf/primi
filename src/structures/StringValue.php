@@ -9,7 +9,7 @@ use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class StringValue extends Value implements
@@ -17,7 +17,7 @@ class StringValue extends Value implements
 	ISupportsSubtraction,
 	ISupportsMultiplication,
 	ISupportsIteration,
-	ISupportsArrayAccess,
+	ISupportsKeyAccess,
 	ISupportsLength
 {
 
@@ -133,7 +133,7 @@ class StringValue extends Value implements
 		throw new ErrorException("String does not support assignment.");
 	}
 
-	public function getArrayInsertionProxy(?string $index): ArrayInsertionProxy {
+	public function getInsertionProxy(?string $index): InsertionProxy {
 		throw new ErrorException("String does not support assignment.");
 	}
 

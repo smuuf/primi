@@ -6,13 +6,13 @@ use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsIteration;
 
-use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class DictValue extends Value implements
 	ISupportsIteration,
-	ISupportsArrayAccess,
+	ISupportsKeyAccess,
 	ISupportsLength
 {
 
@@ -102,8 +102,8 @@ class DictValue extends Value implements
 
 	}
 
-	public function getArrayInsertionProxy(?string $key): ArrayInsertionProxy {
-		return new ArrayInsertionProxy($this, $key);
+	public function getInsertionProxy(?string $key): InsertionProxy {
+		return new InsertionProxy($this, $key);
 	}
 
 	public function isEqualTo(Value $right): ?bool {

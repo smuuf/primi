@@ -9,13 +9,13 @@ use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class ListValue extends Value implements
 	ISupportsIteration,
-	ISupportsArrayAccess,
+	ISupportsKeyAccess,
 	ISupportsAddition,
 	ISupportsMultiplication,
 	ISupportsLength
@@ -105,7 +105,7 @@ class ListValue extends Value implements
 	}
 
 	/**
-	 * Used only via self::getArrayInsertionProxy().
+	 * Used only via self::getInsertionProxy().
 	 */
 	public function arraySet(?string $index, Value $value) {
 
@@ -123,8 +123,8 @@ class ListValue extends Value implements
 
 	}
 
-	public function getArrayInsertionProxy(?string $index): ArrayInsertionProxy {
-		return new ArrayInsertionProxy($this, $index);
+	public function getInsertionProxy(?string $index): InsertionProxy {
+		return new InsertionProxy($this, $index);
 	}
 
 	public function doAddition(Value $right): Value {

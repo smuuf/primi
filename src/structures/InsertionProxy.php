@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsArrayAccess;
+use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Structures\Value;
 
 /**
@@ -15,17 +15,19 @@ use \Smuuf\Primi\Structures\Value;
  *
  * @see \Smuuf\Primi\Handlers\VariableVector
  */
-abstract class InsertionProxy extends \Smuuf\Primi\StrictObject {
+class InsertionProxy extends \Smuuf\Primi\StrictObject {
 
 	protected $target;
 	protected $key;
 
-	public function __construct(ISupportsArrayAccess $target, ?string $key) {
+	public function __construct(ISupportsKeyAccess $target, ?string $key) {
 		$this->target = $target;
 		$this->key = $key;
 	}
 
-	abstract public function commit(Value $value);
+	public function commit(Value $value) {
+		$this->target->arraySet($this->key, $value);
+	}
 
 	public function getTarget(): Value {
 		return $this->target;

@@ -3,13 +3,13 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\ArrayInsertionProxy;
+use \Smuuf\Primi\Structures\InsertionProxy;
 
-interface ISupportsArrayAccess {
+interface ISupportsKeyAccess {
 
 	public function arraySet(?string $key, Value $value);
 	public function arrayGet(string $key): Value;
-	public function getArrayInsertionProxy(?string $key): ArrayInsertionProxy;
+	public function getInsertionProxy(?string $key): InsertionProxy;
 
 }
 
