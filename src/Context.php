@@ -4,7 +4,6 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\FuncValue;
 
 class Context extends StrictObject implements IContext {
 
@@ -13,7 +12,7 @@ class Context extends StrictObject implements IContext {
 	private static $globals = [];
 	private $vars = [];
 
-	public function reset(bool $wipeGlobals = false) {
+	public function reset(bool $wipeGlobals = false): void {
 
 		if ($wipeGlobals) {
 			self::$globals = [];

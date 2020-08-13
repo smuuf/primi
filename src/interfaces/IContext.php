@@ -10,5 +10,6 @@ interface IContext {
 	public function setVariables(array $pairs, bool $global = false);
 	public function getVariable(string $name): ?Value;
 	public function getVariables(bool $includeGlobals = false): array;
+	public function reset(bool $wipeGlobals = false): void;
 
 }
