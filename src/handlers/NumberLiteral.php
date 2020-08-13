@@ -6,8 +6,8 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Helpers\SimpleHandler;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\RuntimeError;
 
 class NumberLiteral extends SimpleHandler {
 
@@ -22,7 +22,7 @@ class NumberLiteral extends SimpleHandler {
 		$value = str_replace('_', '', $node['text']);
 		$float = (float) $value;
 		if ($float >= \PHP_INT_MAX || $float <= \PHP_INT_MIN) {
-			throw new ErrorException("Number overflow ({$value}).", $node);
+			throw new RuntimeError("Number overflow ({$value}).", $node);
 		}
 
 		// As string.

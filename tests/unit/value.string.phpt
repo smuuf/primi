@@ -1,7 +1,8 @@
 <?php
 
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\ExtensionHub;
+use \Smuuf\Primi\Ex\IndexError;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
@@ -120,10 +121,10 @@ Assert::same("ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.ťhiš íš á ŠT
 // Multiplication with float number will result in type error.
 Assert::exception(function() use ($string) {
 	$string->doMultiplication(new NumberValue(2.1));
-}, \TypeError::class);
+}, RuntimeError::class);
 Assert::exception(function() use ($unicode) {
 	$unicode->doMultiplication(new NumberValue("3.1459"));
-}, \TypeError::class);
+}, RuntimeError::class);
 
 //
 // Test comparison operators...
@@ -173,7 +174,7 @@ Assert::same("s", get_val($string->arrayGet(3)));
 // Test error when dereferencing from undexined index.
 Assert::exception(function() use ($string) {
 	$string->arrayGet(50);
-}, \Smuuf\Primi\InternalUndefinedIndexException::class);
+}, IndexError::class);
 
 // Test that inserting does happen on the same instance of the value object.
 $copy = clone $string;
@@ -182,12 +183,12 @@ $copy = clone $string;
 // unclear (for user) if it is mutated in the process or not.
 Assert::exception(function() use ($copy)  {
 	$copy->arraySet(0, new StringValue("x"));
-}, ErrorException::class, 'String does not support assignment.');
+}, RuntimeError::class, 'String does not support assignment.');
 
 // Test creating insertion proxy and commiting it - also forbidden.
 Assert::exception(function() use ($copy) {
 	$copy->getInsertionProxy(4);
-}, ErrorException::class, 'String does not support assignment.');
+}, RuntimeError::class, 'String does not support assignment.');
 
 // Test iteration of strings.
 $sourceString = "abc\ndef";
@@ -223,7 +224,7 @@ Assert::exception(function() use ($fns) {
 		new StringValue("THIRD"),
 		new StringValue("FOURTH"),
 	]);
-}, \Smuuf\Primi\ErrorException::class);
+}, \Smuuf\Primi\Ex\RuntimeError::class);
 
 // Test too-few-parameters.
 Assert::exception(function() use ($fns) {
@@ -233,7 +234,7 @@ Assert::exception(function() use ($fns) {
 		new StringValue("FIRST"),
 		new StringValue("SECOND"),
 	]);
-}, \Smuuf\Primi\ErrorException::class);
+}, \Smuuf\Primi\Ex\RuntimeError::class);
 
 // Test placeholder index being too high for passed parameters.
 Assert::exception(function() use ($fns) {
@@ -243,7 +244,7 @@ Assert::exception(function() use ($fns) {
 		new StringValue("FIRST"),
 		new StringValue("SECOND"),
 	]);
-}, \Smuuf\Primi\ErrorException::class);
+}, \Smuuf\Primi\Ex\RuntimeError::class);
 
 //
 // Test count.

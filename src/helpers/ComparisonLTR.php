@@ -2,12 +2,12 @@
 
 namespace Smuuf\Primi\Helpers;
 
+use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\RelationError;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\UndefinedRelationException;
 
 class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
@@ -70,7 +70,7 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 			case '<=':
 				return new BoolValue(self::evaluateRelation($op, $left, $right));
 			default:
-				throw new ErrorException("Unknown operator '$op'");
+				throw new EngineError("Unknown operator '$op'");
 		}
 
 	}
@@ -107,10 +107,11 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 		$result = $left->hasRelationTo($op, $right);
 
-		// If the left side didn't know how to evaluate equality with the right
-		// side (the first call returned null), switch operands and try again.
-		if ($result === null) {
-			throw new UndefinedRelationException($op, $left, $right);
+		// If the left side didn't know how to evaluate relation with the right
+		// side (the hasRelationTo call returned null), the relation is
+		// undefined and thus raises an error.
+		if ($result === \null) {
+			throw new RelationError($op, $left, $right);
 		}
 
 		return $result;

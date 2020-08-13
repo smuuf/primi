@@ -7,9 +7,9 @@ use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Ex\ArgumentCountError;
+use \Smuuf\Primi\Ex\ReturnException;
 
-use \Smuuf\Primi\ReturnException;
-use \Smuuf\Primi\InternalArgumentCountException;
 
 class FnContainer extends \Smuuf\Primi\StrictObject {
 
@@ -53,7 +53,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 			// Chack number of passed arguments.
 			$args = \array_splice($args, 0, \count($definitionArgs));
 			if (\count($definitionArgs) > \count($args)) {
-				throw new InternalArgumentCountException(
+				throw new ArgumentCountError(
 					\count($args),
 					\count($definitionArgs)
 				);
@@ -112,7 +112,12 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 			}
 
-			$result = $closure(...$args);
+			try {
+				$result = $closure(...$args);
+			} catch (\ArgumentCountError $e) {
+				[$passed, $expected] = primifn_parse_argument_count_error($e);
+				throw new ArgumentCountError($passed, $expected);
+			}
 
 			if (!$result instanceof Value) {
 				return Value::buildAutomatic($result);

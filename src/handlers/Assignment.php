@@ -4,10 +4,9 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ErrorException;
-use \Smuuf\Primi\UndefinedIndexException;
-use \Smuuf\Primi\InternalTypeErrorException;
-use \Smuuf\Primi\InternalUndefinedIndexException;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\LookupError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\InsertionProxy;
 
@@ -34,10 +33,10 @@ class Assignment extends SimpleHandler {
 				// value object.
 				try {
 					$target->commit($return);
-				} catch (InternalUndefinedIndexException $e) {
-					throw new UndefinedIndexException($e->getMessage(), $node);
-				} catch (InternalTypeErrorException $e) {
-					throw new ErrorException(sprintf(
+				} catch (LookupError $e) {
+					throw new RuntimeError($e->getMessage(), $node);
+				} catch (TypeError $e) {
+					throw new RuntimeError(\sprintf(
 						"Cannot insert '%s' into '%s'",
 						$return::TYPE,
 						$target->getTarget()::TYPE

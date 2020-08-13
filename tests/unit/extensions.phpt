@@ -4,6 +4,8 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\ExtensionHub;
+use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\BreakException;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
 
@@ -27,6 +29,10 @@ class CustomExtension extends Extension {
 		return new StringValue("1st {$argument->value}");
 	}
 
+	public static function raise_break(): void {
+		throw new BreakException;
+	}
+
 }
 
 //
@@ -36,7 +42,7 @@ class CustomExtension extends Extension {
 // Test that trying to add a extension that doesn't really if an extension..
 Assert::exception(function() {
 	ExtensionHub::add(BadExtension::class);
-}, \LogicException::class, '#not a valid#i');
+}, EngineError::class, '#not a valid#i');
 
 //
 // Stuff from extensions should be available after resetting main context.
@@ -45,11 +51,27 @@ Assert::exception(function() {
 $i = new \Smuuf\Primi\Interpreter;
 $c = $i->getContext();
 Assert::falsey($c->getVariables());
-ExtensionHub::add(CustomExtension::class);
-Assert::falsey($c->getVariables());
+Assert::truthy($c->getVariables(true), 'Default extensions are loaded at this point - those provide globals and thus thecontext is not completely empty');
 
-$i2 = new \Smuuf\Primi\Interpreter;
-$c2 = $i2->getContext();
-Assert::truthy($c2->getVariable('funnyreverse'));
-$c2->reset();
-Assert::truthy($c2->getVariable('funnyreverse'));
+// This has no effect on existing context - extensions are applied only on new
+// contexts initialized by new interpreter instance.
+ExtensionHub::add(CustomExtension::class);
+
+$i = new \Smuuf\Primi\Interpreter;
+$c = $i->getContext();
+Assert::truthy($c->getVariable('funnyreverse'));
+$c->reset();
+Assert::truthy($c->getVariable('funnyreverse'), 'Global functions still exist after resetting the context without the $wipeGlobals argument.');
+
+$src = <<<SRC
+c = 0
+while (c < 10) {
+	if (c > 3) {
+		raise_break()
+	}
+	c = c + 1
+}
+SRC;
+
+$i->run($src);
+Assert::same(4, $c->getVariable('c')->getInternalValue());

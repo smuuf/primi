@@ -2,13 +2,13 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Ex\KeyError;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsIteration;
 
 use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Helpers\CircularDetector;
-use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class DictValue extends Value implements
 	ISupportsIteration,
@@ -85,7 +85,7 @@ class DictValue extends Value implements
 	public function arrayGet(string $key): Value {
 
 		if (!isset($this->value[$key])) {
-			throw new InternalUndefinedIndexException($key);
+			throw new KeyError($key);
 		}
 
 		return $this->value[$key];

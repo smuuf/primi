@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\Helpers\Common;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\DictValue;
@@ -15,6 +16,7 @@ use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
+
 
 class StringExtension extends Extension {
 

@@ -6,9 +6,9 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ISupportsKeyAccess;
+use \Smuuf\Primi\Ex\LookupError;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\ChainedHandler;
-use \Smuuf\Primi\UndefinedIndexException;
-use \Smuuf\Primi\InternalUndefinedIndexException;
 
 class Dereference extends ChainedHandler {
 
@@ -19,7 +19,7 @@ class Dereference extends ChainedHandler {
 	) {
 
 		if (!$subject instanceof ISupportsKeyAccess) {
-			throw new \Smuuf\Primi\ErrorException(\sprintf(
+			throw new RuntimeError(\sprintf(
 				"Type '%s' does not support dereferencing",
 				$subject::TYPE
 			), $node);
@@ -29,10 +29,16 @@ class Dereference extends ChainedHandler {
 
 			$handler = HandlerFactory::get($node['key']['name']);
 			$key = $handler::handle($node['key'], $context);
+
+			if (!\is_scalar($key->getInternalValue())) {
+				$type = $key::TYPE;
+				throw new LookupError("Cannot use '$type' for lookup.");
+			}
+
 			return $subject->arrayGet($key->getInternalValue());
 
-		} catch (InternalUndefinedIndexException $e) {
-			throw new UndefinedIndexException($e->getMessage(), $node);
+		} catch (LookupError $e) {
+			throw new RuntimeError($e->getMessage(), $node);
 		}
 
 	}

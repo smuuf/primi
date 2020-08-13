@@ -4,6 +4,6 @@ c:StringValue:"3f3b08eca62c21d76256e6e1d0b8bf99f4efbe376f64335b72f4163a8fc50dba"
 d:StringValue:"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 e:StringValue:"cfcd208495d565ef66e7dff9f98764da"
 f:StringValue:"c4ca4238a0b923820dcc509a6f75849b"
-EX:Smuuf\Primi\ErrorException
-EX:Smuuf\Primi\ErrorException
-EX:Smuuf\Primi\ErrorException
+EX:Smuuf\Primi\Ex\RuntimeError
+EX:Smuuf\Primi\Ex\RuntimeError
+EX:Smuuf\Primi\Ex\RuntimeError

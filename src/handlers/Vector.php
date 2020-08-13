@@ -3,13 +3,12 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ISupportsKeyAccess;
+use \Smuuf\Primi\Ex\LookupError;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\ChainedHandler;
-use \Smuuf\Primi\UndefinedIndexException;
-use \Smuuf\Primi\InternalUndefinedIndexException;
 
 /**
  * This handler returns a final part of the chain - a value object that's
@@ -25,7 +24,7 @@ class Vector extends ChainedHandler {
 	) {
 
 		if (!$subject instanceof ISupportsKeyAccess) {
-			throw new ErrorException(sprintf(
+			throw new RuntimeError(sprintf(
 				"Cannot insert into '%s'",
 				$subject::TYPE
 			), $node);
@@ -50,8 +49,8 @@ class Vector extends ChainedHandler {
 			// will be handled by the code above).
 			$next = $subject->arrayGet($key);
 
-		} catch (InternalUndefinedIndexException $e) {
-			throw new UndefinedIndexException($e->getMessage(), $node);
+		} catch (LookupError $e) {
+			throw new RuntimeError($e->getMessage(), $node);
 		}
 
 		// At this point we know there's some another, deeper part of vector,

@@ -37,7 +37,7 @@ function run_test(string $file) {
 
 		try {
 			$interpreter->run($src);
-		} catch (\Smuuf\Primi\ErrorException $e) {
+		} catch (\Smuuf\Primi\Ex\BaseException $e) {
 			printf("EX:%s\n", get_class($e));
 		}
 
@@ -57,7 +57,7 @@ function run_test(string $file) {
 				array_walk($vars, function($x, $k) {
 					printf("%s:%s:%s\n", $k, main_class($x), $x->getStringRepr());
 				});
-			} catch (\Smuuf\Primi\ErrorException $e) {
+			} catch (\Smuuf\Primi\Ex\BaseException $e) {
 				printf("EX:%s\n", get_class($e));
 			}
 		}

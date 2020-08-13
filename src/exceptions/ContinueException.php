@@ -1,7 +1,11 @@
 <?php
 
-namespace Smuuf\Primi;
+declare(strict_types=1);
 
-class ContinueException extends InternalException {
+namespace Smuuf\Primi\Ex;
+
+class ContinueException extends ControlFlowException {
+
+	public const ID = 'continue';
 
 }

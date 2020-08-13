@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\Structures\FuncValue;
 
@@ -24,8 +28,8 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 			return;
 		}
 
-		if (!is_subclass_of($extension, \Smuuf\Primi\Extension::class)) {
-			throw new \LogicException("'$extension' is not a valid extension.");
+		if (!is_subclass_of($extension, Extension::class)) {
+			throw new EngineError("'$extension' is not a valid Primi extension.");
 		}
 
 		$processed = self::process($extension);

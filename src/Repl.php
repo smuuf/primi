@@ -11,7 +11,7 @@ use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\IContext;
 use \Smuuf\Primi\IReadlineDriver;
-use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Ex\BaseException;
 
 class Repl extends \Smuuf\Primi\StrictObject {
 
@@ -118,7 +118,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				$this->printResult($result);
 				echo "\n";
 
-			} catch (ErrorException $e) {
+			} catch (BaseException $e) {
 				echo Colors::get("{red}ERR:{_} {$e->getMessage()}\n");
 			} catch (\Throwable $e) {
 				$this->printPhpTraceback($e);

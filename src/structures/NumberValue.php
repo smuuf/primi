@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsAddition;
@@ -65,7 +65,7 @@ class NumberValue extends Value implements
 				$new = \str_repeat($right->value, $multiplier);
 				return new StringValue($new);
 			}
-			throw new \TypeError;
+			return \null;
 		}
 
 		return new self($this->value * $right->value);
@@ -78,7 +78,7 @@ class NumberValue extends Value implements
 
 		// Avoid division by zero.
 		if ($right->value === 0) {
-			throw new ErrorException("Division by zero");
+			throw new RuntimeError("Division by zero");
 		}
 
 		return new self($this->value / $right->value);

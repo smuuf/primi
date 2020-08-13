@@ -2,6 +2,9 @@
 
 namespace Smuuf\Primi;
 
+use Smuuf\Primi\Ex\ControlFlowException;
+use Smuuf\Primi\Ex\RuntimeError;
+
 /**
  * Direct abstract syntax tree interpreter.
  * @see https://en.wikipedia.org/wiki/Interpreter_(computing)#Abstract_Syntax_Tree_interpreters
@@ -48,10 +51,9 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 			$handler = HandlerFactory::get($ast['name']);
 			return $handler::handle($ast, $this->context);
 
-		} catch (ReturnException $e) {
-			throw new ErrorException("Cannot 'return' from global scope");
-		} catch (BreakException $e) {
-			throw new ErrorException("Cannot 'break' from global scope");
+		} catch (ControlFlowException $e) {
+			$what = $e::ID;
+			throw new RuntimeError("Cannot '{$what}' from global scope");
 		}
 
 	}

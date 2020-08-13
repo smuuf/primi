@@ -3,7 +3,7 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\BreakException;
+use \Smuuf\Primi\Ex\BreakException;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 
 class BreakStatement extends SimpleHandler {

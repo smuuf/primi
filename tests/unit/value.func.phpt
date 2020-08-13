@@ -2,6 +2,7 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Structures\{
 	FuncValue,
 	NumberValue,
@@ -45,7 +46,7 @@ Assert::same(45, get_val($fn->invoke([$five, $three])));
 // No arguments (but expected some).
 Assert::exception(function() use ($fn) {
 	$fn->invoke([]);
-}, \ArgumentCountError::class);
+}, ArgumentCountError::class);
 
 // Too many arguments (expected less) - valid. Allow it.
 Assert::noError(function() use ($fn, $one, $two, $three) {
