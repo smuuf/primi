@@ -3,12 +3,14 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ISupportsLength;
+
+use function \Smuuf\Primi\Helpers\is_any_of_types as primifn_is_any_of_types;
+use function \Smuuf\Primi\Helpers\is_numeric_int as primifn_is_numeric_int;
 
 class NumberValue extends Value implements
 	ISupportsAddition,
@@ -22,7 +24,7 @@ class NumberValue extends Value implements
 
 	public function __construct(string $value) {
 
-		$this->value = Common::isNumericInt($value)
+		$this->value = primifn_is_numeric_int($value)
 			? (int) $value
 			: (float) $value;
 
@@ -43,28 +45,19 @@ class NumberValue extends Value implements
 
 	public function doAddition(Value $right): Value {
 
-		Common::allowTypes($right, self::class);
 		return new self($this->value + $right->value);
 
 	}
 
 	public function doSubtraction(Value $right): self {
 
-		Common::allowTypes($right, self::class);
 		return new self($this->value - $right->value);
 
 	}
 
-	public function doMultiplication(Value $right) {
+	public function doMultiplication(Value $right): ?Value {
 
-		Common::allowTypes($right, self::class, StringValue::class);
-
-		if ($right instanceof StringValue) {
-			$multiplier = $this->value;
-			if (\is_int($multiplier) && $multiplier >= 0) {
-				$new = \str_repeat($right->value, $multiplier);
-				return new StringValue($new);
-			}
+		if (!$right instanceof NumberValue) {
 			return \null;
 		}
 
@@ -74,7 +67,9 @@ class NumberValue extends Value implements
 
 	public function doDivision(Value $right): self {
 
-		Common::allowTypes($right, self::class);
+		if (!$right instanceof NumberValue) {
+			return \null;
+		}
 
 		// Avoid division by zero.
 		if ($right->value === 0) {
@@ -87,14 +82,19 @@ class NumberValue extends Value implements
 
 	public function isEqualTo(Value $right): ?bool {
 
-        if (!Common::isAnyOfTypes($right, NumberValue::class, BoolValue::class)) {
-            return null;
-        }
+		if (!primifn_is_any_of_types($right, NumberValue::class, BoolValue::class)) {
+			return \null;
+		}
 
-        return $this->value == $right->value;
+		return $this->value == $right->value;
+
 	}
 
-	public function hasRelationTo(string $operator, $right): ?bool {
+	public function hasRelationTo(string $operator, Value $right): ?bool {
+
+		if (!primifn_is_any_of_types($right, NumberValue::class)) {
+			return \null;
+		}
 
 		$l = $this->value;
 		$r = $right->value;

@@ -4,15 +4,11 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
 
-/**
- * Node fields:
- * left: A "+" or "-" sign signalling the 'side' of the first operand.
- * right: List of operand nodes.
- */
+use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
+
 class Comparison extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
@@ -32,7 +28,7 @@ class Comparison extends SimpleHandler {
 		if (!isset($node['ops'])) {
 			$node = $node['operands'];
 		} else {
-			$node['ops'] = Common::ensureIndexed($node['ops']);
+			$node['ops'] = primifn_ensure_indexed($node['ops']);
 		}
 
 	}

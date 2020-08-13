@@ -3,7 +3,6 @@
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Structures\DictValue;
@@ -11,6 +10,8 @@ use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\Value;
+
+use function \Smuuf\Primi\Helpers\allow_argument_types as primifn_allow_argument_types;
 
 class CastingExtension extends Extension {
 
@@ -50,7 +51,7 @@ class CastingExtension extends Extension {
 			return $value;
 		}
 
-		Common::allowArgumentTypes(
+		primifn_allow_argument_types(
 			0,
 			$value,
 			StringValue::class, NumberValue::class
@@ -66,7 +67,7 @@ class CastingExtension extends Extension {
 
 	public static function to_number(Value $value): NumberValue {
 
-		Common::allowArgumentTypes(
+		primifn_allow_argument_types(
 			0,
 			$value,
 			StringValue::class, NumberValue::class, BoolValue::class
@@ -78,7 +79,7 @@ class CastingExtension extends Extension {
 
 	public static function to_list(Value $value): ListValue {
 
-		Common::allowArgumentTypes(0, $value, ListValue::class, StringValue::class);
+		primifn_allow_argument_types(0, $value, ListValue::class, StringValue::class);
 
 		if ($value instanceof StringValue) {
 			return new ListValue(iterator_to_array($value->getIterator()));

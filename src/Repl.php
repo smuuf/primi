@@ -6,12 +6,13 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\NullValue;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\IContext;
 use \Smuuf\Primi\IReadlineDriver;
 use \Smuuf\Primi\Ex\BaseException;
+
+use function \Smuuf\Primi\Helpers\object_hash as primifn_object_hash;
 
 class Repl extends \Smuuf\Primi\StrictObject {
 
@@ -148,7 +149,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",
 			$value::TYPE,
-			Common::objectHash($value)
+			primifn_object_hash($value)
 		));
 
 	}

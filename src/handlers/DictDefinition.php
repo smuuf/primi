@@ -4,9 +4,10 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\DictValue;
+
+use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
 
 class DictDefinition extends SimpleHandler {
 
@@ -47,7 +48,7 @@ class DictDefinition extends SimpleHandler {
 
 		// Make sure this is always list, even with one item.
 		if (isset($node['items'])) {
-			$node['items'] = Common::ensureIndexed($node['items']);
+			$node['items'] = primifn_ensure_indexed($node['items']);
 		}
 
 	}

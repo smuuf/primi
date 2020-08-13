@@ -3,12 +3,12 @@
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\KeyError;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsIteration;
-
 use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Helpers\CircularDetector;
+
+use function \Smuuf\Primi\Helpers\object_hash as primifn_object_hash;
 
 class DictValue extends Value implements
 	ISupportsIteration,
@@ -67,7 +67,7 @@ class DictValue extends Value implements
 			// would end up going in (infinite) circles.
 			$hash = \spl_object_hash($item);
 			$str = $cd->has($hash)
-				? \sprintf("*recursion (%s)*", Common::objectHash($item))
+				? \sprintf("*recursion (%s)*", primifn_object_hash($item))
 				: $item->getStringRepr($cd);
 
 			$return .= \sprintf("%s: %s, ", $key, $str);
@@ -109,7 +109,7 @@ class DictValue extends Value implements
 	public function isEqualTo(Value $right): ?bool {
 
 		if (!$right instanceof self) {
-			return null;
+			return \null;
 		}
 
 		// Simple comparison of both arrays should be sufficient.

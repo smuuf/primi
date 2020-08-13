@@ -6,7 +6,6 @@ namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Structures\Value;
@@ -17,6 +16,7 @@ use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
 
+use function \Smuuf\Primi\Helpers\allow_argument_types as primifn_allow_argument_types;
 
 class StringExtension extends Extension {
 
@@ -63,7 +63,7 @@ class StringExtension extends Extension {
 				if ($indexedMode === \false) {
 					// A positional placeholder was used when a non-positional
 					// one is already present.
-					throw new ErrorException(
+					throw new RuntimeError(
 						\sprintf("Cannot combine positional and non-positional placeholders.")
 					);
 				}
@@ -72,13 +72,13 @@ class StringExtension extends Extension {
 				$index = $m[1];
 
 				if ($index < 0) {
-					throw new ErrorException(
+					throw new RuntimeError(
 						\sprintf("Position (%s) cannot be less than 0.", $index)
 					);
 				}
 
 				if ($index > $passedCount) {
-					throw new ErrorException(
+					throw new RuntimeError(
 						\sprintf("Position (%s) does not match the number of parameters (%s).", $index, $passedCount)
 					);
 				}
@@ -90,7 +90,7 @@ class StringExtension extends Extension {
 				if ($indexedMode === \true) {
 					// A non-positional placeholder was used when a positional
 					// one is already present.
-					throw new ErrorException(
+					throw new RuntimeError(
 						sprintf("Cannot combine positional and non-positional placeholders.")
 					);
 				}
@@ -107,7 +107,7 @@ class StringExtension extends Extension {
 
 		// If there are more args expected than passed, throw error.
 		if ($expectedCount > $passedCount) {
-			throw new ErrorException(
+			throw new RuntimeError(
 				\sprintf(
 					"Not enough arguments passed (expected %s, got %s).",
 					$expectedCount,
@@ -138,7 +138,7 @@ class StringExtension extends Extension {
 		}
 
 		if ($replace === \null) {
-			throw new \ArgumentCountError;
+			throw new ArgumentCountError(2, 3);
 		}
 
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
@@ -155,7 +155,10 @@ class StringExtension extends Extension {
 				)
 			);
 		} else {
-			throw new \TypeError;
+
+			$type = $search::TYPE;
+			throw new RuntimeError("Cannot use '$type' as needle");
+
 		}
 
 	}
@@ -187,7 +190,7 @@ class StringExtension extends Extension {
 		}
 
 		// Allow only some value types.
-		Common::allowArgumentTypes(1, $delimiter, StringValue::class, RegexValue::class);
+		primifn_allow_argument_types(1, $delimiter, StringValue::class, RegexValue::class);
 
 		if ($delimiter instanceof RegexValue) {
 			$splat = \preg_split($delimiter->value, $self->value);
@@ -195,7 +198,7 @@ class StringExtension extends Extension {
 
 		if ($delimiter instanceof StringValue) {
 			if ($delimiter->value === '') {
-				throw new ErrorException("String delimiter must not be empty.");
+				throw new RuntimeError("String delimiter must not be empty.");
 			}
 			$splat = \explode($delimiter->value, $self->value);
 		}
@@ -209,7 +212,7 @@ class StringExtension extends Extension {
 	public static function string_contains(StringValue $self, Value $needle): BoolValue {
 
 		// Allow only some value types.
-		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class, RegexValue::class);
+		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class, RegexValue::class);
 
 		if ($needle instanceof RegexValue) {
 			return new BoolValue(
@@ -227,7 +230,7 @@ class StringExtension extends Extension {
 	public static function string_number_of(StringValue $self, Value $needle): NumberValue {
 
 		// Allow only some value types.
-		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class);
+		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		return new NumberValue(
 			(string) \mb_substr_count(
@@ -240,7 +243,7 @@ class StringExtension extends Extension {
 	public static function string_find_first(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
-		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class);
+		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {
@@ -254,7 +257,7 @@ class StringExtension extends Extension {
 	public static function string_find_last(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
-		Common::allowArgumentTypes(1, $needle, StringValue::class, NumberValue::class);
+		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strrpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {
@@ -272,7 +275,7 @@ class StringExtension extends Extension {
 
 		if (!$value instanceof ISupportsIteration) {
 			$type = $value::TYPE;
-			throw new ErrorException("Cannot join unsupported type '$type'");
+			throw new RuntimeError("Cannot join unsupported type '$type'");
 		}
 
 		$prepared = [];

@@ -2,8 +2,9 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\NumberValue;
+
+use function \Smuuf\Primi\Helpers\is_any_of_types as primifn_is_any_of_types;
 
 class BoolValue extends Value {
 
@@ -23,8 +24,8 @@ class BoolValue extends Value {
 
 	public function isEqualTo(Value $right): ?bool {
 
-		if (!Common::isAnyOfTypes($right, BoolValue::class, NumberValue::class)) {
-			return null;
+		if (!primifn_is_any_of_types($right, BoolValue::class, NumberValue::class)) {
+			return \null;
 		}
 
 		return $this->value === $right->isTruthy();
