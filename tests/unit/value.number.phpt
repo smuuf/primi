@@ -1,7 +1,8 @@
 <?php
 
+use \Tester\Assert;
+
 use \Smuuf\Primi\ExtensionHub;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\{
 	Value,
 	StringValue,
@@ -12,7 +13,7 @@ use \Smuuf\Primi\Structures\{
 	BoolValue
 };
 
-use \Tester\Assert;
+use function \Smuuf\Primi\Helpers\is_numeric as primifn_is_numeric;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -63,18 +64,18 @@ Assert::type('float', get_val($negZeroFloat));
 //
 
 // Test correct detection of "numeric" string.
-Assert::true(Common::isNumeric("1"));
-Assert::true(Common::isNumeric("1.2"));
-Assert::true(Common::isNumeric("0.0"));
-Assert::true(Common::isNumeric("-0.0"));
-Assert::true(Common::isNumeric("-1.2"));
-Assert::true(Common::isNumeric("-1"));
-Assert::false(Common::isNumeric("hell no"));
-Assert::false(Common::isNumeric("not 1"));
-Assert::false(Common::isNumeric("1 owl"));
-Assert::false(Common::isNumeric("2 2"));
-Assert::true(Common::isNumeric("+0.0"));
-Assert::false(Common::isNumeric("+-1"));
+Assert::true(primifn_is_numeric("1"));
+Assert::true(primifn_is_numeric("1.2"));
+Assert::true(primifn_is_numeric("0.0"));
+Assert::true(primifn_is_numeric("-0.0"));
+Assert::true(primifn_is_numeric("-1.2"));
+Assert::true(primifn_is_numeric("-1"));
+Assert::false(primifn_is_numeric("hell no"));
+Assert::false(primifn_is_numeric("not 1"));
+Assert::false(primifn_is_numeric("1 owl"));
+Assert::false(primifn_is_numeric("2 2"));
+Assert::true(primifn_is_numeric("+0.0"));
+Assert::false(primifn_is_numeric("+-1"));
 
 //
 // Test addition.

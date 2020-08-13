@@ -4,9 +4,10 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\NullValue;
+
+use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
 
 class Program extends SimpleHandler {
 
@@ -25,7 +26,7 @@ class Program extends SimpleHandler {
 
 		// Make sure the list of statements has proper form.
 		if (isset($node['stmts'])) {
-			$node['stmts'] = Common::ensureIndexed($node['stmts']);
+			$node['stmts'] = primifn_ensure_indexed($node['stmts']);
 		} else {
 			// ... even if there are no statements at all.
 			$node['stmts'] = [];

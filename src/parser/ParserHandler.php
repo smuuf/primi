@@ -4,7 +4,8 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Ex\SyntaxError;
-use \Smuuf\Primi\Helpers\Common;
+
+use function \Smuuf\Primi\Helpers\get_position_estimate as primifn_get_position_estimate;
 
 class ParserHandler extends CompiledParser {
 
@@ -40,7 +41,10 @@ class ParserHandler extends CompiledParser {
 		$pos = \false;
 
 		if ($position !== \false) {
-			[$line, $pos] = Common::getPositionEstimate($this->source, $position);
+			[$line, $pos] = primifn_get_position_estimate(
+				$this->source,
+				$position
+			);
 		}
 
 		throw new SyntaxError($msg, $line, $pos);
@@ -136,7 +140,7 @@ class ParserHandler extends CompiledParser {
 
 		if (isset($node['offset'])) {
 
-			[$line, $pos] = Common::getPositionEstimate(
+			[$line, $pos] = primifn_get_position_estimate(
 				$source, $node['offset']
 			);
 

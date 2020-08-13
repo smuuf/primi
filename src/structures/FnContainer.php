@@ -5,11 +5,13 @@ namespace Smuuf\Primi\Structures;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Ex\ReturnException;
 
+use function \Smuuf\Primi\Helpers\allow_argument_types as primifn_allow_argument_types;
+use function \Smuuf\Primi\Helpers\parse_argument_count_error as primifn_parse_argument_count_error;
+use function \Smuuf\Primi\Helpers\get_primi_parameter_types_from_function as primifn_get_primi_parameter_types_from_function;
 
 class FnContainer extends \Smuuf\Primi\StrictObject {
 
@@ -91,7 +93,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		$rf = new \ReflectionFunction($closure);
 		$paramCount = $rf->getNumberOfParameters();
-		$expectedTypes = Common::getPrimiParameterTypesFromFunction($rf);
+		$expectedTypes = primifn_get_primi_parameter_types_from_function($rf);
 
 		$wrapper = function(Value ...$args) use ($closure, $expectedTypes) {
 
@@ -108,7 +110,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 				// In that case, the type of the last (variadic) parameter
 				// must be the same for all remaining arguments.
 				$expectedType = $expectedTypes[$i] ?? $expectedTypes[$maxIndex];
-				Common::allowArgumentTypes($i, $arg, $expectedType);
+				primifn_allow_argument_types($i, $arg, $expectedType);
 
 			}
 

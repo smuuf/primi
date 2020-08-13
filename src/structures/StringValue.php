@@ -2,16 +2,17 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Helpers\Common;
-use \Smuuf\Primi\Helpers\StringEscaping;
-use \Smuuf\Primi\ISupportsAddition;
-use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsLength;
-use \Smuuf\Primi\ISupportsMultiplication;
+use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsKeyAccess;
+use \Smuuf\Primi\ISupportsSubtraction;
+use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\StringEscaping;
+
+use function \Smuuf\Primi\Helpers\is_any_of_types as primifn_is_any_of_types;
 
 class StringValue extends Value implements
 	ISupportsAddition,
@@ -49,18 +50,21 @@ class StringValue extends Value implements
 
 	}
 
-	public function doAddition(Value $rightOperand) {
+	public function doAddition(Value $right): ?Value {
 
-		Common::allowTypes($rightOperand, self::class);
-		return new self($this->value . $rightOperand->value);
+		if (!$right instanceof StringValue) {
+			return \null;
+		}
+
+		return new self($this->value . $right->value);
 
 	}
 
 	public function doSubtraction(Value $rightOperand) {
 
-		// Allow only string at this point (if the operand was a regex, we've
-		// already returned value).
-		Common::allowTypes($rightOperand, self::class, RegexValue::class);
+		if (!primifn_is_any_of_types($right, StringValue::class, RegexValue::class)) {
+			return \null;
+		}
 
 		if ($rightOperand instanceof RegexValue) {
 			$match = \preg_replace($rightOperand->value, '', $this->value);
@@ -74,8 +78,9 @@ class StringValue extends Value implements
 
 	public function doMultiplication(Value $rightOperand) {
 
-		// Allow only number as right operands.
-		Common::allowTypes($rightOperand, NumberValue::class);
+		if (!$right instanceof NumberValue) {
+			return \null;
+		}
 
 		$multiplier = $rightOperand->value;
 		if (\is_int($multiplier) && $multiplier >= 0) {
@@ -88,8 +93,8 @@ class StringValue extends Value implements
 
 	public function isEqualTo(Value $right): ?bool {
 
-		if (!Common::isAnyOfTypes($right, StringValue::class, RegexValue::class)) {
-			return null;
+		if (!primifn_is_any_of_types($right, StringValue::class, RegexValue::class)) {
+			return \null;
 		}
 
 		if ($right instanceof RegexValue) {
@@ -100,7 +105,11 @@ class StringValue extends Value implements
 
 	}
 
-	public function hasRelationTo(string $operator, $right): ?bool {
+	public function hasRelationTo(string $operator, Value $right): ?bool {
+
+		if (!primifn_is_any_of_types($right, StringValue::class)) {
+			return \null;
+		}
 
 		$l = $this->value;
 		$r = $right->value;

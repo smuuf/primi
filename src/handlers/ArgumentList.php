@@ -4,8 +4,9 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\SimpleHandler;
+
+use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
 
 /**
  * Node fields:
@@ -35,7 +36,7 @@ class ArgumentList extends SimpleHandler {
 
 		// Make sure this is always list, even with one item.
 		if (isset($node['args'])) {
-			$node['args'] = Common::ensureIndexed($node['args']);
+			$node['args'] = primifn_ensure_indexed($node['args']);
 		}
 
 	}

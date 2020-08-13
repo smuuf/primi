@@ -2,9 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Helpers\CircularDetector;
-use \Smuuf\Primi\Helpers\Common;
-
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsIteration;
@@ -12,6 +9,10 @@ use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\CircularDetector;
+
+use function \Smuuf\Primi\Helpers\is_numeric_int as primifn_is_numeric_int;
+use function \Smuuf\Primi\Helpers\object_hash as primifn_object_hash;
 
 class ListValue extends Value implements
 	ISupportsIteration,
@@ -78,7 +79,7 @@ class ListValue extends Value implements
 			// would end up going in (infinite) circles.
 			$hash = \spl_object_hash($item);
 			$str = $cd->has($hash)
-				? \sprintf("*recursion (%s)*", Common::objectHash($item))
+				? \sprintf("*recursion (%s)*", primifn_object_hash($item))
 				: $item->getStringRepr($cd);
 
 			$return .= \sprintf("%s, ", $str);
@@ -146,7 +147,7 @@ class ListValue extends Value implements
 		}
 
 		// ... and that number must be an integer.
-		if (!Common::isNumericInt((string) $right->value)) {
+		if (!primifn_is_numeric_int((string) $right->value)) {
 			return new RuntimeError("List can be only multiplied by an integer.");
 		}
 
@@ -201,7 +202,7 @@ class ListValue extends Value implements
 	 */
 	public function protectedIndex(float $index, bool $throw = true): ?int {
 
-		if (!Common::isNumericInt($index)) {
+		if (!primifn_is_numeric_int((string) $index)) {
 			throw new RuntimeError("Index must be integer");
 		}
 
