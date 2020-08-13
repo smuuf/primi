@@ -165,8 +165,9 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	private static function printPhpTraceback(\Throwable $e) {
 
+		$type = get_class($e);
 		$msg = Colors::get(sprintf("\n{white}{-red}%s", self::PHP_ERROR_HEADER));
-		$msg .= " {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
+		$msg .= " $type: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
 		echo $msg;
 
 		// Best and easiest to get version of backtrace I can think of.

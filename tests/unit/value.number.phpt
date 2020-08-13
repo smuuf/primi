@@ -82,87 +82,65 @@ Assert::false(primifn_is_numeric("+-1"));
 //
 
 // Addition with a negative 0 constructed from string.
-Assert::same(1, $integer->doAddition(new NumberValue("-0"))->getInternalValue());
+Assert::same(1, get_val($integer->doAddition(new NumberValue("-0"))));
 // Addition with a negative 5 constructed from string.
-Assert::same(-4, $integer->doAddition(new NumberValue("-5"))->getInternalValue());
+Assert::same(-4, get_val($integer->doAddition(new NumberValue("-5"))));
 // Addition with a proper zero Number value.
-Assert::same(1, $integer->doAddition(new NumberValue(0))->getInternalValue());
+Assert::same(1, get_val($integer->doAddition(new NumberValue(0))));
 // Addition with a proper Number one.
-Assert::same(2, $integer->doAddition(new NumberValue(1))->getInternalValue());
+Assert::same(2, get_val($integer->doAddition(new NumberValue(1))));
 // Addition with a proper negative Number.
-Assert::same(-122, $integer->doAddition(new NumberValue(-123))->getInternalValue());
+Assert::same(-122, get_val($integer->doAddition(new NumberValue(-123))));
 
 // Addition with unsupported formats will result in type error.
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new StringValue("4"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new BoolValue(true));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+Assert::null($integer->doAddition(new StringValue("4")));
+Assert::null($integer->doAddition(new DictValue([])));
+Assert::null($integer->doAddition(new BoolValue(true)));
+Assert::null($integer->doAddition(new RegexValue("/[abc]/")));
 
 //
 // Test subtraction.
 //
 
-Assert::same(1, $integer->doSubtraction(new NumberValue("-0"))->getInternalValue());
-Assert::same(6, $integer->doSubtraction(new NumberValue("-5"))->getInternalValue());
-Assert::same(1, $integer->doSubtraction(new NumberValue(0))->getInternalValue());
-Assert::same(0, $integer->doSubtraction(new NumberValue(1))->getInternalValue());
-Assert::same(124, $integer->doSubtraction(new NumberValue(-123))->getInternalValue());
+Assert::same(1, get_val($integer->doSubtraction(new NumberValue("-0"))));
+Assert::same(6, get_val($integer->doSubtraction(new NumberValue("-5"))));
+Assert::same(1, get_val($integer->doSubtraction(new NumberValue(0))));
+Assert::same(0, get_val($integer->doSubtraction(new NumberValue(1))));
+Assert::same(124, get_val($integer->doSubtraction(new NumberValue(-123))));
 
 // Subtraction with unsupported formats will result in type error.
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new StringValue("1"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+Assert::null($integer->doSubtraction(new StringValue("1")));
+Assert::null($integer->doSubtraction(new DictValue([])));
+Assert::null($integer->doSubtraction(new BoolValue(false)));
+Assert::null($integer->doSubtraction(new RegexValue("/[abc]/")));
 
 //
 // Test multiplication.
 //
 
 // Multiplication with numbers.
-Assert::same(0, $float->doMultiplication(new NumberValue("-0"))->getInternalValue());
-Assert::same(-11.5, $float->doMultiplication(new NumberValue("-5"))->getInternalValue());
-Assert::same(0, $float->doMultiplication(new NumberValue(0))->getInternalValue());
-Assert::same(2.3, $float->doMultiplication(new NumberValue(1))->getInternalValue());
-Assert::same(-282.9, $float->doMultiplication(new NumberValue(-123))->getInternalValue());
+Assert::same(0, get_val($float->doMultiplication(new NumberValue("-0"))));
+Assert::same(-11.5, get_val($float->doMultiplication(new NumberValue("-5"))));
+Assert::same(0, get_val($float->doMultiplication(new NumberValue(0))));
+Assert::same(2.3, get_val($float->doMultiplication(new NumberValue(1))));
+Assert::same(-282.9, get_val($float->doMultiplication(new NumberValue(-123))));
 
 // Multiplication by a string.
-$result = $biggerInteger->doMultiplication(new StringValue(" "))->getInternalValue();
-Assert::same("                    ", $result);
-$result = $biggerInteger->doMultiplication(new StringValue(" _ěšč"))->getInternalValue();
+// Number X String is not supported by Number, but
+// String X Number is supported.
+$string = new StringValue(" _ěšč");
+$result = $biggerInteger->doMultiplication($string);
+Assert::null($result);
+$result = get_val($string->doMultiplication($biggerInteger));
 Assert::same(" _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč", $result);
 
 // Multiplication with unsupported formats will result in type error.
-Assert::exception(function() use ($posFloat) {
-	$posFloat->doMultiplication(new StringValue(" a"));
-}, \TypeError::class);
-Assert::exception(function() use ($negFloat) {
-	$negFloat->doMultiplication(new StringValue(" b"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doMultiplication(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doMultiplication(new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doMultiplication(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+Assert::null($integer->doMultiplication(new StringValue(" b")));
+Assert::null($posFloat->doMultiplication(new StringValue(" a")));
+Assert::null($negFloat->doMultiplication(new StringValue(" b")));
+Assert::null($integer->doMultiplication(new DictValue([])));
+Assert::null($integer->doMultiplication(new BoolValue(false)));
+Assert::null($integer->doMultiplication(new RegexValue("/[abc]/")));
 
 //
 // Test division.
@@ -170,27 +148,19 @@ Assert::exception(function() use ($integer) {
 
 Assert::exception(function() use ($float) {
 	$float->doDivision(new NumberValue("-0"));
-}, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
+}, \Smuuf\Primi\Ex\RuntimeError::class, '#Division.*zero#');
 Assert::exception(function() use ($integer) {
 	$integer->doDivision(new NumberValue(0));
-}, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
-Assert::same(-0.46, $float->doDivision(new NumberValue("-5"))->getInternalValue());
-Assert::same(2.3, $float->doDivision(new NumberValue(1))->getInternalValue());
-Assert::same(-1.15, $float->doDivision(new NumberValue(-2))->getInternalValue());
+}, \Smuuf\Primi\Ex\RuntimeError::class, '#Division.*zero#');
+Assert::same(-0.46, get_val($float->doDivision(new NumberValue("-5"))));
+Assert::same(2.3, get_val($float->doDivision(new NumberValue(1))));
+Assert::same(-1.15, get_val($float->doDivision(new NumberValue(-2))));
 
 // Subtaction with unsupported formats will result in type error.
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new StringValue("1"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+Assert::null($integer->doDivision(new StringValue("1")));
+Assert::null($integer->doDivision(new ListValue([])));
+Assert::null($integer->doDivision(new BoolValue(false)));
+Assert::null($integer->doDivision(new RegexValue("/[abc]/")));
 
 //
 // Test comparison.

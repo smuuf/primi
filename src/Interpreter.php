@@ -11,7 +11,10 @@ use Smuuf\Primi\Ex\RuntimeError;
  */
 class Interpreter extends \Smuuf\Primi\StrictObject {
 
+	/** @var string Path to temporary directory where ASTs will be cached. */
 	private $tempDir;
+
+	/** @var IContext */
 	private $context;
 
 	public function __construct(

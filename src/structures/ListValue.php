@@ -100,7 +100,7 @@ class ListValue extends Value implements
 			throw new RuntimeError("List index must be integer");
 		}
 
-		$normalized = $this->protectedIndex((int) $index);
+		$normalized = $this->protectedIndex($index);
 		return $this->value[$normalized];
 
 	}
@@ -110,12 +110,12 @@ class ListValue extends Value implements
 	 */
 	public function arraySet(?string $index, Value $value) {
 
-		if ($index === null) {
+		if ($index === \null) {
 			$this->value[] = $value;
 			return;
 		}
 
-		if (!Common::isNumericInt($index)) {
+		if (!primifn_is_numeric_int((string) $index)) {
 			throw new RuntimeError("List index must be integer");
 		}
 
@@ -128,22 +128,22 @@ class ListValue extends Value implements
 		return new InsertionProxy($this, $index);
 	}
 
-	public function doAddition(Value $right): Value {
+	public function doAddition(Value $right): ?Value {
 
 		// Lists can only be added to lists.
 		if (!$right instanceof self) {
-			return null;
+			return \null;
 		}
 
-		return new self(array_merge($this->value, $right->value));
+		return new self(\array_merge($this->value, $right->value));
 
 	}
 
-	public function doMultiplication(Value $right): Value {
+	public function doMultiplication(Value $right): ?Value {
 
 		// Lists can only be multiplied by a number...
 		if (!$right instanceof NumberValue) {
-			return null;
+			return \null;
 		}
 
 		// ... and that number must be an integer.
@@ -166,14 +166,14 @@ class ListValue extends Value implements
 		// helper) is created only once, using the splat operator on the helper,
 		// which contains only references to the original array (and not copies
 		// of it).
-		return new self(array_merge(...$helper));
+		return new self(\array_merge(...$helper));
 
 	}
 
 	public function isEqualTo(Value $right): ?bool {
 
 		if (!$right instanceof ListValue) {
-			return null;
+			return \null;
 		}
 
 		// Simple comparison of both arrays should be sufficient.
@@ -200,13 +200,13 @@ class ListValue extends Value implements
 	 * - index -2 for list with 2 items -> index=<max_index> - 2 (=0)
 	 * - index -3 for list with 2 items -> exception!
 	 */
-	public function protectedIndex(float $index, bool $throw = true): ?int {
+	public function protectedIndex(float $index, bool $throw = \true): ?int {
 
 		if (!primifn_is_numeric_int((string) $index)) {
 			throw new RuntimeError("Index must be integer");
 		}
 
-		$max = count($this->value) - 1;
+		$max = \count($this->value) - 1;
 		$normalized = $index < 0
 			? $max + $index + 1
 			: $index;
@@ -216,7 +216,7 @@ class ListValue extends Value implements
 				// $index on purpose - show the value user originally used.
 				throw new IndexError($index);
 			}
-			return null;
+			return \null;
 		}
 
 		return $normalized;

@@ -13,13 +13,13 @@ class NullValue extends Value {
 	}
 
 	public function isTruthy(): bool {
-		return false;
+		return \false;
 	}
 
 	public function isEqualTo(Value $right): ?bool {
 
 		if (!$right instanceof self) {
-			return null;
+			return \null;
 		}
 
 		return $this->value === $right->value;

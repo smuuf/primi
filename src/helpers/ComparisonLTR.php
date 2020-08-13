@@ -1,53 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Helpers;
 
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RelationError;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\HandlerFactory;
 
-class ComparisonLTR extends \Smuuf\Primi\StrictObject {
+use function \Smuuf\Primi\Helpers\yield_left_to_right as primifn_yield_left_to_right;
 
-	const SHORT_CIRCUIT = true;
+class ComparisonLTR extends StrictObject {
 
-	public static function handle(array $node, Context $context): BoolValue {
+	public static function handle(
+		array $node,
+		Context $context
+	): Value {
 
-		$operands = $node['operands'];
-		$lastRight = false;
-		$result = true;
+		$gen = primifn_yield_left_to_right($node, $context);
 
-		try {
+		$result = \true;
+		$left = $gen->current();
+		$gen->next();
 
-			foreach ($node['ops'] as $index => $opNode) {
+		while ($gen->valid()) {
 
-				$leftNode = $operands[$index];
-				$rightNode = $operands[$index + 1];
+			[$op, $right] = $gen->current();
+			$result &= static::evaluate($op, $left, $right);
+			$gen->next();
 
-				// Optimization: If we're not in the first iteration, do not
-				// evaluate the previously 'right' expression node again, but just
-				// reuse it as 'left' now.
-				$left = $lastRight ?: HandlerFactory::get($leftNode['name'])
-					::handle($leftNode, $context);
-				$right = HandlerFactory::get($rightNode['name'])
-					::handle($rightNode, $context);
+			$left = $right;
 
-				$resultValue = static::evaluate($opNode['text'], $left, $right);
-				$result &= $resultValue->isTruthy();
-
-				// Short-circuiting, if any of the results is already false.
-				if (!$result) {
-					return new BoolValue(false);
-				}
-
-				$lastRight = $right;
-
-			}
-
-		} catch (UndefinedRelationException $e) {
-			throw new ErrorException($e->getMessage(), $node);
 		}
 
 		return new BoolValue((bool) $result);
@@ -58,24 +44,24 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 		string $op,
 		Value $left,
 		Value $right
-	): Value {
+	): bool {
 
 		switch ($op) {
 			case '==':
 			case '!=':
-				return new BoolValue(self::evaluateEquality($op, $left, $right));
+				return self::evaluateEquality($op, $left, $right);
 			case '>':
 			case '<':
 			case '>=':
 			case '<=':
-				return new BoolValue(self::evaluateRelation($op, $left, $right));
+				return self::evaluateRelation($op, $left, $right);
 			default:
 				throw new EngineError("Unknown operator '$op'");
 		}
 
 	}
 
-	public static function evaluateEquality(
+	private static function evaluateEquality(
 		string $op,
 		Value $left,
 		Value $right
@@ -85,13 +71,13 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 		// If the left side didn't know how to evaluate equality with the right
 		// side (the first call returned null), switch operands and try again.
-		if ($result === null) {
+		if ($result === \null) {
 			$result = $right->isEqualTo($left);
 		}
 
 		// If both sides did not know how to evaluate equality with themselves,
 		// the equality is false.
-		$result = $result ?? false;
+		$result = $result ?? \false;
 
 		return $op === '=='
 			? $result
@@ -99,7 +85,7 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	public static function evaluateRelation(
+	private static function evaluateRelation(
 		string $op,
 		Value $left,
 		Value $right
@@ -117,7 +103,6 @@ class ComparisonLTR extends \Smuuf\Primi\StrictObject {
 		return $result;
 
 	}
-
 
 }
 

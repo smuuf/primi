@@ -86,27 +86,15 @@ Assert::same(
 	get_val($noSpaces)
 );
 
-// Subtracting wrong value type results in type error.
-Assert::exception(function() use ($string) {
-	$string->doSubtraction(new NumberValue(1));
-}, \TypeError::class);
-Assert::exception(function() use ($string) {
-	$string->doSubtraction(new BoolValue(true));
-}, \TypeError::class);
-Assert::exception(function() use ($string) {
-	$string->doSubtraction(new ArrayValue([]));
-}, \TypeError::class);
+// Subtraction with undefined results will return ordinary null.
+Assert::null($string->doSubtraction(new NumberValue(1)));
+Assert::null($string->doSubtraction(new BoolValue(true)));
+Assert::null($string->doSubtraction(new DictValue([])));
 
-// Adding wrong value type results in type error.
-Assert::exception(function() use ($string) {
-	$string->doAddition(new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($string) {
-	$string->doAddition(new RegexValue("[abc]+"));
-}, \TypeError::class);
-Assert::exception(function() use ($string) {
-	$string->doAddition(new ArrayValue([]));
-}, \TypeError::class);
+// Addition with undefined results will return ordinary null.
+Assert::null($string->doAddition(new BoolValue(false)));
+Assert::null($string->doAddition(new RegexValue("[abc]+")));
+Assert::null($string->doAddition(new DictValue([])));
 
 //
 // Multiplication.
@@ -118,7 +106,7 @@ Assert::same("this is a string.this is a string.", $result);
 $result = $unicode->doMultiplication(new NumberValue(3))->getInternalValue();
 Assert::same("ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.", $result);
 
-// Multiplication with float number will result in type error.
+// Multiplication with expected type but with invalid value will throw error.
 Assert::exception(function() use ($string) {
 	$string->doMultiplication(new NumberValue(2.1));
 }, RuntimeError::class);
