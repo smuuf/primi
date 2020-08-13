@@ -1,10 +1,21 @@
 <?php
 
-namespace Smuuf\Primi;
+declare(strict_types=1);
 
-class ErrorException extends InternalException {
+namespace Smuuf\Primi\Ex;
 
-	public function __construct($msg, $line = \false, $pos = \false) {
+/**
+ * All errors that Primi knows will extend this base error exception class.
+ */
+abstract class BaseError extends BaseException {
+
+	private const DEFAULT_MSG = 'Unknown error';
+
+	public function __construct(
+		string $msg = self::DEFAULT_MSG,
+		$line = \false,
+		$pos = \false
+	) {
 
 		// Second argument might be a node from AST tree, so extract position
 		// from the node.

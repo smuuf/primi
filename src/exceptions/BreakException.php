@@ -1,7 +1,11 @@
 <?php
 
-namespace Smuuf\Primi;
+declare(strict_types=1);
 
-class BreakException extends InternalException {
+namespace Smuuf\Primi\Ex;
+
+class BreakException extends ControlFlowException {
+
+	public const ID = 'break';
 
 }

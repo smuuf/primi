@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\Helpers\Common;
 
@@ -11,7 +10,8 @@ use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\ISupportsMultiplication;
-use \Smuuf\Primi\InternalUndefinedIndexException;
+use \Smuuf\Primi\Ex\IndexError;
+use \Smuuf\Primi\Ex\RuntimeError;
 
 class ListValue extends Value implements
 	ISupportsIteration,
@@ -95,8 +95,8 @@ class ListValue extends Value implements
 
 	public function arrayGet(string $index): Value {
 
-		if ($index === null) {
-			throw new ErrorException("List index must be integer");
+		if ($index === \null) {
+			throw new RuntimeError("List index must be integer");
 		}
 
 		$normalized = $this->protectedIndex((int) $index);
@@ -115,7 +115,7 @@ class ListValue extends Value implements
 		}
 
 		if (!Common::isNumericInt($index)) {
-			throw new ErrorException("List index must be integer");
+			throw new RuntimeError("List index must be integer");
 		}
 
 		$normalized = $this->protectedIndex((int) $index);
@@ -147,7 +147,7 @@ class ListValue extends Value implements
 
 		// ... and that number must be an integer.
 		if (!Common::isNumericInt((string) $right->value)) {
-			return new ErrorException("List can be only multiplied by an integer.");
+			return new RuntimeError("List can be only multiplied by an integer.");
 		}
 
 		// Helper contains at least one empty array, so array_merge doesn't
@@ -202,7 +202,7 @@ class ListValue extends Value implements
 	public function protectedIndex(float $index, bool $throw = true): ?int {
 
 		if (!Common::isNumericInt($index)) {
-			throw new ErrorException("Index must be integer");
+			throw new RuntimeError("Index must be integer");
 		}
 
 		$max = count($this->value) - 1;
@@ -213,7 +213,7 @@ class ListValue extends Value implements
 		if (!isset($this->value[$normalized])) {
 			if ($throw) {
 				// $index on purpose - show the value user originally used.
-				throw new InternalUndefinedIndexException($index);
+				throw new IndexError($index);
 			}
 			return null;
 		}

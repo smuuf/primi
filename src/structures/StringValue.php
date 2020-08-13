@@ -10,7 +10,8 @@ use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsKeyAccess;
-use \Smuuf\Primi\InternalUndefinedIndexException;
+use \Smuuf\Primi\Ex\IndexError;
+use \Smuuf\Primi\Ex\RuntimeError;
 
 class StringValue extends Value implements
 	ISupportsAddition,
@@ -81,7 +82,7 @@ class StringValue extends Value implements
 			return new self(\str_repeat($this->value, $multiplier));
 		}
 
-		throw new \TypeError;
+		throw new RuntimeError("String multiplier must be a positive integer.");
 
 	}
 
@@ -122,7 +123,7 @@ class StringValue extends Value implements
 		$index = (int) $index;
 
 		if (!isset($this->value[$index])) {
-			throw new \Smuuf\Primi\InternalUndefinedIndexException((string) $index);
+			throw new IndexError((string) $index);
 		}
 
 		return new self($this->value[$index]);
@@ -130,11 +131,11 @@ class StringValue extends Value implements
 	}
 
 	public function arraySet(?string $index, Value $value) {
-		throw new ErrorException("String does not support assignment.");
+		throw new RuntimeError("String does not support assignment.");
 	}
 
 	public function getInsertionProxy(?string $index): InsertionProxy {
-		throw new ErrorException("String does not support assignment.");
+		throw new RuntimeError("String does not support assignment.");
 	}
 
 	public function getIterator(): \Iterator {

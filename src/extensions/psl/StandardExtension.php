@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\ErrorException;
 use \Smuuf\Primi\ISupportsLength;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\NullValue;
@@ -44,7 +44,7 @@ class StandardExtension extends Extension {
 		$desc = $description;
 		if ($assumption->value !== true) {
 			$desc = ($desc && $desc->value !== '') ? " ($desc->value)" : '';
-			throw new ErrorException(sprintf("Assertion failed%s", $desc));
+			throw new RuntimeError(sprintf("Assertion failed%s", $desc));
 		}
 
 		return new BoolValue(true);
@@ -65,7 +65,7 @@ class StandardExtension extends Extension {
 
 		if (!$value instanceof ISupportsLength) {
 			$type = $value::TYPE;
-			throw new ErrorException("Type '$type' does not support length.");
+			throw new RuntimeError("Type '$type' does not support length.");
 		}
 
 		return new NumberValue((string) $value->getLength());
@@ -83,7 +83,7 @@ class StandardExtension extends Extension {
 			|| ($end && !Common::isNumericInt((string) $end->value))
 			|| ($step && !Common::isNumericInt((string) $step->value))
 		) {
-			throw new ErrorException("All arguments must be integers.");
+			throw new RuntimeError("All arguments must be integers.");
 		}
 
 		// If only one agrument is passed, the range will go from 0 to that

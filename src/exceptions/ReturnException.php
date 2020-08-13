@@ -1,15 +1,19 @@
 <?php
 
-namespace Smuuf\Primi;
+declare(strict_types=1);
+
+namespace Smuuf\Primi\Ex;
 
 use \Smuuf\Primi\Structures\NullValue;
 
-class ReturnException extends InternalException {
+class ReturnException extends ControlFlowException {
+
+	public const ID = 'return';
 
 	/** @var mixed */
 	protected $value;
 
-	public function __construct($value) {
+	public function __construct($value = \null) {
 		parent::__construct();
 		$this->value = $value;
 	}

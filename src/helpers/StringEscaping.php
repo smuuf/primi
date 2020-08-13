@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Ex\RuntimeError;
 
 class StringEscaping extends \Smuuf\Primi\StrictObject {
 
@@ -45,7 +45,7 @@ class StringEscaping extends \Smuuf\Primi\StrictObject {
 
 			// The backslashed character doesn't represent any known escape
 			// sequence, therefore error.
-			throw new ErrorException(
+			throw new RuntimeError(
 				"Unrecognized string escape sequence '{$m[0]}'."
 			);
 

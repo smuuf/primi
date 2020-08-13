@@ -3,11 +3,10 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\ErrorException;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Common;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
-use \Smuuf\Primi\InternalBinaryOperationException;
 
 /**
  * Node fields:
@@ -20,12 +19,8 @@ class Comparison extends SimpleHandler {
 
 		try {
 			return ComparisonLTR::handle($node, $context);
-		} catch (InternalBinaryOperationException $e) {
-			throw new ErrorException(sprintf(
-				"Cannot compare '%s' with '%s'",
-				($e->getLeft())::TYPE,
-				($e->getRight())::TYPE
-			), $node);
+		} catch (RuntimeError $e) {
+			throw new RuntimeError($e->getMessage(), $node);
 		}
 
 	}

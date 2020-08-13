@@ -4,11 +4,11 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\BreakException;
-use \Smuuf\Primi\ContinueException;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\Helpers\SimpleHandler;
-
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\BreakException;
+use \Smuuf\Primi\Ex\ContinueException;
 /**
  * Node fields:
  * left: A source iterator.
@@ -24,8 +24,8 @@ class ForStatement extends SimpleHandler {
 		$subject = $leftHandler::handle($node['left'], $context);
 
 		if (!$subject instanceof ISupportsIteration) {
-			throw new \Smuuf\Primi\ErrorException(
-				sprintf("Cannot iterate over '%s'", $subject::TYPE),
+			throw new RuntimeError(
+				\sprintf("Cannot iterate over '%s'", $subject::TYPE),
 				$node
 			);
 		}

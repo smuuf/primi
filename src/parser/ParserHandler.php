@@ -3,6 +3,7 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Helpers\Common;
 
 class ParserHandler extends CompiledParser {
@@ -42,7 +43,7 @@ class ParserHandler extends CompiledParser {
 			[$line, $pos] = Common::getPositionEstimate($this->source, $position);
 		}
 
-		throw new SyntaxErrorException($msg, $line, $pos);
+		throw new SyntaxError($msg, $line, $pos);
 
 	}
 

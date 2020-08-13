@@ -1,10 +1,12 @@
 <?php
 
-namespace Smuuf\Primi;
+declare(strict_types=1);
+
+namespace Smuuf\Primi\Ex;
 
 use \Smuuf\Primi\Structures\Value;
 
-class InternalBinaryOperationException extends InternalException {
+class BinaryOperationError extends RuntimeError {
 
 	protected $op;
 	protected $left;
