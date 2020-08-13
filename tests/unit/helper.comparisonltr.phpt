@@ -36,26 +36,22 @@ class TypeB extends Value {
 	}
 
 	function isEqualTo(Value $right): ?bool {
-		return $this->value == $right->value;
+		return $this->value === $right->value;
 	}
 
 }
 
-function get_val(Value $v) {
-	return $v->getInternalValue();
-}
-
-// TypeA vs TypeA, which doesn't know how to compare
-Assert::false(get_val(ComparisonLTR::evaluate('==', new TypeA(''), new TypeA(''))));
-Assert::true(get_val(ComparisonLTR::evaluate('!=', new TypeA(''), new TypeA(''))));
+// TypeA vs TypeA, which do not know how to compare.
+Assert::false(ComparisonLTR::evaluate('==', new TypeA(''), new TypeA('')));
+Assert::true(ComparisonLTR::evaluate('!=', new TypeA(''), new TypeA('')));
 
 // TypeA::compare() will be null, TypeB::compare() will be used instead.
-Assert::true(get_val(ComparisonLTR::evaluate('==', new TypeA('y'), new TypeB('y'))));
-Assert::false(get_val(ComparisonLTR::evaluate('==', new TypeA('y'), new TypeB('x'))));
-Assert::true(get_val(ComparisonLTR::evaluate('==', new TypeA('x'), new TypeB('x'))));
-Assert::true(get_val(ComparisonLTR::evaluate('==', new TypeA('x'), new TypeB('x'))));
+Assert::true(ComparisonLTR::evaluate('==', new TypeA('y'), new TypeB('y')));
+Assert::false(ComparisonLTR::evaluate('==', new TypeA('y'), new TypeB('x')));
+Assert::true(ComparisonLTR::evaluate('==', new TypeA('x'), new TypeB('x')));
+Assert::true(ComparisonLTR::evaluate('==', new TypeA('x'), new TypeB('x')));
 
-Assert::false(get_val(ComparisonLTR::evaluate('!=', new TypeA('y'), new TypeB('y'))));
-Assert::true(get_val(ComparisonLTR::evaluate('!=', new TypeA('y'), new TypeB('x'))));
-Assert::false(get_val(ComparisonLTR::evaluate('!=', new TypeA('x'), new TypeB('x'))));
-Assert::false(get_val(ComparisonLTR::evaluate('!=', new TypeA('x'), new TypeB('x'))));
+Assert::false(ComparisonLTR::evaluate('!=', new TypeA('y'), new TypeB('y')));
+Assert::true(ComparisonLTR::evaluate('!=', new TypeA('y'), new TypeB('x')));
+Assert::false(ComparisonLTR::evaluate('!=', new TypeA('x'), new TypeB('x')));
+Assert::false(ComparisonLTR::evaluate('!=', new TypeA('x'), new TypeB('x')));

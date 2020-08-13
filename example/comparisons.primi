@@ -1,4 +1,26 @@
 //
+// OR operator returns the first non-falsey operand, or false.
+//
+
+x = 0 or 1
+assert(x == 1)
+
+x = 1 or 2
+assert(x == 1)
+
+x = false or 2
+assert(x == 2)
+
+x = 2 or false or 4
+assert(x == 2)
+
+x = false or 0 or -4
+assert(x == -4)
+
+x = [] or {} or 123
+assert(x == 123)
+
+//
 // Comparing numbers with numbers.
 //
 
@@ -237,3 +259,72 @@ assert(x == false)
 
 x = null or null
 assert(x == false)
+
+//
+// Short-circuiting AND and OR operators.
+//
+
+// OR: Only the first expression in brackets will have to be executed to obtain
+// the result of OR operation.
+a = b = false
+tmp = (a = 1) or (b = 1)
+assert(tmp)
+assert(a == 1)
+assert(b == false)
+
+// AND: Only the first expression in brackets will have to be executed to obtain
+// the result of AND operation - there's no point in continuing evaluating, if
+// the first expression is already falsey.
+a = b = false
+tmp = (a = 0) and (b = 1)
+assert(!tmp)
+assert(a == 0)
+assert(b == false)
+
+// All expressions will have to be executed in order to find the result.
+a = b = c = d = false
+tmp = (a = 0) or (b = 0) or (c = 0) or (d = 0)
+assert(a == 0)
+assert(b == 0)
+assert(c == 0)
+assert(d == 0)
+
+// Only the first expression will be necessary to be executed.
+a = b = c = d = false
+tmp = (a = 1) or (b = 0) or (c = 0) or (d = 0)
+assert(a == 1)
+assert(b == false)
+assert(c == false)
+assert(d == false)
+
+// All expressions will have to be executed in order to find the result.
+a = b = c = d = false
+tmp = (a = 1) and (b = 0) or (c = 0) or (d = 0)
+assert(a == 1)
+assert(b == 0)
+assert(c == 0)
+assert(d == 0)
+
+// All expressions will have to be executed in order to find the result.
+a = b = c = d = false
+tmp = (a = 1) and (b = 0) or (c = 0) or (d = 1)
+assert(a == 1)
+assert(b == 0)
+assert(c == 0)
+assert(d == 1)
+
+// All expressions will have to be executed in order to find the result.
+a = b = c = d = false
+tmp = (a = 1) and (b = 1) or (c = 0) or (d = 1)
+assert(a == 1)
+assert(b == 1)
+assert(c == 0)
+assert(d == 0)
+
+// All expressions will have to be executed in order to find the result.
+a = b = c = d = false
+tmp = (a = 1) and (b = 0) or (c = 1) or (d = 1)
+assert(a == 1)
+assert(b == 0)
+assert(c == 1)
+assert(d == 0)

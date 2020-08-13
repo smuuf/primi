@@ -6,6 +6,6 @@ use \Smuuf\Primi\Structures\Value;
 
 interface ISupportsDivision {
 
-	public function doDivision(Value $operand);
+	public function doDivision(Value $operand): ?Value;
 
 }

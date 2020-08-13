@@ -35,21 +35,28 @@ class NumberValue extends Value implements
 	}
 
 	public function getLength(): int {
-		return strlen((string) $this->value);
+		return \strlen((string) $this->value);
 	}
 
 	public function getStringRepr(): string {
 		return (string) $this->value;
 	}
 
+	public function doAddition(Value $right): ?Value {
 
-	public function doAddition(Value $right): Value {
+		if (!$right instanceof NumberValue) {
+			return \null;
+		}
 
 		return new self($this->value + $right->value);
 
 	}
 
-	public function doSubtraction(Value $right): self {
+	public function doSubtraction(Value $right): ?Value {
+
+		if (!$right instanceof NumberValue) {
+			return \null;
+		}
 
 		return new self($this->value - $right->value);
 
@@ -65,7 +72,7 @@ class NumberValue extends Value implements
 
 	}
 
-	public function doDivision(Value $right): self {
+	public function doDivision(Value $right): ?Value {
 
 		if (!$right instanceof NumberValue) {
 			return \null;

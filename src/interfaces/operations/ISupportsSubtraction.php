@@ -6,6 +6,6 @@ use \Smuuf\Primi\Structures\Value;
 
 interface ISupportsSubtraction {
 
-	public function doSubtraction(Value $operand);
+	public function doSubtraction(Value $operand): ?Value;
 
 }

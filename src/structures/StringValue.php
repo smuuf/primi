@@ -60,29 +60,29 @@ class StringValue extends Value implements
 
 	}
 
-	public function doSubtraction(Value $rightOperand) {
+	public function doSubtraction(Value $right): ?Value {
 
 		if (!primifn_is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			return \null;
 		}
 
-		if ($rightOperand instanceof RegexValue) {
-			$match = \preg_replace($rightOperand->value, '', $this->value);
+		if ($right instanceof RegexValue) {
+			$match = \preg_replace($right->value, '', $this->value);
 			return new self($match);
 		}
 
-		$new = \str_replace($rightOperand->value, '', $this->value);
+		$new = \str_replace($right->value, '', $this->value);
 		return new self($new);
 
 	}
 
-	public function doMultiplication(Value $rightOperand) {
+	public function doMultiplication(Value $right): ?Value {
 
 		if (!$right instanceof NumberValue) {
 			return \null;
 		}
 
-		$multiplier = $rightOperand->value;
+		$multiplier = $right->value;
 		if (\is_int($multiplier) && $multiplier >= 0) {
 			return new self(\str_repeat($this->value, $multiplier));
 		}
@@ -159,7 +159,6 @@ class StringValue extends Value implements
 	 */
 	private static function utfSplit(string $string): \Generator {
 
-		static $set = "UTF-8";
 		$strlen = \mb_strlen($string);
 		for ($i = 0; $i < $strlen; $i++) {
 			yield new self(\mb_substr($string, $i, 1));
