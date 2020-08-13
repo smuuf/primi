@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\StrictObject;
@@ -15,7 +17,7 @@ use \Smuuf\Primi\StrictObject;
  */
 abstract class BaseHandler extends StrictObject {
 
-	const NODE_NEEDS_TEXT = false;
+	const NODE_NEEDS_TEXT = \false;
 
 	public static function reduce(array &$node): void {
 		// Nothing by default.

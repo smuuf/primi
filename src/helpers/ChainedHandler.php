@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Structures\Value;
 
 /**

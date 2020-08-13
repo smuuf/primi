@@ -2,12 +2,12 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Structures\NullValue;
-use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Ex\ReturnException;
+use \Smuuf\Primi\Structures\NullValue;
+use \Smuuf\Primi\Structures\Value;
 
 use function \Smuuf\Primi\Helpers\allow_argument_types as primifn_allow_argument_types;
 use function \Smuuf\Primi\Helpers\parse_argument_count_error as primifn_parse_argument_count_error;
@@ -22,7 +22,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	protected $argsCount = 0;
 
 	/** @var bool Does this function originate from Primi or its provided by engine? */
-	protected $isPhpFunction = false;
+	protected $isPhpFunction = \false;
 
 	/**
 	 * Build and return a closure wrapper around a Primi function (represented
@@ -47,6 +47,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 			// If there's a parent/definition context, clone a new context from
 			// it, so the function does not mutate the outer scope.
 			if ($definitionContext) {
+				// Intentionally shallow clone.
 				$context = clone $definitionContext;
 			} else {
 				$context = new Context;
@@ -83,7 +84,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($closure, false, \count($definitionArgs));
+		return new self($closure, \false, \count($definitionArgs));
 
 	}
 
@@ -97,7 +98,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		$wrapper = function(Value ...$args) use ($closure, $expectedTypes) {
 
-			$maxIndex = count($expectedTypes) - 1;
+			$maxIndex = \count($expectedTypes) - 1;
 			// Do our own type checking prior to the invocation.
 			// If we were only detecting ordinary \TypeErrors by PHP, we
 			// wouldn't be able to tell where exactly those type errors
@@ -129,7 +130,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($wrapper, true, $paramCount);
+		return new self($wrapper, \true, $paramCount);
 
 	}
 

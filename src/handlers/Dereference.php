@@ -4,11 +4,11 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\ChainedHandler;
+use \Smuuf\Primi\Structures\Value;
 
 class Dereference extends ChainedHandler {
 

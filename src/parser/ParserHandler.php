@@ -9,8 +9,8 @@ use function \Smuuf\Primi\Helpers\get_position_estimate as primifn_get_position_
 
 class ParserHandler extends CompiledParser {
 
+	/** @var string Primi source code that is to be parsed and executed. */
 	private $source;
-	protected $tree = [];
 
 	public function __construct($source) {
 
@@ -26,7 +26,8 @@ class ParserHandler extends CompiledParser {
 		$result = $this->match_Program();
 		if ($result['text'] !== $this->source) {
 
-			// $this->pos is an internal PEG Parser position counter.
+			// $this->pos is an internal PEG Parser position counter and
+			// we will use it to determine the line and position in the source.
 			$this->error('Syntax error', $this->pos);
 
 		}
@@ -35,7 +36,7 @@ class ParserHandler extends CompiledParser {
 
 	}
 
-	protected function error($msg, $position = \false) {
+	private function error(string $msg, $position = \false) {
 
 		$line = \false;
 		$pos = \false;
@@ -51,18 +52,18 @@ class ParserHandler extends CompiledParser {
 
 	}
 
-	protected static function sanitizeSource(string $s) {
+	private static function sanitizeSource(string $s) {
 
 		// Unify new-lines.
-		$s = str_replace("\r\n", "\n", $s);
+		$s = \str_replace("\r\n", "\n", $s);
 
 		// Ensure newline at the end (parser needs this to be able to correctly
 		// parse comments in one line source codes.)
-		return rtrim($s) . "\n";
+		return \rtrim($s) . "\n";
 
 	}
 
-	protected static function processAST(array $ast, string $source): array {
+	private static function processAST(array $ast, string $source): array {
 
 		$ast = self::preprocessNode($ast);
 		$ast = self::reduceNode($ast);
@@ -75,7 +76,7 @@ class ParserHandler extends CompiledParser {
 	 * Go recursively through each of the nodes and strip unecessary data
 	 * in the abstract syntax tree.
 	 */
-	protected static function preprocessNode(array $node) {
+	private static function preprocessNode(array $node) {
 
 		// If node has "skip" node defined, replace the whole node with the
 		// "skip" subnode.
@@ -96,7 +97,7 @@ class ParserHandler extends CompiledParser {
 	 * Go recursively through each of the nodes and strip unecessary data
 	 * in the abstract syntax tree.
 	 */
-	protected static function reduceNode(array $node) {
+	private static function reduceNode(array $node) {
 
 		while ($inner = ($node['skip'] ?? \false)) {
 			$node = $inner;
@@ -136,7 +137,7 @@ class ParserHandler extends CompiledParser {
 	 * Recursively iterate the node and its children and add information about
 	 * the node's offset (line & position) for later (e.g. error messages).
 	 */
-	protected static function addPositions(array $node, string $source): array {
+	private static function addPositions(array $node, string $source): array {
 
 		if (isset($node['offset'])) {
 

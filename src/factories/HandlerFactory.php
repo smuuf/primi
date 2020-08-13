@@ -13,10 +13,10 @@ class HandlerFactory extends \Smuuf\Primi\StrictObject {
 		$class = self::$cache[$name] ?? (
 			class_exists($class = __NAMESPACE__ . "\\Handlers\\$name")
 				? $class
-				: false
+				: \false
 		);
 
-		if ($class === false && $strict) {
+		if ($class === \false && $strict) {
 			throw new \LogicException("Handler '$name' not found.");
 		}
 
