@@ -19,7 +19,7 @@ class Negation extends SimpleHandler {
 		// Should we even handle negation? If there's an even number of negation
 		// operators, the result would always have the same truthness as its
 		// input.
-		$isNegation = count($node['nots'] ?? []) % 2;
+		$isNegation = \count($node['nots'] ?? []) % 2;
 
 		return new BoolValue($isNegation ? !$truthness : $truthness);
 

@@ -8,7 +8,7 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 
 class BoolLiteral extends SimpleHandler {
 
-	const NODE_NEEDS_TEXT = true;
+	const NODE_NEEDS_TEXT = \true;
 
 	public static function handle(array $node, Context $context) {
 		return new BoolValue($node['text'] === "true");

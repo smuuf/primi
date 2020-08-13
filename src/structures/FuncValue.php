@@ -13,7 +13,7 @@ class FuncValue extends Value implements ISupportsInvocation {
 	}
 
 	public function isTruthy(): bool {
-		return true;
+		return \true;
 	}
 
 	public function getStringRepr(): string {

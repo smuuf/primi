@@ -39,16 +39,16 @@ class StandardExtension extends Extension {
 	 */
 	public static function assert(
 		BoolValue $assumption,
-		?StringValue $description = null
+		?StringValue $description = \null
 	): BoolValue {
 
 		$desc = $description;
-		if ($assumption->value !== true) {
+		if ($assumption->value !== \true) {
 			$desc = ($desc && $desc->value !== '') ? " ($desc->value)" : '';
 			throw new RuntimeError(sprintf("Assertion failed%s", $desc));
 		}
 
-		return new BoolValue(true);
+		return new BoolValue(\true);
 
 	}
 
@@ -75,8 +75,8 @@ class StandardExtension extends Extension {
 
 	public static function range(
 		NumberValue $start,
-		?NumberValue $end = null,
-		?NumberValue $step = null
+		?NumberValue $end = \null,
+		?NumberValue $step = \null
 	): ListValue {
 
 		if (
@@ -89,10 +89,10 @@ class StandardExtension extends Extension {
 
 		// If only one agrument is passed, the range will go from 0 to that
 		// number.
-		if ($end === null) {
-			$range = range(0, $start->value);
+		if ($end === \null) {
+			$range = \range(0, $start->value);
 		} else {
-			$range = range(
+			$range = \range(
 				$start->value,
 				$end->value,
 				$step ? $step->value : 1
@@ -100,7 +100,7 @@ class StandardExtension extends Extension {
 		}
 
 		return new ListValue(
-			array_map([Value::class, 'buildAutomatic'], $range)
+			\array_map([Value::class, 'buildAutomatic'], $range)
 		);
 
 	}

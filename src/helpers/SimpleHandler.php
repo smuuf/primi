@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\StrictObject;
-use \Smuuf\Primi\Structures\Value;
 
 /**
  * Common ancestor of LogicalAnd and LogicalOr handlers, both of which have

@@ -4,8 +4,8 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\UndefinedVariableError;
-use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Helpers\SimpleHandler;
+use \Smuuf\Primi\Structures\Value;
 
 class Variable extends SimpleHandler {
 

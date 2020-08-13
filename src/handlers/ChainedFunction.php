@@ -32,7 +32,7 @@ class ChainedFunction extends ChainedHandler {
 		// exception being thrown - missing inferred function is not an error
 		// and is quite expected, so don't complicate things with exceptions.
 		$fn = $context->getVariable($typedName);
-		if ($fn === null) {
+		if ($fn === \null) {
 			$fn = Variable::fetch($name, $node, $context);
 		}
 
@@ -49,7 +49,7 @@ class ChainedFunction extends ChainedHandler {
 	}
 
 	private static function inferTypedName(string $name, Value $v): string {
-		return sprintf("%s_%s", $v::TYPE, $name);
+		return \sprintf("%s_%s", $v::TYPE, $name);
 	}
 
 }
