@@ -42,7 +42,6 @@ function match_StringLiteral () {
 	else { return \false; }
 }
 
-
 /* NumberLiteral: / -?\d[\d_]*(\.[\d_]+)? / */
 protected $match_NumberLiteral_typestack = ['NumberLiteral'];
 function match_NumberLiteral () {
@@ -53,7 +52,6 @@ function match_NumberLiteral () {
 	}
 	else { return \false; }
 }
-
 
 /* BoolLiteral: ( "true" | "false" ) !VariableName */
 protected $match_BoolLiteral_typestack = ['BoolLiteral'];
@@ -110,7 +108,6 @@ function match_BoolLiteral ($stack = []) {
 	if( $_10 === \false) { return \false; }
 }
 
-
 /* NullLiteral: "null" !VariableName */
 protected $match_NullLiteral_typestack = ['NullLiteral'];
 function match_NullLiteral ($stack = []) {
@@ -142,7 +139,6 @@ function match_NullLiteral ($stack = []) {
 	if( $_14 === \false) { return \false; }
 }
 
-
 /* RegexLiteral: "r" core:StringLiteral */
 protected $match_RegexLiteral_typestack = ['RegexLiteral'];
 function match_RegexLiteral ($stack = []) {
@@ -169,7 +165,6 @@ function match_RegexLiteral ($stack = []) {
 	if( $_18 === \false) { return \false; }
 }
 
-
 /* Nothing: "" */
 protected $match_Nothing_typestack = ['Nothing'];
 function match_Nothing () {
@@ -180,7 +175,6 @@ function match_Nothing () {
 	}
 	else { return \false; }
 }
-
 
 /* Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral */
 protected $match_Literal_typestack = ['Literal'];
@@ -277,7 +271,6 @@ function match_Literal ($stack = []) {
 	if( $_36 === \false) { return \false; }
 }
 
-
 /* VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) / */
 protected $match_VariableName_typestack = ['VariableName'];
 function match_VariableName () {
@@ -288,7 +281,6 @@ function match_VariableName () {
 	}
 	else { return \false; }
 }
-
 
 /* Variable: core:VariableName */
 protected $match_Variable_typestack = ['Variable'];
@@ -304,7 +296,6 @@ function match_Variable ($stack = []) {
 	}
 	else { return \false; }
 }
-
 
 /* AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block */
 protected $match_AnonymousFunction_typestack = ['AnonymousFunction'];
@@ -453,7 +444,6 @@ function match_AnonymousFunction ($stack = []) {
 	if( $_63 === \false) { return \false; }
 }
 
-
 /* DictItem: __ key:Expression __ ":" __ value:Expression __ */
 protected $match_DictItem_typestack = ['DictItem'];
 function match_DictItem ($stack = []) {
@@ -511,7 +501,6 @@ function match_DictItem ($stack = []) {
 	if( $_72 === \true ) { return $this->finalise($result); }
 	if( $_72 === \false) { return \false; }
 }
-
 
 /* DictDefinition: "{" __ ( items:DictItem ( __ "," __ items:DictItem )* )? __ ( "," __ )? "}" */
 protected $match_DictDefinition_typestack = ['DictDefinition'];
@@ -631,7 +620,6 @@ function match_DictDefinition ($stack = []) {
 	if( $_91 === \false) { return \false; }
 }
 
-
 /* ListDefinition: "[" __ ( items:Expression ( __ "," __ items:Expression )* )? __ ( "," __ )? "]" */
 protected $match_ListDefinition_typestack = ['ListDefinition'];
 function match_ListDefinition ($stack = []) {
@@ -750,7 +738,6 @@ function match_ListDefinition ($stack = []) {
 	if( $_110 === \false) { return \false; }
 }
 
-
 /* Value: skip:Literal | skip:Variable | skip:ListDefinition | skip:DictDefinition */
 protected $match_Value_typestack = ['Value'];
 function match_Value ($stack = []) {
@@ -826,7 +813,6 @@ function match_Value ($stack = []) {
 	if( $_123 === \false) { return \false; }
 }
 
-
 /* VariableVector: core:Variable vector:Vector */
 protected $match_VariableVector_typestack = ['VariableVector'];
 function match_VariableVector ($stack = []) {
@@ -855,7 +841,6 @@ function match_VariableVector ($stack = []) {
 	if( $_127 === \true ) { return $this->finalise($result); }
 	if( $_127 === \false) { return \false; }
 }
-
 
 /* Vector: ( "[" __ ( index:Expression | index:Nothing ) __ "]" ) vector:Vector? */
 protected $match_Vector_typestack = ['Vector'];
@@ -946,7 +931,6 @@ function match_Vector ($stack = []) {
 	if( $_143 === \false) { return \false; }
 }
 
-
 /* Mutable: skip:VariableVector | skip:VariableName */
 protected $match_Mutable_typestack = ['Mutable'];
 function match_Mutable ($stack = []) {
@@ -982,7 +966,6 @@ function match_Mutable ($stack = []) {
 	if( $_148 === \false) { return \false; }
 }
 
-
 /* AddOperator: "+" | "-" */
 protected $match_AddOperator_typestack = ['AddOperator'];
 function match_AddOperator () {
@@ -1011,7 +994,6 @@ function match_AddOperator () {
 	if( $_153 === \true ) { return $this->finalise($result); }
 	if( $_153 === \false) { return \false; }
 }
-
 
 /* MultiplyOperator: "*" | "/" */
 protected $match_MultiplyOperator_typestack = ['MultiplyOperator'];
@@ -1042,7 +1024,6 @@ function match_MultiplyOperator () {
 	if( $_158 === \false) { return \false; }
 }
 
-
 /* AssignmentOperator: "=" */
 protected $match_AssignmentOperator_typestack = ['AssignmentOperator'];
 function match_AssignmentOperator () {
@@ -1054,7 +1035,6 @@ function match_AssignmentOperator () {
 	}
 	else { return \false; }
 }
-
 
 /* ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<" */
 protected $match_ComparisonOperator_typestack = ['ComparisonOperator'];
@@ -1149,7 +1129,6 @@ function match_ComparisonOperator () {
 	if( $_180 === \false) { return \false; }
 }
 
-
 /* AndOperator: "and" */
 protected $match_AndOperator_typestack = ['AndOperator'];
 function match_AndOperator () {
@@ -1160,7 +1139,6 @@ function match_AndOperator () {
 	}
 	else { return \false; }
 }
-
 
 /* OrOperator: "or" */
 protected $match_OrOperator_typestack = ['OrOperator'];
@@ -1173,7 +1151,6 @@ function match_OrOperator () {
 	else { return \false; }
 }
 
-
 /* NegationOperator: "!" */
 protected $match_NegationOperator_typestack = ['NegationOperator'];
 function match_NegationOperator () {
@@ -1185,7 +1162,6 @@ function match_NegationOperator () {
 	}
 	else { return \false; }
 }
-
 
 /* Expression: skip:AnonymousFunction | skip:Assignment | skip:CondExpr */
 protected $match_Expression_typestack = ['Expression'];
@@ -1242,7 +1218,6 @@ function match_Expression ($stack = []) {
 	if( $_192 === \false) { return \false; }
 }
 
-
 /* Assignment: left:Mutable __ AssignmentOperator __ right:Expression */
 protected $match_Assignment_typestack = ['Assignment'];
 function match_Assignment ($stack = []) {
@@ -1289,7 +1264,6 @@ function match_Assignment ($stack = []) {
 	if( $_199 === \true ) { return $this->finalise($result); }
 	if( $_199 === \false) { return \false; }
 }
-
 
 /* CondExpr: true:LogicalOr ( ] "if" __ "(" __ cond:Expression __ ")" __ "else" ] false:LogicalOr )? */
 protected $match_CondExpr_typestack = ['CondExpr'];
@@ -1382,7 +1356,6 @@ function match_CondExpr ($stack = []) {
 	if( $_216 === \false) { return \false; }
 }
 
-
 /* LogicalOr: operands:LogicalAnd ( ] ops:OrOperator ] operands:LogicalAnd )* */
 protected $match_LogicalOr_typestack = ['LogicalOr'];
 function match_LogicalOr ($stack = []) {
@@ -1439,7 +1412,6 @@ function match_LogicalOr ($stack = []) {
 	if( $_225 === \false) { return \false; }
 }
 
-
 /* LogicalAnd: operands:Comparison ( ] ops:AndOperator ] operands:Comparison )* */
 protected $match_LogicalAnd_typestack = ['LogicalAnd'];
 function match_LogicalAnd ($stack = []) {
@@ -1495,7 +1467,6 @@ function match_LogicalAnd ($stack = []) {
 	if( $_234 === \true ) { return $this->finalise($result); }
 	if( $_234 === \false) { return \false; }
 }
-
 
 /* Comparison: operands:Addition ( __ ops:ComparisonOperator __ operands:Addition )* */
 protected $match_Comparison_typestack = ['Comparison'];
@@ -1561,7 +1532,6 @@ function match_Comparison ($stack = []) {
 	if( $_243 === \false) { return \false; }
 }
 
-
 /* Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication )* */
 protected $match_Addition_typestack = ['Addition'];
 function match_Addition ($stack = []) {
@@ -1625,7 +1595,6 @@ function match_Addition ($stack = []) {
 	if( $_252 === \true ) { return $this->finalise($result); }
 	if( $_252 === \false) { return \false; }
 }
-
 
 /* Multiplication: operands:Negation ( __ ops:MultiplyOperator __ operands:Negation )* */
 protected $match_Multiplication_typestack = ['Multiplication'];
@@ -1691,7 +1660,6 @@ function match_Multiplication ($stack = []) {
 	if( $_261 === \false) { return \false; }
 }
 
-
 /* Negation: ( nots:NegationOperator )* core:Operand */
 protected $match_Negation_typestack = ['Negation'];
 function match_Negation ($stack = []) {
@@ -1735,7 +1703,6 @@ function match_Negation ($stack = []) {
 	if( $_267 === \true ) { return $this->finalise($result); }
 	if( $_267 === \false) { return \false; }
 }
-
 
 /* Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value */
 protected $match_Operand_typestack = ['Operand'];
@@ -1846,7 +1813,6 @@ function match_Operand ($stack = []) {
 	if( $_287 === \false) { return \false; }
 }
 
-
 /* Chain: &/[\[\(\.]/ ( core:Dereference | core:Invocation | core:ChainedFunction ) chain:Chain? */
 protected $match_Chain_typestack = ['Chain'];
 function match_Chain ($stack = []) {
@@ -1940,7 +1906,6 @@ function match_Chain ($stack = []) {
 	if( $_302 === \false) { return \false; }
 }
 
-
 /* Dereference: "[" __ key:Expression __ "]" */
 protected $match_Dereference_typestack = ['Dereference'];
 function match_Dereference ($stack = []) {
@@ -1983,7 +1948,6 @@ function match_Dereference ($stack = []) {
 	if( $_309 === \true ) { return $this->finalise($result); }
 	if( $_309 === \false) { return \false; }
 }
-
 
 /* Invocation: "(" __ args:ArgumentList? __ ")" */
 protected $match_Invocation_typestack = ['Invocation'];
@@ -2034,7 +1998,6 @@ function match_Invocation ($stack = []) {
 	if( $_316 === \false) { return \false; }
 }
 
-
 /* ChainedFunction: "." fn:Variable invo:Invocation */
 protected $match_ChainedFunction_typestack = ['ChainedFunction'];
 function match_ChainedFunction ($stack = []) {
@@ -2068,7 +2031,6 @@ function match_ChainedFunction ($stack = []) {
 	if( $_321 === \true ) { return $this->finalise($result); }
 	if( $_321 === \false) { return \false; }
 }
-
 
 /* ArgumentList: args:Expression ( __ "," __ args:Expression )* */
 protected $match_ArgumentList_typestack = ['ArgumentList'];
@@ -2131,7 +2093,6 @@ function match_ArgumentList ($stack = []) {
 	if( $_330 === \false) { return \false; }
 }
 
-
 /* FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )* */
 protected $match_FunctionDefinitionArgumentList_typestack = ['FunctionDefinitionArgumentList'];
 function match_FunctionDefinitionArgumentList ($stack = []) {
@@ -2192,7 +2153,6 @@ function match_FunctionDefinitionArgumentList ($stack = []) {
 	if( $_339 === \true ) { return $this->finalise($result); }
 	if( $_339 === \false) { return \false; }
 }
-
 
 /* FunctionDefinition: "function" [ function:VariableName __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block */
 protected $match_FunctionDefinition_typestack = ['FunctionDefinition'];
@@ -2274,7 +2234,6 @@ function match_FunctionDefinition ($stack = []) {
 	if( $_352 === \true ) { return $this->finalise($result); }
 	if( $_352 === \false) { return \false; }
 }
-
 
 /* IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )? */
 protected $match_IfStatement_typestack = ['IfStatement'];
@@ -2387,7 +2346,6 @@ function match_IfStatement ($stack = []) {
 	if( $_373 === \false) { return \false; }
 }
 
-
 /* ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block ) */
 protected $match_ForStatement_typestack = ['ForStatement'];
 function match_ForStatement ($stack = []) {
@@ -2481,7 +2439,6 @@ function match_ForStatement ($stack = []) {
 	if( $_390 === \false) { return \false; }
 }
 
-
 /* WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block ) */
 protected $match_WhileStatement_typestack = ['WhileStatement'];
 function match_WhileStatement ($stack = []) {
@@ -2553,7 +2510,6 @@ function match_WhileStatement ($stack = []) {
 	if( $_403 === \false) { return \false; }
 }
 
-
 /* TryStatement: "try" __ main:Block __ "catch" __ onerror:Block */
 protected $match_TryStatement_typestack = ['TryStatement'];
 function match_TryStatement ($stack = []) {
@@ -2604,7 +2560,6 @@ function match_TryStatement ($stack = []) {
 	if( $_412 === \true ) { return $this->finalise($result); }
 	if( $_412 === \false) { return \false; }
 }
-
 
 /* CommandStatements: &/[rbc]/ ( skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement ) */
 protected $match_CommandStatements_typestack = ['CommandStatements'];
@@ -2685,7 +2640,6 @@ function match_CommandStatements ($stack = []) {
 	if( $_426 === \false) { return \false; }
 }
 
-
 /* ReturnStatement: ( "return" [ ( subject:Expression )? ) | ( "return" &SEP ) */
 protected $match_ReturnStatement_typestack = ['ReturnStatement'];
 function match_ReturnStatement ($stack = []) {
@@ -2759,7 +2713,6 @@ function match_ReturnStatement ($stack = []) {
 	if( $_440 === \false) { return \false; }
 }
 
-
 /* BreakStatement: "break" */
 protected $match_BreakStatement_typestack = ['BreakStatement'];
 function match_BreakStatement () {
@@ -2771,7 +2724,6 @@ function match_BreakStatement () {
 	else { return \false; }
 }
 
-
 /* ContinueStatement: "continue" */
 protected $match_ContinueStatement_typestack = ['ContinueStatement'];
 function match_ContinueStatement () {
@@ -2782,7 +2734,6 @@ function match_ContinueStatement () {
 	}
 	else { return \false; }
 }
-
 
 /* BlockStatements: &/[iwft]/ ( skip:IfStatement | skip:WhileStatement | skip:FunctionDefinition | skip:ForStatement | skip:TryStatement) */
 protected $match_BlockStatements_typestack = ['BlockStatements'];
@@ -2903,7 +2854,6 @@ function match_BlockStatements ($stack = []) {
 	if( $_464 === \false) { return \false; }
 }
 
-
 /* Statement: !/[\s\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression ) */
 protected $match_Statement_typestack = ['Statement'];
 function match_Statement ($stack = []) {
@@ -2983,7 +2933,6 @@ function match_Statement ($stack = []) {
 	if( $_478 === \false) { return \false; }
 }
 
-
 /* Block: "{" __ ( skip:Program )? "}" */
 protected $match_Block_typestack = ['Block'];
 function match_Block ($stack = []) {
@@ -3033,7 +2982,6 @@ function match_Block ($stack = []) {
 	if( $_486 === \false) { return \false; }
 }
 
-
 /* __: / [\s]*+(?:\/\/[^\n]*+(?:\s*+))? / */
 protected $match____typestack = ['__'];
 function match___ () {
@@ -3045,7 +2993,6 @@ function match___ () {
 	else { return \false; }
 }
 
-
 /* NL: / (?:\/\/[^\n]*)?\n / */
 protected $match_NL_typestack = ['NL'];
 function match_NL () {
@@ -3056,7 +3003,6 @@ function match_NL () {
 	}
 	else { return \false; }
 }
-
 
 /* SEP: ";" | NL */
 protected $match_SEP_typestack = ['SEP'];
@@ -3089,7 +3035,6 @@ function match_SEP ($stack = []) {
 	if( $_493 === \true ) { return $this->finalise($result); }
 	if( $_493 === \false) { return \false; }
 }
-
 
 /* Program: ( __ stmts:Statement? > SEP )* __ */
 protected $match_Program_typestack = ['Program'];
@@ -3151,7 +3096,6 @@ function match_Program ($stack = []) {
 	if( $_502 === \true ) { return $this->finalise($result); }
 	if( $_502 === \false) { return \false; }
 }
-
 
 
 

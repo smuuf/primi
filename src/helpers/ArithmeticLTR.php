@@ -11,9 +11,8 @@ use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\BinaryOperationError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
-
-use function \Smuuf\Primi\Helpers\yield_left_to_right as primifn_yield_left_to_right;
 
 class ArithmeticLTR extends StrictObject {
 
@@ -22,7 +21,7 @@ class ArithmeticLTR extends StrictObject {
 		Context $context
 	): Value {
 
-		$gen = primifn_yield_left_to_right($node, $context);
+		$gen = Func::yield_left_to_right($node, $context);
 
 		$result = $gen->current();
 		$gen->next();

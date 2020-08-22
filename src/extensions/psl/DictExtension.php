@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\DictValue;
 use \Smuuf\Primi\Structures\NullValue;
@@ -10,8 +11,6 @@ use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
-
-use function \Smuuf\Primi\Helpers\allow_argument_types as primifn_allow_argument_types;
 
 class DictExtension extends Extension {
 
@@ -51,7 +50,7 @@ class DictExtension extends Extension {
 	public static function dict_contains(DictValue $arr, Value $needle): BoolValue {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		// Let's search the $needle object in $arr's value (array of objects).
 		return new BoolValue(\array_search($needle, $arr->value) !== \false);
@@ -61,7 +60,7 @@ class DictExtension extends Extension {
 	public static function dict_has(DictValue $arr, Value $key): BoolValue {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $key, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $key, StringValue::class, NumberValue::class);
 
 		// Return true if the key exists in this array.
 		return new BoolValue(isset($arr->value[$key->value]));
@@ -71,7 +70,7 @@ class DictExtension extends Extension {
 	public static function dict_get(DictValue $arr, Value $key, Value $default = \null): Value {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $key, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $key, StringValue::class, NumberValue::class);
 		return $arr->value[$key->value] ?? $default ?? new NullValue;
 
 	}
@@ -79,7 +78,7 @@ class DictExtension extends Extension {
 	public static function dict_number_of(DictValue $arr, Value $needle): NumberValue {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		// We must convert Primi values back to PHP values for the
 		// array_count_values function to work.

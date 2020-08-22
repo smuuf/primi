@@ -8,6 +8,7 @@ use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ArgumentCountError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\DictValue;
@@ -15,8 +16,6 @@ use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\RegexValue;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
-
-use function \Smuuf\Primi\Helpers\allow_argument_types as primifn_allow_argument_types;
 
 class StringExtension extends Extension {
 
@@ -190,7 +189,7 @@ class StringExtension extends Extension {
 		}
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $delimiter, StringValue::class, RegexValue::class);
+		Func::allow_argument_types(1, $delimiter, StringValue::class, RegexValue::class);
 
 		if ($delimiter instanceof RegexValue) {
 			$splat = \preg_split($delimiter->value, $self->value);
@@ -212,7 +211,7 @@ class StringExtension extends Extension {
 	public static function string_contains(StringValue $self, Value $needle): BoolValue {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class, RegexValue::class);
+		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class, RegexValue::class);
 
 		if ($needle instanceof RegexValue) {
 			return new BoolValue(
@@ -230,7 +229,7 @@ class StringExtension extends Extension {
 	public static function string_number_of(StringValue $self, Value $needle): NumberValue {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		return new NumberValue(
 			(string) \mb_substr_count(
@@ -243,7 +242,7 @@ class StringExtension extends Extension {
 	public static function string_find_first(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {
@@ -257,7 +256,7 @@ class StringExtension extends Extension {
 	public static function string_find_last(StringValue $self, Value $needle): Value {
 
 		// Allow only some value types.
-		primifn_allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strrpos($self->value, (string) $needle->value);
 		if ($pos !== \false) {

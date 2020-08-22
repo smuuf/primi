@@ -8,10 +8,9 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RelationError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
-
-use function \Smuuf\Primi\Helpers\yield_left_to_right as primifn_yield_left_to_right;
 
 class ComparisonLTR extends StrictObject {
 
@@ -20,7 +19,7 @@ class ComparisonLTR extends StrictObject {
 		Context $context
 	): Value {
 
-		$gen = primifn_yield_left_to_right($node, $context);
+		$gen = Func::yield_left_to_right($node, $context);
 
 		$result = \true;
 		$left = $gen->current();

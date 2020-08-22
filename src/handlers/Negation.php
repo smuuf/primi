@@ -4,10 +4,9 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\BoolValue;
-
-use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
 
 class Negation extends SimpleHandler {
 
@@ -32,7 +31,7 @@ class Negation extends SimpleHandler {
 		if (!isset($node['nots'])) {
 			$node = $node['core'];
 		} else {
-			$node['nots'] = primifn_ensure_indexed($node['nots']);
+			$node['nots'] = Func::ensure_indexed($node['nots']);
 		}
 
 	}

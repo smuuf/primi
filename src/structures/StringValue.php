@@ -10,9 +10,8 @@ use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\StringEscaping;
-
-use function \Smuuf\Primi\Helpers\is_any_of_types as primifn_is_any_of_types;
 
 class StringValue extends Value implements
 	ISupportsAddition,
@@ -62,7 +61,7 @@ class StringValue extends Value implements
 
 	public function doSubtraction(Value $right): ?Value {
 
-		if (!primifn_is_any_of_types($right, StringValue::class, RegexValue::class)) {
+		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			return \null;
 		}
 
@@ -93,7 +92,7 @@ class StringValue extends Value implements
 
 	public function isEqualTo(Value $right): ?bool {
 
-		if (!primifn_is_any_of_types($right, StringValue::class, RegexValue::class)) {
+		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			return \null;
 		}
 
@@ -107,7 +106,7 @@ class StringValue extends Value implements
 
 	public function hasRelationTo(string $operator, Value $right): ?bool {
 
-		if (!primifn_is_any_of_types($right, StringValue::class)) {
+		if (!Func::is_any_of_types($right, StringValue::class)) {
 			return \null;
 		}
 
