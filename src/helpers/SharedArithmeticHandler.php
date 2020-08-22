@@ -7,10 +7,9 @@ namespace Smuuf\Primi\Helpers;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\BinaryOperationError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\ArithmeticLTR;
 use \Smuuf\Primi\Helpers\SimpleHandler;
-
-use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
 
 /**
  * Common ancestor of Addition, Multiplication handlers, both of which have
@@ -41,7 +40,7 @@ abstract class SharedArithmeticHandler extends SimpleHandler {
 		if (!isset($node['ops'])) {
 			$node = $node['operands'];
 		} else {
-			$node['ops'] = primifn_ensure_indexed($node['ops']);
+			$node['ops'] = Func::ensure_indexed($node['ops']);
 		}
 
 	}

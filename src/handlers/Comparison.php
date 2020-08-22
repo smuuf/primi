@@ -4,10 +4,9 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
-
-use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
 
 class Comparison extends SimpleHandler {
 
@@ -28,7 +27,7 @@ class Comparison extends SimpleHandler {
 		if (!isset($node['ops'])) {
 			$node = $node['operands'];
 		} else {
-			$node['ops'] = primifn_ensure_indexed($node['ops']);
+			$node['ops'] = Func::ensure_indexed($node['ops']);
 		}
 
 	}

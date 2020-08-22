@@ -2,13 +2,12 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Ex\KeyError;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsKeyAccess;
+use \Smuuf\Primi\Ex\KeyError;
+use \Smuuf\Primi\Helpers\Fn;
 use \Smuuf\Primi\Helpers\CircularDetector;
-
-use function \Smuuf\Primi\Helpers\object_hash as primifn_object_hash;
 
 class DictValue extends Value implements
 	ISupportsIteration,
@@ -67,7 +66,7 @@ class DictValue extends Value implements
 			// would end up going in (infinite) circles.
 			$hash = \spl_object_hash($item);
 			$str = $cd->has($hash)
-				? \sprintf("*recursion (%s)*", primifn_object_hash($item))
+				? \sprintf("*recursion (%s)*", Fn::object_hash($item))
 				: $item->getStringRepr($cd);
 
 			$return .= \sprintf("%s: %s, ", $key, $str);

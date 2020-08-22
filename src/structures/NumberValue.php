@@ -2,15 +2,13 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\ISupportsMultiplication;
-use \Smuuf\Primi\ISupportsAddition;
-use \Smuuf\Primi\ISupportsSubtraction;
-use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ISupportsLength;
-
-use function \Smuuf\Primi\Helpers\is_any_of_types as primifn_is_any_of_types;
-use function \Smuuf\Primi\Helpers\is_numeric_int as primifn_is_numeric_int;
+use \Smuuf\Primi\ISupportsAddition;
+use \Smuuf\Primi\ISupportsDivision;
+use \Smuuf\Primi\ISupportsSubtraction;
+use \Smuuf\Primi\ISupportsMultiplication;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 
 class NumberValue extends Value implements
 	ISupportsAddition,
@@ -24,7 +22,7 @@ class NumberValue extends Value implements
 
 	public function __construct(string $value) {
 
-		$this->value = primifn_is_numeric_int($value)
+		$this->value = Func::is_numeric_int($value)
 			? (int) $value
 			: (float) $value;
 
@@ -89,7 +87,7 @@ class NumberValue extends Value implements
 
 	public function isEqualTo(Value $right): ?bool {
 
-		if (!primifn_is_any_of_types($right, NumberValue::class, BoolValue::class)) {
+		if (!Func::is_any_of_types($right, NumberValue::class, BoolValue::class)) {
 			return \null;
 		}
 
@@ -99,7 +97,7 @@ class NumberValue extends Value implements
 
 	public function hasRelationTo(string $operator, Value $right): ?bool {
 
-		if (!primifn_is_any_of_types($right, NumberValue::class)) {
+		if (!Func::is_any_of_types($right, NumberValue::class)) {
 			return \null;
 		}
 

@@ -4,8 +4,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Structures\ValueFriends;
 
-use function \Smuuf\Primi\Helpers\is_array_dict as primifn_is_array_dict;
-use function \Smuuf\Primi\Helpers\is_numeric as primifn_is_numeric;
+use \Smuuf\Primi\Helpers\Func;
 
 abstract class Value extends ValueFriends {
 
@@ -24,12 +23,12 @@ abstract class Value extends ValueFriends {
 				return new FuncValue(FnContainer::buildFromClosure($value));
 			case \is_array($value):
 				$inner = \array_map([self::class, 'buildAutomatic'], $value);
-				if (primifn_is_array_dict($value)) {
+				if (Func::is_array_dict($value)) {
 					return new DictValue($inner);
 				} else {
 					return new ListValue($inner);
 				}
-			case primifn_is_numeric($value):
+			case Func::is_numeric($value):
 				// Must be after "is_array" case.
 				return new NumberValue($value);
 			default:

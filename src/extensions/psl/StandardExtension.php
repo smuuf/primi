@@ -7,14 +7,13 @@ namespace Smuuf\Primi\Psl;
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\NumberValue;
 use \Smuuf\Primi\Structures\StringValue;
-
-use function \Smuuf\Primi\Helpers\is_numeric_int as primifn_is_numeric_int;
 
 class StandardExtension extends Extension {
 
@@ -80,9 +79,9 @@ class StandardExtension extends Extension {
 	): ListValue {
 
 		if (
-			!primifn_is_numeric_int((string) $start->value)
-			|| ($end && !primifn_is_numeric_int((string) $end->value))
-			|| ($step && !primifn_is_numeric_int((string) $step->value))
+			!Func::is_numeric_int((string) $start->value)
+			|| ($end && !Func::is_numeric_int((string) $end->value))
+			|| ($step && !Func::is_numeric_int((string) $step->value))
 		) {
 			throw new RuntimeError("All arguments must be integers.");
 		}

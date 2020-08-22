@@ -2,10 +2,9 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\Value;
-
-use function \Smuuf\Primi\Helpers\parse_argument_count_error as primifn_parse_argument_count_error;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -24,7 +23,7 @@ try {
         echo "yay";
     })(1, 2);
 } catch (\ArgumentCountError $e) {
-    [$x, $y] = primifn_parse_argument_count_error($e);
+    [$x, $y] = Func::parse_argument_count_error($e);
     Assert::same(2, (int) $x);
     Assert::same(3, (int) $y);
 }
@@ -34,7 +33,7 @@ try {
         echo "yay";
     })();
 } catch (\ArgumentCountError $e) {
-    [$x, $y] = primifn_parse_argument_count_error($e);
+    [$x, $y] = Func::parse_argument_count_error($e);
     Assert::same(0, (int) $x);
     Assert::same(2, (int) $y);
 }
@@ -44,7 +43,7 @@ try {
         echo "yay";
     })(1);
 } catch (\ArgumentCountError $e) {
-    [$x, $y] = primifn_parse_argument_count_error($e);
+    [$x, $y] = Func::parse_argument_count_error($e);
     Assert::same(1, (int) $x);
     Assert::same(3, (int) $y);
 }

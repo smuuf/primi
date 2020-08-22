@@ -8,12 +8,10 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\RelationError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
-
-use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
-use function \Smuuf\Primi\Helpers\yield_left_to_right as primifn_yield_left_to_right;
 
 /**
  * Common ancestor of LogicalAnd and LogicalOr handlers, both of which have
@@ -54,7 +52,7 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 		if (!isset($node['ops'])) {
 			$node = $node['operands'];
 		} else {
-			$node['ops'] = primifn_ensure_indexed($node['ops']);
+			$node['ops'] = Func::ensure_indexed($node['ops']);
 		}
 
 	}
@@ -64,7 +62,7 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 		Context $context
 	): BoolValue {
 
-		$gen = primifn_yield_left_to_right($node, $context);
+		$gen = Func::yield_left_to_right($node, $context);
 		$first = $gen->current();
 
 		// If the first operand is truthy, we short-circuit.
@@ -96,7 +94,7 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 		Context $context
 	): Value {
 
-		$gen = primifn_yield_left_to_right($node, $context);
+		$gen = Func::yield_left_to_right($node, $context);
 		$first = $gen->current();
 
 		// If the first operand is truthy, we short-circuit.

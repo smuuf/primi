@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\NullValue;
@@ -13,8 +14,6 @@ use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\DictValue;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
-
-use function \Smuuf\Primi\Helpers\allow_argument_types;
 
 class ListExtension extends Extension {
 
@@ -72,7 +71,7 @@ class ListExtension extends Extension {
 	): BoolValue {
 
 		// Allow only some value types.
-		allow_argument_types(
+		Func::allow_argument_types(
 			1, $needle,
 			StringValue::class, NumberValue::class, ListValue::class,
 			DictValue::class, BoolValue::class, NullValue::class

@@ -3,11 +3,10 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
-
-use function \Smuuf\Primi\Helpers\ensure_indexed as primifn_ensure_indexed;
 
 class FunctionDefinition extends SimpleHandler {
 
@@ -30,7 +29,7 @@ class FunctionDefinition extends SimpleHandler {
 		$params = [];
 		if (isset($node['params'])) {
 			// Make sure this is always list, even with one item.
-			$node['params'] = primifn_ensure_indexed($node['params']);
+			$node['params'] = Func::ensure_indexed($node['params']);
 			foreach ($node['params'] as $a) {
 				$params[] = $a['text'];
 			}

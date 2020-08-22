@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
-use function \Smuuf\Primi\Helpers\is_any_of_types as primifn_is_any_of_types;
+use \Smuuf\Primi\Helpers\Func;
 
 class RegexValue extends Value {
 
@@ -41,7 +41,7 @@ class RegexValue extends Value {
 
 	public function isEqualTo(Value $right): ?bool {
 
-		if (!primifn_is_any_of_types($right, StringValue::class, RegexValue::class)) {
+		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			return \null;
 		}
 

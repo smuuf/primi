@@ -6,6 +6,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\ISupportsInvocation;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\Structures\Value;
 
