@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StrictObject;
+use \Smuuf\Primi\ISupportsPower;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ISupportsSubtraction;
@@ -68,6 +69,9 @@ class ArithmeticLTR extends StrictObject {
 					break;
 				case $op === "/" && $a instanceof ISupportsDivision:
 					$result = $a->doDivision($b);
+					break;
+				case $op === "**" && $a instanceof ISupportsPower:
+					$result = $a->doPower($b);
 					break;
 			}
 

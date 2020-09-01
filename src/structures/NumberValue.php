@@ -2,11 +2,13 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\ISupportsPower;
 use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsAddition;
 use \Smuuf\Primi\ISupportsDivision;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsMultiplication;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 
@@ -15,16 +17,21 @@ class NumberValue extends Value implements
 	ISupportsSubtraction,
 	ISupportsMultiplication,
 	ISupportsLength,
-	ISupportsDivision
+	ISupportsDivision,
+	ISupportsPower
 {
 
+	/** @const int Floating point precision for bcmath operations. */
+	const PRECISION = 128;
 	const TYPE = "number";
 
 	public function __construct(string $value) {
 
-		$this->value = Func::is_numeric_int($value)
-			? (int) $value
-			: (float) $value;
+		if ($value === '') {
+			throw new EngineError("Cannot create number from empty string");
+		}
+
+		$this->value = Func::normalize_decimal($value);
 
 	}
 
@@ -33,11 +40,11 @@ class NumberValue extends Value implements
 	}
 
 	public function getLength(): int {
-		return \strlen((string) $this->value);
+		return \strlen($this->value);
 	}
 
 	public function getStringRepr(): string {
-		return (string) $this->value;
+		return Func::normalize_decimal($this->value);
 	}
 
 	public function doAddition(Value $right): ?Value {
@@ -46,7 +53,7 @@ class NumberValue extends Value implements
 			return \null;
 		}
 
-		return new self($this->value + $right->value);
+		return new self(\bcadd($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -56,7 +63,7 @@ class NumberValue extends Value implements
 			return \null;
 		}
 
-		return new self($this->value - $right->value);
+		return new self(\bcsub($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -66,7 +73,7 @@ class NumberValue extends Value implements
 			return \null;
 		}
 
-		return new self($this->value * $right->value);
+		return new self(\bcmul($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -77,27 +84,51 @@ class NumberValue extends Value implements
 		}
 
 		// Avoid division by zero.
-		if ($right->value === 0) {
+		if (\bccomp($right->value, "0") === 0) {
 			throw new RuntimeError("Division by zero");
 		}
 
-		return new self($this->value / $right->value);
+		return new self(\bcdiv($this->value, $right->value, self::PRECISION));
+
+	}
+
+	public function doPower(Value $right): ?Value {
+
+		if (!$right instanceof NumberValue) {
+			return \null;
+		}
+
+		// If the exponent is a fractional decimal, bcmath can't handle it.
+		if (\bccomp(
+				\bcmod($right->value, 1, NumberValue::PRECISION),
+				'0',
+				self::PRECISION
+			) === -1
+		) {
+			throw new RuntimeError("Exponent must be integer");
+		}
+
+		return new self(\bcpow($this->value, $right->value, self::PRECISION));
 
 	}
 
 	public function isEqualTo(Value $right): ?bool {
 
-		if (!Func::is_any_of_types($right, NumberValue::class, BoolValue::class)) {
-			return \null;
+		if ($right instanceof BoolValue) {
+			return $this->value == $right->value;
 		}
 
-		return $this->value == $right->value;
+		if ($right instanceof NumberValue) {
+			return \bccomp($this->value, $right->value, self::PRECISION) === 0;
+		}
+
+		return null;
 
 	}
 
 	public function hasRelationTo(string $operator, Value $right): ?bool {
 
-		if (!Func::is_any_of_types($right, NumberValue::class)) {
+		if (!$right instanceof NumberValue) {
 			return \null;
 		}
 
@@ -106,14 +137,16 @@ class NumberValue extends Value implements
 
 		switch ($operator) {
 			case ">":
-				return $l > $r;
+				return \bccomp($l, $r, self::PRECISION) === 1;
 			case "<":
-				return $l < $r;
+				return \bccomp($l, $r, self::PRECISION) === -1;
 			case ">=":
-				return $l >= $r;
+				return \bccomp($l, $r, self::PRECISION) === 1 || \bccomp($l, $r, self::PRECISION) === 0;
 			case "<=":
-				return $l <= $r;
+				return \bccomp($l, $r, self::PRECISION) === -1 || \bccomp($l, $r, self::PRECISION) === 0;
 		}
+
+		return null;
 
 	}
 

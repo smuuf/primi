@@ -238,10 +238,10 @@ Assert::exception(function() use ($fns) {
 // Test count.
 //
 
-Assert::same(3, get_val($fns['string_number_of']->invoke([$string, new StringValue("i")])));
-Assert::same(2, get_val($fns['string_number_of']->invoke([$string, new StringValue("is")])));
-Assert::same(0, get_val($fns['string_number_of']->invoke([$string, new StringValue("xoxoxo")])));
-Assert::same(0, get_val($fns['string_number_of']->invoke([$string, new NumberValue(1)])));
+Assert::same('3', get_val($fns['string_number_of']->invoke([$string, new StringValue("i")])));
+Assert::same('2', get_val($fns['string_number_of']->invoke([$string, new StringValue("is")])));
+Assert::same('0', get_val($fns['string_number_of']->invoke([$string, new StringValue("xoxoxo")])));
+Assert::same('0', get_val($fns['string_number_of']->invoke([$string, new NumberValue(1)])));
 
 //
 // Test shuffle.
@@ -254,10 +254,10 @@ Assert::same(17, mb_strlen(get_val($fns['string_shuffle']->invoke([$unicode]))))
 // Test length.
 //
 
-Assert::same(17, get_val($fns['len']->invoke([$string])));
-Assert::same(1, get_val($fns['len']->invoke([$letterA])));
+Assert::same('17', get_val($fns['len']->invoke([$string])));
+Assert::same('1', get_val($fns['len']->invoke([$letterA])));
 // Multibyte strings should report length correctly.
-Assert::same(17, get_val($fns['len']->invoke([$unicode])));
+Assert::same('17', get_val($fns['len']->invoke([$unicode])));
 
 //
 // Test replacing.
@@ -287,8 +287,8 @@ Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 $fnFirst = $fns['string_find_first'];
 $fnLast = $fns['string_find_last'];
 
-Assert::same(2, get_val($fnFirst->invoke([$string, new StringValue("is")])));
-Assert::same(5, get_val($fnLast->invoke([$string, new StringValue("is")])));
+Assert::same('2', get_val($fnFirst->invoke([$string, new StringValue("is")])));
+Assert::same('5', get_val($fnLast->invoke([$string, new StringValue("is")])));
 
 // First: False when it does not appear in the string.
 Assert::false(get_val($fnFirst->invoke([$string, new StringValue("aaa")])));

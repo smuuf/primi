@@ -36,8 +36,8 @@ $closure = function(NumberValue $a, NumberValue $b) {
 // This directly returns a Primi value. (Kind of optional low-levelness.)
 $fn = new FuncValue(FnContainer::buildFromClosure($closure));
 
-Assert::same(4, get_val($fn->invoke([$one, $two])));
-Assert::same(45, get_val($fn->invoke([$five, $three])));
+Assert::same("4", get_val($fn->invoke([$one, $two])));
+Assert::same("45", get_val($fn->invoke([$five, $three])));
 
 //
 // Bound native function error handling.

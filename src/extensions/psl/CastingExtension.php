@@ -72,13 +72,17 @@ class CastingExtension extends Extension {
 			StringValue::class, NumberValue::class, BoolValue::class
 		);
 
-		return new NumberValue((string) $value->value);
+		return new NumberValue((string) (int) $value->value);
 
 	}
 
 	public static function to_list(Value $value): ListValue {
 
-		Func::allow_argument_types(0, $value, ListValue::class, StringValue::class);
+		Func::allow_argument_types(
+			0,
+			$value,
+			ListValue::class, StringValue::class
+		);
 
 		if ($value instanceof StringValue) {
 			return new ListValue(iterator_to_array($value->getIterator()));

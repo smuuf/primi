@@ -8,6 +8,7 @@ use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\ISupportsSubtraction;
 use \Smuuf\Primi\ISupportsMultiplication;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
@@ -82,8 +83,8 @@ class StringValue extends Value implements
 		}
 
 		$multiplier = $right->value;
-		if (\is_int($multiplier) && $multiplier >= 0) {
-			return new self(\str_repeat($this->value, $multiplier));
+		if (Func::is_round_int($multiplier) && $multiplier >= 0) {
+			return new self(\str_repeat($this->value, (int) $multiplier));
 		}
 
 		throw new RuntimeError("String multiplier must be a positive integer.");
@@ -124,9 +125,15 @@ class StringValue extends Value implements
 				return $l <= $r;
 		}
 
+		return null;
+
 	}
 
 	public function arrayGet(string $index): Value {
+
+		if (!Func::is_round_int($index)) {
+			throw new RuntimeError("String index must be integer");
+		}
 
 		$index = (int) $index;
 

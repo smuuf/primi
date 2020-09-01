@@ -63,6 +63,7 @@ Mutable: skip:VariableVector | skip:VariableName
 
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
+PowerOperator: "**"
 AssignmentOperator: "="
 ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
 AndOperator: "and"
@@ -79,7 +80,8 @@ LogicalOr: operands:LogicalAnd ( ] ops:OrOperator ] operands:LogicalAnd )*
 LogicalAnd: operands:Comparison ( ] ops:AndOperator ] operands:Comparison )*
 Comparison: operands:Addition ( __ ops:ComparisonOperator __ operands:Addition )*
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication )*
-Multiplication: operands:Negation ( __ ops:MultiplyOperator __ operands:Negation )*
+Multiplication: operands:Exponentiation ( __ ops:MultiplyOperator __ operands:Exponentiation )*
+Exponentiation: operands:Negation ( __ ops:PowerOperator __ operands:Negation )*
 Negation: ( nots:NegationOperator )* core:Operand
 Operand: ( ( "(" __ core:Expression __ ")" | core:Value ) chain:Chain? ) | skip:Value
 

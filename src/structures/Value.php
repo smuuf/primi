@@ -17,6 +17,8 @@ abstract class Value extends ValueFriends {
 				return new NullValue;
 			case \is_bool($value):
 				return new BoolValue($value);
+			case is_numeric($value):
+				return new NumberValue(Func::scientific_to_decimal($value));
 			case \is_callable($value);
 				// Must be before "is_array" case, because some "arrays"
 				// can be in reality "callables".
@@ -28,9 +30,6 @@ abstract class Value extends ValueFriends {
 				} else {
 					return new ListValue($inner);
 				}
-			case Func::is_numeric($value):
-				// Must be after "is_array" case.
-				return new NumberValue($value);
 			default:
 				return new StringValue($value);
 		}
