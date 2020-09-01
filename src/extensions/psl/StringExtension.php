@@ -40,9 +40,9 @@ class StringExtension extends Extension {
 
 		// Extract PHP values from passed in value objects, because later we
 		// will pass the values to sprintf().
-		\array_walk($items, function(&$i) {
-			$i = $i->value;
-		});
+		$items = \array_map(function($item) {
+			return $item->value;
+		}, $items);
 
 		$passedCount = \count($items);
 		$expectedCount = 0;

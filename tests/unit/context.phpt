@@ -62,7 +62,7 @@ Assert::type(\Smuuf\Primi\Structures\NumberValue::class, $context->getVariable('
 Assert::type(\Smuuf\Primi\Structures\StringValue::class, $context->getVariable('var_f'));
 Assert::type(\Smuuf\Primi\Structures\ListValue::class, $context->getVariable('var_g'));
 Assert::type(\Smuuf\Primi\Structures\DictValue::class, $context->getVariable('var_h'));
-Assert::same(123, $context->getVariable('var_e')->getInternalValue());
+Assert::same("123", $context->getVariable('var_e')->getInternalValue());
 Assert::same("hello there!", $context->getVariable('var_f')->getInternalValue());
 Assert::type('array', $context->getVariable('var_g')->getInternalValue());
 

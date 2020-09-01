@@ -6,7 +6,8 @@ use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Ex\KeyError;
-use \Smuuf\Primi\Helpers\Fn;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\CircularDetector;
 
 class DictValue extends Value implements
@@ -66,7 +67,7 @@ class DictValue extends Value implements
 			// would end up going in (infinite) circles.
 			$hash = \spl_object_hash($item);
 			$str = $cd->has($hash)
-				? \sprintf("*recursion (%s)*", Fn::object_hash($item))
+				? \sprintf("*recursion (%s)*", Func::object_hash($item))
 				: $item->getStringRepr($cd);
 
 			$return .= \sprintf("%s: %s, ", $key, $str);
@@ -94,7 +95,7 @@ class DictValue extends Value implements
 	public function arraySet(?string $key, Value $value) {
 
 		if ($key === \null) {
-			$this->value[] = $value;
+			throw new RuntimeError("Must specify key when inserting into dict.");
 		} else {
 			$this->value[$key] = $value;
 		}

@@ -79,9 +79,9 @@ class StandardExtension extends Extension {
 	): ListValue {
 
 		if (
-			!Func::is_numeric_int((string) $start->value)
-			|| ($end && !Func::is_numeric_int((string) $end->value))
-			|| ($step && !Func::is_numeric_int((string) $step->value))
+			!Func::is_round_int((string) $start->value)
+			|| ($end && !Func::is_round_int((string) $end->value))
+			|| ($step && !Func::is_round_int((string) $step->value))
 		) {
 			throw new RuntimeError("All arguments must be integers.");
 		}

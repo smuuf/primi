@@ -113,7 +113,7 @@ class ListValue extends Value implements
 			return;
 		}
 
-		if (!Func::is_numeric_int((string) $index)) {
+		if (!Func::is_round_int((string) $index)) {
 			throw new RuntimeError("List index must be integer");
 		}
 
@@ -145,7 +145,7 @@ class ListValue extends Value implements
 		}
 
 		// ... and that number must be an integer.
-		if (!Func::is_numeric_int((string) $right->value)) {
+		if (!Func::is_round_int((string) $right->value)) {
 			return new RuntimeError("List can be only multiplied by an integer.");
 		}
 
@@ -200,7 +200,7 @@ class ListValue extends Value implements
 	 */
 	public function protectedIndex(float $index, bool $throw = \true): ?int {
 
-		if (!Func::is_numeric_int((string) $index)) {
+		if (!Func::is_round_int((string) $index)) {
 			throw new RuntimeError("Index must be integer");
 		}
 

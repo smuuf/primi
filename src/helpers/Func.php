@@ -9,8 +9,20 @@ use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\NumberValue;
 
 abstract class Func {
+
+	/**
+	 * Pair of regexes to match zeroes at the beginning and at the end of a
+	 * string, if they're not the last zeroes on that side of decimal point.
+	 *
+	 * @const string[]
+	 */
+	private const DECIMAL_TRIMMING_REGEXES = [
+		['#^0+(\d)#', '#(\.0+$)|((\.\d+?[1-9]?)0+$)#'],
+		['\1', '\3']
+	];
 
 	/**
 	 * Returns false if the passed array has contignuous numeric keys starting
@@ -37,13 +49,32 @@ abstract class Func {
 
 	}
 
-	public static function is_numeric_int(string $input): bool {
-		// Solution based on 'numeric_int' phpcb benchmark results.
-		return (bool) \preg_match("#^[+-]?\d+$#", $input);
+	public static function is_round_int(string $input): bool {
+
+		if (!is_numeric($input)) {
+			return false;
+		}
+
+		return round((float) $input) == $input; // Intentionally ==
+
+		// Regex solution chosen based on 'numeric_int' phpcb benchmark results.
+		// PHP can cast very large or very small numbers to scientific notation,
+		// so the regex must be able to deal with that - integers can only
+		// have 'E+' in them, otherwise it's a float.
+		//return (bool) \preg_match("#^[+-]?\d+(\.\d+E\+\d+)?$#", (string) $input);
+
 	}
 
-	public static function is_numeric(string $input): bool {
+	public static function is_decimal(string $input): bool {
+
+		//return is_numeric($input);
 		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
+
+		// PHP can cast very large or very small numbers to scientific notation,
+		// so the regex must be able to deal with that.
+		//return (bool) \preg_match('#^[+-]?\d+(\.\d+(E[+-]\d+)?)?$#', (string) $input);
+		//return (bool) \preg_match('#^[+-]?\d+(\.\d+(E[+-]\d+)?)?$#', (string) $input);
+
 	}
 
 	public static function object_hash($o): string {
@@ -70,6 +101,37 @@ abstract class Func {
 		}
 
 		return \false;
+
+	}
+
+	public static function normalize_decimal(string $decimal): string {
+		return \preg_replace(
+			self::DECIMAL_TRIMMING_REGEXES[0],
+			self::DECIMAL_TRIMMING_REGEXES[1],
+			$decimal
+		);
+	}
+
+	public static function scientific_to_decimal(string $number): string {
+
+		// If not even with decimal point, just return the original.
+		if (!\preg_match("#^([+-]?\d+\.\d+)(?:E([+-]\d+))?$#", $number, $matches)) {
+			return $number;
+		}
+
+		// If there's no exponent, just return the original.
+		if (!isset($matches[2])) {
+			return $number;
+		}
+
+		// Otherwise, take the base and multiply it by the exponent.
+		$decimal = $matches[1];
+		$exp = $matches[2];
+		return bcmul(
+			$decimal,
+			bcpow('10', $exp, NumberValue::PRECISION),
+			NumberValue::PRECISION
+		);
 
 	}
 
