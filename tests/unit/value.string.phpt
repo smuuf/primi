@@ -152,16 +152,16 @@ Assert::null($string->isEqualTo(new DictValue([])));
 //
 
 // Dereferencing returns new instance.
-$dereferenced1 = $string->arrayGet(0);
+$dereferenced1 = $string->itemGet(new NumberValue(0));
 Assert::notSame($string, $dereferenced1);
 
 // Test return values of dereferencing.
-Assert::same("t", get_val($string->arrayGet(0)));
-Assert::same("s", get_val($string->arrayGet(3)));
+Assert::same("t", get_val($string->itemGet(new NumberValue(0))));
+Assert::same("s", get_val($string->itemGet(new NumberValue(3))));
 
 // Test error when dereferencing from undexined index.
 Assert::exception(function() use ($string) {
-	$string->arrayGet(50);
+	$string->itemGet(new NumberValue(50));
 }, IndexError::class);
 
 // Test that inserting does happen on the same instance of the value object.
@@ -169,14 +169,7 @@ $copy = clone $string;
 
 // Test classic insertion - which is forbidden for strings, as it would be
 // unclear (for user) if it is mutated in the process or not.
-Assert::exception(function() use ($copy)  {
-	$copy->arraySet(0, new StringValue("x"));
-}, RuntimeError::class, 'String does not support assignment.');
-
-// Test creating insertion proxy and commiting it - also forbidden.
-Assert::exception(function() use ($copy) {
-	$copy->getInsertionProxy(4);
-}, RuntimeError::class, 'String does not support assignment.');
+Assert::false($copy->itemSet(new NumberValue(0), new StringValue("x")));
 
 // Test iteration of strings.
 $sourceString = "abc\ndef";

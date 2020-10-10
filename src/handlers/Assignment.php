@@ -33,14 +33,8 @@ class Assignment extends SimpleHandler {
 				// value object.
 				try {
 					$target->commit($return);
-				} catch (LookupError $e) {
+				} catch (LookupError|TypeError $e) {
 					throw new RuntimeError($e->getMessage(), $node);
-				} catch (TypeError $e) {
-					throw new RuntimeError(\sprintf(
-						"Cannot insert '%s' into '%s'",
-						$return::TYPE,
-						$target->getTarget()::TYPE
-					));
 				}
 
 			break;

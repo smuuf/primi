@@ -2,9 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsInvocation;
-
-class FuncValue extends Value implements ISupportsInvocation {
+class FuncValue extends Value {
 
 	const TYPE = "function";
 
@@ -23,7 +21,7 @@ class FuncValue extends Value implements ISupportsInvocation {
 		);
 	}
 
-	public function invoke(array $args = []) {
+	public function invoke(array $args = []): ?Value {
 
 		// Simply execute the closure with passed arguments.
 		return ($this->value->getClosure())(...$args);

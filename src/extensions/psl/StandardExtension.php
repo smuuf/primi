@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\ISupportsLength;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
@@ -63,7 +62,8 @@ class StandardExtension extends Extension {
 	 */
 	public static function len(Value $value): NumberValue {
 
-		if (!$value instanceof ISupportsLength) {
+		$length = $value->getLength();
+		if ($length === null) {
 			$type = $value::TYPE;
 			throw new RuntimeError("Type '$type' does not support length.");
 		}

@@ -2,26 +2,13 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsLength;
-use \Smuuf\Primi\ISupportsAddition;
-use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ISupportsKeyAccess;
-use \Smuuf\Primi\ISupportsSubtraction;
-use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\StringEscaping;
 
-class StringValue extends Value implements
-	ISupportsAddition,
-	ISupportsSubtraction,
-	ISupportsMultiplication,
-	ISupportsIteration,
-	ISupportsKeyAccess,
-	ISupportsLength
-{
+class StringValue extends Value {
 
 	const TYPE = "string";
 
@@ -129,13 +116,13 @@ class StringValue extends Value implements
 
 	}
 
-	public function arrayGet(string $index): Value {
+	public function itemGet(Value $index): Value {
 
-		if (!Func::is_round_int($index)) {
+		if (!Func::is_round_int($index->value)) {
 			throw new RuntimeError("String index must be integer");
 		}
 
-		$index = (int) $index;
+		$index = (int) $index->value;
 
 		if (!isset($this->value[$index])) {
 			throw new IndexError((string) $index);
@@ -145,16 +132,22 @@ class StringValue extends Value implements
 
 	}
 
-	public function arraySet(?string $index, Value $value) {
-		throw new RuntimeError("String does not support assignment.");
-	}
-
-	public function getInsertionProxy(?string $index): InsertionProxy {
-		throw new RuntimeError("String does not support assignment.");
-	}
-
 	public function getIterator(): \Iterator {
 		return self::utfSplit($this->value);
+	}
+
+	public function doesContain(Value $right): ?bool {
+
+		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
+			throw new TypeError("'in' for string requires 'string|regex' as left operand.");
+		}
+
+		if ($right instanceof RegexValue) {
+			return (bool) \preg_match($right->value, $this->value);
+		}
+
+		return \mb_strpos($this->value, $right->value) !== \false;
+
 	}
 
 	// Helpers.

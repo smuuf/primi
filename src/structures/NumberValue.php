@@ -2,28 +2,17 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsPower;
-use \Smuuf\Primi\ISupportsLength;
-use \Smuuf\Primi\ISupportsAddition;
-use \Smuuf\Primi\ISupportsDivision;
-use \Smuuf\Primi\ISupportsSubtraction;
-use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 
-class NumberValue extends Value implements
-	ISupportsAddition,
-	ISupportsSubtraction,
-	ISupportsMultiplication,
-	ISupportsLength,
-	ISupportsDivision,
-	ISupportsPower
-{
+class NumberValue extends Value {
 
 	/** @const int Floating point precision for bcmath operations. */
 	const PRECISION = 128;
 	const TYPE = "number";
+
+	public $_ = 0;
 
 	public function __construct(string $value) {
 

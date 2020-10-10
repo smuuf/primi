@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Helpers\Func;
@@ -209,21 +208,7 @@ class StringExtension extends Extension {
 	}
 
 	public static function string_contains(StringValue $self, Value $needle): BoolValue {
-
-		// Allow only some value types.
-		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class, RegexValue::class);
-
-		if ($needle instanceof RegexValue) {
-			return new BoolValue(
-				(bool) \preg_match((string) $needle->value, (string) $self->value)
-			);
-		}
-
-		// Let's search the $needle object in $arr's value (array of objects).
-		return new BoolValue(
-			\mb_strpos((string) $self->value, (string) $needle->value) !== \false
-		);
-
+		return new BoolValue($self->doesContain($needle));
 	}
 
 	public static function string_number_of(StringValue $self, Value $needle): NumberValue {
@@ -272,14 +257,15 @@ class StringExtension extends Extension {
 		Value $value
 	): StringValue {
 
-		if (!$value instanceof ISupportsIteration) {
+		$iter = $value->getIterator();
+		if ($iter === null) {
 			$type = $value::TYPE;
 			throw new RuntimeError("Cannot join unsupported type '$type'");
 		}
 
 		$prepared = [];
 
-		foreach ($value->getIterator() as $item) {
+		foreach ($iter as $item) {
 			switch (\true) {
 				case $item instanceof DictValue:
 					$prepared[] = self::string_join($self, $item)->value;
