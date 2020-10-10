@@ -4,11 +4,11 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ISupportsKeyAccess;
 use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\InsertionProxy;
 
 /**
  * This handler returns a final part of the chain - a value object that's
@@ -23,31 +23,27 @@ class Vector extends ChainedHandler {
 		Value $subject
 	) {
 
-		if (!$subject instanceof ISupportsKeyAccess) {
-			throw new RuntimeError(sprintf(
-				"Cannot insert into '%s'",
-				$subject::TYPE
-			), $node);
-		}
-
-		$key = \null;
-
 		$handler = HandlerFactory::get($node['index']['name']);
 		$key = $handler::handle($node['index'], $context, $subject);
-		$key = $key->getInternalValue();
 
 		try {
 
 			// Are we going to handle this node as a leaf node?
 			if (!isset($node['vector'])) {
 				// If this is a leaf node, return an insertion proxy.
-				return $subject->getInsertionProxy($key);
+				return new InsertionProxy($key, $subject);
 			}
 
 			// This is not a leaf node, so just dereference the chain a bit deeper,
 			// so we can ultimately end up with some leaf node. (that situation
 			// will be handled by the code above).
-			$next = $subject->arrayGet($key);
+			$next = $subject->itemGet($key);
+			if ($next === null) {
+				throw new RuntimeError(\sprintf(
+					"Type '%s' does not support item access",
+					$subject::TYPE
+				), $node);
+			}
 
 		} catch (LookupError $e) {
 			throw new RuntimeError($e->getMessage(), $node);

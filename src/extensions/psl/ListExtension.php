@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\ListValue;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\Structures\DictValue;
-use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
 
 class ListExtension extends Extension {
@@ -69,19 +66,7 @@ class ListExtension extends Extension {
 		ListValue $list,
 		Value $needle
 	): BoolValue {
-
-		// Allow only some value types.
-		Func::allow_argument_types(
-			1, $needle,
-			StringValue::class, NumberValue::class, ListValue::class,
-			DictValue::class, BoolValue::class, NullValue::class
-		);
-
-		// Let's see if the needle object is in list value (which is an array of
-		// Primi value objects). Non-strict search allows to match dictionaries
-		// with the same key-values but in different order (needs testing).
-		return new BoolValue(\in_array($needle, $list->value));
-
+		return new BoolValue($list->doesContain($needle));
 	}
 
 	public static function list_get(
@@ -120,7 +105,6 @@ class ListExtension extends Extension {
 
 		} else {
 
-			// If an index was specified, pop and return item with that index.
 			$index = $list->protectedIndex($index->value);
 			$popped = $list->value[$index];
 

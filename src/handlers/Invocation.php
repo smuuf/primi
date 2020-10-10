@@ -4,9 +4,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ISupportsInvocation;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\Structures\Value;
 
@@ -19,13 +17,6 @@ class Invocation extends ChainedHandler {
 	) {
 
 		try {
-
-			if (!$fn instanceof ISupportsInvocation) {
-				throw new RuntimeError(
-					\sprintf("Trying to invoke a non-function '%s'", $fn::TYPE),
-					$node
-				);
-			}
 
 			$arguments = [];
 			if (isset($node['args'])) {
@@ -40,7 +31,15 @@ class Invocation extends ChainedHandler {
 				\array_unshift($arguments, $prepend);
 			}
 
-			return $fn->invoke($arguments);
+			$result = $fn->invoke($arguments);
+			if ($result === null) {
+				throw new RuntimeError(
+					\sprintf("Trying to invoke a non-function '%s'", $fn::TYPE),
+					$node
+				);
+			}
+
+			return $result;
 
 		} catch (RuntimeError $e) {
 			throw new RuntimeError($e->getMessage(), $node);

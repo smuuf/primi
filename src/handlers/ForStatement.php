@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\ISupportsIteration;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\BreakException;
@@ -23,19 +22,18 @@ class ForStatement extends SimpleHandler {
 		$leftHandler = HandlerFactory::get($node['left']['name']);
 		$subject = $leftHandler::handle($node['left'], $context);
 
-		if (!$subject instanceof ISupportsIteration) {
+		$iter = $subject->getIterator();
+		if ($iter === null) {
 			throw new RuntimeError(
 				\sprintf("Cannot iterate over '%s'", $subject::TYPE),
 				$node
 			);
 		}
 
-		$iterator = $subject->getIterator();
-
 		$elementVariableName = $node['item']['text'];
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
-		foreach ($iterator as $i) {
+		foreach ($iter as $i) {
 
 			$context->setVariable($elementVariableName, $i);
 

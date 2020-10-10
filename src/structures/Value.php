@@ -101,4 +101,50 @@ abstract class Value extends ValueFriends {
 		return \null;
 	}
 
+	public function doesContain(Value $right): ?bool {
+		return null;
+	}
+
+	public function doAddition(Value $right): ?Value {
+		return null;
+	}
+
+	public function doSubtraction(Value $right): ?Value {
+		return null;
+	}
+
+	public function doMultiplication(Value $right): ?Value {
+		return null;
+	}
+
+	public function doDivision(Value $right): ?Value {
+		return null;
+	}
+
+	public function doPower(Value $right): ?Value {
+		return null;
+	}
+
+	public function invoke(array $args = []): ?Value {
+		return null;
+	}
+
+	public function getIterator(): ?\Iterator {
+		return null;
+	}
+
+	/**
+	 * Assign a value under specified key into this value.
+	 *
+	 * Must return true on successful assignment and false when assignment is
+	 * not supported.
+	 */
+	public function itemSet(?Value $key, Value $value): bool {
+		return false;
+	}
+
+	public function itemGet(Value $key): ?Value {
+		return null;
+	}
+
 }

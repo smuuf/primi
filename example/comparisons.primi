@@ -328,3 +328,56 @@ assert(a == 1)
 assert(b == 0)
 assert(c == 1)
 assert(d == 0)
+
+//
+// 'in' and 'not in' comparisons.
+//
+
+// Strings.
+
+a_string = "abcdefg"
+assert("abc" in a_string)
+assert("cab" not in a_string)
+
+a_string = "příliš žluťoučký KŮŇ"
+assert("příliš" in a_string)
+assert("šilířp" not in a_string)
+assert("žluť" in a_string)
+assert("ŽLUŤ" not in a_string)
+assert("čký KŮŇ" in a_string)
+assert("kůň" not in a_string)
+
+// Lists.
+
+a_list = [1, 5, 'čáu!', [], true, {}, {'key_yay': 'value_yay'}]
+assert(1 in a_list)
+assert(5 in a_list)
+assert('čáu!' in a_list)
+assert([] in a_list)
+assert({} in a_list)
+assert({'key_yay': 'value_yay'} in a_list)
+
+assert(2 not in a_list)
+assert('č' not in a_list)
+assert([1] not in a_list)
+assert(false not in a_list)
+assert({'key_yay': 'different_value'} not in a_list)
+
+// Dicts (in/not in works with keys, not values.)
+
+a_dict = {'a': true, 'c': false, 123: null}
+assert('a' in a_dict)
+assert('c' in a_dict)
+assert(123 in a_dict)
+assert('123' not in a_dict)
+// This is not true - and is currently considered a bug.
+// _ = "Operator 'in' should do strict comparison. Number 123 is different from string '123'."
+// assert('123' not in a_dict, _)
+
+assert([] not in a_dict)
+assert({} not in a_dict)
+assert({'key_yay': 'value_yay'} not in a_dict)
+assert(2 not in a_dict)
+assert('č' not in a_dict)
+assert([1] not in a_dict)
+assert(false not in a_dict)

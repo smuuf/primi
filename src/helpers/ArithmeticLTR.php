@@ -6,11 +6,6 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StrictObject;
-use \Smuuf\Primi\ISupportsPower;
-use \Smuuf\Primi\ISupportsAddition;
-use \Smuuf\Primi\ISupportsDivision;
-use \Smuuf\Primi\ISupportsSubtraction;
-use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\BinaryOperationError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
@@ -58,19 +53,19 @@ class ArithmeticLTR extends StrictObject {
 		for ($i = 0; $i < 2; $i++) {
 
 			switch (\true) {
-				case $op === "+" && $a instanceof ISupportsAddition:
+				case $op === "+":
 					$result = $a->doAddition($b);
 					break;
-				case $op === "-" && $a instanceof ISupportsSubtraction:
+				case $op === "-":
 					$result = $a->doSubtraction($b);
 					break;
-				case $op === "*" && $a instanceof ISupportsMultiplication:
+				case $op === "*":
 					$result = $a->doMultiplication($b);
 					break;
-				case $op === "/" && $a instanceof ISupportsDivision:
+				case $op === "/":
 					$result = $a->doDivision($b);
 					break;
-				case $op === "**" && $a instanceof ISupportsPower:
+				case $op === "**":
 					$result = $a->doPower($b);
 					break;
 			}

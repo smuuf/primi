@@ -2,23 +2,12 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsLength;
-use \Smuuf\Primi\ISupportsAddition;
-use \Smuuf\Primi\ISupportsIteration;
-use \Smuuf\Primi\ISupportsKeyAccess;
-use \Smuuf\Primi\ISupportsMultiplication;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\CircularDetector;
 
-class ListValue extends Value implements
-	ISupportsIteration,
-	ISupportsKeyAccess,
-	ISupportsAddition,
-	ISupportsMultiplication,
-	ISupportsLength
-{
+class ListValue extends Value {
 
 	const TYPE = "list";
 
@@ -92,38 +81,38 @@ class ListValue extends Value implements
 		return new \ArrayIterator($this->value);
 	}
 
-	public function arrayGet(string $index): Value {
+	public function itemGet(Value $index): Value {
 
-		if ($index === \null) {
-			throw new RuntimeError("List index must be integer");
+		if (
+			!Func::is_any_of_types($index, NumberValue::class)
+			|| !Func::is_round_int($index->value)
+		) {
+			throw new RuntimeError("List index must be integer.");
 		}
 
-		$normalized = $this->protectedIndex($index);
-		return $this->value[$normalized];
+		// Numbers are internally stored as strings, so get it as PHP integer.
+		return $this->value[$this->protectedIndex((int) $index->value)];
 
 	}
 
-	/**
-	 * Used only via self::getInsertionProxy().
-	 */
-	public function arraySet(?string $index, Value $value) {
+	public function itemSet(?Value $index, Value $value): bool {
 
 		if ($index === \null) {
 			$this->value[] = $value;
-			return;
+			return true;
 		}
 
-		if (!Func::is_round_int((string) $index)) {
-			throw new RuntimeError("List index must be integer");
+		if (
+			!Func::is_any_of_types($index, NumberValue::class)
+			|| !Func::is_round_int($index->value)
+		) {
+			throw new RuntimeError("List index must be integer.");
 		}
 
-		$normalized = $this->protectedIndex((int) $index);
-		$this->value[$normalized] = $value;
+		// Numbers are internally stored as strings, so get it as PHP integer.
+		$this->value[$this->protectedIndex((int) $index->value)] = $value;
+		return true;
 
-	}
-
-	public function getInsertionProxy(?string $index): InsertionProxy {
-		return new InsertionProxy($this, $index);
 	}
 
 	public function doAddition(Value $right): ?Value {
@@ -150,7 +139,7 @@ class ListValue extends Value implements
 		}
 
 		// Helper contains at least one empty array, so array_merge doesn't
-		// complain about empty arguments for PHP<7.4
+		// complain about empty arguments for PHP<7.4.
 		$helper = [[]];
 
 		// Multiplying lists by an integer N returns a new list consisting of
@@ -181,6 +170,15 @@ class ListValue extends Value implements
 		// See https://www.php.net/manual/en/language.oop5.object-comparison.php.
 		return $this->value == $right->value;
 
+	}
+
+	public function doesContain(Value $right): ?bool {
+
+		// Let's see if the needle object is in list value (which is an array of
+		// Primi value objects). Non-strict search allows to match dictionaries
+		// with the same key-values but in different order.
+		return \in_array($right, $this->value);
+;
 	}
 
 	/**

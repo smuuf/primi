@@ -49,6 +49,10 @@ class ComparisonLTR extends StrictObject {
 			case '==':
 			case '!=':
 				return self::evaluateEquality($op, $left, $right);
+			case 'in':
+				return self::evaluateIn($op, $left, $right);
+			case 'not in':
+				return !self::evaluateIn($op, $left, $right);
 			case '>':
 			case '<':
 			case '>=':
@@ -91,6 +95,27 @@ class ComparisonLTR extends StrictObject {
 	): bool {
 
 		$result = $left->hasRelationTo($op, $right);
+
+		// If the left side didn't know how to evaluate relation with the right
+		// side (the hasRelationTo call returned null), the relation is
+		// undefined and thus raises an error.
+		if ($result === \null) {
+			throw new RelationError($op, $left, $right);
+		}
+
+		return $result;
+
+	}
+
+	private static function evaluateIn(
+		string $op,
+		Value $left,
+		Value $right
+	): bool {
+
+		// Note the apparently switched operands: A in B means asking if B
+		// contains A.
+		$result = $right->doesContain($left);
 
 		// If the left side didn't know how to evaluate relation with the right
 		// side (the hasRelationTo call returned null), the relation is

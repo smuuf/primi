@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\ISupportsKeyAccess;
+use Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Structures\Value;
 
 /**
@@ -20,13 +20,21 @@ class InsertionProxy extends \Smuuf\Primi\StrictObject {
 	protected $target;
 	protected $key;
 
-	public function __construct(ISupportsKeyAccess $target, ?string $key) {
+	public function __construct(?Value $key, Value $target) {
 		$this->target = $target;
 		$this->key = $key;
 	}
 
 	public function commit(Value $value) {
-		$this->target->arraySet($this->key, $value);
+
+		$success = $this->target->itemSet($this->key, $value);
+		if ($success === false) {
+			throw new TypeError(sprintf(
+				"Type '%s' does not support item assignment.",
+				$value::TYPE
+			));
+		}
+
 	}
 
 	public function getTarget(): Value {

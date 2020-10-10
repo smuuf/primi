@@ -51,11 +51,11 @@ abstract class Func {
 
 	public static function is_round_int(string $input): bool {
 
-		if (!is_numeric($input)) {
-			return false;
+		if (!\is_numeric($input)) {
+			return \false;
 		}
 
-		return round((float) $input) == $input; // Intentionally ==
+		return \round((float) $input) == $input; // Intentionally ==
 
 		// Regex solution chosen based on 'numeric_int' phpcb benchmark results.
 		// PHP can cast very large or very small numbers to scientific notation,
@@ -127,9 +127,9 @@ abstract class Func {
 		// Otherwise, take the base and multiply it by the exponent.
 		$decimal = $matches[1];
 		$exp = $matches[2];
-		return bcmul(
+		return \bcmul(
 			$decimal,
-			bcpow('10', $exp, NumberValue::PRECISION),
+			\bcpow('10', $exp, NumberValue::PRECISION),
 			NumberValue::PRECISION
 		);
 
@@ -156,11 +156,17 @@ abstract class Func {
 			}
 		}
 
-		throw new TypeError(
+		// Convert Primi value classes names to Primi type names.
+		$expectedNames = \array_map(function($class) {
+			return $class::TYPE;
+		}, $allowedTypes);
+
+		throw new TypeError(sprintf(
+			"Expected '%s' but got '%s' as argument %d",
+			\implode("|", $expectedNames),
 			$arg::TYPE,
-			$allowedTypes,
-			"as argument $index"
-		);
+			$index
+		));
 
 	}
 
@@ -210,7 +216,7 @@ abstract class Func {
 
 		// ArgumentCountError exception does not provide these numbers itself,
 		// so we have to extract it from the internal PHP exception message.
-		if (!preg_match('#(?<passed>\d+)\s+passed.*(?<expected>\d+)\s+expected#', $msg, $m)) {
+		if (!\preg_match('#(?<passed>\d+)\s+passed.*(?<expected>\d+)\s+expected#', $msg, $m)) {
 			return [\null, \null];
 		}
 

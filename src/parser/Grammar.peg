@@ -16,7 +16,7 @@ class CompiledParser extends Parser\Packrat {
 
 	private const RESERVED_WORDS = [
 		'false', 'true', 'null', 'if', 'else', 'return', 'for', 'and', 'or',
-		'function', 'break', 'continue', 'while', 'try', 'catch'
+		'function', 'break', 'continue', 'while', 'try', 'catch', 'not', 'in'
 	];
 
 	/**
@@ -65,7 +65,10 @@ AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
 PowerOperator: "**"
 AssignmentOperator: "="
+#  These comparison operators don't have to be surrounded by whitespace: Eg. '1+inside' is valid
 ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
+#  These comparison operators must be surrounded by whitespace: Eg. '1ininside' is not valid.
+ComparisonOperatorWithWhitespace: "in"  | "not in"
 AndOperator: "and"
 OrOperator: "or"
 NegationOperator: "!"
@@ -78,7 +81,7 @@ Assignment: left:Mutable __ AssignmentOperator __ right:Expression
 CondExpr: true:LogicalOr ( ] "if" __ "(" __ cond:Expression __ ")" __ "else" ] false:LogicalOr )?
 LogicalOr: operands:LogicalAnd ( ] ops:OrOperator ] operands:LogicalAnd )*
 LogicalAnd: operands:Comparison ( ] ops:AndOperator ] operands:Comparison )*
-Comparison: operands:Addition ( __ ops:ComparisonOperator __ operands:Addition )*
+Comparison: operands:Addition ( ( __ ops:ComparisonOperator __ | ops: ] ComparisonOperatorWithWhitespace ] ) operands:Addition )*
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication )*
 Multiplication: operands:Exponentiation ( __ ops:MultiplyOperator __ operands:Exponentiation )*
 Exponentiation: operands:Negation ( __ ops:PowerOperator __ operands:Negation )*
