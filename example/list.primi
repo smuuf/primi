@@ -147,3 +147,9 @@ assert(
 	result == [],
 	'List multiplied by a negative number results in an empty list.'
 )
+
+// Iterating with both indexes and values.
+for (index: word in list_of_words) {
+	assert(type(index) == 'number')
+	assert(type(word) == 'string')
+}

@@ -78,7 +78,12 @@ class ListValue extends Value {
 	}
 
 	public function getIterator(): \Iterator {
-		return new \ArrayIterator($this->value);
+
+		$index = 0; // Always index from zero with incrementing 1.
+		foreach ($this->value as $value) {
+			yield new NumberValue($index++) => $value;
+		}
+
 	}
 
 	public function itemGet(Value $index): Value {

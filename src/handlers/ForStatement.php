@@ -30,12 +30,17 @@ class ForStatement extends SimpleHandler {
 			);
 		}
 
-		$elementVariableName = $node['item']['text'];
+		$keyVariableName = $node['key']['text'] ?? false;
+		$itemVariableName = $node['item']['text'];
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
-		foreach ($iter as $i) {
+		foreach ($iter as $k => $i) {
 
-			$context->setVariable($elementVariableName, $i);
+			if ($keyVariableName) {
+				$context->setVariable($keyVariableName, $k);
+			}
+
+			$context->setVariable($itemVariableName, $i);
 
 			try {
 				$blockHandler::handle($node['right'], $context);

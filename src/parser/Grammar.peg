@@ -99,7 +99,7 @@ FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName 
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
-ForStatement: "for" __ "(" __ item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
+ForStatement: "for" __ "(" __ ( key:VariableName __ ":" __ )? item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 TryStatement: "try" __ main:Block __ "catch" __ onerror:Block
 # &/[rbc]/ - Don't even try any of the subrules if this doesn't start with expected letters.
