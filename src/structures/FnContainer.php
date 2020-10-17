@@ -10,6 +10,9 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\Value;
 
+/**
+ * @internal
+ */
 class FnContainer extends \Smuuf\Primi\StrictObject {
 
 	/** @var \Closure Closure wrapping the function itself. */

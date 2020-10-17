@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Helpers\Func;
@@ -15,6 +17,10 @@ class BoolValue extends Value {
 
 	public function getStringRepr(): string {
 		return $this->value ? 'true' : 'false';
+	}
+
+	public function hash(): string {
+		return $this->value ? '1' : '0';
 	}
 
 	public function isTruthy(): bool {

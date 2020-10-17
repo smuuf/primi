@@ -4,6 +4,8 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\DictValue;
@@ -13,29 +15,36 @@ class DictDefinition extends SimpleHandler {
 	public static function handle(array $node, Context $context) {
 
 		if (empty($node['items'])) {
-			return new DictValue([]);
+			return new DictValue;
 		}
 
-		return new DictValue(self::buildItems($node['items'], $context));
+		try {
+
+			return new DictValue(Func::iterator_as_tuples(
+				self::buildMap($node['items'], $context)
+			));
+
+		} catch (UnhashableTypeException $e) {
+			throw new RuntimeError(\sprintf(
+				"Cannot create dict with key of unhashable type '%s'",
+				$e->getType()
+			), $node);
+		}
 
 	}
 
-	protected static function buildItems(
+	protected static function buildMap(
 		array $itemNodes,
 		Context $context
-	): array {
+	): \Generator {
 
 		$result = [];
 		foreach ($itemNodes as $itemNode) {
 
 			$keyHandler = HandlerFactory::get($itemNode['key']['name']);
-			$key = $keyHandler::handle($itemNode['key'], $context);
-			$key = $key->getInternalValue();
-
 			$valueHandler = HandlerFactory::get($itemNode['value']['name']);
-			$value = $valueHandler::handle($itemNode['value'], $context);
-
-			$result[$key] = $value;
+			yield $keyHandler::handle($itemNode['key'], $context)
+				=> $valueHandler::handle($itemNode['value'], $context);;
 
 		}
 

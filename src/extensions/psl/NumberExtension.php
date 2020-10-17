@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Psl;
 
-use ErrorException;
 use \Smuuf\Primi\Extension;
+use Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\NumberValue;
 
 class NumberExtension extends Extension {
@@ -45,12 +45,11 @@ class NumberExtension extends Extension {
 	}
 
 	/** Returns number `n` squared to the power of `power` */
-	public static function number_pow(NumberValue $n, NumberValue $power = \null): NumberValue {
-		return $n->doPower(
-			$power === \null
-				? new NumberValue('2')
-				: $power
-		);
+	public static function number_pow(
+		NumberValue $n,
+		?NumberValue $power = \null
+	): ?NumberValue { // Can never be null, but so phpstan doesn't complain.
+		return $n->doPower($power ?? new NumberValue('2'));
 	}
 
 	/** Returns the sine of number `n` specified in radians. */
@@ -71,6 +70,17 @@ class NumberExtension extends Extension {
 	/** Returns the arc tangent of number `n` specified in radians. */
 	public static function number_atan(NumberValue $n): NumberValue {
 		return new NumberValue((string) \atan((float) $n->value));
+	}
+
+	/** Returns the remainder (modulo) of the division of the arguments. */
+	public static function number_mod(NumberValue $a, NumberValue $b): NumberValue {
+		return new NumberValue((string) ((int) $a->value % (int) $b->value));
+	}
+
+	/** Return `true` if first argument is divisible by the second argument. */
+	public static function number_divisible_by(NumberValue $a, NumberValue $b): BoolValue {
+		$truth = ((int) $a->value % (int) $b->value) === 0;
+		return new BoolValue($truth);
 	}
 
 }

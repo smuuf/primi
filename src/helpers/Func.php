@@ -25,6 +25,26 @@ abstract class Func {
 	];
 
 	/**
+	 * Returns a generator yielding `[primi key, primi value]` tuples from some
+	 * PHP array. If the key or the value is not an instance of `Value` object,
+	 * it will be converted automatically to a `Value` object.
+	 */
+	public static function php_array_to_dict_pairs(array $array): \Generator {
+		foreach (Func::iterator_as_tuples($array) as [$key, $value]) {
+			yield [Value::buildAutomatic($key),	Value::buildAutomatic($value)];
+		}
+	}
+
+	/**
+	 * Returns a generator yielding `[key, value]` tuples from some iterator.
+	 */
+	public static function iterator_as_tuples(iterable $iter): \Generator {
+		foreach ($iter as $key => $value) {
+			yield [$key, $value];
+		}
+	}
+
+	/**
 	 * Returns false if the passed array has contignuous numeric keys starting
 	 * from 0 (i.e. it is a "list"). Returns true otherwise (i.e. it is a
 	 * "dictionary).

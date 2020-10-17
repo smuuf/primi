@@ -1,4 +1,5 @@
-max_iter = 500000
+max_iter = 50000
+tenth_iter = max_iter / 10
 
 function bench_function_calls() {
 
@@ -11,8 +12,12 @@ function bench_function_calls() {
 	while (c < max_iter) {
 		result = result + adder(c, 1)
 		c = c + 1
+		if (!c.mod(tenth_iter)) {
+			print(':', false)
+		}
 	}
 
+	print('|', false)
 	return c
 
 }
@@ -28,11 +33,47 @@ function bench_regex_matches() {
 	while (c < max_iter) {
 		result = result + (haystack == r"^.*(zač).*(,)?.*?(\.)").to_number()
 		c = c + 1
+		if (!c.mod(tenth_iter)) {
+			print(':', false)
+		}
 	}
 
+	print('|', false)
 	return c
+
+}
+
+function bench_dicts() {
+
+	c = 0
+	result = []
+
+	while (c < max_iter) {
+
+		dict = {
+			'a': true,
+			'b': false,
+			'c': null,
+			'd': 'áhojky, plantážníku!',
+			'keys': ['a', 'b', 'c'],
+		}
+
+		for (name in dict['keys']) {
+			result[] = dict[name]
+		}
+
+		c = c + 1
+		if (!c.mod(tenth_iter)) {
+			print(':', false)
+		}
+
+	}
+
+	print('|', false)
+	return result;
 
 }
 
 bench_function_calls()
 bench_regex_matches()
+bench_dicts()

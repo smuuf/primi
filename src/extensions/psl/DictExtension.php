@@ -3,103 +3,128 @@
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\Ex\TypeError;
+use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\DictValue;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\BoolValue;
-use \Smuuf\Primi\Structures\StringValue;
-use \Smuuf\Primi\Structures\NumberValue;
+use Smuuf\Primi\Structures\ListValue;
 
 class DictExtension extends Extension {
 
-	public static function dict_copy(DictValue $arr): DictValue {
-		return clone $arr;
+	/**
+	 * Returns value stored under `key`, if it in dict, otherwise returns the \
+	 * value of the `default` argument, which is `null` by default, but can \
+	 * optionally be specified.
+	 *
+	 * ```js
+	 * d = {'a': 1, 100: 'yes'}
+	 * d.get('a') == 1
+	 * d.get(100) == 'yes'
+	 * d.get('100') == null
+	 * d.get('100', ['one', 'hundred']) == ['one', 'hundred']
+	 * ```
+	 */
+	public static function dict_get(
+		DictValue $dict,
+		Value $key,
+		?Value $default = \null
+	): Value {
+
+		try {
+			return $dict->value[$key] ?? $default ?? new NullValue;
+		} catch (UnhashableTypeException $e) {
+			throw new TypeError($e->getMessage());
+		}
+
 	}
 
-	public static function dict_reverse(DictValue $arr): Value {
-		return new DictValue(\array_reverse($arr->value));
+	/**
+	 * Return `true` if the value exists in dict. Return `false` otherwise.
+	 *
+	 * ```js
+	 * d = {'a': 1, 100: 'yes'}
+	 * d.has_value(1) == true
+	 * d.has_value('yes') == true
+	 * d.has_value(100) == false
+	 * d.has_value(false) == false
+	 * ```
+	 */
+	public static function dict_has_value(
+		DictValue $dict,
+		Value $needle
+	): BoolValue {
+		return new BoolValue($dict->value->findValue($needle) !== null);
 	}
 
-	public static function dict_random(DictValue $arr): Value {
-		return $arr->value[\array_rand($arr->value)];
+	/**
+	 * Return `true` if the key exists in dict. Return `false` otherwise.
+	 *
+	 * ```js
+	 * d = {'a': 1, 100: 'yes'}
+	 * d.has_key('a') == true
+	 * d.has_key(100) == true
+	 * d.has_key('100') == false
+	 * d.has_key('yes') == false
+	 * ```
+	 */
+	public static function dict_has_key(
+		DictValue $dict,
+		Value $key
+	): BoolValue {
+
+		try {
+			return new BoolValue($dict->doesContain($key));
+		} catch (UnhashableTypeException $e) {
+			throw new TypeError($e->getMessage());
+		}
+
 	}
 
-	public static function dict_shuffle(DictValue $arr): DictValue {
+	public static function dict_values(DictValue $dict): ListValue {
 
-		// Do NOT modify the original array argument (as PHP would do).
-		$copy = clone $arr;
-		\shuffle($copy->value);
+		$list = [];
+		foreach ($dict->getIterator() as $_ => $value) {
+			$list[] = $value;
+		}
 
-		return $copy;
+		return new ListValue($list);
 
 	}
 
-	public static function dict_map(DictValue $arr, FuncValue $fn): DictValue {
+	public static function dict_keys(DictValue $dict): ListValue {
+
+		$list = [];
+		foreach ($dict->getIterator() as $key => $_) {
+			$list[] = $key;
+		}
+
+		return new ListValue($list);
+
+	}
+
+	public static function dict_copy(DictValue $dict): DictValue {
+		return clone $dict;
+	}
+
+	public static function dict_reverse(DictValue $dict): Value {
+		return new DictValue(Func::iterator_as_tuples(
+			$dict->value->getReverseIterator()
+		));
+	}
+
+	public static function dict_map(DictValue $dict, FuncValue $fn): DictValue {
 
 		$result = [];
-		foreach ($arr->value as $k => $v) {
-			$result[$k] = $fn->invoke([$v]);
+		foreach ($dict->value as $k => $v) {
+			$result[] = [$k, $fn->invoke([$v, $k])];
 		}
 
 		return new DictValue($result);
 
-	}
-
-	public static function dict_contains(DictValue $arr, Value $needle): BoolValue {
-
-		// Allow only some value types.
-		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
-
-		// Let's search the $needle object in $arr's value (array of objects).
-		return new BoolValue(\array_search($needle, $arr->value) !== \false);
-
-	}
-
-	public static function dict_has(DictValue $arr, Value $key): BoolValue {
-
-		// Allow only some value types.
-		Func::allow_argument_types(1, $key, StringValue::class, NumberValue::class);
-
-		// Return true if the key exists in this array.
-		return new BoolValue(isset($arr->value[$key->value]));
-
-	}
-
-	public static function dict_get(DictValue $arr, Value $key, Value $default = \null): Value {
-
-		// Allow only some value types.
-		Func::allow_argument_types(1, $key, StringValue::class, NumberValue::class);
-		return $arr->value[$key->value] ?? $default ?? new NullValue;
-
-	}
-
-	public static function dict_number_of(DictValue $arr, Value $needle): NumberValue {
-
-		// Allow only some value types.
-		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
-
-		// We must convert Primi values back to PHP values for the
-		// array_count_values function to work.
-		$phpValues = \array_map(function($item) {
-			return $item->value;
-		}, $arr->value);
-
-		$valuesCount = \array_count_values($phpValues);
-		$count = $valuesCount[$needle->value] ?? 0;
-
-		return new NumberValue((string) $count);
-
-	}
-
-	public static function dict_push(DictValue $arr, Value $value): NullValue {
-		$arr->value[] = $value;
-		return new NullValue;
-	}
-
-	public static function dict_pop(DictValue $arr): Value {
-		return \array_pop($arr->value);
 	}
 
 }

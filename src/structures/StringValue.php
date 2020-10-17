@@ -28,6 +28,10 @@ class StringValue extends Value {
 		return $this->value;
 	}
 
+	public function hash(): string {
+		return md5($this->value);
+	}
+
 	public function getStringRepr(): string {
 
 		// We are about to put double-quotes around the return value,
