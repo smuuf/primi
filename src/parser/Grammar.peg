@@ -44,7 +44,7 @@ NumberLiteral: / -?\d[\d_]*(\.[\d_]+)? /
 BoolLiteral: ( "true" | "false" ) !VariableName
 # Literal for null must NOT be followed by any possible characters representing variable name.
 NullLiteral: "null" !VariableName
-RegexLiteral: "r" core:StringLiteral
+RegexLiteral: "rx" core:StringLiteral
 Nothing: ""
 
 Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral

@@ -274,7 +274,7 @@ result = {};
 // Iterating over list of words built by separating long string with whitespace characters.
 //
 
-splat = constitution.split(r"\s+");
+splat = constitution.split(rx"\s+");
 for (word in splat) {
     if (!result.get('word')) {
         result[word] = 0

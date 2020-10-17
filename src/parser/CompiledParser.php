@@ -143,16 +143,13 @@ function match_NullLiteral ($stack = []) {
 }
 
 
-/* RegexLiteral: "r" core:StringLiteral */
+/* RegexLiteral: "rx" core:StringLiteral */
 protected $match_RegexLiteral_typestack = ['RegexLiteral'];
 function match_RegexLiteral ($stack = []) {
 	$matchrule = "RegexLiteral"; $result = $this->construct($matchrule, $matchrule); $newStack = \array_merge($stack, [$result]);
 	$_18 = \null;
 	do {
-		if (\substr($this->string, $this->pos, 1) === 'r') {
-			$this->pos += 1;
-			$result["text"] .= 'r';
-		}
+		if (($subres = $this->literal('rx')) !== \false) { $result["text"] .= $subres; }
 		else { $_18 = \false; break; }
 		$key = 'match_StringLiteral'; $pos = $this->pos;
 		$subres = $this->packhas($key, $pos)

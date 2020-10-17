@@ -26,13 +26,13 @@ assert(result == "string")
 result = type("ahoj")
 assert(result == "string")
 
-result = type(r"ahoj")
+result = type(rx"ahoj")
 assert(result == "regex")
 
-result = type(r"a[ho]j")
+result = type(rx"a[ho]j")
 assert(result == "regex")
 
-result = type(r"")
+result = type(rx"")
 assert(result == "regex")
 
 result = type(type)
@@ -64,7 +64,7 @@ result = 1.to_bool()
 assert(result == true)
 
 result = 1.to_regex()
-assert(result == r"1")
+assert(result == rx"1")
 
 //
 // Casting strings.
@@ -80,7 +80,7 @@ result = "a".to_bool()
 assert(result == true)
 
 result = "a".to_regex()
-assert(result == r"a")
+assert(result == rx"a")
 
 //
 // Casting bools.
@@ -125,11 +125,11 @@ assert(result == ["a", "b", " ", "c"])
 // Casting regexes.
 //
 
-result = r"a".to_string()
+result = rx"a".to_string()
 assert(result == "a")
 
-result = r"a".to_regex()
-assert(result == r"a")
+result = rx"a".to_regex()
+assert(result == rx"a")
 
 //
 // Examples of invalid casts.
@@ -177,10 +177,10 @@ assert(true_if_error(() => {
 }))
 
 assert(true_if_error(() => {
-	x_regex_to_number = r"a".to_number()
+	x_regex_to_number = rx"a".to_number()
 }))
 
 assert(true_if_error(() => {
-	x_regex_to_list = r"a".to_list()
+	x_regex_to_list = rx"a".to_list()
 }))
 

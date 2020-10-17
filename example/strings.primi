@@ -52,7 +52,7 @@ assert(result == false)
 //
 
 x = "ahojahojahojahojahoj"
-if (x == r'(ahoj){5}') { // A little bit of regex sneaked in here.
+if (x == rx'(ahoj){5}') { // A little bit of regex sneaked in here.
 	x = "nazdárek!"
 }
 assert(x == "nazdárek!", "String vs regex matching")
