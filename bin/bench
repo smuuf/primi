@@ -28,7 +28,7 @@ function measure_time {
     # insufficient precision (only 2 decimal points).
     # So lets measure everything.
     START=`get_precise_time`
-    TMP=`$1 > /dev/null`
+    $1 1>&2
     END=`get_precise_time`
     perl -e "printf('%.8f', $END - $START);"
 }
@@ -41,7 +41,7 @@ function timeit_primi {
     echo `measure_time "./primi $1"`
 }
 
-echo -n "Measuring perf standard ... "
+echo "Measuring perf standard ... "
 PERF_STD=`timeit_php $PERF_STANDARD_PATH`
 echo "$PERF_STD s"
 
@@ -60,7 +60,7 @@ do
         SCORE=$(perl -e "printf('%.2f', $SIMPLE_TIME / $PERF_STD)")
         TOTAL_SCORE=$(perl -e "printf('%.2f', $SCORE + $TOTAL_TIME)")
         TOTAL_TIME=$(perl -e "printf('%.2f', $SIMPLE_TIME + $TOTAL_TIME)")
-        echo "$SIMPLE_TIME s (${SCORE}x slower)";
+        echo -e "\n█ $SIMPLE_TIME s (${SCORE}x slower)";
     done
 done
 

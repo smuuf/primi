@@ -3,8 +3,11 @@
 cd $(dirname $0)
 
 if [[ "$1" == "--coverage" ]]; then
-        # "-p phpdbg"
-        COV="-d memory_limit=-1 --coverage ../coverage.xml --coverage-src ../src/"
+	COV_FORMAT="xml"
+	if [[ "$2" == "html" ]]; then
+		COV_FORMAT="html"
+	fi
+        COV="-d memory_limit=-1 --coverage ../coverage.$COV_FORMAT --coverage-src ../src/"
 fi
 
-./../vendor/nette/tester/src/tester $COV -C ../tests
+./../vendor/nette/tester/src/tester -p phpdbg $COV -C ../tests
