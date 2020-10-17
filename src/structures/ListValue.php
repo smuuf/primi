@@ -30,7 +30,7 @@ class ListValue extends Value {
 
 	}
 
-	public function getLength(): int {
+	public function getLength(): ?int {
 		return \count($this->value);
 	}
 

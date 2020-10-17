@@ -50,6 +50,16 @@ abstract class Value extends ValueFriends {
 		return $this->getStringRepr();
 	}
 
+	// Length.
+
+	/**
+	 * Values can report the length of it (i.e. its internal value).
+	 * Values without any meaningful length can report null (default).
+	 */
+	public function getLength(): ?int {
+		return null;
+	}
+
 	/**
 	 * Returns an unambiguous string representation of internal value.
 	 *
@@ -136,13 +146,19 @@ abstract class Value extends ValueFriends {
 	/**
 	 * Assign a value under specified key into this value.
 	 *
-	 * Must return true on successful assignment and false when assignment is
+	 * Must return true on successful assignment, or `false` if assignment is
 	 * not supported.
 	 */
 	public function itemSet(?Value $key, Value $value): bool {
 		return false;
 	}
 
+	/**
+	 * Returns some internal value by specified key.
+	 *
+	 * Must return some value object, or `null` if such operation is not
+	 * supported.
+	 */
 	public function itemGet(Value $key): ?Value {
 		return null;
 	}
