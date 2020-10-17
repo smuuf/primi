@@ -1,6 +1,8 @@
 <?php
 
 use \Tester\Assert;
+
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\{
 	Value,
 	StringValue,
@@ -84,12 +86,12 @@ $v = new ListValue([
 Assert::same('[1, "xxx", false, r"abc", r"/abc/"]', $v->getStringRepr());
 
 // Dict.
-$v = new DictValue([
-	'aaa' => Value::buildAutomatic(1),
+$v = new DictValue(Func::php_array_to_dict_pairs([
+	'aaa' => 1, // Will be converted to Value behind the scenes.
 	'bbb' => Value::buildAutomatic("xxx"),
 	'ccc' => Value::buildAutomatic(false),
 	'ddd' => new RegexValue('abc'),
 	'___' => new RegexValue('/abc/'),
-]);
+]));
 Assert::same('{"aaa": 1, "bbb": "xxx", "ccc": false, "ddd": r"abc", "___": r"/abc/"}', $v->getStringRepr());
 

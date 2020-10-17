@@ -12,6 +12,10 @@ class NullValue extends Value {
 		return "null";
 	}
 
+	public function hash(): string {
+		return 'n';
+	}
+
 	public function isTruthy(): bool {
 		return \false;
 	}

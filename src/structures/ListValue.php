@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\IndexError;
@@ -16,8 +18,10 @@ class ListValue extends Value {
 	}
 
 	public function __construct(array $items) {
-		$this->value = $items;
-		$this->reindex();
+
+		// Ensuring the list is indexed from 0. Keys will be ignored.
+		$this->value = array_values($items);
+
 	}
 
 	public function __clone() {
@@ -81,7 +85,7 @@ class ListValue extends Value {
 
 		$index = 0; // Always index from zero with incrementing 1.
 		foreach ($this->value as $value) {
-			yield new NumberValue($index++) => $value;
+			yield new NumberValue((string) ($index++)) => $value;
 		}
 
 	}
@@ -140,7 +144,7 @@ class ListValue extends Value {
 
 		// ... and that number must be an integer.
 		if (!Func::is_round_int((string) $right->value)) {
-			return new RuntimeError("List can be only multiplied by an integer.");
+			throw new RuntimeError("List can be only multiplied by an integer.");
 		}
 
 		// Helper contains at least one empty array, so array_merge doesn't
@@ -201,7 +205,7 @@ class ListValue extends Value {
 	 * - index -2 for list with 2 items -> index=<max_index> - 2 (=0)
 	 * - index -3 for list with 2 items -> exception!
 	 */
-	public function protectedIndex(float $index, bool $throw = \true): ?int {
+	public function protectedIndex(int $index, bool $throw = \true): ?int {
 
 		if (!Func::is_round_int((string) $index)) {
 			throw new RuntimeError("Index must be integer");
@@ -215,7 +219,7 @@ class ListValue extends Value {
 		if (!isset($this->value[$normalized])) {
 			if ($throw) {
 				// $index on purpose - show the value user originally used.
-				throw new IndexError($index);
+				throw new IndexError((string) $index);
 			}
 			return \null;
 		}

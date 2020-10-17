@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Psl;
 
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
@@ -78,19 +79,21 @@ class CastingExtension extends Extension {
 
 	public static function to_list(Value $value): ListValue {
 
-		Func::allow_argument_types(
-			0,
-			$value,
-			ListValue::class, StringValue::class
-		);
-
-		if ($value instanceof StringValue) {
-			return new ListValue(iterator_to_array($value->getIterator()));
+		$iter = $value->getIterator();
+		if ($iter === null) {
+			throw new RuntimeError(sprintf(
+				"Type '%s' cannot be casted to list", $value::TYPE
+			));
 		}
 
-		// Allow arrays to be casted to array (no other conversions allowed).
-		// And do NOT break references inside the array (arbitrary decision).
-		return $value;
+		// Some iterators (eg. dict) can return objects as keys and that
+		// would make iterator_to_array() crash with "Illegal offset type",
+		// so we have to make sure only values are taken from the iterator.
+		$values = (function($iter) {
+			foreach ($iter as $v) {	yield $v; }
+		})($iter);
+
+		return new ListValue(iterator_to_array($values));
 
 	}
 

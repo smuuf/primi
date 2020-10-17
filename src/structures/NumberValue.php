@@ -12,8 +12,6 @@ class NumberValue extends Value {
 	const PRECISION = 128;
 	const TYPE = "number";
 
-	public $_ = 0;
-
 	public function __construct(string $value) {
 
 		if ($value === '') {
@@ -34,6 +32,10 @@ class NumberValue extends Value {
 
 	public function getStringRepr(): string {
 		return Func::normalize_decimal($this->value);
+	}
+
+	public function hash(): string {
+		return md5(Func::normalize_decimal($this->value));
 	}
 
 	public function doAddition(Value $right): ?Value {
@@ -89,7 +91,7 @@ class NumberValue extends Value {
 
 		// If the exponent is a fractional decimal, bcmath can't handle it.
 		if (\bccomp(
-				\bcmod($right->value, 1, NumberValue::PRECISION),
+				\bcmod($right->value, '1', NumberValue::PRECISION),
 				'0',
 				self::PRECISION
 			) === -1

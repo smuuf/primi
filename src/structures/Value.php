@@ -2,11 +2,11 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Ex\UnhashableTypeException;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\ValueFriends;
 
-use \Smuuf\Primi\Helpers\Func;
-
-abstract class Value extends ValueFriends {
+abstract class Value extends ValueFriends{
 
 	const TYPE = "any";
 
@@ -17,7 +17,7 @@ abstract class Value extends ValueFriends {
 				return new NullValue;
 			case \is_bool($value):
 				return new BoolValue($value);
-			case is_numeric($value):
+			case \is_numeric($value):
 				return new NumberValue(Func::scientific_to_decimal($value));
 			case \is_callable($value);
 				// Must be before "is_array" case, because some "arrays"
@@ -26,10 +26,12 @@ abstract class Value extends ValueFriends {
 			case \is_array($value):
 				$inner = \array_map([self::class, 'buildAutomatic'], $value);
 				if (Func::is_array_dict($value)) {
-					return new DictValue($inner);
+					return new DictValue(Func::php_array_to_dict_pairs($inner));
 				} else {
 					return new ListValue($inner);
 				}
+			case $value instanceof Value:
+				return $value;
 			default:
 				return new StringValue($value);
 		}
@@ -161,6 +163,16 @@ abstract class Value extends ValueFriends {
 	 */
 	public function itemGet(Value $key): ?Value {
 		return null;
+	}
+
+	/**
+	 * Returns a scalar value to be used as a hash value that can be used as
+	 * scalar key for PHP arrays used in Primi internals.
+	 *
+	 * @throws UnhashableTypeException
+	 */
+	public function hash(): string {
+		throw new UnhashableTypeException(static::TYPE);
 	}
 
 }

@@ -76,7 +76,7 @@ class ListExtension extends Extension {
 	): Value {
 
 		// If the index is not found, this will return null.
-		$index = $list->protectedIndex((float) $index->value, false);
+		$index = $list->protectedIndex((int) $index->value, false);
 		if ($index === null) {
 			return $default ?? new NullValue;
 		}
@@ -105,7 +105,7 @@ class ListExtension extends Extension {
 
 		} else {
 
-			$index = $list->protectedIndex((float) $index->value);
+			$index = $list->protectedIndex((int) $index->value);
 			$popped = $list->value[$index];
 
 			// Remove the item and reindex the list.

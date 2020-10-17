@@ -21,6 +21,13 @@ $loader->addDirectory(__DIR__ . "/src")->register();
 
 $config = parse_arguments($argv);
 
+if ($config['print_process_stats']) {
+	register_shutdown_function(function() {
+		$mb = round(memory_get_peak_usage() / 1e6, 4);
+		echo "Memory peak: " . $mb. " MB\n";
+	});
+}
+
 // Determine the source. Act as REPL if no source was specified.
 if (empty($config['input'])) {
 
@@ -65,7 +72,7 @@ try {
 	$interpreter->run($source);
 	if ($config['print_context']) {
 		foreach ($context->getVariables() as $name => $value) {
-			echo "$name: {$value->getStringValue()}\n";
+			echo "$name: {$value->getStringRepr()}\n";
 		}
 		die;
 	}
@@ -84,6 +91,7 @@ function parse_arguments(array $args): array {
 		'print_context' => false,
 		'input_is_code' => false,
 		'input' => false,
+		'print_process_stats' => false
 	];
 
 	while ($a = array_shift($args)) {
@@ -104,6 +112,10 @@ function parse_arguments(array $args): array {
 			case "--print-context":
 				$config['print_context'] = true;
 			break;
+			case "-ps":
+				case "--process-stats":
+					$config['print_process_stats'] = true;
+				break;
 			default:
 				$config['input'] = $a;
 			break;
@@ -121,9 +133,14 @@ function die_with_help() {
 $header
 Usage: primi [<options>] [<input file>]
 Options:
-  -t, --tree     Only print syntax tree and exit.
-  -s, --source   Treat <input file> as string instead of a source file path.
-  -c, --context  Print contents of primary context after execution.
+  -t, --tree
+    Only print syntax tree and exit.
+  -s, --source
+    Treat <input file> as string instead of a source file path.
+  -c, --context
+    Print contents of primary context after execution.
+  -p, --print-stats
+    Print interpreter stats upon exit.
 
 HELP;
 

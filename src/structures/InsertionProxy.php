@@ -13,6 +13,7 @@ use \Smuuf\Primi\Structures\Value;
  * At that point an insertion proxy is created with KEY being set and
  * VALUE can be "commited" later.
  *
+ * @internal
  * @see \Smuuf\Primi\Handlers\VariableVector
  */
 class InsertionProxy extends \Smuuf\Primi\StrictObject {

@@ -3,6 +3,7 @@
 use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\{
 	StringValue,
 	NumberValue,
@@ -259,11 +260,11 @@ Assert::same('17', get_val($fns['len']->invoke([$unicode])));
 $fnReplace = $fns['string_replace'];
 
 // Test replacing with array of needle-replacement.
-$pairs = new DictValue([
-	"is" => new StringValue("A"),
-	"i" => new StringValue("B"),
+$pairs = new DictValue(Func::php_array_to_dict_pairs([
+	"is" => "A", // Will be automatically converted to Value.
+	"i" => "B", // The same.
 	"." => new StringValue("ščř"),
-]);
+]));
 $result = $fnReplace->invoke([$string, $pairs]);
 Assert::same("thA A a strBngščř", get_val($result));
 // Replacing ordinary strings.

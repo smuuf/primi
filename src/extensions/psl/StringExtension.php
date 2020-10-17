@@ -40,7 +40,7 @@ class StringExtension extends Extension {
 		// Extract PHP values from passed in value objects, because later we
 		// will pass the values to sprintf().
 		$items = \array_map(function($item) {
-			return $item->value;
+			return $item->getStringValue();
 		}, $items);
 
 		$passedCount = \count($items);
@@ -123,13 +123,25 @@ class StringExtension extends Extension {
 		// Replacing using array of search-replace pairs.
 		if ($search instanceof DictValue) {
 
-			$from = \array_keys($search->value);
+			// Extract <from: to> pairs from the dict.
+			$from = [];
+			$to = [];
+			foreach ($search->getIterator() as $key => $value) {
 
-			// Values in DictValues are stored as Value objects,
-			// so we need to extract the real PHP values from it.
-			$to = \array_values(\array_map(function($item) {
-				return $item->value;
-			}, $search->value));
+				if (!$key instanceof StringValue) {
+					$type = $key::TYPE;
+					throw new RuntimeError("Replacement dict key must be a string, '$type' given.");
+				}
+
+				if (!$value instanceof StringValue) {
+					$type = $value::TYPE;
+					throw new RuntimeError("Replacement dict value must be a string, '$type' given.");
+				}
+
+				$from[] = $key->value;
+				$to[] = $value->value;
+
+			}
 
 			return new StringValue(\str_replace($from, $to, $self->value));
 
