@@ -39,8 +39,8 @@ class DictValue extends Value {
 
 	}
 
-	public function getLength(): int {
-		return \count($this->value);
+	public function getLength(): ?int {
+		return $this->value->count();
 	}
 
 	public function isTruthy(): bool {

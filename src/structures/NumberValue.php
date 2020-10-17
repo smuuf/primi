@@ -28,7 +28,7 @@ class NumberValue extends Value {
 		return (bool) $this->value;
 	}
 
-	public function getLength(): int {
+	public function getLength(): ?int {
 		return \strlen($this->value);
 	}
 

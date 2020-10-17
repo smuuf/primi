@@ -16,7 +16,7 @@ class StringValue extends Value {
 		$this->value = $value;
 	}
 
-	public function getLength(): int {
+	public function getLength(): ?int {
 		return \mb_strlen($this->value);
 	}
 
