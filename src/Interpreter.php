@@ -11,7 +11,12 @@ use Smuuf\Primi\Ex\RuntimeError;
  */
 class Interpreter extends \Smuuf\Primi\StrictObject {
 
-	/** @var string Path to temporary directory where ASTs will be cached. */
+	/**
+	 * Path to temporary directory where ASTs will be cached.
+	 * If `null`, AST cache will not be used at all.
+	 *
+	 * @var null|string
+	 */
 	private $tempDir;
 
 	/** @var IContext */
@@ -19,10 +24,13 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 
 	public function __construct(
 		?IContext $context = null,
-		string $tempDir = ''
+		?string $tempDir = null
 	) {
 
-		$this->tempDir = rtrim($tempDir, "/") ?: "";
+		$this->tempDir = $tempDir !== null
+			? rtrim($tempDir, "/")
+			: null;
+
 		$this->context = $context ?: new Context;
 
 		self::applyExtensions($this->context);
@@ -63,14 +71,16 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 
 	public function getSyntaxTree(string $source): array {
 
-		if ($this->tempDir && $ast = $this->loadCachedAST($source)) {
+		if (
+			$this->tempDir !== null
+			&& ($ast = $this->loadCachedAST($source))) {
 			return $ast;
 		}
 
 		$parser = new ParserHandler($source);
 		$ast = $parser->run();
 
-		if ($this->tempDir) {
+		if ($this->tempDir !== null) {
 			$this->storeCachedAST($ast, $source);
 		}
 

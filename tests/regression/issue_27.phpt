@@ -2,9 +2,7 @@
 
 //
 // Resolved issue:
-//
 // Number 0.0000001 is recognized as string 1.0E-8 in the function result.
-//
 // https://github.com/smuuf/primi/issues/27
 //
 
