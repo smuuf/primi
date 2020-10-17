@@ -17,7 +17,7 @@ class RegexExtension extends Extension {
 	 * returns `false`.
 	 *
 	 * ```js
-	 * r"[xyz]+".match("abbcxxyzzdeef") == "xxyzz"
+	 * rx"[xyz]+".match("abbcxxyzzdeef") == "xxyzz"
 	 * ```
 	 */
 	public static function regex_match(

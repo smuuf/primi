@@ -5,7 +5,7 @@
 variables = [
 	['number', 123],
 	['string', 'abc'],
-	['regex', r'\d+'],
+	['regex', rx'\d+'],
 	['list', [1, 2, 3]],
 	['dict', {'a': 'aa', 'b': 'bb', 'c': 'cc'}],
 	['bool', true],

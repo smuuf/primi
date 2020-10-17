@@ -34,6 +34,6 @@ assert(was_error, 'Invoking an array as function raises error')
 
 try {
 	was_error = false
-	r"\d+"()
+	rx"\d+"()
 } catch { was_error = true; }
 assert(was_error, 'Invoking a regex as function raises error')

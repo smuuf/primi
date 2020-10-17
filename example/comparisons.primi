@@ -370,7 +370,7 @@ assert(false not in a_dict)
 all_types = {
 	"number": 0,
 	"string": '',
-	"regex": r'',
+	"regex": rx'',
 	"list": [],
 	"dict": {},
 	"bool": false,
