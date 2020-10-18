@@ -7,7 +7,7 @@ namespace Smuuf\Primi;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\IContext;
-use \Smuuf\Primi\IReadlineDriver;
+use \Smuuf\Primi\ICliIoDriver;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
@@ -24,12 +24,12 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		. "its components. Please report this to the maintainer.";
 
 	/** @var string Full path to readline history file. */
-	private $historyFilePath;
+	private static $historyFilePath;
 
 	/** @var Interpreter */
 	protected $interpreter;
 
-	/** @var IReadlineDriver */
+	/** @var ICliIoDriver */
 	protected $driver;
 
 	/** @var bool */
@@ -37,28 +37,29 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	public function __construct(
 		Interpreter $interpreter,
-		IReadlineDriver $driver = null,
+		ICliIoDriver $driver = null,
 		bool $rawOutput = false
 	) {
 
-		self::printHelp();
+		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
+		$this->rawOutput = $rawOutput;
+		$this->driver = $driver ?: new \Smuuf\Primi\ReadlineCliIoDriver;
+		$this->loadHistory();
+
+		$this->printHelp();
 
 		$this->interpreter = $interpreter;
-		$this->rawOutput = $rawOutput;
-		$this->driver = $driver ?: new \Smuuf\Primi\Readline;
-		$this->historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
-		$this->loadHistory();
 
 	}
 
-	protected static function printHelp() {
+	protected function printHelp() {
 
-		echo Colors::get("\n".
+		$this->driver->output(Colors::get("\n".
 			"{green}Use '{_}exit{green}' to exit.\n" .
 			"Use '{_}?{green}' to view local variables " .
 			"or '{_}??{green}' to view all variables.\n" .
 			"The latest result is stored in '{_}_{green}' variable.\n\n"
-		);
+		));
 
 	}
 
@@ -69,11 +70,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			$this->saveHistory();
 		});
 
-		$this->loop();
+		return $this->loop();
 
 	}
 
-	private function loop() {
+	private function loop(): ?Value {
 
 		$i = $this->interpreter;
 		$c = $i->getContext();
@@ -104,7 +105,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 					break 2;
 			}
 
-			$this->driver->readlineAddHistory($input);
+			$this->driver->addToHistory($input);
 
 			try {
 
@@ -116,15 +117,20 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				$c->setVariable('_', $result);
 
 				$this->printResult($result);
-				echo "\n";
+				$this->driver->output("\n");
 
 			} catch (BaseException $e) {
-				echo Colors::get("{red}ERR:{_} {$e->getMessage()}\n");
+				$this->driver->output(
+					Colors::get("{red}ERR:{_} {$e->getMessage()}\n")
+				);
 			} catch (\Throwable $e) {
 				$this->printPhpTraceback($e);
 			}
 
 		}
+
+		// Return the result of last expression executed, or null.
+		return $result ?? null;
 
 	}
 
@@ -135,11 +141,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			return;
 		}
 
-		printf(
+		$this->driver->output(sprintf(
 			"%s %s\n",
 			$result->getStringRepr(),
 			!$this->rawOutput ? self::formatType($result) : null
-		);
+		));
 
 	}
 
@@ -156,22 +162,24 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	private function printContext(IContext $c, bool $includeGlobals): void {
 
 		foreach ($c->getVariables($includeGlobals) as $name => $value)  {
-			echo "$name: ";
+			$this->driver->output("$name: ");
 			$this->printResult($value);
 		}
 
 	}
 
-	private static function printPhpTraceback(\Throwable $e) {
+	private function printPhpTraceback(\Throwable $e) {
 
 		$type = get_class($e);
 		$msg = Colors::get(sprintf("\n{white}{-red}%s", self::PHP_ERROR_HEADER));
 		$msg .= " $type: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
-		echo $msg;
+		$this->driver->output($msg);
 
 		// Best and easiest to get version of backtrace I can think of.
-		echo $e->getTraceAsString();
-		echo Colors::get(sprintf("\n{yellow}%s\n", self::ERROR_REPORT_PLEA));
+		$this->driver->output($e->getTraceAsString());
+		$this->driver->output(
+			Colors::get(sprintf("\n{yellow}%s\n", self::ERROR_REPORT_PLEA))
+		);
 
 	}
 
@@ -188,7 +196,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				$prompt = self::MULTILINE_PROMPT;
 			}
 
-			$input = $this->driver->readline($prompt);
+			$input = $this->driver->input($prompt);
 			[$incomplete, $trim] = self::isIncompleteInput($input);
 
 			if ($incomplete) {
@@ -239,16 +247,16 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	private function loadHistory() {
 
-		if (is_readable($this->historyFilePath)) {
-			$this->driver->readlineReadHistory($this->historyFilePath);
+		if (is_readable(self::$historyFilePath)) {
+			$this->driver->loadHistory(self::$historyFilePath);
 		}
 
 	}
 
 	private function saveHistory() {
 
-		if (is_writable(dirname($this->historyFilePath))) {
-			$this->driver->readlineWriteHistory($this->historyFilePath);
+		if (is_writable(dirname(self::$historyFilePath))) {
+			$this->driver->storeHistory(self::$historyFilePath);
 		}
 
 	}

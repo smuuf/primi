@@ -9,13 +9,30 @@ class Context extends StrictObject implements IContext {
 
 	// use WatchLifecycle;
 
-	private static $globals = [];
+	private $globals = [];
 	private $vars = [];
+
+	/** @var Interpreter|null Intepreter object using this context. */
+	private $interpreter;
+
+	/**
+	 * Inject the `Interpreter` instance into this `Context`.
+	 */
+	public function setInterpreter(Interpreter $i) {
+		$this->interpreter = $i;
+	}
+
+	/**
+	 * Return the `Interpreter` instance using this `Context`.
+	 */
+	public function getInterpreter(): Interpreter {
+		return $this->interpreter;
+	}
 
 	public function reset(bool $wipeGlobals = false): void {
 
 		if ($wipeGlobals) {
-			self::$globals = [];
+			$this->globals = [];
 		}
 
 		$this->vars = [];
@@ -31,7 +48,7 @@ class Context extends StrictObject implements IContext {
 	) {
 
 		if ($global) {
-			self::$globals[$name] = $value;
+			$this->globals[$name] = $value;
 		} else {
 			$this->vars[$name] = $value;
 		}
@@ -65,8 +82,8 @@ class Context extends StrictObject implements IContext {
 			return $this->vars[$name];
 		}
 
-		if (isset(self::$globals[$name])) {
-			return self::$globals[$name];
+		if (isset($this->globals[$name])) {
+			return $this->globals[$name];
 		}
 
 		// This should be slightly faster than throwing exceptions for undefined
@@ -76,7 +93,7 @@ class Context extends StrictObject implements IContext {
 	}
 
 	public function getVariables(bool $includeGlobals = false): array {
-		return $this->vars + ($includeGlobals ? self::$globals : []);
+		return $this->vars + ($includeGlobals ? $this->globals : []);
 	}
 
 	// Debugging.

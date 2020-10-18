@@ -24,21 +24,21 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 
 	public function __construct(
 		?IContext $context = null,
-		?string $tempDir = null
+		?string $tempDir = null,
+		?ExtensionHub $extHub = null
 	) {
 
 		$this->tempDir = $tempDir !== null
-			? rtrim($tempDir, "/")
+		? rtrim($tempDir, "/")
 			: null;
 
-		$this->context = $context ?: new Context;
+		$context = $context ?: new Context;
+		$extHub = $extHub ?? new ExtensionHub;
+		$extHub->applyToContext($context);
 
-		self::applyExtensions($this->context);
+		$this->context = $context;
+		$this->context->setInterpreter($this);
 
-	}
-
-	protected static function applyExtensions(IContext $context) {
-		$context->setVariables(ExtensionHub::get(), true);
 	}
 
 	public function getContext(): IContext {
@@ -109,15 +109,3 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 	}
 
 }
-
-ExtensionHub::add([
-	\Smuuf\Primi\Psl\StandardExtension::class,
-	\Smuuf\Primi\Psl\StringExtension::class,
-	\Smuuf\Primi\Psl\NumberExtension::class,
-	\Smuuf\Primi\Psl\DictExtension::class,
-	\Smuuf\Primi\Psl\ListExtension::class,
-	\Smuuf\Primi\Psl\RegexExtension::class,
-	\Smuuf\Primi\Psl\BoolExtension::class,
-	\Smuuf\Primi\Psl\CastingExtension::class,
-	\Smuuf\Primi\Psl\HashExtension::class
-]);
