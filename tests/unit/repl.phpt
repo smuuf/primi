@@ -13,25 +13,35 @@ $commands = [
     'b',
 	'a',
 	'?',
-	"(a, b) => {\n    return a + b;\n}",
+	"(a, b) => { return a + b; }",
+	'??',
 	'exit',
 ];
 
 // This is expected output. This will be compared with actual output down below.
+// Asterisk * means that the line can be whatever.
 $expected = [
+	'*', // REPL info
+	'*', // REPL info
+	'*', // REPL info
 	"ERR: Undefined variable 'a' @ line 1, position 0",
 	"1",
 	"ERR: Undefined variable 'b' @ line 1, position 0",
 	"1",
-	"a: 1\n_: 1",
+	"a: 1",
+	"_: 1",
 	"<function: user>",
+	'...', // ... - skip checking the rest.
 ];
 
-$driver = new class implements \Smuuf\Primi\IReadlineDriver {
+$driver = new class implements \Smuuf\Primi\ICliIoDriver {
 
-	public function readline(string $prompt): string {
+	public $lines = [];
+	public $buffer = '';
 
-        global $commands, $counter;
+	public function input(string $prompt): string {
+
+		global $commands, $counter;
 
 		// Each call to this method will return the next item in the
 		// global $commands array. We're simulating user input.
@@ -39,17 +49,28 @@ $driver = new class implements \Smuuf\Primi\IReadlineDriver {
 
 	}
 
-	public function readlineAddHistory(string $item): void {
+	public function output(string $text): void {
+
+		// The mechanism down below ensures that any output will be correcly
+		// divided into separate lines.
+		$this->buffer .= $text;
+
+		if (strpos($this->buffer, "\n") !== false) {
+			$lines = explode("\n", trim($this->buffer));
+			while (($line = array_shift($lines)) !== null) {
+				if (trim($line) === '') {
+					continue;
+				}
+				$this->lines[] = $line;
+			}
+			$this->buffer = '';
+		}
 
 	}
 
-	public function readlineReadHistory(string $path): void {
-
-	}
-
-	public function readlineWriteHistory(string $path): void {
-
-	}
+	public function addToHistory(string $item): void {}
+	public function loadHistory(string $path): void {}
+	public function storeHistory(string $path): void {}
 
 };
 
@@ -58,19 +79,27 @@ $interpreter = new \Smuuf\Primi\Interpreter($context);
 $repl = new \Smuuf\Primi\Repl($interpreter, $driver, true);
 
 // Run prepared commands and catch whole output.
-ob_start();
 $repl->start();
-$buffer = ob_get_clean();
+$output = $driver->lines;
 
-Assert::same(
-	normalize_array($expected),
-	normalize_string($buffer)
-);
+foreach ($expected as $index => $string) {
 
-function normalize_array(array $lines) {
-	return implode(' ', array_map('normalize_string', $lines));
-}
+	// If there's * in the expected array, take whatever output was on that
+	// line - skip this line.
+	if ($string === '*') {
+		continue;
+	}
 
-function normalize_string(string $string) {
-	return trim(preg_replace('~\s+~', " ", $string));
+	// On first encounter of ... in the expected array, skip the rest.
+	if ($string === '...') {
+		break;
+	}
+
+	$line = $index + 1;
+	Assert::same(
+		trim($expected[$index]),
+		trim($output[$index]),
+		"Output line $line match"
+	);
+
 }

@@ -38,7 +38,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function(...$args) use (
+		$closure = function(array $args) use (
 			$node,
 			$definitionContext,
 			$definitionArgs
@@ -94,16 +94,16 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		$rf = new \ReflectionFunction($closure);
 		$paramCount = $rf->getNumberOfParameters();
-		$expectedTypes = Func::get_primi_parameter_types_from_function($rf);
+		$expectedTypes = Func::check_allowed_parameter_types_of_function($rf);
 
-		$wrapper = function(Value ...$args) use ($closure, $expectedTypes) {
+		$wrapper = function(array $args) use ($closure, $expectedTypes) {
 
-			$maxIndex = \count($expectedTypes) - 1;
 			// Do our own type checking prior to the invocation.
 			// If we were only detecting ordinary \TypeErrors by PHP, we
 			// wouldn't be able to tell where exactly those type errors
 			// occured (for example we wouldn't be able to differentiate
 			// argument type errors from return value type errors).
+			$maxIndex = \count($expectedTypes) - 1;
 			foreach ($args as $i => $arg) {
 
 				// Handle variadic parameters - actual number of arguments

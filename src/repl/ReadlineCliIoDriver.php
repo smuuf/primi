@@ -2,15 +2,19 @@
 
 namespace Smuuf\Primi;
 
-class Readline extends \Smuuf\Primi\StrictObject implements IReadlineDriver {
+class ReadlineCliIoDriver extends \Smuuf\Primi\StrictObject implements ICliIoDriver {
 
 	private $lastItem = '';
 
-	public function readline(string $prompt): string {
+	public function input(string $prompt): string {
 		return readline($prompt);
 	}
 
-	public function readlineAddHistory(string $item): void {
+	public function output(string $text): void {
+		echo $text;
+	}
+
+	public function addToHistory(string $item): void {
 
 		// Avoid storing the same value again, if it's the same value
 		// as before.
@@ -23,7 +27,7 @@ class Readline extends \Smuuf\Primi\StrictObject implements IReadlineDriver {
 
 	}
 
-	public function readlineReadHistory(string $path): void {
+	public function loadHistory(string $path): void {
 
 		// Prior to loading the history file:
 		// - Read it,
@@ -37,7 +41,7 @@ class Readline extends \Smuuf\Primi\StrictObject implements IReadlineDriver {
 
 	}
 
-	public function readlineWriteHistory(string $path): void {
+	public function storeHistory(string $path): void {
 		readline_write_history($path);
 	}
 

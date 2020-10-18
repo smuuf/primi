@@ -33,35 +33,49 @@ class CustomExtension extends Extension {
 		throw new BreakException;
 	}
 
+	public function get_var_from_context(StringValue $varName): Value {
+		return $this->getContext()->getVariable($varName->value);
+	}
+
 }
 
+// Create custom extension hub.
+$extHub = new ExtensionHub;
+
 //
-// Adding a not-an-extension.
+// Trying to add a not-an-extension.
 //
 
-// Test that trying to add a extension that doesn't really if an extension..
-Assert::exception(function() {
-	ExtensionHub::add(BadExtension::class);
+Assert::exception(function() use ($extHub) {
+	$extHub->add(BadExtension::class);
 }, EngineError::class, '#not a valid#i');
 
 //
 // Stuff from extensions should be available after resetting main context.
 //
 
-$i = new \Smuuf\Primi\Interpreter;
+$i = new \Smuuf\Primi\Interpreter(null, null, $extHub);
 $c = $i->getContext();
-Assert::falsey($c->getVariables());
-Assert::truthy($c->getVariables(true), 'Default extensions are loaded at this point - those provide globals and thus thecontext is not completely empty');
+Assert::falsey($c->getVariables(), 'User-lang variable pool is empty.');
+Assert::truthy($c->getVariables(true), 'Global variables were loaded from extension and thus the context is not completely empty.');
 
-// This has no effect on existing context - extensions are applied only on new
-// contexts initialized by new interpreter instance.
-ExtensionHub::add(CustomExtension::class);
+//
+// Cannot add new extensions to hub after it was applied to some context.
+//
 
-$i = new \Smuuf\Primi\Interpreter;
+Assert::exception(function() use ($extHub) {
+	$extHub->add(CustomExtension::class);
+}, EngineError::class, '#.*hub.*locked#i');
+
+//
+// Create a new interpreter and extension hub.
+//
+
+// Create custom extension hub.
+$extHub = new ExtensionHub;
+$extHub->add(CustomExtension::class);
+$i = new \Smuuf\Primi\Interpreter(null, null, $extHub);
 $c = $i->getContext();
-Assert::truthy($c->getVariable('funnyreverse'));
-$c->reset();
-Assert::truthy($c->getVariable('funnyreverse'), 'Global functions still exist after resetting the context without the $wipeGlobals argument.');
 
 $src = <<<SRC
 c = 0
@@ -74,13 +88,12 @@ while (c < 10) {
 SRC;
 
 $i->run($src);
-Assert::same(
-	'4',
-	$c->getVariable('c')->getInternalValue(),
-	'Internal representation of number is normalized upon instantiation of the number object.'
-);
-Assert::same(
-	'4',
-	$c->getVariable('c')->getStringValue(),
-	'String representation of number is normalized - extra zeroes are trimmed'
-);
+Assert::same( '4', $c->getVariable('c')->getInternalValue(), 'Internal representation of number is normalized upon instantiation of the number object.');
+Assert::same('4', $c->getVariable('c')->getStringValue(), 'String representation of number is normalized - extra zeroes are trimmed');
+
+$src = <<<SRC
+xxx = get_var_from_context('c')
+SRC;
+
+$i->run($src);
+Assert::same('4', $c->getVariable('xxx')->getStringValue(), "Variable 'xxx' is filled by function accessing the interpreter context.");

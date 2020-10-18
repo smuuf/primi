@@ -7,7 +7,7 @@ namespace Smuuf\Primi\Helpers;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\NumberValue;
 
@@ -251,7 +251,7 @@ abstract class Func {
 	 * In another words: This function returns which Primi types a PHP function
 	 * expects.
 	 */
-	public static function get_primi_parameter_types_from_function(
+	public static function check_allowed_parameter_types_of_function(
 		\ReflectionFunction $rf
 	): array {
 
@@ -260,10 +260,20 @@ abstract class Func {
 
 			$type = $rp->getType();
 
+			// See https://github.com/phpstan/phpstan/issues/3886#issuecomment-699599667
+			if ($type instanceof \ReflectionNamedType) {
+				$typeName = $type->getName();
+			} else {
+				throw new EngineError("Union parameter types not yet supported");
+			}
+
 			// a) No typehint or b) typehint not hinting some Value class
 			// means invalid type - gonna throw exception in that case.
 			$invalidType = $type === \null
-				|| !\is_a($type->getName(), Value::class, \true);
+				|| (
+					!\is_a($typeName, Value::class, \true)
+					&& !\is_a($typeName, Context::class, \true)
+				);
 
 			if ($invalidType) {
 
@@ -277,14 +287,15 @@ abstract class Func {
 				$paramPosition = $rp->getPosition();
 				$fqn = $class ? "{$class}::{$method}()" : "{$method}()";
 
-				$msg = "Parameter '\${$paramName}' (#{$paramPosition}) of "
-					. "{$fqn} doesn't have Primi value class typehint.";
+				$msg = "Parameter {$paramPosition} '\${$paramName}' of type "
+					. "'$typeName' at {$fqn} is not an allowed type for Primi "
+					. "functions";
 
-				throw new RuntimeError($msg);
+				throw new EngineError($msg);
 
 			};
 
-			$types[] = $type->getName();
+			$types[] = $typeName;
 
 		}
 

@@ -2,6 +2,9 @@
 
 namespace Smuuf\Primi\Structures;
 
+/**
+ * @property FnContainer $value Internal map container.
+ */
 class FuncValue extends Value {
 
 	const TYPE = "function";
@@ -24,7 +27,7 @@ class FuncValue extends Value {
 	public function invoke(array $args = []): ?Value {
 
 		// Simply execute the closure with passed arguments.
-		return ($this->value->getClosure())(...$args);
+		return ($this->value->getClosure())($args);
 
 	}
 

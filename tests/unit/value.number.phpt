@@ -2,6 +2,7 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\{
 	Value,
@@ -19,7 +20,9 @@ function get_val(Value $v) {
 	return $v->getInternalValue();
 }
 
-$fns = ExtensionHub::get();
+$extHub = new ExtensionHub;
+$ctx = new Context;
+$extHub->applyToContext($ctx);
 
 $integer = new NumberValue("1");
 $biggerInteger = new NumberValue("20");
@@ -234,49 +237,50 @@ Assert::true($tmp);
 // Methods...
 //
 
-$tmp = $fns['number_abs']->invoke([$integer]);
+$fn = $ctx->getVariable('number_abs');
+$tmp = $fn->invoke([$integer]);
 Assert::same("1", get_val($tmp));
-$tmp = $fns['number_abs']->invoke([$biggerInteger]);
+$tmp = $fn->invoke([$biggerInteger]);
 Assert::same("20", get_val($tmp));
-$tmp = $fns['number_abs']->invoke([$posFloat]);
+$tmp = $fn->invoke([$posFloat]);
 Assert::same("2.3", get_val($tmp));
-$tmp = $fns['number_abs']->invoke([$negFloat]);
+$tmp = $fn->invoke([$negFloat]);
 Assert::same("2.3", get_val($tmp));
 
-$tmp = $fns['number_sqrt']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_sqrt')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_pow']->invoke([$integer, new NumberValue(4)]);
+$tmp = $ctx->getVariable('number_pow')->invoke([$integer, new NumberValue(4)]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_sin']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_sin')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_cos']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_cos')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_tan']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_tan')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_atan']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_atan')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_ceil']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_ceil')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_floor']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_floor')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_round']->invoke([$integer]);
+$tmp = $ctx->getVariable('number_round')->invoke([$integer]);
 Assert::type('string',  get_val($tmp));
 
-$tmp = $fns['number_sqrt']->invoke([$float]);
+$tmp = $ctx->getVariable('number_sqrt')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_pow']->invoke([$float, new NumberValue(4)]);
+$tmp = $ctx->getVariable('number_pow')->invoke([$float, new NumberValue(4)]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_sin']->invoke([$float]);
+$tmp = $ctx->getVariable('number_sin')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_cos']->invoke([$float]);
+$tmp = $ctx->getVariable('number_cos')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_tan']->invoke([$float]);
+$tmp = $ctx->getVariable('number_tan')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_atan']->invoke([$float]);
+$tmp = $ctx->getVariable('number_atan')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_ceil']->invoke([$float]);
+$tmp = $ctx->getVariable('number_ceil')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_floor']->invoke([$float]);
+$tmp = $ctx->getVariable('number_floor')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $fns['number_round']->invoke([$float]);
+$tmp = $ctx->getVariable('number_round')->invoke([$float]);
 Assert::type('string',  get_val($tmp));
