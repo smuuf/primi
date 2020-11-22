@@ -12,7 +12,15 @@ class AnonymousFunction extends SimpleHandler {
 
 	public static function handle(array $node, Context $context) {
 
-		$fn = FnContainer::build($node['body'], $node['params'], $context);
+		$callId = "<anonymous>() (defined at {$node['_l']}:{$node['_p']})";
+
+		$fn = FnContainer::build(
+			$node['body'],
+			$node['params'],
+			$context->getCurrentScope(),
+			$callId
+		);
+
 		return new FuncValue($fn);
 
 	}

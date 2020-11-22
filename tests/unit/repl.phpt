@@ -74,9 +74,7 @@ $driver = new class implements \Smuuf\Primi\ICliIoDriver {
 
 };
 
-$context = new \Smuuf\Primi\Context;
-$interpreter = new \Smuuf\Primi\Interpreter($context);
-$repl = new \Smuuf\Primi\Repl($interpreter, $driver, true);
+$repl = new \Smuuf\Primi\Repl(null, $driver, true);
 
 // Run prepared commands and catch whole output.
 $repl->start();

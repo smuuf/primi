@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\Structures\FuncValue;
@@ -33,25 +33,26 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	 */
 	const DEFAULT_EXTENSIONS = [
 		\Smuuf\Primi\Psl\HashExtension::class,
+		\Smuuf\Primi\Psl\DatetimeExtension::class,
 		PHP_SAPI === 'cli' // CliExtension only in CLI mode.
 			? \Smuuf\Primi\Psl\CliExtension::class
 			: false,
 	];
 
-	/** @var string[] Extensions that are to be applied to runtime context. */
+	/** @var (string|Extension)[] Extensions that are to be applied to runtime scope. */
 	protected $extensions = [];
 
 	/**
-	 * Is `true` if extension hub was already applied to a context and is now
+	 * Is `true` if extension hub was already applied to a scope and is now
 	 * locked. If so, new extensions cannot be added.
 	 *
 	 * @var bool
 	 */
-	private $isLocked = false;
+	private $isLocked = \false;
 
 	public function __construct(
 		array $extensions = [],
-		bool $skipDefault = false
+		bool $skipDefault = \false
 	) {
 
 		// Load essential extensions.
@@ -72,7 +73,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	 * Optionally pass an array of <PHP class> => <Value class> pairs to
 	 * register multiple extensions at once.
 	 */
-	public function add($extClass) {
+	public function add($extClass): void {
 
 		if ($this->isLocked) {
 			throw new EngineError("Extension hub was already applied and is now locked");
@@ -98,17 +99,26 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	/**
 	 * Return array of values provided by all registered extensions.
 	 */
-	public function applyToContext(Context $ctx): void {
+	public function apply(AbstractScope $scope): void {
 
 		// Lock this extension hub to avoid adding new extensions - this
 		// ensures consistency (extensions added to the hub later wouldn't be
-		// available in the context).
-		$this->isLocked = true;
+		// available in the scope).
+		$this->isLocked = \true;
+		$extScope = new Scope;
 
 		foreach ($this->extensions as $ext) {
-			$instance = new $ext($ctx);
-			$ctx->setVariables($this->processExtension($instance), true);
+
+			// Extensions can be class names or instances.
+			$instance = \is_string($ext)
+				? new $ext
+				: $ext;
+
+			$extScope->setVariables($this->processExtension($instance));
+
 		}
+
+		$scope->setParent($extScope);
 
 	}
 

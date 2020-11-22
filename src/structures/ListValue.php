@@ -108,7 +108,7 @@ class ListValue extends Value {
 
 		if ($index === \null) {
 			$this->value[] = $value;
-			return true;
+			return \true;
 		}
 
 		if (
@@ -120,7 +120,7 @@ class ListValue extends Value {
 
 		// Numbers are internally stored as strings, so get it as PHP integer.
 		$this->value[$this->protectedIndex((int) $index->value)] = $value;
-		return true;
+		return \true;
 
 	}
 

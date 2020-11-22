@@ -3,108 +3,85 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\StrictObject;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Structures\Value;
 
-class Context extends StrictObject implements IContext {
+class Context extends StrictObject {
 
-	// use WatchLifecycle;
+	/** @var string[] Call stack list. */
+	protected $callStack = [];
 
-	private $globals = [];
-	private $vars = [];
-
-	/** @var Interpreter|null Intepreter object using this context. */
-	private $interpreter;
+	/** @var AbstractScope[] Scope stack list. */
+	protected $scopeStack = [];
 
 	/**
-	 * Inject the `Interpreter` instance into this `Context`.
+	 * Direct reference to the scope on the top of the stack.
+	 * @var AbstractScope
 	 */
-	public function setInterpreter(Interpreter $i) {
-		$this->interpreter = $i;
+	protected $currentScope = \null;
+
+	public function __construct(?AbstractScope $scope = \null) {
+		$this->pushScope($scope ?? new Scope);
 	}
 
-	/**
-	 * Return the `Interpreter` instance using this `Context`.
-	 */
-	public function getInterpreter(): Interpreter {
-		return $this->interpreter;
+	// Callstack management.
+
+	public function getCallStack(): array {
+		return $this->callStack;
 	}
 
-	public function reset(bool $wipeGlobals = false): void {
+	public function getTraceback(): array {
+		return $this->callStack;
+	}
 
-		if ($wipeGlobals) {
-			$this->globals = [];
+	public function pushCall(string $callId): void {
+		$this->callStack[] = $callId;
+	}
+
+	public function popCall(): void {
+		\array_pop($this->callStack);
+	}
+
+	// Scope management.
+
+	public function getCurrentScope(): AbstractScope {
+		return $this->currentScope;
+	}
+
+	public function pushScope(AbstractScope $scope): void {
+		$this->scopeStack[] = $scope;
+		$this->currentScope = $scope;
+	}
+
+	public function popScope(): void {
+
+		if (\count($this->scopeStack) === 1) {
+			// At least one scope needs to be present at all times.
+			throw new EngineError("Cannot pop last scope");
 		}
 
-		$this->vars = [];
+		\array_pop($this->scopeStack);
+		$this->currentScope = \end($this->scopeStack);
 
 	}
 
-	// Variables.
-
-	public function setVariable(
-		string $name,
-		Value $value,
-		bool $global = false
-	) {
-
-		if ($global) {
-			$this->globals[$name] = $value;
-		} else {
-			$this->vars[$name] = $value;
-		}
-
-	}
-
-	/**
-	 * Set multiple variables to the context using an array as parameter.
-	 *
-	 * @param array<string, Value> $pairs
-	 */
-	public function setVariables(array $pairs, bool $global = false) {
-
-		foreach ($pairs as $name => $value) {
-
-			if (!$value instanceof Value) {
-				$value = Value::buildAutomatic($value);
-			}
-
-			$this->setVariable($name, $value, $global);
-
-		}
-
-	}
+	// Direct access to the current scope - which is the one on the top of the
+	// stack (compatibility with Primi 0.4).
 
 	public function getVariable(string $name): ?Value {
-
-		// Variables of current context instance have higher priority than
-		// global variables.
-		if (isset($this->vars[$name])) {
-			return $this->vars[$name];
-		}
-
-		if (isset($this->globals[$name])) {
-			return $this->globals[$name];
-		}
-
-		// This should be slightly faster than throwing exceptions for undefined
-		// variables.
-		return null;
-
+		return $this->currentScope->getVariable($name);
 	}
 
-	public function getVariables(bool $includeGlobals = false): array {
-		return $this->vars + ($includeGlobals ? $this->globals : []);
+	public function getVariables(bool $includeParents = \false): array {
+		return $this->currentScope->getVariables($includeParents);
 	}
 
-	// Debugging.
+	public function setVariable(string $name, Value $value) {
+		$this->currentScope->setVariable($name, $value);
+	}
 
-	public function ___debug_zvals() {
-
-		if (extension_loaded('xdebug_debug_zval')) {
-			$tmp = $this;
-			xdebug_debug_zval('tmp');
-		}
-
+	public function setVariables(array $pairs) {
+		$this->currentScope->setVariables($pairs);
 	}
 
 }

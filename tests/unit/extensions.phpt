@@ -2,6 +2,7 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Ex\EngineError;
@@ -33,8 +34,11 @@ class CustomExtension extends Extension {
 		throw new BreakException;
 	}
 
-	public function get_var_from_context(StringValue $varName): Value {
-		return $this->getContext()->getVariable($varName->value);
+	/**
+	 * @injectContext
+	 */
+	public function get_var_from_context(Context $ctx, StringValue $varName): Value {
+		return $ctx->getVariable($varName->value);
 	}
 
 }
@@ -55,9 +59,9 @@ Assert::exception(function() use ($extHub) {
 //
 
 $i = new \Smuuf\Primi\Interpreter(null, null, $extHub);
-$c = $i->getContext();
-Assert::falsey($c->getVariables(), 'User-lang variable pool is empty.');
-Assert::truthy($c->getVariables(true), 'Global variables were loaded from extension and thus the context is not completely empty.');
+$s = $i->getCurrentScope();
+Assert::falsey($s->getVariables(), 'User-lang variable pool is empty.');
+Assert::truthy($s->getVariables(true), 'Global variables were loaded from extension and thus the context is not completely empty.');
 
 //
 // Cannot add new extensions to hub after it was applied to some context.
@@ -75,7 +79,7 @@ Assert::exception(function() use ($extHub) {
 $extHub = new ExtensionHub;
 $extHub->add(CustomExtension::class);
 $i = new \Smuuf\Primi\Interpreter(null, null, $extHub);
-$c = $i->getContext();
+$s = $i->getCurrentScope();
 
 $src = <<<SRC
 c = 0
@@ -88,12 +92,12 @@ while (c < 10) {
 SRC;
 
 $i->run($src);
-Assert::same( '4', $c->getVariable('c')->getInternalValue(), 'Internal representation of number is normalized upon instantiation of the number object.');
-Assert::same('4', $c->getVariable('c')->getStringValue(), 'String representation of number is normalized - extra zeroes are trimmed');
+Assert::same( '4', $s->getVariable('c')->getInternalValue(), 'Internal representation of number is normalized upon instantiation of the number object.');
+Assert::same('4', $s->getVariable('c')->getStringValue(), 'String representation of number is normalized - extra zeroes are trimmed');
 
 $src = <<<SRC
 xxx = get_var_from_context('c')
 SRC;
 
 $i->run($src);
-Assert::same('4', $c->getVariable('xxx')->getStringValue(), "Variable 'xxx' is filled by function accessing the interpreter context.");
+Assert::same('4', $s->getVariable('xxx')->getStringValue(), "Variable 'xxx' is filled by function accessing the interpreter context.");

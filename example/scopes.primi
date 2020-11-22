@@ -1,0 +1,33 @@
+global_a = 1
+
+function fun_a(local_a, call) {
+
+	global_a = global_a + 1
+	local_a = local_a + 1
+	//print('fun_a: global = {}, local_a = {}'.format(global_a, local_a))
+
+	fn_b = function(local_b) {
+		global_a = global_a + 1
+		local_a = local_a + 1
+		local_b = local_b + 1
+		//print('fun_inner: global = {}, local_a = {}, local_b = {}'.format(global_a, local_a, local_b))
+	}
+
+	if (call) {
+		fn_b(local_a)
+	}
+
+	return fn_b
+
+}
+
+assert(global_a == 1)
+
+inner_fn_b = fun_a(global_a, false)
+assert(global_a == 1, 'Added global_a + 1 inside function fun_a, but global_a remained unchanged in global scope')
+
+inner_fn_b(global_a)
+assert(global_a == 1, 'Added global_a + 1 inside function fn_b/inner_fn_b, but global_a remained unchanged in global scope')
+
+fun_a(0, true)
+assert(global_a == 1, 'global_a remained unchanged in global scope')

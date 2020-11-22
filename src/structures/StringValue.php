@@ -116,7 +116,7 @@ class StringValue extends Value {
 				return $l <= $r;
 		}
 
-		return null;
+		return \null;
 
 	}
 

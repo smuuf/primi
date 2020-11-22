@@ -225,7 +225,7 @@ abstract class Func {
 	}
 
 	/**
-	 * Parse \ArgumentCountError's message and return a tuple of integers
+	 * Parse `\ArgumentCountError` message and return a tuple of integers
 	 * representing:
 	 * 1. Number of arguments passed.
 	 * 2. Number of arguments expected.
@@ -241,6 +241,26 @@ abstract class Func {
 		}
 
 		return [$m['passed'], $m['expected']];
+
+	}
+
+	/**
+	 * Parse `\TypeError` *argument type* message and return a tuple representing:
+	 * 1. Index of wrong argument.
+	 * 2. Passed type as Primi type name.
+	 * 3. Expected type as Primi type name.
+	 */
+	public static function parse_argument_type_error(\TypeError $e): array {
+
+		$msg = $e->getMessage();
+
+		// ArgumentCountError exception does not provide these numbers itself,
+		// so we have to extract it from the internal PHP exception message.
+		if (!\preg_match('#Argument (?<index>\d+).*of (?<expected>[\\\\a-z]+)(?: or null)?, instance of (?<passed>[\\\\a-z]+) given#i', $msg, $m)) {
+			return [\null, \null, \null];
+		}
+
+		return [$m['index'], ($m['passed'])::TYPE, ($m['expected'])::TYPE];
 
 	}
 
@@ -267,20 +287,20 @@ abstract class Func {
 				throw new EngineError("Union parameter types not yet supported");
 			}
 
-			// a) No typehint or b) typehint not hinting some Value class
-			// means invalid type - gonna throw exception in that case.
-			$invalidType = $type === \null
-				|| (
-					!\is_a($typeName, Value::class, \true)
-					&& !\is_a($typeName, Context::class, \true)
-				);
+			// Detect invalid type for parameter:
+			// a) Invalid if  typehint is not present at all.
+			// b) Invalid if not hinting some Value class or its descendants.
+			// c) Invalid if not hinting the Context class.
+			$invalid = false;
+			$invalid |= $type === \null;
+			$invalid |=
+				!\is_a($typeName, Value::class, \true)
+				&& !\is_a($typeName, Context::class, \true);
 
-			if ($invalidType) {
+			if ($invalid) {
 
 				$declClass = $rp->getDeclaringClass();
-				$class = $declClass
-					? $declClass->getName()
-					: \null;
+				$class = $declClass	? $declClass->getName()	: \null;
 
 				$method = $rp->getDeclaringFunction()->getName();
 				$paramName = $rp->getName();
@@ -309,7 +329,7 @@ abstract class Func {
 
 		$firstOperand = $operands[0];
 		$handler = HandlerFactory::get($firstOperand['name']);
-		$first = $handler::handle($firstOperand, $context);
+		$first = $handler::run($firstOperand, $context);
 
 		yield $first;
 
@@ -320,13 +340,22 @@ abstract class Func {
 
 			$nextOperand = $operands[$i];
 			$handler = HandlerFactory::get($nextOperand['name']);
-			$next = $handler::handle($nextOperand, $context);
+			$next = $handler::run($nextOperand, $context);
 
 			// Extract the text of the assigned operator node.
 			$op = $node['ops'][$i - 1]['text'];
 
 			yield [$op, $next];
 
+		}
+
+	}
+
+	public static function enumerate(iterable $it, int $start = 0) {
+
+		$count = $start;
+		foreach ($it as $k => $v) {
+			yield ++$count => [$k, $v];
 		}
 
 	}
