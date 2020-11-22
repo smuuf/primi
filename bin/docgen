@@ -2,4 +2,4 @@
 
 cd `dirname $0`/..
 
-php ./docs/gendoc/gendoc.php
+php ./tools/docgen/docgen.php

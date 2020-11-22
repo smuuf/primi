@@ -4,6 +4,19 @@
 require __DIR__ . "/../../vendor/autoload.php";
 $bench = new \Smuuf\Phpcb\PhpBenchmark(new \Smuuf\Phpcb\SerialEngine);
 
+function shuffle_assoc(array $array): array {
+
+	$keys = array_keys($array);
+	shuffle($keys);
+
+	foreach($keys as $key) {
+		$new[$key] = $array[$key];
+	}
+
+	return $new;
+
+}
+
 $arr = [
 	[1, 2, 3, 4, 5, 6, 7, 8, 9],
 	[1, 2, 3, 4, 5, 6, 7, 8, 9, 'c'],
@@ -15,6 +28,13 @@ $arr = [
 	array_merge(...[range(0, 10000), ['a' => 1, 'b' => 2]]),
 	[1, 2, 3, 4, 'c' => true, 6, 7, 8, 9],
 ];
+
+$megaarr = [];
+foreach ($arr as $a) {
+	foreach (range(1, 100) as $_) {
+		$megaarr[] = shuffle_assoc($a);
+	}
+}
 
 function is_array_dict_A(array $input): bool {
 
@@ -63,28 +83,28 @@ function is_array_dict_C(array $input): bool {
 
 }
 
-$bench->addBench(function() use ($arr) {
+$bench->addBench(function() use ($megaarr) {
 	$results = [];
-	foreach ($arr as $a) {
+	foreach ($megaarr as $a) {
 		$results[] = is_array_dict_A($a);
 	}
 	return $results;
 });
 
-$bench->addBench(function() use ($arr) {
+$bench->addBench(function() use ($megaarr) {
 	$results = [];
-	foreach ($arr as $a) {
+	foreach ($megaarr as $a) {
 		$results[] = is_array_dict_B($a);
 	}
 	return $results;
 });
 
-$bench->addBench(function() use ($arr) {
+$bench->addBench(function() use ($megaarr) {
 	$results = [];
-	foreach ($arr as $a) {
+	foreach ($megaarr as $a) {
 		$results[] = is_array_dict_C($a);
 	}
 	return $results;
 });
 
-$bench->run(1e3);
+$bench->run(50);
