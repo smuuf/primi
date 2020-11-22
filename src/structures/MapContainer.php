@@ -25,7 +25,10 @@ class MapContainer extends \Smuuf\Primi\StrictObject implements
 	\Countable
 {
 
+	/** @var Value[] Storage for dict values. */
 	private $values = [];
+
+	/** @var Value[] Storage for key values. */
 	private $keys = [];
 
 	/**
@@ -104,8 +107,8 @@ class MapContainer extends \Smuuf\Primi\StrictObject implements
 		// Non-strict on purpose, so that different value instances having
 		// the same internal value are considered to be equal.
 		$scalarKey = \array_search($value, $this->values);
-		if ($scalarKey === false) {
-			return null;
+		if ($scalarKey === \false) {
+			return \null;
 		}
 
 		return $this->keys[$scalarKey];
@@ -126,14 +129,14 @@ class MapContainer extends \Smuuf\Primi\StrictObject implements
 	}
 
 	public function get(Value $key): ?Value {
-		return $this->values[self::buildScalarKey($key)] ?? null;
+		return $this->values[self::buildScalarKey($key)] ?? \null;
 	}
 
 	/**
 	 * Return number of items in the map.
 	 */
 	public function count(): int {
-		return count($this->values);
+		return \count($this->values);
 	}
 
 	public function getIterator(): \Generator {
@@ -146,7 +149,7 @@ class MapContainer extends \Smuuf\Primi\StrictObject implements
 
 	public function getReverseIterator(): \Generator {
 
-		$reversed = array_reverse($this->values, true);
+		$reversed = \array_reverse($this->values, \true);
 		foreach ($reversed as $scalarKey => $value) {
 			yield $this->keys[$scalarKey] => $value;
 		}

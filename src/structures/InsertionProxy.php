@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use Smuuf\Primi\Ex\TypeError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Structures\Value;
 
 /**
@@ -29,7 +29,7 @@ class InsertionProxy extends \Smuuf\Primi\StrictObject {
 	public function commit(Value $value) {
 
 		$success = $this->target->itemSet($this->key, $value);
-		if ($success === false) {
+		if ($success === \false) {
 			throw new TypeError(sprintf(
 				"Type '%s' does not support item assignment.",
 				$value::TYPE

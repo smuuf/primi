@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Colors;
-use \Smuuf\Primi\Interpreter;
-use \Smuuf\Primi\IContext;
+use \Smuuf\Primi\AbstractScope;
 use \Smuuf\Primi\ICliIoDriver;
+use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
@@ -15,40 +15,53 @@ use \Smuuf\Primi\Structures\NullValue;
 
 class Repl extends \Smuuf\Primi\StrictObject {
 
-	const HISTORY_FILE = '.primi_history';
-	const PRIMARY_PROMPT = '>>> ';
-	const MULTILINE_PROMPT = '... ';
+	private const DEFAULT_REPL_ID = "<repl>";
+
+	private const HISTORY_FILE = '.primi_history';
+	private const PRIMARY_PROMPT = '>>> ';
+	private const MULTILINE_PROMPT = '... ';
 
 	private const PHP_ERROR_HEADER = "PHP ERROR:";
-	private const ERROR_REPORT_PLEA = "This is probably a bug in Primi or any of "
-		. "its components. Please report this to the maintainer.";
+	private const ERROR_REPORT_PLEA =
+		"This is probably a bug in Primi or any "
+		. "of its components. Please report this to the maintainer.";
 
 	/** @var string Full path to readline history file. */
 	private static $historyFilePath;
 
-	/** @var Interpreter */
-	protected $interpreter;
+	/** @var string REPL identifies itself in callstack with this string. */
+	protected $replId;
 
-	/** @var ICliIoDriver */
+	/**
+	 * IO driver used for user input/output.
+	 *
+	 * This is handy for our unit tests, so we can simulate user input and
+	 * gather REPL output.
+	 *
+	 * @var ICliIoDriver
+	 */
 	protected $driver;
 
-	/** @var bool */
-	protected $rawOutput = false;
+	/**
+	 * If `true`, values are printed out without their unique ID.
+	 * This is handy for our unit tests, because unique IDs are pretty random
+	 * and that makes it complicated to test stable output.
+	 *
+	 * @var bool
+	 */
+	protected $printRawValues = false;
 
 	public function __construct(
-		Interpreter $interpreter,
+		?string $replId = null,
 		ICliIoDriver $driver = null,
-		bool $rawOutput = false
+		bool $printRawValues = false
 	) {
 
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
-		$this->rawOutput = $rawOutput;
-		$this->driver = $driver ?: new \Smuuf\Primi\ReadlineCliIoDriver;
-		$this->loadHistory();
 
-		$this->printHelp();
-
-		$this->interpreter = $interpreter;
+		$this->printRawValues = $printRawValues;
+		$this->replId = $replId ?? self::DEFAULT_REPL_ID;
+		$this->driver = $driver ?? new \Smuuf\Primi\ReadlineCliIoDriver;
 
 	}
 
@@ -56,46 +69,81 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 		$this->driver->output(Colors::get("\n".
 			"{green}Use '{_}exit{green}' to exit.\n" .
-			"Use '{_}?{green}' to view local variables " .
-			"or '{_}??{green}' to view all variables.\n" .
-			"The latest result is stored in '{_}_{green}' variable.\n\n"
+			"Use '{_}?{green}' to view local variables, " .
+			"'{_}??{green}' to view all variables, " .
+			"'{_}?tb{green}' to see traceback. \n" .
+			"The latest result is stored in '{_}_{green}' variable.\n"
 		));
 
 	}
 
-	public function start() {
+	/**
+	 * Main REPL entrypoint.
+	 *
+	 * Creates a new instance of interpreter and runs it with a Context, if it
+	 * was specified as argument. Otherwise the interpreter creates its own
+	 * new context and REPL operates within that one.
+	 */
+	public function start(?Context $ctx = null): ?Value {
+
+		$this->printHelp();
+		$this->loadHistory();
 
 		// Allow saving history even on serious errors.
 		register_shutdown_function(function(): void {
 			$this->saveHistory();
 		});
 
-		return $this->loop();
+		// If context was not provided, create and use a new one.
+		$ctx = $ctx ?? new Context(new Scope);
+		$ctx->pushCall($this->replId);
+
+		// Print out level (position in call stack).
+		$this->driver->output(self::getLevelInfo($ctx, true));
+		$retval = $this->loop(new RawInterpreter, $ctx);
+
+		return $retval;
 
 	}
 
-	private function loop(): ?Value {
+	private function loop(RawInterpreter $intepreter, Context $ctx): ?Value {
 
-		$i = $this->interpreter;
-		$c = $i->getContext();
+		$scope = $ctx->getCurrentScope();
 
-		readline_completion_function(function() use ($c) {
-			return array_keys($c->getVariables());
+		readline_completion_function(function() use ($scope) {
+			return array_keys($scope->getVariables(true));
 		});
 
+		$lastValidInput = false;
 		while (true) {
 
-			$input = $this->gatherLines();
+			// Add last valid input into history.
+			// Doing it at this point allows us to easily do both:
+			// a) Skip adding expressions to history if it resulted in syntax
+			// error.
+			// b) Add control commands (the `switch` statement below) to
+			// history without having to call `addToHistory` after every `case`.
+			if ($lastValidInput !== false) {
+				$this->driver->addToHistory($lastValidInput);
+			}
+
+			$this->driver->output("\n");
+			$input = $this->gatherLines($ctx);
+			$lastValidInput = $input;
 
 			switch (trim($input)) {
 				case '?':
 					// Print defined variables.
-					$this->printContext($c, false);
+					$this->printScope($scope, false);
+					continue 2;
+				case '?tb':
+					// Print traceback
+					$this->printTraceback($ctx);
 					continue 2;
 				case '??':
-					// Print all variables, including global ones provided by
-					// extensions.
-					$this->printContext($c, true);
+					// Print all variables, including the ones from parent
+					// scopes (i.e. even from extensions).
+					$this->printScope($scope, true);
 					continue 2;
 				case '':
 					// Ignore (skip) empty input.
@@ -105,24 +153,28 @@ class Repl extends \Smuuf\Primi\StrictObject {
 					break 2;
 			}
 
-			$this->driver->addToHistory($input);
-
 			try {
 
 				// Ensure that there's a semicolon at the end.
 				// This way users won't have to put it in there themselves.
-				$result = $i->run("$input;");
+				$result = $intepreter->execute("$input;", $ctx);
 
 				// Store the result into _ variable for quick'n'easy retrieval.
-				$c->setVariable('_', $result);
+				$scope->setVariable('_', $result);
 
 				$this->printResult($result);
-				$this->driver->output("\n");
 
 			} catch (BaseException $e) {
+
 				$this->driver->output(
 					Colors::get("{red}ERR:{_} {$e->getMessage()}\n")
 				);
+
+				// Input resulted in syntax error - won't be added to history.
+				if ($e instanceof SyntaxError) {
+					$lastValidInput = false;
+				}
+
 			} catch (\Throwable $e) {
 				$this->printPhpTraceback($e);
 			}
@@ -134,40 +186,67 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private function printResult(Value $result = null): void {
+	/**
+	 * Pretty-prints out a result of a Primi expression. No result or null
+	 * values are not to be printed.
+	 */
+	private function printResult(?Value $result = null): void {
 
-		// Do not print empty or NullValue results.
+		// Do not print out empty or NullValue results.
 		if ($result === null || $result instanceof NullValue) {
 			return;
 		}
 
+		$this->printValue($result);
+
+	}
+
+	/**
+	 * Pretty-prints out a Value representation with type info.
+	 */
+	private function printValue(Value $result): void {
+
 		$this->driver->output(sprintf(
 			"%s %s\n",
 			$result->getStringRepr(),
-			!$this->rawOutput ? self::formatType($result) : null
+			!$this->printRawValues ? self::formatType($result) : null
 		));
 
 	}
 
-	private static function formatType(Value $value) {
+	/**
+	 * Pretty-prints out all variables of a scope (with or without variables
+	 * from parent scopes).
+	 */
+	private function printScope(AbstractScope $c, bool $includeParents): void {
 
-		return Colors::get(sprintf(
-			"{darkgrey}(%s %s){_}",
-			$value::TYPE,
-			Func::object_hash($value)
-		));
-
-	}
-
-	private function printContext(IContext $c, bool $includeGlobals): void {
-
-		foreach ($c->getVariables($includeGlobals) as $name => $value)  {
-			$this->driver->output("$name: ");
-			$this->printResult($value);
+		foreach ($c->getVariables($includeParents) as $name => $value)  {
+			$this->driver->output(Colors::get("{lightblue}$name{_}: "));
+			$this->printValue($value);
 		}
 
 	}
 
+	/**
+	 * Pretty-prints out traceback from a context.
+	 */
+	private function printTraceback(Context $ctx): void {
+
+		$this->driver->output(Colors::get(
+			"{yellow}Traceback:{_}\n"
+		));
+
+		foreach ($ctx->getTraceback() as $level => $callId)  {
+			$this->driver->output(Colors::get(
+				"{yellow}[$level]{_} $callId\n"
+			));
+		}
+
+	}
+
+	/**
+	 * Pretty-prints out traceback from a PHP exception.
+	 */
 	private function printPhpTraceback(\Throwable $e) {
 
 		$type = get_class($e);
@@ -183,10 +262,17 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private function gatherLines(): string {
+	/**
+	 * Gathers and returns user input for REPL.
+	 *
+	 * Uses a "very sophisticated" way of allowing the user to enter multi-line
+	 * input.
+	 */
+	private function gatherLines(Context $ctx): string {
 
 		$gathering = false;
 		$lines = '';
+		$levelInfo = self::getLevelInfo($ctx);
 
 		while (true) {
 
@@ -194,6 +280,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				$prompt = self::PRIMARY_PROMPT;
 			} else {
 				$prompt = self::MULTILINE_PROMPT;
+			}
+
+			// Display level of nesting - number of items in current call stack.
+			if ($levelInfo) {
+				$this->driver->output("{$levelInfo}\n");
 			}
 
 			$input = $this->driver->input($prompt);
@@ -221,7 +312,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private function isIncompleteInput(string $input) {
+	private static function isIncompleteInput(string $input) {
 
 		if (empty(trim($input))) {
 			return [false, 0];
@@ -258,6 +349,37 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		if (is_writable(dirname(self::$historyFilePath))) {
 			$this->driver->storeHistory(self::$historyFilePath);
 		}
+
+	}
+
+
+	private static function getLevelInfo(
+		Context $ctx,
+		bool $full = false
+	): string {
+
+		$level = count($ctx->getCallStack());
+
+		if ($level === 0) {
+			return '';
+		}
+
+		$out = "L +{$level}";
+		if ($full) {
+			$out = "Entering level {$out}.\n";
+		}
+
+		return Colors::get("{darkgrey}{$out}{_}");
+
+	}
+
+	private static function formatType(Value $value) {
+
+		return Colors::get(sprintf(
+			"{darkgrey}(%s %s){_}",
+			$value::TYPE,
+			Func::object_hash($value)
+		));
 
 	}
 

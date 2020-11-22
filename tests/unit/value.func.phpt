@@ -2,6 +2,7 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Structures\{
 	FuncValue,
@@ -15,6 +16,8 @@ require __DIR__ . '/../bootstrap.php';
 function get_val(Value $v) {
 	return $v->getInternalValue();
 }
+
+$ctx = new Context;
 
 $one = new NumberValue(1);
 $two = new NumberValue(2);
@@ -36,19 +39,19 @@ $closure = function(NumberValue $a, NumberValue $b) {
 // This directly returns a Primi value. (Kind of optional low-levelness.)
 $fn = new FuncValue(FnContainer::buildFromClosure($closure));
 
-Assert::same("4", get_val($fn->invoke([$one, $two])));
-Assert::same("45", get_val($fn->invoke([$five, $three])));
+Assert::same("4", get_val($fn->invoke($ctx, [$one, $two])));
+Assert::same("45", get_val($fn->invoke($ctx, [$five, $three])));
 
 //
 // Bound native function error handling.
 //
 
 // No arguments (but expected some).
-Assert::exception(function() use ($fn) {
-	$fn->invoke([]);
+Assert::exception(function() use ($fn, $ctx) {
+	$fn->invoke($ctx, []);
 }, ArgumentCountError::class);
 
 // Too many arguments (expected less) - valid. Allow it.
-Assert::noError(function() use ($fn, $one, $two, $three) {
-	$fn->invoke([$one, $two, $three]);
+Assert::noError(function() use ($fn, $ctx, $one, $two, $three) {
+	$fn->invoke($ctx, [$one, $two, $three]);
 });

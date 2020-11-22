@@ -17,8 +17,7 @@ function run_primi_source(string $source) {
 		? ROOT_DIR . "/temp/"
 		: null;
 
-	$context = new \Smuuf\Primi\Context;
-	$interpreter = new \Smuuf\Primi\Interpreter($context, $cachePath);
+	$interpreter = new \Smuuf\Primi\Interpreter(null, $cachePath);
 
 	// Run interpreter
 	$interpreter->run($source);

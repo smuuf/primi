@@ -2,6 +2,9 @@
 <?php
 
 // Composer's autoload.
+
+use Smuuf\Primi\Ex\BaseException;
+
 require __DIR__ . "/vendor/autoload.php";
 
 error_reporting(E_ALL);
@@ -33,12 +36,9 @@ if (empty($config['input'])) {
 
 	echo header_string('REPL');
 
-	// Create "VM" context.
-	$context = new \Smuuf\Primi\Context;
-	// REPL uses interpreter without cache.
-	$interpreter = new \Smuuf\Primi\Interpreter($context);
-	$repl = new \Smuuf\Primi\Repl($interpreter);
-	$repl->start();
+	$i = new \Smuuf\Primi\Interpreter;
+	$repl = new \Smuuf\Primi\Repl;
+	$repl->start($i->getContext());
 	die;
 
 }
@@ -55,30 +55,29 @@ if ($config['input_is_code']) {
 	$source = file_get_contents($filepath);
 }
 
+// Create global scope for easy access afterwards.
+$scope = new \Smuuf\Primi\Scope;
+// Create interpreter - with cache.
+$interpreter = new \Smuuf\Primi\Interpreter($scope, __DIR__ . "/temp/");
+
+// Get syntax tree.
+if ($config['tree']) {
+	print_r($interpreter->getSyntaxTree($source));
+	die;
+}
+
+// Run interpreter and catch any error that may have occurred.
 try {
-
-	// Create "VM" context.
-	$context = new \Smuuf\Primi\Context;
-	// Create interpreter - with cache.
-	$interpreter = new \Smuuf\Primi\Interpreter($context, __DIR__ . "/temp/");
-
-	// Get syntax tree.
-	if ($config['tree']) {
-		print_r($interpreter->getSyntaxTree($source));
-		die;
-	}
-
-	// Run interpreter
 	$interpreter->run($source);
-	if ($config['print_context']) {
-		foreach ($context->getVariables() as $name => $value) {
-			echo "$name: {$value->getStringRepr()}\n";
-		}
-		die;
-	}
+} catch (BaseException $e) {
+	die("{$e->getMessage()}\n");
+}
 
-} catch (\Smuuf\Primi\Ex\BaseException $e) {
-	die($e->getMessage() . "\n");
+if ($config['print_scope']) {
+	foreach ($scope->getVariables() as $name => $value) {
+		echo "$name: {$value->getStringRepr()}\n";
+	}
+	die;
 }
 
 function parse_arguments(array $args): array {
@@ -88,7 +87,7 @@ function parse_arguments(array $args): array {
 
 	$config = [
 		'tree' => false,
-		'print_context' => false,
+		'print_scope' => false,
 		'input_is_code' => false,
 		'input' => false,
 		'print_process_stats' => false
@@ -108,12 +107,12 @@ function parse_arguments(array $args): array {
 			case "--source":
 				$config['input_is_code'] = true;
 			break;
-			case "-c":
-			case "--print-context":
-				$config['print_context'] = true;
-			break;
 			case "-ps":
-				case "--process-stats":
+			case "--print-scope":
+				$config['print_scope'] = true;
+			break;
+			case "-st":
+				case "--stats":
 					$config['print_process_stats'] = true;
 				break;
 			default:
@@ -137,9 +136,9 @@ Options:
     Only print syntax tree and exit.
   -s, --source
     Treat <input file> as string instead of a source file path.
-  -c, --context
-    Print contents of primary context after execution.
-  -p, --print-stats
+  -ps, --print-scope
+    Print contents of global scope after execution.
+  -st, --stats
     Print interpreter stats upon exit.
 
 HELP;

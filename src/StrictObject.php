@@ -11,10 +11,10 @@ abstract class StrictObject {
 	 */
 	public function __get(string $name) {
 
-		throw new \LogicException(sprintf(
+		throw new \LogicException(\sprintf(
 			"Cannot read an undeclared property '%s' in %s.",
 			$name,
-			get_called_class()
+			\get_called_class()
 		));
 
 	}
@@ -26,10 +26,10 @@ abstract class StrictObject {
 	 */
 	public function __set(string $name, $value) {
 
-		throw new \LogicException(sprintf(
+		throw new \LogicException(\sprintf(
 			"Cannot write to an undeclared property '%s' in %s",
 			$name,
-			get_called_class()
+			\get_called_class()
 		));
 
 	}

@@ -3,10 +3,10 @@
 namespace Smuuf\Primi;
 
 /**
- * Use external context for watching lifecycles, as different classes that
+ * Use external scope for watching lifecycles, as different classes that
  * use the WatchLifecycle triat don't share the one trait's static properties.
  */
-abstract class WatchLifecycleContext {
+abstract class WatchLifecycleScope {
 
 	public static $instanceCounter = 0;
 	public static $stackCounter = 0;
@@ -26,7 +26,7 @@ trait WatchLifecycle {
 	public function __construct() {
 
 		// Assign a new, globally unique counter's number for this new object.
-		self::$instanceCounter = WatchLifecycleContext::$instanceCounter++;
+		self::$instanceCounter = WatchLifecycleScope::$instanceCounter++;
 
 		// Build a completely unique hash for this object's instance.
 		$hash = self::getHash($this);
@@ -35,25 +35,25 @@ trait WatchLifecycle {
 		$this->add($hash);
 
 		// Build a unique true color for this instance.
-		$colorhash = self::truecolor($hash, $hash);
+		$colorHash = self::truecolor($hash, $hash);
 		$visual = $this->visualize();
 
 		// Visualize newly created object with a pretty sign.
-		echo "+  $colorhash $visual\n";
+		echo "+  $colorHash $visual\n";
 
 	}
 
 	public function __destruct() {
 
-		// Build visualisation string before removing this object from watched stack.
+		// Build visualization string before removing this object from watched stack.
 		$visual = $this->visualize();
 
 		// Remove this object from global watch stack.
 		$hash = self::getHash($this);
 		$this->remove($hash);
 
-		$colorhash = self::truecolor($hash, $hash);
-		echo " - $colorhash $visual\n";
+		$colorHash = self::truecolor($hash, $hash);
+		echo " - $colorHash $visual\n";
 
 	}
 
@@ -61,31 +61,31 @@ trait WatchLifecycle {
 	 * Add this currently watched instance to global stack.
 	 */
 	private function add($hash) {
-		WatchLifecycleContext::$stack[++WatchLifecycleContext::$stackCounter] = $hash;
+		WatchLifecycleScope::$stack[++WatchLifecycleScope::$stackCounter] = $hash;
 	}
 
 	/**
 	 * Remove this currently watched instance from global stack.
 	 */
 	private function remove($hash) {
-		unset(WatchLifecycleContext::$stack[array_search($hash, WatchLifecycleContext::$stack, true)]);
+		unset(WatchLifecycleScope::$stack[array_search($hash, WatchLifecycleScope::$stack, true)]);
 	}
 
 	private function visualize() {
 
-		if (!WatchLifecycleContext::$stack) return "x";
+		if (!WatchLifecycleScope::$stack) return "x";
 
-		$max = max(array_keys(WatchLifecycleContext::$stack));
+		$max = max(array_keys(WatchLifecycleScope::$stack));
 		$return = null;
 
 		foreach (range(1, $max) as $pos) {
 
 			// If such position exists in our watching stack, display a character.
 			// If this stack item was not displayed yet, display a special character.
-			$return .= isset(WatchLifecycleContext::$stack[$pos])
-				? (isset(WatchLifecycleContext::$alreadyVisualized[$pos]) ? "|" : "o")
+			$return .= isset(WatchLifecycleScope::$stack[$pos])
+				? (isset(WatchLifecycleScope::$alreadyVisualized[$pos]) ? "|" : "o")
 				: " ";
-			WatchLifecycleContext::$alreadyVisualized[$pos] = true;
+			WatchLifecycleScope::$alreadyVisualized[$pos] = true;
 
 		}
 

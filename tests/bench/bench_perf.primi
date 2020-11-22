@@ -3,9 +3,7 @@ tenth_iter = max_iter / 10
 
 function bench_function_calls() {
 
-	adder = function(x, y) {
-		return x + y
-	}
+	adder = (x, y) => { return x + y; }
 
 	result = -1024
 	c = 0
@@ -31,7 +29,7 @@ function bench_regex_matches() {
 	result = 0
 	c = 0
 	while (c < max_iter) {
-		result = result + (haystack == r"^.*(zač).*(,)?.*?(\.)").to_number()
+		result = result + (haystack == rx"^.*(zač).*(,)?.*?(\.)").to_number()
 		c = c + 1
 		if (!c.mod(tenth_iter)) {
 			print(':', false)

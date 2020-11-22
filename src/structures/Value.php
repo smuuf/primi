@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\ValueFriends;
@@ -59,7 +60,7 @@ abstract class Value extends ValueFriends{
 	 * Values without any meaningful length can report null (default).
 	 */
 	public function getLength(): ?int {
-		return null;
+		return \null;
 	}
 
 	/**
@@ -107,42 +108,54 @@ abstract class Value extends ValueFriends{
 	 * define that by overriding this default logic. (By default a value does
 	 * not know anything about its relation of itself to other values.)
 	 *
-	 * Relation in this context means the result of <, >, <=, >= operations.
+	 * Relation in this scope means the result of <, >, <=, >= operations.
 	 */
 	public function hasRelationTo(string $operator, Value $right): ?bool {
 		return \null;
 	}
 
 	public function doesContain(Value $right): ?bool {
-		return null;
+		return \null;
 	}
 
 	public function doAddition(Value $right): ?Value {
-		return null;
+		return \null;
 	}
 
 	public function doSubtraction(Value $right): ?Value {
-		return null;
+		return \null;
 	}
 
 	public function doMultiplication(Value $right): ?Value {
-		return null;
+		return \null;
 	}
 
 	public function doDivision(Value $right): ?Value {
-		return null;
+		return \null;
 	}
 
 	public function doPower(Value $right): ?Value {
-		return null;
+		return \null;
 	}
 
-	public function invoke(array $args = []): ?Value {
-		return null;
+	/**
+	 * Called when used as `some_value()`.
+	 *
+	 * If value supports invocation, it must return a Value. Otherwise return
+	 * null.
+	 *
+	 * @param Context $context Runtime context of the call-site.
+	 * @param array<string, Value> $args Array dictionary of call arguments.
+	 */
+	public function invoke(
+		Context $context,
+		array $args = []
+	): ?Value {
+		return \null;
 	}
 
 	public function getIterator(): ?\Iterator {
-		return null;
+		return \null;
 	}
 
 	/**
@@ -152,7 +165,7 @@ abstract class Value extends ValueFriends{
 	 * not supported.
 	 */
 	public function itemSet(?Value $key, Value $value): bool {
-		return false;
+		return \false;
 	}
 
 	/**
@@ -162,7 +175,7 @@ abstract class Value extends ValueFriends{
 	 * supported.
 	 */
 	public function itemGet(Value $key): ?Value {
-		return null;
+		return \null;
 	}
 
 	/**

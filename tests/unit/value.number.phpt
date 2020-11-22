@@ -2,6 +2,7 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Structures\{
@@ -22,7 +23,8 @@ function get_val(Value $v) {
 
 $extHub = new ExtensionHub;
 $ctx = new Context;
-$extHub->applyToContext($ctx);
+$scope = new Scope;
+$extHub->apply($scope);
 
 $integer = new NumberValue("1");
 $biggerInteger = new NumberValue("20");
@@ -237,50 +239,50 @@ Assert::true($tmp);
 // Methods...
 //
 
-$fn = $ctx->getVariable('number_abs');
-$tmp = $fn->invoke([$integer]);
+$fn = $scope->getVariable('number_abs');
+$tmp = $fn->invoke($ctx, [$integer]);
 Assert::same("1", get_val($tmp));
-$tmp = $fn->invoke([$biggerInteger]);
+$tmp = $fn->invoke($ctx, [$biggerInteger]);
 Assert::same("20", get_val($tmp));
-$tmp = $fn->invoke([$posFloat]);
+$tmp = $fn->invoke($ctx, [$posFloat]);
 Assert::same("2.3", get_val($tmp));
-$tmp = $fn->invoke([$negFloat]);
+$tmp = $fn->invoke($ctx, [$negFloat]);
 Assert::same("2.3", get_val($tmp));
 
-$tmp = $ctx->getVariable('number_sqrt')->invoke([$integer]);
+$tmp = $scope->getVariable('number_sqrt')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_pow')->invoke([$integer, new NumberValue(4)]);
+$tmp = $scope->getVariable('number_pow')->invoke($ctx, [$integer, new NumberValue(4)]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_sin')->invoke([$integer]);
+$tmp = $scope->getVariable('number_sin')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_cos')->invoke([$integer]);
+$tmp = $scope->getVariable('number_cos')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_tan')->invoke([$integer]);
+$tmp = $scope->getVariable('number_tan')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_atan')->invoke([$integer]);
+$tmp = $scope->getVariable('number_atan')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_ceil')->invoke([$integer]);
+$tmp = $scope->getVariable('number_ceil')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_floor')->invoke([$integer]);
+$tmp = $scope->getVariable('number_floor')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_round')->invoke([$integer]);
+$tmp = $scope->getVariable('number_round')->invoke($ctx, [$integer]);
 Assert::type('string',  get_val($tmp));
 
-$tmp = $ctx->getVariable('number_sqrt')->invoke([$float]);
+$tmp = $scope->getVariable('number_sqrt')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_pow')->invoke([$float, new NumberValue(4)]);
+$tmp = $scope->getVariable('number_pow')->invoke($ctx, [$float, new NumberValue(4)]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_sin')->invoke([$float]);
+$tmp = $scope->getVariable('number_sin')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_cos')->invoke([$float]);
+$tmp = $scope->getVariable('number_cos')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_tan')->invoke([$float]);
+$tmp = $scope->getVariable('number_tan')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_atan')->invoke([$float]);
+$tmp = $scope->getVariable('number_atan')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_ceil')->invoke([$float]);
+$tmp = $scope->getVariable('number_ceil')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_floor')->invoke([$float]);
+$tmp = $scope->getVariable('number_floor')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));
-$tmp = $ctx->getVariable('number_round')->invoke([$float]);
+$tmp = $scope->getVariable('number_round')->invoke($ctx, [$float]);
 Assert::type('string',  get_val($tmp));

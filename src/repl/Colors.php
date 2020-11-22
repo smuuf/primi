@@ -54,24 +54,24 @@ class Colors extends \Smuuf\Primi\StrictObject {
 
 	public static function get(string $string, bool $revert = true): string {
 
-		return preg_replace_callback(
+		return \preg_replace_callback(
 			'#(?<!\\\\)\{([a-z_-][a-z-]*)\}#i',
 			[self::class, 'handler'],
-			$string . ($revert ? '{_}' : null) // Insert reset character if we should reset styles on end.
+			$string . ($revert ? '{_}' : \null) // Insert reset character if we should reset styles on end.
 		);
 
 	}
 
 	private static function handler(array $m): string {
 
-		if (getenv('NO_COLOR') !== false) {
+		if (\getenv('NO_COLOR') !== \false) {
 			return '';
 		}
 
 		$color = $m[1];
 
 		if (isset(self::COLORS[$color])) {
-			return sprintf(self::COLOR_FORMAT, self::COLORS[$color]);
+			return \sprintf(self::COLOR_FORMAT, self::COLORS[$color]);
 		}
 
 		return $m[0];
