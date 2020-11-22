@@ -3,6 +3,7 @@
 
 declare(strict_types=1);
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Structures\Value;
 
 define('ROOT_DIR', realpath(__DIR__ . '/../..'));
@@ -47,7 +48,7 @@ if (!function_exists('str_ends_with')) {
 	}
 }
 
-out('█ Primi Standard Library docs generator');
+out('█ DocGen: Primi Standard Library Docs Generator');
 
 out('Parsing extension files...');
 const EXTENSIONS_GLOB = ROOT_DIR . '/src/extensions/psl/*.php';
@@ -72,6 +73,8 @@ function get_relevant_methods(string $className): array {
 
 function clean_doc_whitespace(string $doc): string {
 	// Unify newlines.
+	// Remove @annotations
+	$doc = preg_replace('#^\h*\*+\h*\h@\w+\h*$#m', '', $doc);
 	$doc = preg_replace('#\r?\n#', "\n", $doc);
 	// Remove whitespace and '*' and '/' from the start
 	$doc = preg_replace('#^[\/\s\*]*+#', '', $doc);
@@ -79,7 +82,7 @@ function clean_doc_whitespace(string $doc): string {
 	$doc = preg_replace('#[\/\s\*]*+$#', '', $doc);
 	// Remove startofline-horizontalwhitespace-asterisk-whitespace
 	// Handles also empty lines after the asterisk (removes those empty lines).
-	$doc = preg_replace('#^\h*(\*+\s*+)*#m', '', $doc);
+	$doc = preg_replace('#^\h*\**(\h+|\n)#m', '', $doc);
 	$doc = trim($doc);
 	return $doc;
 }
@@ -102,8 +105,16 @@ function extract_params(\ReflectionMethod $methodRef): array {
 				$paramType = $paramTypeRef->getName();
 			}
 
-			if (!is_a($paramType, Value::class, true)) {
-				warn("Class '$className, method '$methodName', parameter '$paramName' does not hint Primi's Value class.");
+			$isValue = is_a($paramType, Value::class, true);
+			$isCtx = is_a($paramType, Context::class, true);
+			if (!$isValue && !$isCtx) {
+				warn("Class '$className, method '$methodName', parameter '$paramName' does not hint Value|Context");
+				continue;
+			}
+
+			// Context is automatically injected to functions that need it.
+			// This has no place in function's signature. Skip this param type.
+			if ($isCtx) {
 				continue;
 			}
 
@@ -142,7 +153,7 @@ foreach ($extensionFiles as $filepath) {
 				warn("Class '$className, method '$methodName', referencing non-existent type having class " . $returnTypeRef->getName());
 			}
 		} else {
-			warn("Class '$className, method '$methodName', return type does not hint Primi's Value class.");
+			warn("Class '$className, method '$methodName', return type does not hint Value|Context");
 		}
 
 		$data[$className][$methodName] = [
