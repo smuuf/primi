@@ -48,8 +48,12 @@ class NumberExtension extends Extension {
 	public static function number_pow(
 		NumberValue $n,
 		?NumberValue $power = \null
-	): ?NumberValue { // Can never be null, but so phpstan doesn't complain.
-		return $n->doPower($power ?? new NumberValue('2'));
+	): NumberValue {
+
+		/** @var NumberValue */
+		$result = $n->doPower($power ?? new NumberValue('2'));
+		return $result;
+
 	}
 
 	/** Returns the sine of number `n` specified in radians. */

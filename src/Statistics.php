@@ -12,7 +12,7 @@ abstract class Statistics extends StrictObject {
 	/** @var bool If true, statistics are gathered. Disabled by default. */
 	private static $enabled = false;
 
-	/** @var Dictionary for gathered statistics. */
+	/** @var array Dictionary for gathered statistics. */
 	private static $stats = [];
 
 	/**

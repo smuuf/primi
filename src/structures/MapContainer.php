@@ -139,6 +139,9 @@ class MapContainer extends \Smuuf\Primi\StrictObject implements
 		return \count($this->values);
 	}
 
+	/**
+	 * @returns \Generator<string, Value, null, null>
+	 */
 	public function getIterator(): \Generator {
 
 		foreach ($this->values as $scalarKey => $value) {
