@@ -8,34 +8,19 @@ use \Smuuf\Primi\Structures\Value;
 
 class BinaryOperationError extends RuntimeError {
 
-	protected $op;
-	protected $left;
-	protected $right;
-
 	public function __construct(
 		string $op,
 		Value $left,
 		Value $right
 	) {
 
-		parent::__construct();
+		$msg = \sprintf(
+			"Cannot use operator '%s' with '%s' and '%s'",
+			$op, ($left)::TYPE, ($right)::TYPE
+		);
 
-		$this->op = $op;
-		$this->left = $left;
-		$this->right = $right;
+		parent::__construct($msg);
 
-	}
-
-	public function getOperator() {
-		return $this->op;
-	}
-
-	public function getLeft() {
-		return $this->left;
-	}
-
-	public function getRight() {
-		return $this->right;
 	}
 
 }

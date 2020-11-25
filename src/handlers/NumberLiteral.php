@@ -12,7 +12,7 @@ class NumberLiteral extends SimpleHandler {
 
 	const NODE_NEEDS_TEXT = \true;
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 		return new NumberValue($node['number']);
 	}
 

@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\ChainedHandler;
 use \Smuuf\Primi\Structures\Value;
@@ -17,24 +16,18 @@ class Dereference extends ChainedHandler {
 		Value $subject
 	) {
 
-		try {
+		$handler = HandlerFactory::get($node['key']['name']);
+		$key = $handler::run($node['key'], $context);
 
-			$handler = HandlerFactory::get($node['key']['name']);
-			$key = $handler::handle($node['key'], $context);
-
-			$returned = $subject->itemGet($key);
-			if ($returned === null) {
-				throw new RuntimeError(\sprintf(
-					"Type '%s' does not support item access",
-					$subject::TYPE
-				), $node);
-			}
-
-			return $returned;
-
-		} catch (LookupError $e) {
-			throw new RuntimeError($e->getMessage(), $node);
+		$returned = $subject->itemGet($key);
+		if ($returned === null) {
+			throw new RuntimeError(\sprintf(
+				"Type '%s' does not support item access",
+				$subject::TYPE
+			));
 		}
+
+		return $returned;
 
 	}
 

@@ -27,7 +27,7 @@ class ParserHandler extends CompiledParser {
 
 			// $this->pos is an internal PEG Parser position counter and
 			// we will use it to determine the line and position in the source.
-			$this->error('Syntax error', $this->pos);
+			$this->syntaxError($this->pos, $this->source);
 
 		}
 
@@ -35,7 +35,7 @@ class ParserHandler extends CompiledParser {
 
 	}
 
-	private function error(string $msg, $position = \false) {
+	private function syntaxError(int $position, string $source) {
 
 		$line = \false;
 		$pos = \false;
@@ -47,7 +47,10 @@ class ParserHandler extends CompiledParser {
 			);
 		}
 
-		throw new SyntaxError($msg, $line, $pos);
+		// Show a bit of code where the syntax error occured.
+		$excerpt = mb_substr($source, $position, 20);
+
+		throw new SyntaxError((int) $line, (int) $pos, $excerpt);
 
 	}
 
@@ -102,7 +105,7 @@ class ParserHandler extends CompiledParser {
 			$node = $inner;
 		}
 
-		foreach ($node as $key => &$item) {
+		foreach ($node as &$item) {
 			if (\is_array($item)) {
 				$item = self::reduceNode($item);
 			}

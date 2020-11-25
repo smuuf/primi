@@ -8,7 +8,7 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 
 class ContinueStatement extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 		throw new ContinueException;
 	}
 

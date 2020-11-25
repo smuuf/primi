@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Ex\RelationError;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Structures\Value;
@@ -22,27 +20,21 @@ use \Smuuf\Primi\Structures\BoolValue;
  */
 abstract class SharedLogicalHandler extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
-		try {
+		// The type of operator will not ever change in a single logical
+		// operation node.
+		$type = $node['ops'][0]['text'];
 
-			// The type of operator will not ever change in a single logical
-			// operation node.
-			$type = $node['ops'][0]['text'];
-
-			switch (\true) {
-				case $type === "and":
-					return self::handleAnd($node, $context);
-				case $type === "or":
-					return self::handleOr($node, $context);
-				default:
-					// Unknown operator - should not ever happen, unless there's
-					// any unexpected output of source code parting.
-					throw new EngineError("Unknown uperator '$type'.");
-			}
-
-		} catch (RelationError $e) {
-			throw new RuntimeError($e->getMessage(), $node);
+		switch (\true) {
+			case $type === "and":
+				return self::handleAnd($node, $context);
+			case $type === "or":
+				return self::handleOr($node, $context);
+			default:
+				// Unknown operator - should not ever happen, unless there's
+				// any unexpected output of source code parting.
+				throw new EngineInternalError("Unknown operator '$type'.");
 		}
 
 	}

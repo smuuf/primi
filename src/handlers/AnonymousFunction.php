@@ -10,7 +10,7 @@ use \Smuuf\Primi\Structures\FnContainer;
 
 class AnonymousFunction extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		$callId = "<anonymous>() (defined at {$node['_l']}:{$node['_p']})";
 

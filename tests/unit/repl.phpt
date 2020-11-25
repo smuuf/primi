@@ -21,12 +21,13 @@ $commands = [
 // This is expected output. This will be compared with actual output down below.
 // Asterisk * means that the line can be whatever.
 $expected = [
-	'*', // REPL info
-	'*', // REPL info
-	'*', // REPL info
 	"ERR: Undefined variable 'a' @ line 1, position 0",
+	"Traceback:",
+	"[0] <repl>",
 	"1",
 	"ERR: Undefined variable 'b' @ line 1, position 0",
+	"Traceback:",
+	"[0] <repl>",
 	"1",
 	"a: 1",
 	"_: 1",
@@ -74,7 +75,8 @@ $driver = new class implements \Smuuf\Primi\ICliIoDriver {
 
 };
 
-$repl = new \Smuuf\Primi\Repl(null, $driver, true);
+$repl = new \Smuuf\Primi\Repl(null, $driver);
+$repl::$noExtras = true;
 
 // Run prepared commands and catch whole output.
 $repl->start();

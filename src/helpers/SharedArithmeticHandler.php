@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Ex\BinaryOperationError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\ArithmeticLTR;
 use \Smuuf\Primi\Helpers\SimpleHandler;
@@ -18,19 +16,8 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
  */
 abstract class SharedArithmeticHandler extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
-
-		try {
-			return ArithmeticLTR::handle($node, $context);
-		} catch (BinaryOperationError $e) {
-			throw new RuntimeError(sprintf(
-				"Cannot use operator '%s' with '%s' and '%s'",
-				$e->getOperator(),
-				($e->getLeft())::TYPE,
-				($e->getRight())::TYPE
-			), $node);
-		}
-
+	protected static function handle(array $node, Context $context) {
+		return ArithmeticLTR::handle($node, $context);
 	}
 
 	public static function reduce(array &$node): void {

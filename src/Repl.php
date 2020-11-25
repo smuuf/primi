@@ -7,6 +7,7 @@ namespace Smuuf\Primi;
 use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\AbstractScope;
 use \Smuuf\Primi\ICliIoDriver;
+use \Smuuf\Primi\Ex\BaseError;
 use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Helpers\Func;
@@ -43,29 +44,30 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	protected $driver;
 
 	/**
-	 * If `true`, values are printed out without their unique ID.
-	 * This is handy for our unit tests, because unique IDs are pretty random
-	 * and that makes it complicated to test stable output.
+	 * If `false`, extra "user-friendly info" is not printed out.
+	 * This is also handy for our unit tests - less output to test.
 	 *
 	 * @var bool
 	 */
-	protected $printRawValues = false;
+	public static $noExtras = false;
 
 	public function __construct(
 		?string $replId = null,
-		ICliIoDriver $driver = null,
-		bool $printRawValues = false
+		ICliIoDriver $driver = null
 	) {
 
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 
-		$this->printRawValues = $printRawValues;
 		$this->replId = $replId ?? self::DEFAULT_REPL_ID;
 		$this->driver = $driver ?? new \Smuuf\Primi\ReadlineCliIoDriver;
 
 	}
 
 	protected function printHelp() {
+
+		if (self::$noExtras) {
+			return;
+		}
 
 		$this->driver->output(Colors::get("\n".
 			"{green}Use '{_}exit{green}' to exit.\n" .
@@ -99,10 +101,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		$ctx->pushCall($this->replId);
 
 		// Print out level (position in call stack).
-		$this->driver->output(self::getLevelInfo($ctx, true));
-		$retval = $this->loop(new RawInterpreter, $ctx);
+		if (!self::$noExtras) {
+			$this->driver->output(self::getLevelInfo($ctx, true));
+		}
 
-		return $retval;
+		return $this->loop(new RawInterpreter, $ctx);
 
 	}
 
@@ -114,22 +117,14 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			return array_keys($scope->getVariables(true));
 		});
 
-		$lastValidInput = false;
 		while (true) {
-
-			// Add last valid input into history.
-			// Doing it at this point allows us to easily do both:
-			// a) Skip adding expressions to history if it resulted in syntax
-			// error.
-			// b) Add control commands (the `switch` statement below) to
-			// history without having to call `addToHistory` after every `case`.
-			if ($lastValidInput !== false) {
-				$this->driver->addToHistory($lastValidInput);
-			}
 
 			$this->driver->output("\n");
 			$input = $this->gatherLines($ctx);
-			$lastValidInput = $input;
+
+			if (trim($input)) {
+				$this->driver->addToHistory($input);
+			}
 
 			switch (trim($input)) {
 				case '?':
@@ -164,7 +159,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 				$this->printResult($result);
 
-			} catch (BaseException $e) {
+			} catch (BaseError $e) {
 
 				$this->driver->output(
 					Colors::get("{red}ERR:{_} {$e->getMessage()}\n")
@@ -175,8 +170,12 @@ class Repl extends \Smuuf\Primi\StrictObject {
 					$lastValidInput = false;
 				}
 
-			} catch (\Throwable $e) {
+			} catch (BaseException|\Throwable $e) {
+
+				// All exceptions other than BaseError are like to be a problem
+				// with Primi or PHP - print the whole PHP exception.
 				$this->printPhpTraceback($e);
+
 			}
 
 		}
@@ -209,7 +208,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 		$this->driver->output(sprintf(
 			"%s %s\n",
 			$result->getStringRepr(),
-			!$this->printRawValues ? self::formatType($result) : null
+			!self::$noExtras ? self::formatType($result) : null
 		));
 
 	}
@@ -283,7 +282,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			}
 
 			// Display level of nesting - number of items in current call stack.
-			if ($levelInfo) {
+			if (!self::$noExtras && $levelInfo) {
 				$this->driver->output("{$levelInfo}\n");
 			}
 
@@ -360,7 +359,8 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 		$level = count($ctx->getCallStack());
 
-		if ($level === 0) {
+		// Do not print anything for level 1 (or less, lol).
+		if ($level < 2) {
 			return '';
 		}
 

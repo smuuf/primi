@@ -33,7 +33,7 @@ class ChainedFunction extends ChainedHandler {
 		// and is quite expected, so don't complicate things with exceptions.
 		$fn = $context->getVariable($typedName);
 		if ($fn === \null) {
-			$fn = Variable::fetch($name, $node, $context);
+			$fn = Variable::fetch($name, $context);
 		}
 
 		// Modify the invocation node to contain the subject. Its handler will

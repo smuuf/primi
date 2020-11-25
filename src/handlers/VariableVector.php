@@ -13,11 +13,11 @@ class VariableVector extends SimpleHandler {
 	 * derived from the vector and which supports insertion. All values but the
 	 * last part of the chain also must support key access.
 	 */
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		// Handle the item; pass in the origin subject.
 		$handler = HandlerFactory::get($node['core']['name']);
-		$value = $handler::handle($node['core'], $context);
+		$value = $handler::run($node['core'], $context);
 
 		// There's chain, so handle it, too.
 		$handler = HandlerFactory::get($node['vector']['name']);

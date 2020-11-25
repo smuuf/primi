@@ -10,7 +10,7 @@ use \Smuuf\Primi\Structures\ListValue;
 
 class ListDefinition extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		if (empty($node['items'])) {
 			return new ListValue([]);
@@ -29,7 +29,7 @@ class ListDefinition extends SimpleHandler {
 		foreach ($itemNodes as $itemNode) {
 
 			$valueHandler = HandlerFactory::get($itemNode['name']);
-			$value = $valueHandler::handle($itemNode, $context);
+			$value = $valueHandler::run($itemNode, $context);
 
 			$result[] = $value;
 

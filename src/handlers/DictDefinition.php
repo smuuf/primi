@@ -12,7 +12,7 @@ use \Smuuf\Primi\Structures\DictValue;
 
 class DictDefinition extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		if (empty($node['items'])) {
 			return new DictValue;
@@ -28,7 +28,7 @@ class DictDefinition extends SimpleHandler {
 			throw new RuntimeError(\sprintf(
 				"Cannot create dict with key of unhashable type '%s'",
 				$e->getType()
-			), $node);
+			));
 		}
 
 	}
@@ -43,8 +43,8 @@ class DictDefinition extends SimpleHandler {
 
 			$keyHandler = HandlerFactory::get($itemNode['key']['name']);
 			$valueHandler = HandlerFactory::get($itemNode['value']['name']);
-			yield $keyHandler::handle($itemNode['key'], $context)
-				=> $valueHandler::handle($itemNode['value'], $context);;
+			yield $keyHandler::run($itemNode['key'], $context)
+				=> $valueHandler::run($itemNode['value'], $context);;
 
 		}
 

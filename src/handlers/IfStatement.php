@@ -13,20 +13,20 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
  */
 class IfStatement extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		// Execute the left-hand node and get its return value.
 		$leftHandler = HandlerFactory::get($node['left']['name']);
-		$return = $leftHandler::handle($node['left'], $context);
+		$return = $leftHandler::run($node['left'], $context);
 
 		// If the result of the left hand equals to truthy value,
 		// execute the code branch stored in the right-hand node.
 		if ($return->isTruthy()) {
 			$rightHandler = HandlerFactory::get($node['right']['name']);
-			$rightHandler::handle($node['right'], $context);
+			$rightHandler::run($node['right'], $context);
 		} elseif (isset($node['else'])) {
 			$elseHandler = HandlerFactory::get($node['else']['name']);
-			$elseHandler::handle($node['else'], $context);
+			$elseHandler::run($node['else'], $context);
 		}
 
 	}

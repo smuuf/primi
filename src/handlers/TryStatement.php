@@ -4,25 +4,25 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\ContextAwareException;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 
 class TryStatement extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		try {
 
 			// Execute the main code.
 			$mainHandler = HandlerFactory::get($node['main']['name']);
-			return $mainHandler::handle($node['main'], $context);
+			return $mainHandler::run($node['main'], $context);
 
-		} catch (RuntimeError $e) {
+		} catch (ContextAwareException $e) {
 
-			// Execute the onerror block if any error occured with the main
+			// Execute the onerror block if any error occurred with the main
 			// code.
 			$errorHandler = HandlerFactory::get($node['onerror']['name']);
-			return $errorHandler::handle($node['onerror'], $context);
+			return $errorHandler::run($node['onerror'], $context);
 
 		}
 

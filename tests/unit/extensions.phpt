@@ -92,7 +92,7 @@ while (c < 10) {
 SRC;
 
 $i->run($src);
-Assert::same( '4', $s->getVariable('c')->getInternalValue(), 'Internal representation of number is normalized upon instantiation of the number object.');
+Assert::same('4', $s->getVariable('c')->getInternalValue(), 'Internal representation of number is normalized upon instantiation of the number object.');
 Assert::same('4', $s->getVariable('c')->getStringValue(), 'String representation of number is normalized - extra zeroes are trimmed');
 
 $src = <<<SRC

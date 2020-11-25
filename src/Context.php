@@ -3,7 +3,7 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\StrictObject;
-use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Structures\Value;
 
 class Context extends StrictObject {
@@ -57,7 +57,7 @@ class Context extends StrictObject {
 
 		if (\count($this->scopeStack) === 1) {
 			// At least one scope needs to be present at all times.
-			throw new EngineError("Cannot pop last scope");
+			throw new EngineInternalError("Cannot pop last scope");
 		}
 
 		\array_pop($this->scopeStack);

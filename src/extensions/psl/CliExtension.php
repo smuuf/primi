@@ -42,7 +42,7 @@ class CliExtension extends Extension {
 	 */
 	public static function debugger(Context $ctx): Value {
 
-		$repl = new Repl;
+		$repl = new Repl('<debugger>');
 		return $repl->start($ctx) ?? new NullValue;
 
 	}

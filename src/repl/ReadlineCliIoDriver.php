@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi;
 
-class ReadlineCliIoDriver extends \Smuuf\Primi\StrictObject implements ICliIoDriver {
+class ReadlineCliIoDriver extends StrictObject implements ICliIoDriver {
 
 	private $lastItem = '';
 

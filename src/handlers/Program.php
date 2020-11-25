@@ -10,11 +10,11 @@ use \Smuuf\Primi\Structures\NullValue;
 
 class Program extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		foreach ($node['stmts'] as $sub) {
 			$handler = HandlerFactory::get($sub['name']);
-			$returnValue = $handler::handle($sub, $context);
+			$returnValue = $handler::run($sub, $context);
 		}
 
 		return $returnValue ?? new NullValue;

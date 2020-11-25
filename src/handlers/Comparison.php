@@ -3,21 +3,14 @@
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\SimpleHandler;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
 
 class Comparison extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
-
-		try {
-			return ComparisonLTR::handle($node, $context);
-		} catch (RuntimeError $e) {
-			throw new RuntimeError($e->getMessage(), $node);
-		}
-
+	protected static function handle(array $node, Context $context) {
+		return ComparisonLTR::handle($node, $context);
 	}
 
 	public static function reduce(array &$node): void {
