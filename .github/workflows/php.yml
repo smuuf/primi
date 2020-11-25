@@ -14,15 +14,17 @@ jobs:
         chmod +x ./primi ./bin/* $HOME/cc-test-reporter
     - name: Prepare
       run: $HOME/cc-test-reporter before-build
+    - name: Disable xdebug
+      run: sudo phpdismod xdebug
     - name: Run tests
       run: chmod +x ./primi ./bin/*; ./bin/test --coverage
     - name: Run benchmarks
-      run: sudo phpdismod xdebug; ./bin/bench  
+      run: ./bin/bench
     - name: Run static analysis
       run: ./bin/phpstan || true # Ignore phpstan error exit code.
     - name: Gather test results
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}      
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       run: |
         $HOME/cc-test-reporter format-coverage --output=./coverage.json --input-type=clover ./coverage.xml
         $HOME/cc-test-reporter upload-coverage --input=./coverage.json
