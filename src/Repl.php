@@ -145,7 +145,8 @@ class Repl extends \Smuuf\Primi\StrictObject {
 					continue 2;
 				case 'exit':
 					// Catch a non-command 'exit'.
-					break 2;
+					// Return the result of last expression executed, or null.
+					return $result ?? null;
 			}
 
 			try {
@@ -156,7 +157,6 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 				// Store the result into _ variable for quick'n'easy retrieval.
 				$scope->setVariable('_', $result);
-
 				$this->printResult($result);
 
 			} catch (BaseError $e) {
@@ -164,11 +164,6 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				$this->driver->output(
 					Colors::get("{red}ERR:{_} {$e->getMessage()}\n")
 				);
-
-				// Input resulted in syntax error - won't be added to history.
-				if ($e instanceof SyntaxError) {
-					$lastValidInput = false;
-				}
 
 			} catch (BaseException|\Throwable $e) {
 
@@ -179,9 +174,6 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			}
 
 		}
-
-		// Return the result of last expression executed, or null.
-		return $result ?? null;
 
 	}
 

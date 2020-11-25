@@ -73,6 +73,9 @@ class DictValue extends Value {
 
 	}
 
+	/**
+	 * @returns \Iterator<string, Value>
+	 */
 	public function getIterator(): \Iterator {
 		return $this->value->getIterator();
 	}

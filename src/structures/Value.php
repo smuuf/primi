@@ -145,7 +145,7 @@ abstract class Value extends ValueFriends{
 	 * null.
 	 *
 	 * @param Context $context Runtime context of the call-site.
-	 * @param array<string, Value> $args Array dictionary of call arguments.
+	 * @param array<Value> $args Array dictionary of call arguments.
 	 */
 	public function invoke(
 		Context $context,
