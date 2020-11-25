@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Statistics;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\NumberValue;
 
@@ -13,6 +14,7 @@ class BoolValue extends Value {
 
 	public function __construct(bool $value) {
 		$this->value = $value;
+		Statistics::add('value_count_bool');
 	}
 
 	public function getStringRepr(): string {

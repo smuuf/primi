@@ -28,10 +28,25 @@ $loader->addDirectory(__DIR__ . "/src")->register();
 $config = parse_arguments($argv);
 
 if ($config['print_process_stats']) {
+
+	// Enable stats gathering.
+	Statistics::enable();
+
 	register_shutdown_function(function() {
-		$mb = round(memory_get_peak_usage() / 1e6, 4);
-		echo "Memory peak: " . $mb. " MB\n";
+
+		$mb = round(memory_get_peak_usage() / 1e6, 2);
+		echo "Memory peak: {$mb} MB\n";
+
+		$fnCalls = Statistics::single('func_calls');
+		echo "Function calls: {$fnCalls}\n";
+
+		echo "Created values:\n";
+		foreach (Statistics::get('value_count_') as $name => $value) {
+			echo "- {$name}: {$value}\n";
+		}
+
 	});
+
 }
 
 // Determine the source. Act as REPL if no source was specified.

@@ -2,11 +2,16 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Statistics;
 use \Smuuf\Primi\Structures\Value;
 
 class NullValue extends Value {
 
 	const TYPE = "null";
+
+	public function __construct() {
+		Statistics::add('value_count_null');
+	}
 
 	public function getStringRepr(): string {
 		return "null";
