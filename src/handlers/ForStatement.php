@@ -16,17 +16,16 @@ use \Smuuf\Primi\Ex\ContinueException;
  */
 class ForStatement extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		// Execute the left-hand node and get its return value.
 		$leftHandler = HandlerFactory::get($node['left']['name']);
-		$subject = $leftHandler::handle($node['left'], $context);
+		$subject = $leftHandler::run($node['left'], $context);
 
 		$iter = $subject->getIterator();
 		if ($iter === null) {
 			throw new RuntimeError(
-				\sprintf("Cannot iterate over '%s'", $subject::TYPE),
-				$node
+				\sprintf("Cannot iterate over '%s'", $subject::TYPE)
 			);
 		}
 
@@ -43,7 +42,7 @@ class ForStatement extends SimpleHandler {
 			$context->setVariable($itemVariableName, $i);
 
 			try {
-				$blockHandler::handle($node['right'], $context);
+				$blockHandler::run($node['right'], $context);
 			} catch (ContinueException $e) {
 				continue;
 			} catch (BreakException $e) {

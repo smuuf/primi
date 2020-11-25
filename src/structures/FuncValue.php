@@ -18,16 +18,19 @@ class FuncValue extends Value {
 	}
 
 	public function getStringRepr(): string {
-		return sprintf(
+		return \sprintf(
 			"<function: %s>",
 			$this->value->isPhpFunction() ? 'native' : 'user'
 		);
 	}
 
-	public function invoke(array $args = []): ?Value {
+	public function invoke(
+		Context $context,
+		array $args = []
+	): ?Value {
 
-		// Simply execute the closure with passed arguments.
-		return ($this->value->getClosure())($args);
+		// Simply call the closure with passed arguments and other info.
+		return $this->value->callClosure($context, $args);
 
 	}
 

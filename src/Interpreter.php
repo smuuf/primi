@@ -34,38 +34,28 @@ class Interpreter extends RawInterpreter {
 	 * to be used.
 	 */
 	public function __construct(
-		$scopeOrContext = null,
+		Context $context = null,
 		?string $tempDir = null,
 		?ExtensionHub $extHub = null
 	) {
 
 		// If temp directory was not specified, do not cache parsed AST.
-		$tempDirPath = $tempDir !== null
+		$tmp = $tempDir !== null
 			? realpath($tempDir) // Returns false if path does not exist.
 			: null;
 
-		if ($tempDirPath === false) {
-			throw new EngineError("Directory '$tempDirPath' does not exist");
+		if ($tmp === false) {
+			throw new EngineError("Specified temp directory '$tempDir' does not exist");
 		}
 
-		// Interpreter is created with a global scope provided or with nothing
-		// at all.
-		if ($scopeOrContext === null || $scopeOrContext instanceof AbstractScope) {
+		$this->tempDir = $tmp;
 
-			$globalScope = $scopeOrContext ?? new Scope;
-			$extHub = $extHub ?? new ExtensionHub;
-			$extHub->apply($globalScope);
+		// Create new context, if it was not provided.
+		$context = $context ?? new Context;
+		$this->context = $context;
 
-			$ctx = new Context;
-			$ctx->pushScope($globalScope);
-
-		} elseif ($scopeOrContext instanceof Context) {
-			$ctx = $scopeOrContext;
-		} else {
-			throw new EngineError("First argument passed to Interpreter must be AbstractScope|Context|null");
-		}
-
-		$this->context = $ctx;
+		$extHub = $extHub ?? new ExtensionHub;
+		$extHub->apply($context->getCurrentScope());
 
 	}
 

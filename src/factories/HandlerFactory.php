@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi;
 
 class HandlerFactory extends \Smuuf\Primi\StrictObject {

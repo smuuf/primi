@@ -12,10 +12,19 @@ class FunctionDefinition extends SimpleHandler {
 
 	const NODE_NEEDS_TEXT = \true;
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
-		$fnc = FnContainer::build($node['body'], $node['params'], $context);
-		$context->setVariable($node['fnName'], new FuncValue($fnc));
+		$callId = "{$node['fnName']}() (defined at {$node['_l']}:{$node['_p']})";
+		$currentScope = $context->getCurrentScope();
+
+		$fnc = FnContainer::build(
+			$node['body'],
+			$node['params'],
+			$currentScope,
+			$callId
+		);
+
+		$currentScope->setVariable($node['fnName'], new FuncValue($fnc));
 
 	}
 

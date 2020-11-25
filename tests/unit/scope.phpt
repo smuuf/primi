@@ -95,7 +95,7 @@ $multi = [
 
 $scope->setVariables($multi);
 
-// Test that all funciables are present (and in correct order).
+// Test that all variables are present (and in correct order).
 Assert::same([
 	'func_a'=> $funcA,
 	'func_b'=> $funcB,

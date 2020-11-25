@@ -10,10 +10,10 @@ use \Smuuf\Primi\Structures\BoolValue;
 
 class Negation extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		$handler = HandlerFactory::get($node['core']['name']);
-		$truthness = $handler::handle($node['core'], $context)->isTruthy();
+		$truthness = $handler::run($node['core'], $context)->isTruthy();
 
 		// Should we even handle negation? If there's an even number of negation
 		// operators, the result would always have the same truthness as its

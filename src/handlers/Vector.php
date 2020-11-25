@@ -24,29 +24,22 @@ class Vector extends ChainedHandler {
 	) {
 
 		$handler = HandlerFactory::get($node['index']['name']);
-		$key = $handler::handle($node['index'], $context, $subject);
+		$key = $handler::run($node['index'], $context, $subject);
 
-		try {
+		// Are we going to handle this node as a leaf node?
+		if (!isset($node['vector'])) {
+			// If this is a leaf node, return an insertion proxy.
+			return new InsertionProxy($key, $subject);
+		}
 
-			// Are we going to handle this node as a leaf node?
-			if (!isset($node['vector'])) {
-				// If this is a leaf node, return an insertion proxy.
-				return new InsertionProxy($key, $subject);
-			}
-
-			// This is not a leaf node, so just dereference the chain a bit deeper,
-			// so we can ultimately end up with some leaf node. (that situation
-			// will be handled by the code above).
-			$next = $subject->itemGet($key);
-			if ($next === null) {
-				throw new RuntimeError(\sprintf(
-					"Type '%s' does not support item access",
-					$subject::TYPE
-				), $node);
-			}
-
-		} catch (LookupError $e) {
-			throw new RuntimeError($e->getMessage(), $node);
+		// This is not a leaf node, so just dereference the chain a bit deeper,
+		// so we can ultimately end up with some leaf node. (that situation
+		// will be handled by the code above).
+		$next = $subject->itemGet($key);
+		if ($next === \null) {
+			throw new RuntimeError(\sprintf(
+				"Type '%s' does not support item access", $subject::TYPE
+			));
 		}
 
 		// At this point we know there's some another, deeper part of vector,

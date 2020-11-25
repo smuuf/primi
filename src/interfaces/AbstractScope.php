@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Structures\Value;
 
 /**
@@ -23,11 +23,15 @@ abstract class AbstractScope extends StrictObject {
 	final public function setParent(self $parent): void {
 
 		if ($this === $parent) {
-			throw new EngineError("Scope cannot have itself as parent");
+			throw new EngineInternalError("Scope cannot have itself as parent");
 		}
 
 		$this->parent = $parent;
 
+	}
+
+	final public function getParent(): ?AbstractScope {
+		return $this->parent;
 	}
 
 	/**
@@ -39,7 +43,7 @@ abstract class AbstractScope extends StrictObject {
 	final public function getVariable(string $name): ?Value {
 
 		return $this->fetchVariable($name)
-			// Recursively up, if there's a parent scope..
+			// Recursively up, if there's a parent scope.
 			?? ($this->parent ? $this->parent->getVariable($name) : \null);
 
 	}

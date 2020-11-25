@@ -5,19 +5,28 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\ContextAwareException;
 
 /**
- * Common ancestor of LogicalAnd and LogicalOr handlers, both of which have
- * the exact same implementation, but are separated on a grammar level for
- * operators "and" and "or" to have a distinct precedences.
- *
- * Using the third optional parameter signalizes usage of a chained handler.
- * Chained handlers have the ability to pass an additional Value structure into
- * nested handler calls.
+ * Base node handler class for evaluating some AST node within given context.
  */
 abstract class SimpleHandler extends BaseHandler {
 
-	abstract public static function handle(
+	final public static function run(
+		array $node,
+		Context $context
+	) {
+
+		try {
+			return static::handle($node, $context);
+		} catch (RuntimeError $e) {
+			throw new ContextAwareException($e->getMessage(), $node, $context);
+		}
+
+	}
+
+	abstract protected static function handle(
 		array $node,
 		Context $context
 	);

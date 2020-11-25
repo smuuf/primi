@@ -16,34 +16,29 @@ class Invocation extends ChainedHandler {
 		Value $fn
 	) {
 
-		try {
-
-			$arguments = [];
-			if (isset($node['args'])) {
-				$handler = HandlerFactory::get($node['args']['name']);
-				$arguments = $handler::handle($node['args'], $context);
-			}
-
-			// If the node contains an argument to be prepended to the arg list,
-			// do exactly that. (This is used then for chained functions.)
-			$prepend = $node['prepend_arg'] ?? \null;
-			if ($prepend) {
-				\array_unshift($arguments, $prepend);
-			}
-
-			$result = $fn->invoke($arguments);
-			if ($result === null) {
-				throw new RuntimeError(
-					\sprintf("Trying to invoke a non-function '%s'", $fn::TYPE),
-					$node
-				);
-			}
-
-			return $result;
-
-		} catch (RuntimeError $e) {
-			throw new RuntimeError($e->getMessage(), $node);
+		$arguments = [];
+		if (isset($node['args'])) {
+			$handler = HandlerFactory::get($node['args']['name']);
+			$arguments = $handler::run($node['args'], $context);
 		}
+
+		// If the node contains an argument to be prepended to the arg list,
+		// do exactly that. (This is used for chained functions.)
+		$prepend = $node['prepend_arg'] ?? \null;
+		if ($prepend) {
+			\array_unshift($arguments, $prepend);
+		}
+
+		// Gather info about call location - for some quality tracebacks.
+		$result = $fn->invoke($context, $arguments);
+
+		if ($result === null) {
+			throw new RuntimeError(
+				\sprintf("Trying to invoke a non-function '%s'", $fn::TYPE)
+			);
+		}
+
+		return $result;
 
 	}
 

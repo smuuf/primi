@@ -9,7 +9,7 @@ abstract class ControlFlowException extends EngineException {
 	/**
 	 * Statement causing such control flow mechanism. This is a default value
 	 * and ultimately shouldn't appear anywhere, as it should always be
-	 * overriden in child classes.
+	 * overridden in child classes.
 	 *
 	 * @const string
 	 */

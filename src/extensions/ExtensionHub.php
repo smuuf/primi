@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Extension;
+use \Smuuf\Primi\ExtensionScope;
 use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\Structures\FuncValue;
+use \Smuuf\Primi\Structures\FnContainer;
 
 class ExtensionHub extends \Smuuf\Primi\StrictObject {
 
@@ -40,7 +40,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	];
 
 	/** @var (string|Extension)[] Extensions that are to be applied to runtime scope. */
-	protected $extensions = [];
+	private $extensions = [];
 
 	/**
 	 * Is `true` if extension hub was already applied to a scope and is now
@@ -73,39 +73,56 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	 * Optionally pass an array of <PHP class> => <Value class> pairs to
 	 * register multiple extensions at once.
 	 */
-	public function add($extClass): void {
+	public function add($extension): void {
 
 		if ($this->isLocked) {
-			throw new EngineError("Extension hub was already applied and is now locked");
+			throw new EngineError(
+				"This ExtensionHub instance was already applied and is now locked"
+			);
 		}
 
 		// We allow registering extensions in bulk.
-		if (\is_array($extClass)) {
-			// Skip falsey values (easier for adding conditional extensions).
-			foreach (array_filter($extClass) as $ext) {
+		if (\is_array($extension)) {
+
+			// Skip falsey values (friendlier for adding conditional
+			// extensions).
+			foreach (array_filter($extension) as $ext) {
 				$this->add($ext);
 			}
+
 			return;
+
 		}
 
-		if (!is_subclass_of($extClass, Extension::class)) {
-			throw new EngineError("'$extClass' is not a valid Primi extension");
+		// Can be either class name or instance, so we can't use `instanceof`.
+		if (!is_subclass_of($extension, Extension::class)) {
+			throw new EngineError("'$extension' is not a valid Primi extension");
 		}
 
-		$this->extensions[$extClass] = $extClass;
+		$this->extensions[$extension] = $extension;
 
 	}
 
 	/**
-	 * Return array of values provided by all registered extensions.
+	 * Create new `ExtensionScope` filled with items provided by the extension
+	 * hub and add it as the top parent for the scope passed as argument.
+	 *
+	 * If the top parent already is some `ExtensionScope`, do not do anything.
 	 */
 	public function apply(AbstractScope $scope): void {
 
+		// Detect if the scope already has ExtensionScope as one of its parents.
+		// If so, do not apply anything.
+		$topScope = self::getTopScope($scope);
+		if ($topScope instanceof ExtensionScope) {
+			return;
+		}
+
 		// Lock this extension hub to avoid adding new extensions - this
 		// ensures consistency (extensions added to the hub later wouldn't be
-		// available in the scope).
+		// available).
 		$this->isLocked = \true;
-		$extScope = new Scope;
+		$extScope = new ExtensionScope;
 
 		foreach ($this->extensions as $ext) {
 
@@ -118,25 +135,15 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 
 		}
 
-		$scope->setParent($extScope);
+		$topScope->setParent($extScope);
 
 	}
 
 	/**
 	 * Process an extension class - iterate over all public methods and
-	 * register their return value as target value object's property.
-	 * We'll use the method's name as the target property name.
-	 *
-	 * For example, if you register "SomeExtensionClass::class" as an extension
-	 * to the Primi's "StringValue::class", then if, for example, you write a
-	 * "SomeExtensionClass::plsGimmeOne()" method which returns a new
-	 * NumberValue(1), that Number value will be available under the
-	 * <code>'hello there!'.plsGimmeOne; </code> property.
-	 *
-	 * Then, if you use <code>'hello there!'.plsGimmeOne</code>, in
-	 * some Primi source code, it will return a number one.
+	 * make FuncValues from them.
 	 */
-	protected function processExtension(Extension $ext): array {
+	private function processExtension(Extension $ext): array {
 
 		$extRef = new \ReflectionClass($ext);
 		$methods = $extRef->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -158,6 +165,17 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 		}
 
 		return $result;
+
+	}
+
+	private static function getTopScope(AbstractScope $scope): AbstractScope {
+
+		$current = $scope;
+		while ($next = $current->getParent()) {
+			$current = $next;
+		}
+
+		return $current;
 
 	}
 

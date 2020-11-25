@@ -3,7 +3,10 @@
 
 // Composer's autoload.
 
-use Smuuf\Primi\Ex\BaseException;
+use \Smuuf\Primi\Repl;
+use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\Interpreter;
+use \Smuuf\Primi\Ex\BaseException;
 
 require __DIR__ . "/vendor/autoload.php";
 
@@ -36,29 +39,33 @@ if (empty($config['input'])) {
 
 	echo header_string('REPL');
 
-	$i = new \Smuuf\Primi\Interpreter;
-	$repl = new \Smuuf\Primi\Repl;
+	$i = new Interpreter;
+	$repl = new Repl;
 	$repl->start($i->getContext());
 	die;
 
 }
 
 if ($config['input_is_code']) {
+
 	// Input is passed as a string of Primi source code.
 	$source = $config['input'];
+
 } else {
+
 	// Input is passed as a filename of file containing Primi source code.
 	$filepath = $config['input'];
 	if (!is_file($filepath)) {
 		die("Input file '$filepath' not found.\n");
 	}
+
 	$source = file_get_contents($filepath);
+
 }
 
-// Create global scope for easy access afterwards.
-$scope = new \Smuuf\Primi\Scope;
 // Create interpreter - with cache.
-$interpreter = new \Smuuf\Primi\Interpreter($scope, __DIR__ . "/temp/");
+$interpreter = new Interpreter(null, __DIR__ . "/temp/");
+$scope = $interpreter->getCurrentScope();
 
 // Get syntax tree.
 if ($config['tree']) {

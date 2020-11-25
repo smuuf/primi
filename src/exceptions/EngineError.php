@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Ex;
 
+/**
+ * Errors that represent runtime errors within the engine, but which might
+ * not be necessarily caused by faulty logic in the engine itself. It may be
+ * that someone is using Primi in some unexpected or just plainly wrong way.
+ */
 class EngineError extends EngineException {
-
-	// Errors that represent some malfunction in Primi interpreter engine.
-	// These should not happen - and if they do, it means that Primi itself
-	// contains an error (some kind of unhandled edge-case, for example).
 
 }

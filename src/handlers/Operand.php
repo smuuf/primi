@@ -8,11 +8,11 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 
 class Operand extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		// Handle the item; pass in the chained value, if it was given.
 		$handler = HandlerFactory::get($node['core']['name']);
-		$value = $handler::handle($node['core'], $context);
+		$value = $handler::run($node['core'], $context);
 
 		// If there's chain, handle it.
 		if (isset($node['chain'])) {

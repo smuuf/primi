@@ -7,20 +7,20 @@ namespace Smuuf\Primi\Helpers;
 use \Smuuf\Primi\StrictObject;
 
 /**
- * Common ancestor of LogicalAnd and LogicalOr handlers, both of which have
- * the exact same implementation, but are separated on a grammar level for
- * operators "and" and "or" to have a distinct precedences.
- *
- * Using the third optional parameter signalizes usage of a chained handler.
- * Chained handlers have the ability to pass an additional Value structure into
- * nested handler calls.
+ * Base class for node handler (always static). The static `Node::reduce()`
+ * method is used for optional AST node post-process (e.g. reduction) after
+ * parsing.
  */
 abstract class BaseHandler extends StrictObject {
 
 	const NODE_NEEDS_TEXT = \false;
 
+	/**
+	 * Post-process the AST node provided by parser. AST node array is passed by
+	 * reference.
+	 */
 	public static function reduce(array &$node): void {
-		// Nothing by default.
+		// Nothing is done to the AST node by default.
 	}
 
 }

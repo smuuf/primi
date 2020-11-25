@@ -6,8 +6,8 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StrictObject;
-use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RelationError;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\BoolValue;
@@ -59,7 +59,7 @@ class ComparisonLTR extends StrictObject {
 			case '<=':
 				return self::evaluateRelation($op, $left, $right);
 			default:
-				throw new EngineError("Unknown operator '$op'");
+				throw new EngineInternalError("Unknown operator '$op'");
 		}
 
 	}

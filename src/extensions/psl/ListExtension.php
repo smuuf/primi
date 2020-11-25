@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Psl;
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\ListValue;
@@ -51,11 +52,18 @@ class ListExtension extends Extension {
 
 	}
 
-	public static function list_map(ListValue $list, FuncValue $fn): ListValue {
+	/**
+	 * @injectContext
+	 */
+	public static function list_map(
+		Context $ctx,
+		ListValue $list,
+		FuncValue $fn
+	): ListValue {
 
 		$result = [];
 		foreach ($list->value as $k => $v) {
-			$result[$k] = $fn->invoke([$v]);
+			$result[$k] = $fn->invoke($ctx, [$v]);
 		}
 
 		return new ListValue($result);
@@ -91,9 +99,11 @@ class ListExtension extends Extension {
 	}
 
 	public static function list_prepend(ListValue $list, Value $value): NullValue {
+
 		// array_unshift() will reindex internal array, which is what we want.
 		array_unshift($list->value, $value);
 		return new NullValue;
+
 	}
 
 	public static function list_pop(ListValue $list, ?NumberValue $index = null): Value {

@@ -9,14 +9,14 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 
 class ReturnStatement extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		if (!isset($node['subject'])) {
 			throw new ReturnException;
 		}
 
 		$handler = HandlerFactory::get($node['subject']['name']);
-		throw new ReturnException($handler::handle($node['subject'], $context));
+		throw new ReturnException($handler::run($node['subject'], $context));
 
 	}
 

@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Psl;
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Extension;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
@@ -11,7 +12,7 @@ use \Smuuf\Primi\Structures\DictValue;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\FuncValue;
 use \Smuuf\Primi\Structures\BoolValue;
-use Smuuf\Primi\Structures\ListValue;
+use \Smuuf\Primi\Structures\ListValue;
 
 class DictExtension extends Extension {
 
@@ -57,7 +58,7 @@ class DictExtension extends Extension {
 		DictValue $dict,
 		Value $needle
 	): BoolValue {
-		return new BoolValue($dict->value->findValue($needle) !== null);
+		return new BoolValue($dict->value->findValue($needle) !== \null);
 	}
 
 	/**
@@ -116,11 +117,18 @@ class DictExtension extends Extension {
 		));
 	}
 
-	public static function dict_map(DictValue $dict, FuncValue $fn): DictValue {
+	/**
+	 * @injectContext
+	 */
+	public static function dict_map(
+		Context $ctx,
+		DictValue $dict,
+		FuncValue $fn
+	): DictValue {
 
 		$result = [];
 		foreach ($dict->value as $k => $v) {
-			$result[] = [$k, $fn->invoke([$v, $k])];
+			$result[] = [$k, $fn->invoke($ctx, [$v, $k])];
 		}
 
 		return new DictValue($result);

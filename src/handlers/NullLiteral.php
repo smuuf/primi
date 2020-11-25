@@ -8,7 +8,7 @@ use \Smuuf\Primi\Structures\NullValue;
 
 class NullLiteral extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 		return new NullValue;
 	}
 

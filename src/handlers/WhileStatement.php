@@ -10,7 +10,7 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
 
 class WhileStatement extends SimpleHandler {
 
-	public static function handle(
+	protected static function handle(
 		array $node,
 		Context $context
 	) {
@@ -20,11 +20,11 @@ class WhileStatement extends SimpleHandler {
 		$blockHandler = HandlerFactory::get($node['right']['name']);
 
 		while (
-			$condHandler::handle($node['left'], $context)->isTruthy()
+			$condHandler::run($node['left'], $context)->isTruthy()
 		) {
 
 			try {
-				$blockHandler::handle($node['right'], $context);
+				$blockHandler::run($node['right'], $context);
 			} catch (ContinueException $e) {
 				continue;
 			} catch (BreakException $e) {

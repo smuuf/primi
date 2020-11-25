@@ -2,10 +2,14 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\AbstractScope;
 use \Smuuf\Primi\HandlerFactory;
-use \Smuuf\Primi\Ex\ArgumentCountError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\ReturnException;
+use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\Value;
@@ -18,10 +22,11 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	/** @var \Closure Closure wrapping the function itself. */
 	protected $closure;
 
-	/** @var int Number of parameters the function is aware of. */
-	protected $argsCount = 0;
-
-	/** @var bool Does this function originate from Primi or its provided by engine? */
+	/**
+	 * True if the function represents a native PHP function instead of Primi
+	 * function.
+	 * @var bool
+	 */
 	protected $isPhpFunction = \false;
 
 	/**
@@ -31,29 +36,24 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	 * The closure returns some Primi value object as a result.
 	 */
 	public static function build(
-		array $node,
+		array $entryNode,
 		array $definitionArgs = [],
-		Context $definitionContext = \null
+		?AbstractScope $definitionScope = \null,
+		?string $callId = \null
 	) {
+
+		$callId = $callId ?? '<unknown>';
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function(array $args) use (
-			$node,
-			$definitionContext,
-			$definitionArgs
+		$closure = function(Context $ctx, array $args) use (
+			$entryNode,
+			$definitionScope,
+			$definitionArgs,
+			$callId
 		) {
 
-			// If there's a parent/definition context, clone a new context from
-			// it, so the function does not mutate the outer scope.
-			if ($definitionContext) {
-				// Intentionally shallow clone.
-				$context = clone $definitionContext;
-			} else {
-				$context = new Context;
-			}
-
-			// Chack number of passed arguments.
+			// Check number of passed arguments.
 			$args = \array_splice($args, 0, \count($definitionArgs));
 			if (\count($definitionArgs) > \count($args)) {
 				throw new ArgumentCountError(
@@ -63,20 +63,32 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 			}
 
 			// Create pairs of arguments <arg_name> => <arg_value> and
-			// inject them into the function's context, too. (i.e. these are
+			// inject them into the function's scope, too. (i.e. these are
 			// the arguments passed into it.)
 			$args = \array_combine($definitionArgs, $args);
-			$context->setVariables($args);
+
+			$scope = new Scope;
+			$scope->setParent($definitionScope);
+			$scope->setVariables($args);
+
+			$ctx->pushScope($scope);
+			$ctx->pushCall($callId);
 
 			try {
 
 				// Run the function body and expect a ReturnException with the
 				// return value.
-				$handler = HandlerFactory::get($node['name']);
-				$handler::handle($node, $context);
+				$handler = HandlerFactory::get($entryNode['name']);
+				$handler::run($entryNode, $ctx);
 
 			} catch (ReturnException $e) {
 				return $e->getValue();
+			} finally {
+
+				// Remove the latest context stack items.
+				$ctx->popScope();
+				$ctx->popCall();
+
 			}
 
 			// Return null if no "return" was present.
@@ -84,7 +96,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($closure, \false, \count($definitionArgs));
+		return new self($closure, \false);
 
 	}
 
@@ -93,33 +105,55 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		$closure = \Closure::fromCallable($fn);
 
 		$rf = new \ReflectionFunction($closure);
-		$paramCount = $rf->getNumberOfParameters();
-		$expectedTypes = Func::check_allowed_parameter_types_of_function($rf);
+		$callId = $rf->getName();
 
-		$wrapper = function(array $args) use ($closure, $expectedTypes) {
+		// Determine whether context object should be injected into args.
+		$docComment = $rf->getDocComment();
+		$injectContext = \strpos($docComment, '@injectContext') !== \false;
 
-			// Do our own type checking prior to the invocation.
-			// If we were only detecting ordinary \TypeErrors by PHP, we
-			// wouldn't be able to tell where exactly those type errors
-			// occured (for example we wouldn't be able to differentiate
-			// argument type errors from return value type errors).
-			$maxIndex = \count($expectedTypes) - 1;
-			foreach ($args as $i => $arg) {
+		Func::check_allowed_parameter_types_of_function($rf);
 
-				// Handle variadic parameters - actual number of arguments
-				// can be higher than the expected number of parameters.
-				// In that case, the type of the last (variadic) parameter
-				// must be the same for all remaining arguments.
-				$expectedType = $expectedTypes[$i] ?? $expectedTypes[$maxIndex];
-				Func::allow_argument_types($i, $arg, $expectedType);
+		$wrapper = function(Context $ctx, array $args) use (
+			$closure,
+			$injectContext,
+			$callId
+		) {
 
+			if ($injectContext) {
+				\array_unshift($args, $ctx);
 			}
+
+			// Add this function call to the call stack.
+			$ctx->pushCall($callId);
 
 			try {
 				$result = $closure(...$args);
 			} catch (\ArgumentCountError $e) {
+
 				[$passed, $expected] = Func::parse_argument_count_error($e);
 				throw new ArgumentCountError($passed, $expected);
+
+			} catch (\TypeError $e) {
+
+				// We want to handle only argument type errors. Return type
+				// errors are a sign of badly used return type hint for PHP
+				// function and should bubble up (be rethrown) for the
+				// developer to see it.
+				if (\strpos($e->getMessage(), 'TypeError: Return') !== \false) {
+					throw $e;
+				}
+
+				[$index, $passed, $expected] = Func::parse_argument_type_error($e);
+
+				throw new TypeError(\sprintf(
+					"Expected '%s' but got '%s' as argument %d",
+					$expected,
+					$passed,
+					$index
+				));
+
+			} finally {
+				$ctx->popCall(); // Remove the latest entry from call stack.
 			}
 
 			if (!$result instanceof Value) {
@@ -130,7 +164,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 		};
 
-		return new self($wrapper, \true, $paramCount);
+		return new self($wrapper, \true);
 
 	}
 
@@ -139,20 +173,14 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	 */
 	private function __construct(
 		\Closure $closure,
-		bool $isPhpFunction,
-		int $argsCount
+		bool $isPhpFunction
 	) {
 		$this->closure = $closure;
-		$this->argsCount = $argsCount;
 		$this->isPhpFunction = $isPhpFunction;
 	}
 
-	public function getClosure(): \Closure {
-		return $this->closure;
-	}
-
-	public function getArgsCount(): int {
-		return $this->argsCount;
+	public function callClosure(...$args): ?Value {
+		return ($this->closure)(...$args);
 	}
 
 	public function isPhpFunction(): bool {

@@ -15,7 +15,7 @@ use \Smuuf\Primi\Helpers\SimpleHandler;
  */
 class ArgumentList extends SimpleHandler {
 
-	public static function handle(array $node, Context $context) {
+	protected static function handle(array $node, Context $context) {
 
 		if (!isset($node['args'])) {
 			return [];
@@ -24,7 +24,7 @@ class ArgumentList extends SimpleHandler {
 		$list = [];
 		foreach ($node['args'] as $a) {
 			$handler = HandlerFactory::get($a['name']);
-			$list[] = $handler::handle($a, $context);
+			$list[] = $handler::run($a, $context);
 		}
 
 		return $list;
