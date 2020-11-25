@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Statistics;
 use \Smuuf\Primi\Helpers\Func;
 
 class RegexValue extends Value {
@@ -22,6 +23,8 @@ class RegexValue extends Value {
 		// We'll be using ASCII \x07 (bell) character as delimiters, so
 		// we won't need to deal with any escaping of input.
 		$this->value = "\x07$regex\x07u";
+
+		Statistics::add('value_count_regex');
 
 	}
 

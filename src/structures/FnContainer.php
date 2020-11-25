@@ -180,7 +180,10 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 	}
 
 	public function callClosure(...$args): ?Value {
+
+		Statistics::add('func_calls');
 		return ($this->closure)(...$args);
+
 	}
 
 	public function isPhpFunction(): bool {

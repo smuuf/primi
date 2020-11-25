@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Statistics;
 use \Smuuf\Primi\Ex\KeyError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
@@ -20,6 +21,7 @@ class DictValue extends Value {
 	 */
 	public function __construct(iterable $tuples = []) {
 		$this->value = MapContainer::fromTuples($tuples);
+		Statistics::add('value_count_dict');
 	}
 
 	public function __clone() {

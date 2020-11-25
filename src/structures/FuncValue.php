@@ -2,6 +2,9 @@
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Statistics;
+
 /**
  * @property FnContainer $value Internal map container.
  */
@@ -11,6 +14,7 @@ class FuncValue extends Value {
 
 	public function __construct(FnContainer $fn) {
 		$this->value = $fn;
+		Statistics::add('value_count_func');
 	}
 
 	public function isTruthy(): bool {

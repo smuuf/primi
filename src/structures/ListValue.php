@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Statistics;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
@@ -21,6 +22,7 @@ class ListValue extends Value {
 
 		// Ensuring the list is indexed from 0. Keys will be ignored.
 		$this->value = array_values($items);
+		Statistics::add('value_count_list');
 
 	}
 
