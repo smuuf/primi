@@ -162,7 +162,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			} catch (BaseError|SystemException $e) {
 
 				$this->driver->output(
-					Colors::get("{red}ERR:{_} {$e->getMessage()}\n")
+					Colors::get("{red}ERR:{_} {$e->getMessage()}")
 				);
 
 			} catch (EngineException|\Throwable $e) {
