@@ -14,6 +14,9 @@ class Context extends StrictObject {
 	/** @var AbstractScope[] Scope stack list. */
 	protected $scopeStack = [];
 
+	/** @var string[] Event queue. */
+	protected $eventQueue = [];
+
 	/**
 	 * Direct reference to the scope on the top of the stack.
 	 * @var AbstractScope
@@ -22,6 +25,16 @@ class Context extends StrictObject {
 
 	public function __construct(?AbstractScope $scope = \null) {
 		$this->pushScope($scope ?? new Scope);
+	}
+
+	// Events.
+
+	public function addEvent(string $name): void {
+		$this->eventQueue[] = $name;
+	}
+
+	public function getEvent(): ?string {
+		return array_pop($this->eventQueue);
 	}
 
 	// Callstack management.

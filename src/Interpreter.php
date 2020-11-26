@@ -57,6 +57,13 @@ class Interpreter extends RawInterpreter {
 		$extHub = $extHub ?? new ExtensionHub;
 		$extHub->apply($context->getCurrentScope());
 
+		if (function_exists('pcntl_async_signals')) {
+			pcntl_async_signals(true);
+			pcntl_signal(SIGINT, function() {
+				$this->context->addEvent('SIGINT');
+			});
+		}
+
 	}
 
 	/**
