@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi;
 
+use LogicException;
+
 class Colors extends \Smuuf\Primi\StrictObject {
 
 	const COLOR_FORMAT = "\033[%sm";
@@ -72,6 +74,8 @@ class Colors extends \Smuuf\Primi\StrictObject {
 
 		if (isset(self::COLORS[$color])) {
 			return \sprintf(self::COLOR_FORMAT, self::COLORS[$color]);
+		} else {
+			throw new \LogicException("Unknown color '$color'");
 		}
 
 		return $m[0];
