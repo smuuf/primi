@@ -31,7 +31,7 @@ class ContextAwareException extends EngineException {
 		}
 
 		$msg = \sprintf(
-			"%s @ line %s, position %s%s",
+			"%s @ line %s, position %s%s\n",
 			$originalMsg,
 			$node['_l'],
 			$node['_p'],
