@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\Structures\Value;
 
 class NullValue extends Value {
@@ -10,7 +10,7 @@ class NullValue extends Value {
 	const TYPE = "null";
 
 	public function __construct() {
-		Statistics::add('value_count_null');
+		Stats::add('value_count_null');
 	}
 
 	public function getStringRepr(): string {

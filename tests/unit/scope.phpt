@@ -7,7 +7,7 @@ use \Smuuf\Primi\Structures\FnContainer;
 require __DIR__ . '/../bootstrap.php';
 
 //
-// Variables
+// Scopes and variables.
 //
 
 $scope = new \Smuuf\Primi\Scope;

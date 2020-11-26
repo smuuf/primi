@@ -140,7 +140,7 @@ assert(
 	'List can be multiplied by integer number.'
 )
 
-// Multipliying by a negative integer.
+// Mutiplication by a negative integer.
 multiplier = -3
 result = list_a * multiplier
 assert(

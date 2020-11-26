@@ -11,6 +11,7 @@ function fun_a(local_a, call) {
 		local_a = local_a + 1
 		local_b = local_b + 1
 		//print('fun_inner: global = {}, local_a = {}, local_b = {}'.format(global_a, local_a, local_b))
+		//debugger()
 	}
 
 	if (call) {

@@ -278,38 +278,46 @@ abstract class Func {
 		$types = [];
 		foreach ($rf->getParameters() as $rp) {
 
+			$invalid = false;
 			$type = $rp->getType();
 
-			// See https://github.com/phpstan/phpstan/issues/3886#issuecomment-699599667
-			if ($type instanceof \ReflectionNamedType) {
-				$typeName = $type->getName();
+			if ($type === null) {
+				$invalid = 'Type must be specified';
 			} else {
-				throw new EngineError("Union parameter types not yet supported");
-			}
 
-			// Detect invalid type for parameter:
-			// a) Invalid if  typehint is not present at all.
-			// b) Invalid if not hinting some Value class or its descendants.
-			// c) Invalid if not hinting the Context class.
-			$invalid = false;
-			$invalid |= $type === \null;
-			$invalid |=
-				!\is_a($typeName, Value::class, \true)
-				&& !\is_a($typeName, Context::class, \true);
+				// See https://github.com/phpstan/phpstan/issues/3886#issuecomment-699599667
+				if (!$type instanceof \ReflectionNamedType) {
+					$invalid = "Union types not yet supported";
+				} else {
+
+					$typeName = $type->getName();
+
+					// a) Invalid if not hinting some Value class or its descendants.
+					// b) Invalid if not hinting the Context class.
+					if (!\is_a($typeName, Value::class, \true)
+						&& !\is_a($typeName, Context::class, \true)
+					) {
+						$invalid = "Type '$typeName' is not an allowed type";
+					}
+
+				}
+
+			}
 
 			if ($invalid) {
 
-				$declClass = $rp->getDeclaringClass();
-				$class = $declClass	? $declClass->getName()	: \null;
+				$declaringClass = $rp->getDeclaringClass();
+				$className = $declaringClass
+					? $declaringClass->getName()
+					: \null;
 
-				$method = $rp->getDeclaringFunction()->getName();
+				$fnName = $rp->getDeclaringFunction()->getName();
 				$paramName = $rp->getName();
 				$paramPosition = $rp->getPosition();
-				$fqn = $class ? "{$class}::{$method}()" : "{$method}()";
+				$fqn = $className ? "{$className}::{$fnName}()" : "{$fnName}()";
 
-				$msg = "Parameter {$paramPosition} '\${$paramName}' of type "
-					. "'$typeName' at {$fqn} is not an allowed type for Primi "
-					. "functions";
+				$msg = "Parameter {$paramPosition} '\${$paramName}' is invalid:"
+					. " $invalid";
 
 				throw new EngineError($msg);
 

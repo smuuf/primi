@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
@@ -15,7 +15,7 @@ class StringValue extends Value {
 
 	public function __construct(string $value) {
 
-		Statistics::add('value_count_string');
+		Stats::add('value_count_string');
 		$this->value = $value;
 
 	}
