@@ -3,18 +3,18 @@
 
 declare(strict_types=1);
 
+use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Structures\Value;
 
-define('ROOT_DIR', realpath(__DIR__ . '/../..'));
-const OUTPUT_FILE = ROOT_DIR . '/docs/functions.md';
+define('PRIMI_ROOT_DIT', realpath(__DIR__ . '/../..'));
 
 // Composer's autoload.
-require ROOT_DIR . '/vendor/autoload.php';
+require PRIMI_ROOT_DIT . '/vendor/autoload.php';
 
-// Autoloader.
-$loader = new \Smuuf\Koloader\Autoloader(ROOT_DIR . "/temp/");
-$loader->addDirectory(ROOT_DIR . "/src")->register();
+// Our autoloader.
+$loader = new \Smuuf\Koloader\Autoloader(PRIMI_ROOT_DIT . "/temp/");
+$loader->addDirectory(PRIMI_ROOT_DIT . "/src")->register();
 
 // Strict errors.
 error_reporting(E_ALL);
@@ -22,10 +22,15 @@ set_error_handler(function($severity, $message, $file, $line) {
 	throw new \ErrorException($message, 0, $severity, $file, $line);
 }, E_ALL);
 
-$warnings = [];
+
+// Helper functions.
+
+function line($text = ''): void {
+	echo "$text\n";
+}
 
 function out($text): void {
-	echo "$text\n";
+	echo $text;
 }
 
 function warn($text): void {
@@ -34,9 +39,27 @@ function warn($text): void {
 }
 
 function err($text): void {
-	echo "█ Error: $text\n";
+	echo Colors::get("{-red}█ Error:{_} $text\n");
 	die(1);
 }
+
+// Docgen.
+
+line('█ DocGen: Primi Standard Library Docs Generator');
+line();
+
+array_shift($argv);
+
+if ($argc !== 3) {
+	line('Usage:');
+	line('php ./docgen.php "<glob_path_to_PHP_files>" <path_to_result_markdown_file.md>');
+	die;
+}
+
+$phpFilesGlob = $argv[0];
+$outputFile = $argv[1];
+
+$warnings = [];
 
 // Polyfills for pre-PHP 8 versions.
 if (!function_exists('str_ends_with')) {
@@ -48,12 +71,9 @@ if (!function_exists('str_ends_with')) {
 	}
 }
 
-out('█ DocGen: Primi Standard Library Docs Generator');
-
-out('Parsing extension files...');
-const EXTENSIONS_GLOB = ROOT_DIR . '/src/extensions/psl/*.php';
-if (!$extensionFiles = glob(EXTENSIONS_GLOB)) {
-	err(sprintf("No extension files found at '%s'\n", EXTENSIONS_GLOB));
+line(Colors::get("Parsing extension files at {cyan}$phpFilesGlob{_} ..."));
+if (!$extensionFiles = glob($phpFilesGlob)) {
+	err("No extension files found at $phpFilesGlob");
 }
 
 function get_relevant_methods(string $className): array {
@@ -131,6 +151,8 @@ function extract_params(\ReflectionMethod $methodRef): array {
 $data = [];
 foreach ($extensionFiles as $filepath) {
 
+	line(Colors::get("- File {cyan}$filepath{_}"));
+
 	$filename = basename($filepath);
 	$className = substr($filename, 0, strrpos($filename, '.'));
 
@@ -138,10 +160,18 @@ foreach ($extensionFiles as $filepath) {
 	$data[$className] = [];
 
 	foreach ($methods as $methodRef) {
+
 		$methodName = $methodRef->getName();
+		out(Colors::get("{darkgrey}  - Method{_} $className::$methodName{darkgrey} ... {_}"));
 
 		$docComment = $methodRef->getDocComment();
+		if (strpos($docComment ?: '', '@docgenSkip') !== false) {
+			line(Colors::get("{lightyellow}Skipped via @docgenSkip"));
+			continue;
+		}
+
 		$text = $docComment ? clean_doc_whitespace($docComment) : '';
+
 		$params = extract_params($methodRef);
 
 		// Extract return type, which must be specified.
@@ -150,10 +180,16 @@ foreach ($extensionFiles as $filepath) {
 			try {
 				$returnType = ($returnTypeRef->getName())::TYPE;
 			} catch (\Throwable $e) {
-				warn("Class '$className, method '$methodName', referencing non-existent type having class " . $returnTypeRef->getName());
+				warn("Class '$className, method '$methodName', referencing non-existent Primi type having class " . $returnTypeRef->getName());
 			}
 		} else {
 			warn("Class '$className, method '$methodName', return type does not hint Value|Context");
+		}
+
+		if (!$text) {
+			line(Colors::get("{red}Missing or empty docstring"));
+		} else {
+			line(Colors::get("{green}OK"));
 		}
 
 		$data[$className][$methodName] = [
@@ -166,7 +202,7 @@ foreach ($extensionFiles as $filepath) {
 
 }
 
-out('Building docs...');
+line('Building docs...');
 
 function build_markdown(array $data): string {
 
@@ -233,13 +269,15 @@ function build_markdown(array $data): string {
 }
 
 $md = build_markdown($data);
-file_put_contents(OUTPUT_FILE, $md);
+line(Colors::get("Saving into {lightblue}$outputFile{_} ..."));
 
-out('Done.');
+file_put_contents($outputFile, $md);
+
+line('Done.');
 
 // Print warnings at the end, if there were any.
 if ($warnings) {
-	out("Warnings:");
+	line(Colors::get("{yellow}Warnings: "));
 	foreach ($warnings as $warning) {
 		echo "- $warning\n";
 	}
