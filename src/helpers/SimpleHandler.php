@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Ex\ContextAwareException;
 
 /**
@@ -19,8 +20,16 @@ abstract class SimpleHandler extends BaseHandler {
 	) {
 
 		try {
+
+			if ($event = $context->getEvent()) {
+				if ($event === 'SIGINT') {
+					throw new SystemException('Received SIGINT');
+				}
+			}
+
 			return static::handle($node, $context);
-		} catch (RuntimeError $e) {
+
+		} catch (RuntimeError|SystemException $e) {
 			throw new ContextAwareException($e->getMessage(), $node, $context);
 		}
 
