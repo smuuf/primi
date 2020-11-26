@@ -8,8 +8,8 @@ use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\AbstractScope;
 use \Smuuf\Primi\ICliIoDriver;
 use \Smuuf\Primi\Ex\BaseError;
-use \Smuuf\Primi\Ex\SyntaxError;
-use \Smuuf\Primi\Ex\BaseException;
+use \Smuuf\Primi\Ex\EngineException;
+use \Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\NullValue;
@@ -159,13 +159,13 @@ class Repl extends \Smuuf\Primi\StrictObject {
 				$scope->setVariable('_', $result);
 				$this->printResult($result);
 
-			} catch (BaseError $e) {
+			} catch (BaseError|SystemException $e) {
 
 				$this->driver->output(
 					Colors::get("{red}ERR:{_} {$e->getMessage()}\n")
 				);
 
-			} catch (BaseException|\Throwable $e) {
+			} catch (EngineException|\Throwable $e) {
 
 				// All exceptions other than BaseError are like to be a problem
 				// with Primi or PHP - print the whole PHP exception.

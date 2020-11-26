@@ -4,7 +4,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\AbstractScope;
 use \Smuuf\Primi\HandlerFactory;
 use \Smuuf\Primi\Ex\TypeError;
@@ -181,7 +181,7 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 
 	public function callClosure(...$args): ?Value {
 
-		Statistics::add('func_calls');
+		Stats::add('func_calls');
 		return ($this->closure)(...$args);
 
 	}

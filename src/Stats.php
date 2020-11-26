@@ -7,7 +7,7 @@ namespace Smuuf\Primi;
 /**
  * A static runtime statistics gatherer.
  */
-abstract class Statistics extends StrictObject {
+abstract class Stats extends StrictObject {
 
 	/** @var bool If true, statistics are gathered. Disabled by default. */
 	private static $enabled = false;
@@ -22,31 +22,48 @@ abstract class Statistics extends StrictObject {
 		self::$enabled = $state;
 	}
 
-	public static function add(string $what): void {
+	/**
+	 * Increment counter of stats entry by 1.
+	 * The stats entry is initialized with 0 if it doesn't exist yet.
+	 */
+	public static function add(string $entryName): void {
 
 		if (!self::$enabled) {
 			return;
 		}
 
-		self::$stats[$what] = (self::$stats[$what] ?? 0) + 1;
+		self::$stats[$entryName] = (self::$stats[$entryName] ?? 0) + 1;
 
 	}
 
-	public static function get(string $prefix = ''): \Generator {
+	/**
+	 * Return an array of multiple stats entries based on some prefix.
+	 * The prefix is trimmed off the stats entry name.
+	 *
+	 * @return array<name, int>
+	 */
+	public static function multi(string $prefix = ''): array {
 
+		$result = [];
 		$trim = strlen($prefix);
+
 		foreach (self::$stats as $name => $value) {
 
 			if ($prefix && strpos($name, $prefix) !== 0) {
 				continue;
 			}
 
-			yield substr($name, $trim) => $value;
+			$result[substr($name, $trim)] = $value;
 
 		}
 
+		return $result;
+
 	}
 
+	/**
+	 * Return a single stats entry by its full name.
+	 */
 	public static function single(string $name): int {
 		return self::$stats[$name] ?? 0;
 	}

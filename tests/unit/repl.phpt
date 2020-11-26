@@ -14,6 +14,7 @@ $commands = [
 	'a',
 	'?',
 	"(a, b) => { return a + b; }",
+	'?tb',
 	'??',
 	'exit',
 ];
@@ -32,6 +33,8 @@ $expected = [
 	"a: 1",
 	"_: 1",
 	"<function: user>",
+	"Traceback:",
+	"[0] <repl>",
 	'...', // ... - skip checking the rest.
 ];
 

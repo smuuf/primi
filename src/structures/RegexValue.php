@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\Helpers\Func;
 
 class RegexValue extends Value {
@@ -24,7 +24,7 @@ class RegexValue extends Value {
 		// we won't need to deal with any escaping of input.
 		$this->value = "\x07$regex\x07u";
 
-		Statistics::add('value_count_regex');
+		Stats::add('value_count_regex');
 
 	}
 

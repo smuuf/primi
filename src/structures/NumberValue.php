@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Helpers\Func;
@@ -20,7 +20,7 @@ class NumberValue extends Value {
 		}
 
 		$this->value = Func::normalize_decimal($value);
-		Statistics::add('value_count_number');
+		Stats::add('value_count_number');
 
 	}
 
