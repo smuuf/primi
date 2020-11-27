@@ -70,10 +70,10 @@ Assert::same('false', $v->getStringRepr());
 
 // Regex 1.
 $v = new RegexValue('/abc/');
-Assert::same('r"/abc/"', $v->getStringRepr());
+Assert::same('rx"/abc/"', $v->getStringRepr());
 // Regex 2.
 $v = new RegexValue('abc');
-Assert::same('r"abc"', $v->getStringRepr());
+Assert::same('rx"abc"', $v->getStringRepr());
 
 // List.
 $v = new ListValue([
@@ -83,7 +83,7 @@ $v = new ListValue([
 	new RegexValue('abc'),
 	new RegexValue('/abc/'),
 ]);
-Assert::same('[1, "xxx", false, r"abc", r"/abc/"]', $v->getStringRepr());
+Assert::same('[1, "xxx", false, rx"abc", rx"/abc/"]', $v->getStringRepr());
 
 // Dict.
 $v = new DictValue(Func::php_array_to_dict_pairs([
@@ -93,5 +93,5 @@ $v = new DictValue(Func::php_array_to_dict_pairs([
 	'ddd' => new RegexValue('abc'),
 	'___' => new RegexValue('/abc/'),
 ]));
-Assert::same('{"aaa": 1, "bbb": "xxx", "ccc": false, "ddd": r"abc", "___": r"/abc/"}', $v->getStringRepr());
+Assert::same('{"aaa": 1, "bbb": "xxx", "ccc": false, "ddd": rx"abc", "___": rx"/abc/"}', $v->getStringRepr());
 
