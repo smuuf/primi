@@ -34,9 +34,9 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 	const DEFAULT_EXTENSIONS = [
 		\Smuuf\Primi\Psl\HashExtension::class,
 		\Smuuf\Primi\Psl\DatetimeExtension::class,
-		PHP_SAPI === 'cli' // CliExtension only in CLI mode.
+		\PHP_SAPI === 'cli' // CliExtension only in CLI mode.
 			? \Smuuf\Primi\Psl\CliExtension::class
-			: false,
+			: \false,
 	];
 
 	/** @var (string|Extension)[] Extensions that are to be applied to runtime scope. */
@@ -86,7 +86,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 
 			// Skip falsey values (friendlier for adding conditional
 			// extensions).
-			foreach (array_filter($extension) as $ext) {
+			foreach (\array_filter($extension) as $ext) {
 				$this->add($ext);
 			}
 
@@ -95,7 +95,7 @@ class ExtensionHub extends \Smuuf\Primi\StrictObject {
 		}
 
 		// Can be either class name or instance, so we can't use `instanceof`.
-		if (!is_subclass_of($extension, Extension::class)) {
+		if (!\is_subclass_of($extension, Extension::class)) {
 			throw new EngineError("'$extension' is not a valid Primi extension");
 		}
 

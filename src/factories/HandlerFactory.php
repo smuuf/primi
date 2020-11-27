@@ -13,7 +13,7 @@ class HandlerFactory extends \Smuuf\Primi\StrictObject {
 		// Using caching is faster than repeatedly building strings and checking
 		// classes and stuff.
 		$class = self::$cache[$name] ?? (
-			class_exists($class = __NAMESPACE__ . "\\Handlers\\$name")
+			\class_exists($class = __NAMESPACE__ . "\\Handlers\\$name")
 				? $class
 				: \false
 		);

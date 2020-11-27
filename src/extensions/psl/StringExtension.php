@@ -108,7 +108,7 @@ class StringExtension extends Extension {
 					// A non-positional placeholder was used when a positional
 					// one is already present.
 					throw new RuntimeError(
-						sprintf("Cannot combine positional and non-positional placeholders.")
+						\sprintf("Cannot combine positional and non-positional placeholders.")
 					);
 				}
 

@@ -37,7 +37,7 @@ class NumberValue extends Value {
 	}
 
 	public function hash(): string {
-		return md5(Func::normalize_decimal($this->value));
+		return \md5(Func::normalize_decimal($this->value));
 	}
 
 	public function doAddition(Value $right): ?Value {

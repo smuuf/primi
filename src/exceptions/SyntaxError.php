@@ -9,7 +9,7 @@ class SyntaxError extends BaseError {
 	public function __construct(int $line, int $position, string $excerpt = '') {
 
 		$near = $excerpt
-			? sprintf("near '%s' ", trim($excerpt))
+			? \sprintf("near '%s' ", \trim($excerpt))
 			: '';
 
 		$msg = \sprintf(

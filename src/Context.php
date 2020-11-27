@@ -34,7 +34,7 @@ class Context extends StrictObject {
 	}
 
 	public function getEvent(): ?string {
-		return array_pop($this->eventQueue);
+		return \array_pop($this->eventQueue);
 	}
 
 	// Callstack management.

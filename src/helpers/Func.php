@@ -127,7 +127,7 @@ abstract class Func {
 		return \preg_replace(
 			self::DECIMAL_TRIMMING_REGEXES[0],
 			self::DECIMAL_TRIMMING_REGEXES[1],
-			ltrim(trim($decimal), '+')
+			\ltrim(\trim($decimal), '+')
 		);
 	}
 
@@ -180,7 +180,7 @@ abstract class Func {
 			return $class::TYPE;
 		}, $allowedTypes);
 
-		throw new TypeError(sprintf(
+		throw new TypeError(\sprintf(
 			"Expected '%s' but got '%s' as argument %d",
 			\implode("|", $expectedNames),
 			$arg::TYPE,
