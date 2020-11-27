@@ -212,7 +212,7 @@ class ListExtension extends Extension {
 	): NullValue {
 
 		// array_unshift() will reindex internal array, which is what we want.
-		array_unshift($list->value, $value);
+		\array_unshift($list->value, $value);
 		return new NullValue;
 
 	}

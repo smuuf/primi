@@ -20,7 +20,7 @@ class HashExtension extends Extension {
 	 */
 	public static function hash_md5(StringValue $val): StringValue {
 
-		$hash = md5((string) $val->value);
+		$hash = \md5((string) $val->value);
 		return new StringValue($hash);
 
 	}
@@ -36,7 +36,7 @@ class HashExtension extends Extension {
 	 */
 	public static function hash_sha256(StringValue $val): StringValue {
 
-		$hash = hash('sha256', (string) $val->value);
+		$hash = \hash('sha256', (string) $val->value);
 		return new StringValue($hash);
 	}
 

@@ -10,7 +10,7 @@ namespace Smuuf\Primi;
 abstract class Stats extends StrictObject {
 
 	/** @var bool If true, statistics are gathered. Disabled by default. */
-	private static $enabled = false;
+	private static $enabled = \false;
 
 	/** @var array Dictionary for gathered statistics. */
 	private static $stats = [];
@@ -18,7 +18,7 @@ abstract class Stats extends StrictObject {
 	/**
 	 * Enable global stats gathering.
 	 */
-	public static function enable(bool $state = true): void {
+	public static function enable(bool $state = \true): void {
 		self::$enabled = $state;
 	}
 
@@ -45,15 +45,15 @@ abstract class Stats extends StrictObject {
 	public static function multi(string $prefix = ''): array {
 
 		$result = [];
-		$trim = strlen($prefix);
+		$trim = \strlen($prefix);
 
 		foreach (self::$stats as $name => $value) {
 
-			if ($prefix && strpos($name, $prefix) !== 0) {
+			if ($prefix && \strpos($name, $prefix) !== 0) {
 				continue;
 			}
 
-			$result[substr($name, $trim)] = $value;
+			$result[\substr($name, $trim)] = $value;
 
 		}
 

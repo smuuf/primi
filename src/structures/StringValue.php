@@ -33,7 +33,7 @@ class StringValue extends Value {
 	}
 
 	public function hash(): string {
-		return md5($this->value);
+		return \md5($this->value);
 	}
 
 	public function getStringRepr(): string {

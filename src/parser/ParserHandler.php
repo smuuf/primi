@@ -48,7 +48,7 @@ class ParserHandler extends CompiledParser {
 		}
 
 		// Show a bit of code where the syntax error occured.
-		$excerpt = mb_substr($source, $position, 20);
+		$excerpt = \mb_substr($source, $position, 20);
 
 		throw new SyntaxError((int) $line, (int) $pos, $excerpt);
 

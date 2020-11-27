@@ -59,7 +59,7 @@ class CastingExtension extends Extension {
 
 		$regex = $value->value;
 		if ($escape && $escape->isTruthy()) {
-			$regex = preg_quote($regex);
+			$regex = \preg_quote($regex);
 		}
 
 		return new RegexValue($regex);
@@ -119,7 +119,7 @@ class CastingExtension extends Extension {
 			StringValue::class, NumberValue::class, BoolValue::class
 		);
 
-		$str = trim($value->value);
+		$str = \trim($value->value);
 		if (!Func::is_decimal($str)) {
 			throw new RuntimeError("Invalid number literal '$str'");
 		}
@@ -146,7 +146,7 @@ class CastingExtension extends Extension {
 
 		$iter = $value->getIterator();
 		if ($iter === null) {
-			throw new RuntimeError(sprintf(
+			throw new RuntimeError(\sprintf(
 				"Type '%s' cannot be casted to list", $value::TYPE
 			));
 		}
@@ -158,7 +158,7 @@ class CastingExtension extends Extension {
 			foreach ($iter as $v) {	yield $v; }
 		})($iter);
 
-		return new ListValue(iterator_to_array($values));
+		return new ListValue(\iterator_to_array($values));
 
 	}
 
