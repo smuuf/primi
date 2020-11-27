@@ -4,7 +4,7 @@
 // Composer's autoload.
 
 use \Smuuf\Primi\Repl;
-use \Smuuf\Primi\Statistics;
+use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Ex\BaseException;
 
@@ -30,18 +30,18 @@ $config = parse_arguments($argv);
 if ($config['print_process_stats']) {
 
 	// Enable stats gathering.
-	Statistics::enable();
+	Stats::enable();
 
 	register_shutdown_function(function() {
 
 		$mb = round(memory_get_peak_usage() / 1e6, 2);
 		echo "Memory peak: {$mb} MB\n";
 
-		$fnCalls = Statistics::single('func_calls');
+		$fnCalls = Stats::single('func_calls');
 		echo "Function calls: {$fnCalls}\n";
 
 		echo "Created values:\n";
-		foreach (Statistics::get('value_count_') as $name => $value) {
+		foreach (Stats::multi('value_count_') as $name => $value) {
 			echo "- {$name}: {$value}\n";
 		}
 

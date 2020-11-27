@@ -40,7 +40,7 @@ abstract class Stats extends StrictObject {
 	 * Return an array of multiple stats entries based on some prefix.
 	 * The prefix is trimmed off the stats entry name.
 	 *
-	 * @return array<name, int>
+	 * @return array<string, int>
 	 */
 	public static function multi(string $prefix = ''): array {
 

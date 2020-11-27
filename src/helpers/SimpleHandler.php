@@ -14,6 +14,9 @@ use \Smuuf\Primi\Ex\ContextAwareException;
  */
 abstract class SimpleHandler extends BaseHandler {
 
+	private const EVENT_TICK_RESOLUTION = 100;
+	private static $tick = 0;
+
 	final public static function run(
 		array $node,
 		Context $context
@@ -21,10 +24,16 @@ abstract class SimpleHandler extends BaseHandler {
 
 		try {
 
-			if ($event = $context->getEvent()) {
-				if ($event === 'SIGINT') {
-					throw new SystemException('Received SIGINT');
+			if (++self::$tick >= self::EVENT_TICK_RESOLUTION) {
+
+				if ($event = $context->getEvent()) {
+					if ($event === 'SIGINT') {
+						throw new SystemException('Received SIGINT');
+					}
 				}
+
+				self::$tick = 0;
+
 			}
 
 			return static::handle($node, $context);
