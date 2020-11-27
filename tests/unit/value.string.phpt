@@ -289,13 +289,13 @@ Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
 
 $fn = $scope->getVariable('string_find_first');
 Assert::same('2', get_val($fn->invoke($ctx, [$string, new StringValue("is")])));
-// First: False when it does not appear in the string.
-Assert::false(get_val($fn->invoke($ctx, [$string, new StringValue("aaa")])));
+// First: null when it does not appear in the string.
+Assert::null(get_val($fn->invoke($ctx, [$string, new StringValue("aaa")])));
 
 $fn = $scope->getVariable('string_find_last');
 Assert::same('5', get_val($fn->invoke($ctx, [$string, new StringValue("is")])));
-// Last: False when it does not appear in the string.
-Assert::false(get_val($fn->invoke($ctx, [$string, new StringValue("aaa")])));
+// Last: null when it does not appear in the string.
+Assert::null(get_val($fn->invoke($ctx, [$string, new StringValue("aaa")])));
 
 //
 // Test splitting.

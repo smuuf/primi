@@ -51,7 +51,7 @@ result = type({1: 'a', 2: 'b', 'c': 'd'})
 assert(result == "dict")
 
 //
-// Casting nubmbers.
+// Casting numbers.
 //
 
 result = 1.to_number()
@@ -62,9 +62,6 @@ assert(result == "1")
 
 result = 1.to_bool()
 assert(result == true)
-
-result = 1.to_regex()
-assert(result == rx"1")
 
 //
 // Casting strings.

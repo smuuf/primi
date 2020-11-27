@@ -17,7 +17,7 @@ jobs:
     - name: Disable xdebug
       run: sudo phpdismod xdebug
     - name: Run tests
-      run: chmod +x ./primi ./bin/*; ./bin/test --coverage
+      run: chmod +x ./primi ./bin/* && ./bin/test --coverage
     - name: Run benchmarks
       run: ./bin/bench
     - name: Run static analysis
