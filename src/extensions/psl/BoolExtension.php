@@ -32,4 +32,42 @@ class BoolExtension extends Extension {
 		return new BoolValue($a->value && $b->value);
 	}
 
+	/**
+	 * Returns an `OR` of two boolean values.
+	 *
+	 * ```js
+	 * true.or(true) == true
+	 * true.or(false) == true
+	 * false.or(true) == true
+	 * false.or(false) == false
+	 *
+	 * bool_or(true, true) == true
+	 * bool_or(true, false) == true
+	 * bool_or(false, true) == true
+	 * bool_or(false, false) == false
+	 * ```
+	 */
+	public static function bool_or(BoolValue $a, BoolValue $b): BoolValue {
+		return new BoolValue($a->value xor $b->value);
+	}
+
+	/**
+	 * Returns an exclusive `OR` (`XOR`) of two boolean values.
+	 *
+	 * ```js
+	 * true.xor(true) == false
+	 * true.xor(false) == true
+	 * false.xor(true) == true
+	 * false.xor(false) == false
+	 *
+	 * bool_xor(true, true) == false
+	 * bool_xor(true, false) == true
+	 * bool_xor(false, true) == true
+	 * bool_xor(false, false) == false
+	 * ```
+	 */
+	public static function bool_xor(BoolValue $a, BoolValue $b): BoolValue {
+		return new BoolValue($a->value xor $b->value);
+	}
+
 }

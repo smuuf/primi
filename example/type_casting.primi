@@ -70,8 +70,13 @@ assert(result == rx"1")
 // Casting strings.
 //
 
-result = "a".to_number()
-assert(result == 0)
+error = 0
+try {
+	result = "a".to_number()
+} catch {
+	error = 1
+}
+assert(error == 1)
 
 result = "a".to_string()
 assert(result == "a")

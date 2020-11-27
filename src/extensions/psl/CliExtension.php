@@ -19,6 +19,7 @@ class CliExtension extends Extension {
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
+	 *
 	 * Prints value to standard output.
 	 */
 	public static function print(
@@ -35,7 +36,8 @@ class CliExtension extends Extension {
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
-	 * Injects a [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) \
+	 *
+	 * Injects a [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)
 	 * session for debugging at the specified line.
 	 *
 	 * @injectContext
@@ -49,6 +51,7 @@ class CliExtension extends Extension {
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
+	 *
 	 * Return traceback as a list.
 	 *
 	 * @injectContext
@@ -59,7 +62,8 @@ class CliExtension extends Extension {
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
-	 * Returns memory peak usage used by Primi (or rather PHP behind it) in \
+	 *
+	 * Returns memory peak usage used by Primi (or rather PHP behind it) in
 	 * bytes.
 	 */
 	public static function memory_get_peak_usage(): NumberValue {
@@ -68,6 +72,7 @@ class CliExtension extends Extension {
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
+	 *
 	 * Returns current usage used by Primi (or rather PHP behind it) in bytes.
 	 */
 	public static function memory_get_usage(): NumberValue {
@@ -76,8 +81,9 @@ class CliExtension extends Extension {
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
-	 * This function returns true if a boolean value passed into it is `true` \
-	 * and throws error if it's `false`. Optional string decription can be \
+	 *
+	 * This function returns true if a boolean value passed into it is `true`
+	 * and throws error if it's `false`. Optional string decription can be
 	 * provided, which will be visible in the eventual error message.
 	 */
 	public static function assert(

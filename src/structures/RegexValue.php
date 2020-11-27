@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\StringEscaping;
 
 class RegexValue extends Value {
 
@@ -38,7 +39,7 @@ class RegexValue extends Value {
 		$string = $this->value;
 		$string = \mb_substr($string, 1, \mb_strlen($string) - 3);
 
-		return "r\"{$string}\"";
+		return "rx\"{$string}\"";
 
 	}
 

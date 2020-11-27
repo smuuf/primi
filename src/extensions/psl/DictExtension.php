@@ -17,8 +17,8 @@ use \Smuuf\Primi\Structures\ListValue;
 class DictExtension extends Extension {
 
 	/**
-	 * Returns value stored under `key`, if it in dict, otherwise returns the \
-	 * value of the `default` argument, which is `null` by default, but can \
+	 * Returns value stored under `key`, if it in dict, otherwise returns the
+	 * value of the `default` argument, which is `null` by default, but can
 	 * optionally be specified.
 	 *
 	 * ```js
@@ -44,7 +44,7 @@ class DictExtension extends Extension {
 	}
 
 	/**
-	 * Return `true` if the value exists in dict. Return `false` otherwise.
+	 * Returns `true` if the value exists in dict. Return `false` otherwise.
 	 *
 	 * ```js
 	 * d = {'a': 1, 100: 'yes'}
@@ -62,7 +62,7 @@ class DictExtension extends Extension {
 	}
 
 	/**
-	 * Return `true` if the key exists in dict. Return `false` otherwise.
+	 * Returns `true` if the key exists in dict. Return `false` otherwise.
 	 *
 	 * ```js
 	 * d = {'a': 1, 100: 'yes'}
@@ -85,6 +85,13 @@ class DictExtension extends Extension {
 
 	}
 
+	/**
+	 * Returns a new `list` containing **values** from this `dict`.
+	 *
+	 * ```js
+	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
+	 * ```
+	 */
 	public static function dict_values(DictValue $dict): ListValue {
 
 		$list = [];
@@ -96,6 +103,13 @@ class DictExtension extends Extension {
 
 	}
 
+	/**
+	 * Returns a new `list` containing **keys** from this `dict`.
+	 *
+	 * ```js
+	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
+	 * ```
+	 */
 	public static function dict_keys(DictValue $dict): ListValue {
 
 		$list = [];
@@ -107,9 +121,29 @@ class DictExtension extends Extension {
 
 	}
 
+	/**
+	 * Returns a new shallow copy of this dict.
+	 *
+	 * ```js
+	 * a_dict = {'a': 1, 100: 'yes'}
+	 * b_dict = a_dict.copy()
+	 * b_dict[100] = 'nope'
+	 *
+	 * a_dict == {'a': 1, 100: 'yes'}
+	 * b_dict == {'a': 1, 100: 'nope'}
+	 * ```
+	 */
 	public static function dict_copy(DictValue $dict): DictValue {
 		return clone $dict;
 	}
+
+	/**
+	 * Returns a new `dict` with original `dict`'s items in reversed order.
+	 *
+	 * ```js
+	 * {'a': 1, 100: 'yes'}.reverse() == {100: 'yes', 'a': 1}
+	 * ```
+	 */
 
 	public static function dict_reverse(DictValue $dict): Value {
 		return new DictValue(Func::iterator_as_tuples(
@@ -118,6 +152,17 @@ class DictExtension extends Extension {
 	}
 
 	/**
+	 * Returns a new dict with same keys but values returned by a passed
+	 * function _(callback)_ applied to each item.
+	 *
+	 * Callback arguments: `callback(value, key)`.
+	 *
+	 * ```js
+	 * a_dict = {'key_a': 'val_a', 'key_b': 'val_b'}
+	 * fn = (v, k) => { return k + "|" + v; }
+	 * a_dict.map(fn) == {"key_a": "key_a|val_a", "key_b": "key_b|val_b"}
+	 * ```
+	 *
 	 * @injectContext
 	 */
 	public static function dict_map(

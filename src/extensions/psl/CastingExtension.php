@@ -16,20 +16,7 @@ use \Smuuf\Primi\Structures\Value;
 class CastingExtension extends Extension {
 
 	/**
-	 * Return type of value as string.
-	 *
-	 * ```js
-	 * type(true) == 'bool'
-	 * type("hello") == 'string'
-	 * type(type) == 'function'
-	 * ```
-	 */
-	public static function type(Value $value): StringValue {
-		return new StringValue($value::TYPE);
-	}
-
-	/**
-	 * Return a string representation of value.
+	 * Return a `string` representation of value.
 	 *
 	 * ```js
 	 * to_string(true) == 'true'
@@ -44,7 +31,20 @@ class CastingExtension extends Extension {
 		return new StringValue($value->getStringValue());
 	}
 
-	public static function to_regex(Value $value): RegexValue {
+	/**
+	 * Convert `string` to a `regex` value. If the optional `escape` argument
+	 * is `true`, the any characters with special regex meaning will be
+	 * escaped so that they are meant literally.
+	 *
+	 * ```js
+	 * "hello".to_regex() == rx"hello"
+	 * to_regex("Why so serious...?", true) == rx"Why so serious\.\.\.\?"
+	 * ```
+	 */
+	public static function to_regex(
+		Value $value,
+		?BoolValue $escape = null
+	): RegexValue {
 
 		// Allow regexes to be casted to regex.
 		if ($value instanceof RegexValue) {
@@ -54,18 +54,64 @@ class CastingExtension extends Extension {
 		Func::allow_argument_types(
 			0,
 			$value,
-			StringValue::class, NumberValue::class
+			StringValue::class, RegexValue::class
 		);
 
-		return new RegexValue((string) $value->value);
+		$regex = $value->value;
+		if ($escape && $escape->isTruthy()) {
+			$regex = preg_quote($regex);
+		}
+
+		return new RegexValue($regex);
 
 	}
 
+	/**
+	 * Returns a new `bool` value based on argument's truthness.
+	 *
+	 * ```js
+	 * to_bool(true) == true
+	 * to_bool(false) == false
+	 * to_bool(-1) == true
+	 * to_bool(0) == false
+	 * to_bool([]) == false
+	 * to_bool(['']) == true
+	 * to_bool('') == false
+	 * to_bool(' ') == true
+	 * to_bool('0') == true
+	 * to_bool('1') == true
+	 * ```
+	 */
 	public static function to_bool(Value $value): BoolValue {
 		return new BoolValue($value->isTruthy());
 	}
 
+	/**
+	 * Cast a `number|string|bool` value to `number`.
+	 *
+	 * ```js
+	 * to_number(1) == 1
+	 * to_number('123') == 123
+	 * to_number('+123') == 123
+	 * to_number('-123') == -123
+	 * to_number(' +123.001   ') == 123.001
+	 * to_number(' -123.00   ') == -123.0
+	 *
+	 * to_number(true) == 1
+	 * to_number(false) == 0
+	 * to_number(fal) == 0
+	 * ```
+	 */
 	public static function to_number(Value $value): NumberValue {
+
+		if ($value instanceof NumberValue) {
+			// numberValue is immutable, so we don't even need to make a clone.
+			return $value;
+		}
+
+		if ($value instanceof BoolValue) {
+			return new NumberValue($value->value ? '1' : '0');
+		}
 
 		Func::allow_argument_types(
 			0,
@@ -73,10 +119,29 @@ class CastingExtension extends Extension {
 			StringValue::class, NumberValue::class, BoolValue::class
 		);
 
-		return new NumberValue((string) (int) $value->value);
+		$str = trim($value->value);
+		if (!Func::is_decimal($str)) {
+			throw new RuntimeError("Invalid number literal '$str'");
+		}
+
+		return new NumberValue((string) $str);
 
 	}
 
+	/**
+	 * Returns a new `list` containing items of some iterable value.
+	 *
+	 * ```js
+	 * a_list = 'první máj'.to_list()
+	 * a_list == ["p", "r", "v", "n", "í", " ", "m", "á", "j"]
+	 *
+	 * b_list = {'a': 1, 'b': 2, 'c': []}.to_list()
+	 * b_list = [1, 2, []]
+	 *
+	 * c_list = {'a': 1, 'b': 2, 'c': []}.keys().to_list()
+	 * c_list = ['a', 'b', 'c']
+	 * ```
+	 */
 	public static function to_list(Value $value): ListValue {
 
 		$iter = $value->getIterator();
@@ -97,16 +162,45 @@ class CastingExtension extends Extension {
 
 	}
 
-	public static function to_dict(DictValue $value): DictValue {
+	/**
+	 * Returns a new dict containing items of some iterable value.
+	 *
+	 * ```js
+	 * a_list = 'máj'.to_dict()
+	 * a_list == {0: 'm', 1: 'á', 2: 'j'}
+	 *
+	 * b_list = {'a': 1, 'b': 2, 'c': []}.to_list()
+	 * b_list = [1, 2, []]
+	 *
+	 * c_list = {'a': 1, 'b': 2, 'c': []}.keys().to_list()
+	 * c_list = ['a', 'b', 'c']
+	 * ```
+	 */
+	public static function to_dict(Value $value): DictValue {
+
+		if ($value instanceof DictValue) {
+			return clone $value;
+		}
+
+		Func::allow_argument_types(
+			0,
+			$value,
+			StringValue::class, ListValue::class
+		);
 
 		// Allow arrays to be casted to array (no other conversions allowed).
 		// And do NOT break references inside the array (arbitrary decision).
-		return $value;
+		return new DictValue(Func::iterator_as_tuples($value->getIterator()));
 
 	}
 
 	// Specific cases of casting.
 
+	/**
+	 * Regex delimiters must be trimmed off when converting to string.
+	 *
+	 * @docgenSkip
+	 */
 	public static function regex_to_string(RegexValue $value): StringValue {
 
 		// Cut off the first delim and the last delim + "u" modifier.

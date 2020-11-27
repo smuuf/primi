@@ -9,6 +9,7 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
 use \Smuuf\Primi\Structures\ListValue;
+use \Smuuf\Primi\Structures\StringValue;
 use \Smuuf\Primi\Structures\NumberValue;
 
 class StandardExtension extends Extension {
@@ -33,6 +34,19 @@ class StandardExtension extends Extension {
 
 		return new NumberValue((string) $value->getLength());
 
+	}
+
+	/**
+	 * Return type of value as string.
+	 *
+	 * ```js
+	 * type(true) == 'bool'
+	 * type("hello") == 'string'
+	 * type(type) == 'function'
+	 * ```
+	 */
+	public static function type(Value $value): StringValue {
+		return new StringValue($value::TYPE);
 	}
 
 	public static function range(
