@@ -74,11 +74,9 @@ class Colors extends \Smuuf\Primi\StrictObject {
 
 		if (isset(self::COLORS[$color])) {
 			return \sprintf(self::COLOR_FORMAT, self::COLORS[$color]);
-		} else {
-			throw new \LogicException("Unknown color '$color'");
 		}
 
-		return $m[0];
+		throw new \LogicException("Unknown color '$color'");
 
 	}
 

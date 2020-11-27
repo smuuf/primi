@@ -34,7 +34,13 @@ class Context extends StrictObject {
 	}
 
 	public function getEvent(): ?string {
-		return \array_pop($this->eventQueue);
+
+		if ($this->eventQueue) {
+			return \array_pop($this->eventQueue);
+		}
+
+		return null;
+
 	}
 
 	// Callstack management.
@@ -79,7 +85,7 @@ class Context extends StrictObject {
 	}
 
 	// Direct access to the current scope - which is the one on the top of the
-	// stack (compatibility with Primi 0.4).
+	// stack (compatibility with Primi <0.5).
 
 	public function getVariable(string $name): ?Value {
 		return $this->currentScope->getVariable($name);
