@@ -122,7 +122,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			$this->driver->output("\n");
 			$input = $this->gatherLines($ctx);
 
-			if (trim($input)) {
+			if (trim($input) && $input !== 'exit') {
 				$this->driver->addToHistory($input);
 			}
 

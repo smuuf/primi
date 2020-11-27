@@ -9,6 +9,7 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Structures\NullValue;
 use \Smuuf\Primi\Structures\BoolValue;
 use \Smuuf\Primi\Structures\DictValue;
 use \Smuuf\Primi\Structures\ListValue;
@@ -18,6 +19,13 @@ use \Smuuf\Primi\Structures\NumberValue;
 
 class StringExtension extends Extension {
 
+	/**
+	 * Returns a new `string` from shuffled characters of the original `string`.
+	 *
+	 * ```js
+	 * "hello".shuffle() // "leohl" or something similar.
+	 * ```
+	 */
 	public static function string_shuffle(StringValue $str): StringValue {
 
 		// str_shuffle() doesn't work with unicode, so let's do this ourselves.
@@ -35,7 +43,23 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function string_format(StringValue $str, Value ...$items): StringValue {
+	/**
+	 * Returns a new `string` with placeholders from the original `string`
+	 * replaced by additional arguments.
+	 *
+	 * Placeholders can be either _(but these can't be combined)_:
+	 * - Non-positional: `{}`
+	 * - Positional: `{0}`, `{1}`, `{2}`, etc.
+	 *
+	 * ```js
+	 * "x{}x, y{}y".format(1, 2) == "x1x, y2y"
+	 * "x{1}x, y{0}y".format(111, 222) == "x222x, y111y"
+	 * ```
+	 */
+	public static function string_format(
+		StringValue $str,
+		Value ...$items
+	): StringValue {
 
 		// Extract PHP values from passed in value objects, because later we
 		// will pass the values to sprintf().
@@ -58,30 +82,25 @@ class StringExtension extends Extension {
 
 			if (isset($m[1])) {
 
+				// A positional placeholder was used when a non-positional one
+				// is already present.
 				if ($indexedMode === \false) {
-					// A positional placeholder was used when a non-positional
-					// one is already present.
-					throw new RuntimeError(
-						\sprintf("Cannot combine positional and non-positional placeholders.")
-					);
+					throw new RuntimeError("Cannot combine positional and non-positional placeholders.");
 				}
 
 				$indexedMode = \true;
 				$index = $m[1];
 
 				if ($index < 0) {
-					throw new RuntimeError(
-						\sprintf("Position (%s) cannot be less than 0.", $index)
-					);
+					throw new RuntimeError("Position ($index) cannot be less than 0.");
 				}
 
 				if ($index > $passedCount) {
-					throw new RuntimeError(
-						\sprintf("Position (%s) does not match the number of parameters (%s).", $index, $passedCount)
-					);
+					throw new RuntimeError("Position ($index) does not match the number of parameters ($passedCount).");
 				}
 
-				$converted = "%{$index}\$s";
+				$plusOne = $index + 1;
+				$converted = "%{$plusOne}\$s";
 
 			} else {
 
@@ -118,7 +137,24 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function string_replace(StringValue $self, Value $search, StringValue $replace = \null): StringValue {
+	/**
+	 * Perform search and replace and return the results as new `string`.
+	 *
+	 * Two separate modes of operation:
+	 * 1. The needle `search` is a `string` and haystack `replace` is a string.
+	 * 2. The needle `search` is a `dict` defining search-and-replace pairs
+	 * _(and `replace` argument is omitted)_.
+	 *
+	 * ```js
+	 * "abcdef".replace("c", "X") == "abXdef"
+	 * "abcdef".replace({"c": "X", "e": "Y"}) == "abXdYf"
+	 * ```
+	 */
+	public static function string_replace(
+		StringValue $string,
+		Value $search,
+		StringValue $replace = \null
+	): StringValue {
 
 		// Replacing using array of search-replace pairs.
 		if ($search instanceof DictValue) {
@@ -143,7 +179,7 @@ class StringExtension extends Extension {
 
 			}
 
-			return new StringValue(\str_replace($from, $to, $self->value));
+			return new StringValue(\str_replace($from, $to, $string->value));
 
 		}
 
@@ -155,13 +191,13 @@ class StringExtension extends Extension {
 			// Handle both string/number values the same way.
 			return new StringValue(
 				\str_replace(
-					(string) $search->value, $replace->value, $self->value
+					(string) $search->value, $replace->value, $string->value
 				)
 			);
 		} elseif ($search instanceof RegexValue) {
 			return new StringValue(
 				\preg_replace(
-					$search->value, $replace->value, $self->value
+					$search->value, $replace->value, $string->value
 				)
 			);
 		} else {
@@ -173,24 +209,41 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function string_reverse(StringValue $self): StringValue {
+	/**
+	 * Return reversed string.
+	 *
+	 * ```js
+	 * "hello! tady čaj".reverse() == "jač ydat !olleh"
+	 * ```
+	 */
+	public static function string_reverse(StringValue $string): StringValue {
 
 		// strrev() does not support multibyte.
 		// Let's do it ourselves then!
 
 		$result = '';
-		$len = \mb_strlen($self->value);
+		$len = \mb_strlen($string->value);
 
 		for ($i = $len; $i-- > 0;) {
-			$result .= \mb_substr($self->value, $i, 1);
+			$result .= \mb_substr($string->value, $i, 1);
 		}
 
 		return new StringValue($result);
 
 	}
 
+	/**
+	 * Split original `string` by some `delimiter` and return result the as a
+	 * `list`. If the `delimiter` is not specified, the `string` is splat by
+	 * whitespace characters.
+	 *
+	 * ```js
+	 * "a b c\nd e f".split() == ['a', 'b', 'c', 'd', 'e', 'f']
+	 * "a,b,c,d".split(',') == ['a', 'b', 'c', 'd']
+	 * ```
+	 */
 	public static function string_split(
-		StringValue $self,
+		StringValue $string,
 		?Value $delimiter = \null
 	): ListValue {
 
@@ -203,14 +256,14 @@ class StringExtension extends Extension {
 		Func::allow_argument_types(1, $delimiter, StringValue::class, RegexValue::class);
 
 		if ($delimiter instanceof RegexValue) {
-			$splat = \preg_split($delimiter->value, $self->value);
+			$splat = \preg_split($delimiter->value, $string->value);
 		}
 
 		if ($delimiter instanceof StringValue) {
 			if ($delimiter->value === '') {
 				throw new RuntimeError("String delimiter must not be empty.");
 			}
-			$splat = \explode($delimiter->value, $self->value);
+			$splat = \explode($delimiter->value, $string->value);
 		}
 
 		return new ListValue(\array_map(function($part) {
@@ -219,59 +272,112 @@ class StringExtension extends Extension {
 
 	}
 
-	public static function string_contains(StringValue $self, Value $needle): BoolValue {
-		return new BoolValue($self->doesContain($needle));
+	/**
+	 * Returns `true` if the `string` contains `needle`. Returns `false`
+	 * otherwise.
+	 *
+	 * ```js
+	 * "this is a sentence".contains("sen") == true
+	 * "this is a sentence".contains("yay") == false
+	 * ```
+	 */
+	public static function string_contains(
+		StringValue $haystack,
+		Value $needle
+	): BoolValue {
+		return new BoolValue($haystack->doesContain($needle));
 	}
 
-	public static function string_number_of(StringValue $self, Value $needle): NumberValue {
+	/**
+	 * Returns `number` of occurrences of `needle` in a string.
+	 *
+	 * ```js
+	 * "this is a sentence".number_of("s") == 3
+	 * "this is a sentence".number_of("x") == 0
+	 * ```
+	 */
+	public static function string_number_of(
+		StringValue $haystack,
+		Value $needle
+	): NumberValue {
 
 		// Allow only some value types.
 		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		return new NumberValue(
 			(string) \mb_substr_count(
-				(string) $self->value, (string) $needle->value
+				(string) $haystack->value, (string) $needle->value
 			)
 		);
 
 	}
 
-	public static function string_find_first(StringValue $self, Value $needle): Value {
+	/**
+	 * Returns the position _(index)_ of **first** occurrence of `needle` in
+	 * the `string`. If the `needle` was not found, `null` is returned.
+	 *
+	 * ```js
+	 * "this is a sentence".find_first("s") == 3
+	 * "this is a sentence".find_first("t") == 0
+	 * "this is a sentence".find_first("x") == null
+	 * ```
+	 */
+	public static function string_find_first(StringValue $haystack, Value $needle): Value {
 
 		// Allow only some value types.
 		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
-		$pos = \mb_strpos($self->value, (string) $needle->value);
+		$pos = \mb_strpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
 			return new NumberValue((string) $pos);
 		} else {
-			return new BoolValue(\false);
+			return new NullValue;
 		}
 
 	}
 
-	public static function string_find_last(StringValue $self, Value $needle): Value {
+	/**
+	 * Returns the position _(index)_ of **last** occurrence of `needle` in
+	 * the `string`. If the `needle` was not found, `null` is returned.
+	 *
+	 * ```js
+	 * "this is a sentence".find_first("s") == 3
+	 * "this is a sentence".find_first("t") == 0
+	 * "this is a sentence".find_first("x") == null
+	 * ```
+	 */
+	public static function string_find_last(StringValue $haystack, Value $needle): Value {
 
 		// Allow only some value types.
 		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
-		$pos = \mb_strrpos($self->value, (string) $needle->value);
+		$pos = \mb_strrpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
 			return new NumberValue((string) $pos);
 		} else {
-			return new BoolValue(\false);
+			return new NullValue;
 		}
 
 	}
 
+	/**
+	 * Join items from `iterable` with this `string` and return the result as
+	 * a new string.
+	 *
+	 * ```js
+	 * ','.join(['a', 'b', 3]) == "a,b,3"
+	 * ':::'.join({'a': 1, 'b': 2, 'c': '3'}) == "1:::2:::3"
+	 * '-PADDING-'.join("abc") == "a-PADDING-b-PADDING-3" // String is also iterable.
+	 * ```
+	 */
 	public static function string_join(
-		StringValue $self,
-		Value $value
+		StringValue $string,
+		Value $iterable
 	): StringValue {
 
-		$iter = $value->getIterator();
+		$iter = $iterable->getIterator();
 		if ($iter === null) {
-			$type = $value::TYPE;
+			$type = $iterable::TYPE;
 			throw new RuntimeError("Cannot join unsupported type '$type'");
 		}
 
@@ -280,10 +386,10 @@ class StringExtension extends Extension {
 		foreach ($iter as $item) {
 			switch (\true) {
 				case $item instanceof DictValue:
-					$prepared[] = self::string_join($self, $item)->value;
+					$prepared[] = self::string_join($string, $item)->value;
 					break;
 				case $item instanceof ListValue:
-						$prepared[] = self::string_join($self, $item)->value;
+						$prepared[] = self::string_join($string, $item)->value;
 					break;
 				default:
 					$prepared[] = $item->getStringValue();
@@ -291,7 +397,7 @@ class StringExtension extends Extension {
 			}
 		}
 
-		return new StringValue(\implode($self->value, $prepared));
+		return new StringValue(\implode($string->value, $prepared));
 
 	}
 

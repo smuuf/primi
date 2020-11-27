@@ -10,7 +10,7 @@ use \Smuuf\Primi\Structures\NumberValue;
 class DatetimeExtension extends Extension {
 
 	/**
-	 * Returns high-resolution monotonic time. It is an arbitrary number that \
+	 * Returns high-resolution monotonic time. It is an arbitrary number that
 	 * keeps increasing by 1 every second.
 	 */
 	public static function time_monotonic(): NumberValue {

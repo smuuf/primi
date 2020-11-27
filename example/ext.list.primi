@@ -1,0 +1,74 @@
+//
+// List extension functions.
+//
+// list_copy()
+// list_reverse()
+// list_random()
+// list_count()
+// list_shuffle()
+// list_map()
+// list_contains()
+// list_get()
+// list_push()
+// list_prepend()
+// list_pop()
+
+function true_if_error(fn) {
+	try { fn(); return false; } catch { return true; }
+}
+
+//
+// list_copy()
+//
+
+a = [1, "x", []]
+
+b = a
+b[0] = "bee"
+assert(a[0] == "bee")
+
+c = a.copy()
+c[0] = "cow"
+assert(a[0] != "cow")
+
+//
+// list_reverse()
+//
+
+a = [1, "x", ['a', 'b'], {}]
+b = a.reverse()
+assert(b == [{}, ['a', 'b'], "x", 1])
+
+//
+// list_random()
+//
+
+a = [1, "x", []]
+b = a.random()
+assert(b == 1 or b == "x" or b == [])
+
+//
+// list_count()
+//
+
+a = [
+	1,
+	"x",
+	['a', 'b'],
+	['b', 'a'], // Switched order of items.
+	{'x': 'y', 'xx': 'yy'},
+	{'x': 'y', 'xx': 'yy'},
+	{'xx': 'yy', 'x': 'y'}, // Switched order of items.
+]
+assert(a.count(1) == 1)
+assert(a.count(-1) == 0)
+assert(a.count('nope') == 0)
+assert(a.count('x') == 1)
+assert(a.count('xx') == 0)
+
+_ = 'List with same items in different order are considered to be different'
+assert(a.count(['a', 'b']) == 1, _)
+assert(a.count(['b', 'a']) == 1, _)
+
+_ = 'Dicts with same items in different order are considered to be the same'
+assert(a.count({'x': 'y', 'xx': 'yy'}) == 3, _)

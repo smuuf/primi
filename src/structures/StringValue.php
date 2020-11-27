@@ -168,7 +168,10 @@ class StringValue extends Value {
 
 		$strlen = \mb_strlen($string);
 		for ($i = 0; $i < $strlen; $i++) {
-			yield new self(\mb_substr($string, $i, 1));
+
+			yield new NumberValue((string) $i)
+				=> new self(\mb_substr($string, $i, 1));
+
 		}
 
 	}

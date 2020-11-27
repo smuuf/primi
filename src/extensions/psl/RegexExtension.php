@@ -13,7 +13,7 @@ use \Smuuf\Primi\Extension;
 class RegexExtension extends Extension {
 
 	/**
-	 * Regular expression match. Returns the first matching string. Otherwise \
+	 * Regular expression match. Returns the first matching string. Otherwise
 	 * returns `false`.
 	 *
 	 * ```js

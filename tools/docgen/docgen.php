@@ -71,9 +71,9 @@ if (!function_exists('str_ends_with')) {
 	}
 }
 
-line(Colors::get("Parsing extension files at {cyan}$phpFilesGlob{_} ..."));
+line(Colors::get("Parsing files at {cyan}$phpFilesGlob{_} ..."));
 if (!$extensionFiles = glob($phpFilesGlob)) {
-	err("No extension files found at $phpFilesGlob");
+	err("No files found at $phpFilesGlob");
 }
 
 function get_relevant_methods(string $className): array {
@@ -92,19 +92,20 @@ function get_relevant_methods(string $className): array {
 }
 
 function clean_doc_whitespace(string $doc): string {
-	// Unify newlines.
-	// Remove @annotations
-	$doc = preg_replace('#^\h*\*+\h*\h@\w+\h*$#m', '', $doc);
+
+	// Unify NL
 	$doc = preg_replace('#\r?\n#', "\n", $doc);
-	// Remove whitespace and '*' and '/' from the start
-	$doc = preg_replace('#^[\/\s\*]*+#', '', $doc);
-	// Remove whitespace and '*' and '/' at the end.
-	$doc = preg_replace('#[\/\s\*]*+$#', '', $doc);
-	// Remove startofline-horizontalwhitespace-asterisk-whitespace
-	// Handles also empty lines after the asterisk (removes those empty lines).
-	$doc = preg_replace('#^\h*\**(\h+|\n)#m', '', $doc);
+	// Remove "/**"-NL
+	$doc = preg_replace('#^\/\*\*\s*\n#', '', $doc);
+	// Remove NL-WHITESPACE-"*/"
+	$doc = preg_replace('#\s*\*\/#', '', $doc);
+
+	$doc = preg_replace('#^\s*\*\h*#m', '', $doc);
+
 	$doc = trim($doc);
+
 	return $doc;
+
 }
 
 function extract_params(\ReflectionMethod $methodRef): array {
@@ -125,6 +126,8 @@ function extract_params(\ReflectionMethod $methodRef): array {
 				$paramType = $paramTypeRef->getName();
 			}
 
+			$isOptional = $paramRef->isOptional();
+
 			$isValue = is_a($paramType, Value::class, true);
 			$isCtx = is_a($paramType, Context::class, true);
 			if (!$isValue && !$isCtx) {
@@ -138,8 +141,11 @@ function extract_params(\ReflectionMethod $methodRef): array {
 				continue;
 			}
 
-			$paramType = ($paramType)::TYPE;
-			$params[$paramName] = $paramType;
+			$params[] = [
+				'type' => ($paramType)::TYPE,
+				'name' => $paramName,
+				'optional' => $isOptional,
+			];
 
 		}
 	}
@@ -172,8 +178,6 @@ foreach ($extensionFiles as $filepath) {
 
 		$text = $docComment ? clean_doc_whitespace($docComment) : '';
 
-		$params = extract_params($methodRef);
-
 		// Extract return type, which must be specified.
 		$returnType = false;
 		if ($returnTypeRef = $methodRef->getReturnType()) {
@@ -194,7 +198,7 @@ foreach ($extensionFiles as $filepath) {
 
 		$data[$className][$methodName] = [
 			'doctext' => $text,
-			'parameters' => $params ?: false,
+			'parameters' => extract_params($methodRef) ?: false,
 			'returns' => $returnType ?: false,
 		];
 
@@ -204,62 +208,71 @@ foreach ($extensionFiles as $filepath) {
 
 line('Building docs...');
 
+function remove_doc_tags(string $text) {
+	return preg_replace('#@[^\s]+#', '', $text);
+}
+
 function build_markdown(array $data): string {
 
-	$indent = "\t";
+	$fnBullet = "###";
 	$md = '';
+
+	// List extensions alphabetically.
+	ksort($data);
 
 	foreach ($data as $extName => $extData) {
 
 		$md .= "## $extName\n";
+
+		// List functions alphabetically.
+		ksort($extData);
+
 		foreach ($extData as $funcName => $funcData) {
 
 			$parameters = [];
 			if ($funcData['parameters']) {
-				foreach ($funcData['parameters'] as $paramName => $paramType) {
-					$parameters[] = "_{$paramType}_ `$paramName`";
+				foreach ($funcData['parameters'] as $param) {
+					$paramName = $param['name'];
+					$paramType = $param['type'];
+
+					$tmp = "_{$paramType}_ **`$paramName`**";
+					if ($param['optional']) {
+						$tmp = "*[$tmp]*";
+					}
+
+					$parameters[] = $tmp;
+
 				}
 			}
 
 			$parameters = implode(', ', $parameters);
 			$returnType = $funcData['returns'] ?: '';
-			$md .= "- **`$funcName`**($parameters) "
-				. ($returnType ? " → _{$returnType}_\n" : "\n");
+			$md .= "$fnBullet **`$funcName`**($parameters) "
+				. ($returnType ? " → _{$returnType}_" : "")
+				. "\n\n";
 
 			$doctext = $funcData['doctext'] ?? '' ?: '_Missing description._';
 
 			// Process each line separately to aid advanced formatting.
-			$codeBlock = false;
-			$buffer = '';
+			$wasEmpty = false;
+			$indent = "";
 			foreach (preg_split('#\n#', $doctext) as $line) {
 
-				$buffer .= rtrim($line, '\\');
-				if (str_ends_with($line, '\\')) {
-					// Continue with gathering the next line into our buffer.
+				$isEmpty = trim($line) === '';
+
+				// Reduce multiple empty lines into a single empty line.
+				if ($wasEmpty && $isEmpty) {
 					continue;
 				}
 
-				$modeChanged = false;
-				if (!$codeBlock && str_starts_with($line, '```')) {
-					$codeBlock = true;
-					$modeChanged = true;
-				}
+				$wasEmpty = $isEmpty;
+				$line = remove_doc_tags($line);
 
-				$md .= $indent
-					. ($codeBlock ? '' : "- ")
-					. "$buffer\n";
-
-				// End codeblock after adding the text to buffer, so the last
-				// ``` codeblock line doesn't have bullet point.
-				if (!$modeChanged && $codeBlock && str_starts_with($line, '```')) {
-					$codeBlock = false;
-				}
-
-				$buffer = '';
+				$md .= "{$indent}{$line}\n";
 
 			}
 
-			$md .= "\n";
+			$md .= "\n---\n";
 
 		}
 	}

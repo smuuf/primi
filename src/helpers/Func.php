@@ -17,11 +17,11 @@ abstract class Func {
 	 * Pair of regexes to match zeroes at the beginning and at the end of a
 	 * string, if they're not the last zeroes on that side of decimal point.
 	 *
-	 * @const string[]
+	 * @const string[][]
 	 */
 	private const DECIMAL_TRIMMING_REGEXES = [
-		['#^0+(\d)#', '#(\.0+$)|((\.\d+?[1-9]?)0+$)#'],
-		['\1', '\3']
+		['#^(-?)0+(\d)#', '#(\.0+$)|((\.\d+?[1-9]?)0+$)#'],
+		['\1\2', '\3']
 	];
 
 	/**
@@ -77,24 +77,10 @@ abstract class Func {
 
 		return \round((float) $input) == $input; // Intentionally ==
 
-		// Regex solution chosen based on 'numeric_int' phpcb benchmark results.
-		// PHP can cast very large or very small numbers to scientific notation,
-		// so the regex must be able to deal with that - integers can only
-		// have 'E+' in them, otherwise it's a float.
-		//return (bool) \preg_match("#^[+-]?\d+(\.\d+E\+\d+)?$#", (string) $input);
-
 	}
 
 	public static function is_decimal(string $input): bool {
-
-		//return is_numeric($input);
 		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
-
-		// PHP can cast very large or very small numbers to scientific notation,
-		// so the regex must be able to deal with that.
-		//return (bool) \preg_match('#^[+-]?\d+(\.\d+(E[+-]\d+)?)?$#', (string) $input);
-		//return (bool) \preg_match('#^[+-]?\d+(\.\d+(E[+-]\d+)?)?$#', (string) $input);
-
 	}
 
 	public static function object_hash($o): string {
@@ -124,11 +110,24 @@ abstract class Func {
 
 	}
 
+	/**
+	 * Normalize decimal number - trim zeroes from left and from right and
+	 * do it, like, smart-like.
+	 *
+	 * Examples:
+	 * - `00100.0` -> `100.0`
+	 * - `00100.000` -> `100.0`
+	 * - `00100.000100` -> `100.0001`
+	 * - `000.000100` -> `0.0001`
+	 * - `0100` -> `100`
+	 * - `+0100` -> `100`
+	 * - `-0100` -> `-100`
+	 */
 	public static function normalize_decimal(string $decimal): string {
 		return \preg_replace(
 			self::DECIMAL_TRIMMING_REGEXES[0],
 			self::DECIMAL_TRIMMING_REGEXES[1],
-			$decimal
+			ltrim(trim($decimal), '+')
 		);
 	}
 

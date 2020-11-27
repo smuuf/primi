@@ -30,6 +30,11 @@ Assert::same('5001.10000001', Func::normalize_decimal('5001.10000001'));
 Assert::same('5001.10000001', Func::normalize_decimal('005001.10000001'));
 Assert::same('5001.10000001', Func::normalize_decimal('0000005001.10000001000'));
 
+Assert::same('100.01', Func::normalize_decimal('+100.0100'));
+Assert::same('100.01', Func::normalize_decimal('+00100.0100'));
+Assert::same('-100.01', Func::normalize_decimal('-100.0100'));
+Assert::same('-100.01', Func::normalize_decimal('-00100.0100'));
+
 //
 // Very long decimals.
 //
