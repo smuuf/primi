@@ -1,8 +1,9 @@
 <?php
 
-use Smuuf\Primi\Ex\RuntimeError;
-use Smuuf\Primi\Interpreter;
 use \Tester\Assert;
+
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Interpreter;
 
 require __DIR__ . '/../bootstrap.php';
 

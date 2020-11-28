@@ -2,11 +2,10 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\ExtensionHub;
-use \Smuuf\Primi\Structures\{
-	Value,
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Values\{
+	AbstractValue,
 	StringValue,
 	NumberValue,
 	RegexValue,
@@ -14,10 +13,11 @@ use \Smuuf\Primi\Structures\{
 	ListValue,
 	BoolValue
 };
+use \Smuuf\Primi\Extensions\ExtensionHub;
 
 require __DIR__ . '/../bootstrap.php';
 
-function get_val(Value $v) {
+function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
 

@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Colors;
-use \Smuuf\Primi\AbstractScope;
-use \Smuuf\Primi\ICliIoDriver;
 use \Smuuf\Primi\Ex\BaseError;
 use \Smuuf\Primi\Ex\EngineException;
 use \Smuuf\Primi\Ex\SystemException;
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Scopes\AbstractScope;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\NullValue;
+use \Smuuf\Primi\Helpers\Colors;
+use \Smuuf\Primi\Drivers\ReadlineUserIoDriver;
+use \Smuuf\Primi\Drivers\UserIoDriverInterface;
 
 class Repl extends \Smuuf\Primi\StrictObject {
 
@@ -39,7 +41,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	 * This is handy for our unit tests, so we can simulate user input and
 	 * gather REPL output.
 	 *
-	 * @var ICliIoDriver
+	 * @var UserIoDriverInterface
 	 */
 	protected $driver;
 
@@ -53,13 +55,13 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	public function __construct(
 		?string $replId = null,
-		ICliIoDriver $driver = null
+		UserIoDriverInterface $driver = null
 	) {
 
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 
 		$this->replId = $replId ?? self::DEFAULT_REPL_ID;
-		$this->driver = $driver ?? new \Smuuf\Primi\ReadlineCliIoDriver;
+		$this->driver = $driver ?? new ReadlineUserIoDriver;
 
 	}
 
@@ -86,7 +88,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	 * was specified as argument. Otherwise the interpreter creates its own
 	 * new context and REPL operates within that one.
 	 */
-	public function start(?Context $ctx = null): ?Value {
+	public function start(?Context $ctx = null): ?AbstractValue {
 
 		$this->printHelp();
 		$this->loadHistory();
@@ -105,11 +107,11 @@ class Repl extends \Smuuf\Primi\StrictObject {
 			$this->driver->output(self::getLevelInfo($ctx, true));
 		}
 
-		return $this->loop(new RawInterpreter, $ctx);
+		return $this->loop(new DirectInterpreter, $ctx);
 
 	}
 
-	private function loop(RawInterpreter $intepreter, Context $ctx): ?Value {
+	private function loop(DirectInterpreter $intepreter, Context $ctx): ?AbstractValue {
 
 		$scope = $ctx->getCurrentScope();
 
@@ -181,7 +183,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	 * Pretty-prints out a result of a Primi expression. No result or null
 	 * values are not to be printed.
 	 */
-	private function printResult(?Value $result = null): void {
+	private function printResult(?AbstractValue $result = null): void {
 
 		// Do not print out empty or NullValue results.
 		if ($result === null || $result instanceof NullValue) {
@@ -193,9 +195,9 @@ class Repl extends \Smuuf\Primi\StrictObject {
 	}
 
 	/**
-	 * Pretty-prints out a Value representation with type info.
+	 * Pretty-prints out a AbstractValue representation with type info.
 	 */
-	private function printValue(Value $result): void {
+	private function printValue(AbstractValue $result): void {
 
 		$this->driver->output(sprintf(
 			"%s %s\n",
@@ -365,7 +367,7 @@ class Repl extends \Smuuf\Primi\StrictObject {
 
 	}
 
-	private static function formatType(Value $value) {
+	private static function formatType(AbstractValue $value) {
 
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",

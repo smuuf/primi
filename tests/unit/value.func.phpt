@@ -4,16 +4,16 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\ArgumentCountError;
-use \Smuuf\Primi\Structures\{
+use \Smuuf\Primi\Structures\FnContainer;
+use \Smuuf\Primi\Values\{
 	FuncValue,
 	NumberValue,
-	Value,
-	FnContainer
+	AbstractValue,
 };
 
 require __DIR__ . '/../bootstrap.php';
 
-function get_val(Value $v) {
+function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
 
@@ -29,7 +29,7 @@ $five = new NumberValue(5);
 //
 
 // Primi functions created from callables can be only created from callables
-// that typehint its parameters as Primi's Value class or its descendants.
+// that typehint its parameters as Primi's AbstractValue class or its descendants.
 
 $closure = function(NumberValue $a, NumberValue $b) {
 	return new NumberValue($a->getInternalValue() * $b->getInternalValue() ** 2);

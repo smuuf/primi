@@ -3,18 +3,14 @@
 
 declare(strict_types=1);
 
-use \Smuuf\Primi\Colors;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Colors;
 
 define('PRIMI_ROOT_DIT', realpath(__DIR__ . '/../..'));
 
 // Composer's autoload.
 require PRIMI_ROOT_DIT . '/vendor/autoload.php';
-
-// Our autoloader.
-$loader = new \Smuuf\Koloader\Autoloader(PRIMI_ROOT_DIT . "/temp/");
-$loader->addDirectory(PRIMI_ROOT_DIT . "/src")->register();
 
 // Strict errors.
 error_reporting(E_ALL);
@@ -78,7 +74,7 @@ if (!$extensionFiles = glob($phpFilesGlob)) {
 
 function get_relevant_methods(string $className): array {
 
-	$classRef = new \ReflectionClass("\Smuuf\Primi\Psl\\$className");
+	$classRef = new \ReflectionClass("\Smuuf\Primi\StdLib\\{$className}");
 
 	// We want methods that are both public AND static AND non-PHP-magic.
 	return array_filter(
@@ -128,7 +124,7 @@ function extract_params(\ReflectionMethod $methodRef): array {
 
 			$isOptional = $paramRef->isOptional();
 
-			$isValue = is_a($paramType, Value::class, true);
+			$isValue = is_a($paramType, AbstractValue::class, true);
 			$isCtx = is_a($paramType, Context::class, true);
 			if (!$isValue && !$isCtx) {
 				warn("Class '$className, method '$methodName', parameter '$paramName' does not hint Value|Context");

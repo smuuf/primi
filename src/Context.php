@@ -4,7 +4,9 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Scopes\AbstractScope;
+use \Smuuf\Primi\Values\AbstractValue;
 
 class Context extends StrictObject {
 
@@ -87,7 +89,7 @@ class Context extends StrictObject {
 	// Direct access to the current scope - which is the one on the top of the
 	// stack (compatibility with Primi <0.5).
 
-	public function getVariable(string $name): ?Value {
+	public function getVariable(string $name): ?AbstractValue {
 		return $this->currentScope->getVariable($name);
 	}
 
@@ -95,7 +97,7 @@ class Context extends StrictObject {
 		return $this->currentScope->getVariables($includeParents);
 	}
 
-	public function setVariable(string $name, Value $value) {
+	public function setVariable(string $name, AbstractValue $value) {
 		$this->currentScope->setVariable($name, $value);
 	}
 

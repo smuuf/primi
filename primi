@@ -21,10 +21,6 @@ set_exception_handler(function($ex) {
 	echo $ex->getTraceAsString() . "\n";
 });
 
-// Autoloader.
-$loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/temp/");
-$loader->addDirectory(__DIR__ . "/src")->register();
-
 $config = parse_arguments($argv);
 
 if ($config['print_process_stats']) {

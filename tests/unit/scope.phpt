@@ -2,6 +2,17 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Values\{
+	ValueFactory,
+	StringValue,
+	NumberValue,
+	RegexValue,
+	DictValue,
+	ListValue,
+	FuncValue,
+	BoolValue
+};
 use \Smuuf\Primi\Structures\FnContainer;
 
 require __DIR__ . '/../bootstrap.php';
@@ -10,14 +21,14 @@ require __DIR__ . '/../bootstrap.php';
 // Scopes and variables.
 //
 
-$scope = new \Smuuf\Primi\Scope;
+$scope = new Scope;
 
 // Pool of variables is empty.
 Assert::type('array', $v = $scope->getVariables());
 Assert::falsey($v);
 
-$varA = new \Smuuf\Primi\Structures\NumberValue(123);
-$varB = new \Smuuf\Primi\Structures\StringValue("foo");
+$varA = new NumberValue(123);
+$varB = new StringValue("foo");
 $scope->setVariable('var_a', $varA);
 $scope->setVariable('var_b', $varB);
 
@@ -33,8 +44,8 @@ Assert::same([
 Assert::truthy($scope->getVariables());
 
 $multi = [
-	'var_c' => ($varC = new \Smuuf\Primi\Structures\BoolValue(false)),
-	'var_d' => ($varD = new \Smuuf\Primi\Structures\RegexValue("[abc]")),
+	'var_c' => ($varC = new BoolValue(false)),
+	'var_d' => ($varD = new RegexValue("[abc]")),
 ];
 
 $scope->setVariables($multi);
@@ -58,10 +69,10 @@ $scope->setVariables([
 	'var_h' => ['a' => 1, 'b' => 2, 'c' => 3],
 ]);
 
-Assert::type(\Smuuf\Primi\Structures\NumberValue::class, $scope->getVariable('var_e'));
-Assert::type(\Smuuf\Primi\Structures\StringValue::class, $scope->getVariable('var_f'));
-Assert::type(\Smuuf\Primi\Structures\ListValue::class, $scope->getVariable('var_g'));
-Assert::type(\Smuuf\Primi\Structures\DictValue::class, $scope->getVariable('var_h'));
+Assert::type(NumberValue::class, $scope->getVariable('var_e'));
+Assert::type(StringValue::class, $scope->getVariable('var_f'));
+Assert::type(ListValue::class, $scope->getVariable('var_g'));
+Assert::type(DictValue::class, $scope->getVariable('var_h'));
 Assert::same("123", $scope->getVariable('var_e')->getInternalValue());
 Assert::same("hello there!", $scope->getVariable('var_f')->getInternalValue());
 Assert::type('array', $scope->getVariable('var_g')->getInternalValue());
@@ -70,7 +81,7 @@ Assert::type('array', $scope->getVariable('var_g')->getInternalValue());
 // Functions
 //
 
-$scope = new \Smuuf\Primi\Scope;
+$scope = new Scope;
 
 // Pool of functions is empty.
 Assert::type('array', $v = $scope->getVariables());
@@ -79,7 +90,7 @@ Assert::falsey($v);
 // Create empty function container for testing purposes.
 $fnContainer = FnContainer::buildFromClosure(function() {});
 
-$funcA = new \Smuuf\Primi\Structures\FuncValue($fnContainer);
+$funcA = new FuncValue($fnContainer);
 $scope->setVariable('func_a', $funcA);
 
 // The returned function instance Scope returned is the same object as inserted.
@@ -89,8 +100,8 @@ Assert::same($funcA, $scope->getVariable('func_a'));
 Assert::truthy($scope->getVariables());
 
 $multi = [
-	'func_b' => ($funcB = new \Smuuf\Primi\Structures\FuncValue($fnContainer)),
-	'func_c' => ($funcC = new \Smuuf\Primi\Structures\FuncValue($fnContainer)),
+	'func_b' => ($funcB = new FuncValue($fnContainer)),
+	'func_c' => ($funcC = new FuncValue($fnContainer)),
 ];
 
 $scope->setVariables($multi);

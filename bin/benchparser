@@ -14,8 +14,6 @@ const MULTI_COUNT = 10;
 require __DIR__ . "/../vendor/autoload.php";
 
 error_reporting(E_ALL);
-$loader = new \Smuuf\Koloader\Autoloader(__DIR__ . "/../temp/");
-$loader->addDirectory(__DIR__ . "/../src")->register();
 
 // Interpreter without temp dir to avoid caching when benchmarking.
 $context = new \Smuuf\Primi\Context;

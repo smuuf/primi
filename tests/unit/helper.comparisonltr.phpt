@@ -1,12 +1,13 @@
 <?php
 
 use \Tester\Assert;
-use \Smuuf\Primi\Structures\Value;
+
+use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
 
 require __DIR__ . '/../bootstrap.php';
 
-class TypeA extends Value {
+class TypeA extends AbstractValue {
 
 	public function __construct($value) {
 		$this->value = $value;
@@ -16,7 +17,7 @@ class TypeA extends Value {
 		return 'A';
 	}
 
-	function isEqualTo(Value $right): ?bool {
+	function isEqualTo(AbstractValue $right): ?bool {
 
 		// This type doesn't know how to compare against anything.
 		return null;
@@ -25,7 +26,7 @@ class TypeA extends Value {
 
 }
 
-class TypeB extends Value {
+class TypeB extends AbstractValue {
 
 	public function __construct($value) {
 		$this->value = $value;
@@ -35,7 +36,7 @@ class TypeB extends Value {
 		return 'B';
 	}
 
-	function isEqualTo(Value $right): ?bool {
+	function isEqualTo(AbstractValue $right): ?bool {
 		return $this->value === $right->value;
 	}
 
