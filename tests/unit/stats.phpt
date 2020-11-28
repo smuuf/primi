@@ -1,7 +1,8 @@
 <?php
 
-use Smuuf\Primi\Stats;
 use \Tester\Assert;
+
+use \Smuuf\Primi\Helpers\Stats;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -17,15 +18,15 @@ Stats::add('prefix_a_something');
 Assert::type('array', Stats::multi('prefix_a_'), 'Stats::multi() returns an array - even if empty');
 Assert::falsey(
 	Stats::multi('prefix_a_'),
-	"Value for 'prefix_a_something' is missing - because it was not incremented - because of disabled stats gathering"
+	"AbstractValue for 'prefix_a_something' is missing - because it was not incremented - because of disabled stats gathering"
 );
 Assert::falsey(
 	Stats::single('prefix_a_something'),
-	"Value for 'prefix_a_something' is missing - because it was not incremented - because of disabled stats gathering"
+	"AbstractValue for 'prefix_a_something' is missing - because it was not incremented - because of disabled stats gathering"
 );
 Assert::falsey(
 	Stats::single('prefix_a_nonexistent'),
-	"Value for 'prefix_a_nonexistent' is missing because of disabled stats gathering"
+	"AbstractValue for 'prefix_a_nonexistent' is missing because of disabled stats gathering"
 );
 
 //
@@ -39,7 +40,7 @@ Assert::type('array', Stats::multi('prefix_a_'), 'Stats::multi() returns an arra
 Assert::same(
 	['something' => 1],
 	Stats::multi('prefix_a_'),
-	"Value for 'prefix_a_something' is present and has prefix trimmed off."
+	"AbstractValue for 'prefix_a_something' is present and has prefix trimmed off."
 );
 
 Stats::add('prefix_a_something'); // Increment existing stats entry by 1.
@@ -48,12 +49,12 @@ Stats::add('prefix_b_something'); // Create a new stats entry and increment its 
 Assert::same(
 	['something' => 2],
 	Stats::multi('prefix_a_'),
-	"Value for 'prefix_a_something' is present and has correct value."
+	"AbstractValue for 'prefix_a_something' is present and has correct value."
 );
 Assert::same(
 	['something' => 1],
 	Stats::multi('prefix_b_'),
-	"Value for 'prefix_b_something' is present and has correct value."
+	"AbstractValue for 'prefix_b_something' is present and has correct value."
 );
 
 Assert::same(2, Stats::single('prefix_a_something'), "Getting value for a single stats entry");

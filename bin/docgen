@@ -2,4 +2,4 @@
 
 cd `dirname $0`/..
 
-php ./tools/docgen/docgen.php "./src/extensions/psl/*Extension.php" ./docs/functions.md
+php ./tools/docgen/docgen.php "./src/StdLib/*Extension.php" ./docs/functions.md

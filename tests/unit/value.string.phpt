@@ -1,12 +1,12 @@
 <?php
 
-use \Smuuf\Primi\Scope;
+use \Tester\Assert;
+
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\ExtensionHub;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Structures\{
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Values\{
 	StringValue,
 	NumberValue,
 	RegexValue,
@@ -14,14 +14,14 @@ use \Smuuf\Primi\Structures\{
 	DictValue,
 	ListValue,
 	BoolValue,
-	Value
+	AbstractValue,
 };
-
-use \Tester\Assert;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Extensions\ExtensionHub;
 
 require __DIR__ . '/../bootstrap.php';
 
-function get_val(Value $v) {
+function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
 
@@ -269,7 +269,7 @@ $fn = $scope->getVariable('string_replace');
 
 // Test replacing with array of needle-replacement.
 $pairs = new DictValue(Func::php_array_to_dict_pairs([
-	"is" => "A", // Will be automatically converted to Value.
+	"is" => "A", // Will be automatically converted to AbstractValue.
 	"i" => "B", // The same.
 	"." => new StringValue("ščř"),
 ]));

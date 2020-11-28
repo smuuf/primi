@@ -2,15 +2,15 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Structures\{
+use \Smuuf\Primi\Values\{
 	BoolValue,
 	NullValue,
-	Value
+	AbstractValue
 };
 
 require __DIR__ . '/../bootstrap.php';
 
-function get_val(Value $v) {
+function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
 

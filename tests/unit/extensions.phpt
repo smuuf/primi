@@ -3,16 +3,16 @@
 use \Tester\Assert;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extension;
-use \Smuuf\Primi\ExtensionHub;
+use \Smuuf\Primi\Extensions\Extension;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BreakException;
-use \Smuuf\Primi\Structures\StringValue;
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Values\StringValue;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Extensions\ExtensionHub;
 
 require __DIR__ . '/../bootstrap.php';
 
-function get_val(Value $v) {
+function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
 
@@ -37,7 +37,7 @@ class CustomExtension extends Extension {
 	/**
 	 * @injectContext
 	 */
-	public function get_var_from_context(Context $ctx, StringValue $varName): Value {
+	public function get_var_from_context(Context $ctx, StringValue $varName): AbstractValue {
 		return $ctx->getVariable($varName->value);
 	}
 

@@ -3,12 +3,12 @@
 use \Tester\Assert;
 
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Structures\StringValue;
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Values\StringValue;
+use \Smuuf\Primi\Values\AbstractValue;
 
 require __DIR__ . '/../bootstrap.php';
 
-function get_val(Value $v) {
+function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
 

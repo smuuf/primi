@@ -2,9 +2,8 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Structures\{
-	Value,
+use \Smuuf\Primi\Values\{
+	ValueFactory,
 	StringValue,
 	NumberValue,
 	RegexValue,
@@ -13,31 +12,32 @@ use \Smuuf\Primi\Structures\{
 	FuncValue,
 	BoolValue
 };
+use \Smuuf\Primi\Helpers\Func;
 
 require __DIR__ . '/../bootstrap.php';
 
-Assert::same(NumberValue::TYPE, Value::buildAutomatic(1)::TYPE);
-Assert::same(NumberValue::TYPE, Value::buildAutomatic(-1)::TYPE);
-Assert::same(NumberValue::TYPE, Value::buildAutomatic("0")::TYPE);
-Assert::same(NumberValue::TYPE, Value::buildAutomatic("+4")::TYPE);
-Assert::same(NumberValue::TYPE, Value::buildAutomatic(-123)::TYPE);
+Assert::same(NumberValue::TYPE, ValueFactory::buildAutomatic(1)::TYPE);
+Assert::same(NumberValue::TYPE, ValueFactory::buildAutomatic(-1)::TYPE);
+Assert::same(NumberValue::TYPE, ValueFactory::buildAutomatic("0")::TYPE);
+Assert::same(NumberValue::TYPE, ValueFactory::buildAutomatic("+4")::TYPE);
+Assert::same(NumberValue::TYPE, ValueFactory::buildAutomatic(-123)::TYPE);
 
-Assert::same(StringValue::TYPE, Value::buildAutomatic("a")::TYPE);
-Assert::same(StringValue::TYPE, Value::buildAutomatic("")::TYPE);
-Assert::same(StringValue::TYPE, Value::buildAutomatic("word")::TYPE);
-Assert::same(StringValue::TYPE, Value::buildAutomatic("-1 squirrels")::TYPE);
+Assert::same(StringValue::TYPE, ValueFactory::buildAutomatic("a")::TYPE);
+Assert::same(StringValue::TYPE, ValueFactory::buildAutomatic("")::TYPE);
+Assert::same(StringValue::TYPE, ValueFactory::buildAutomatic("word")::TYPE);
+Assert::same(StringValue::TYPE, ValueFactory::buildAutomatic("-1 squirrels")::TYPE);
 
-Assert::same(BoolValue::TYPE, Value::buildAutomatic(true)::TYPE);
-Assert::same(BoolValue::TYPE, Value::buildAutomatic(false)::TYPE);
+Assert::same(BoolValue::TYPE, ValueFactory::buildAutomatic(true)::TYPE);
+Assert::same(BoolValue::TYPE, ValueFactory::buildAutomatic(false)::TYPE);
 
-Assert::same(ListValue::TYPE, Value::buildAutomatic([])::TYPE);
-Assert::same(ListValue::TYPE, Value::buildAutomatic([1])::TYPE);
+Assert::same(ListValue::TYPE, ValueFactory::buildAutomatic([])::TYPE);
+Assert::same(ListValue::TYPE, ValueFactory::buildAutomatic([1])::TYPE);
 
-Assert::same(DictValue::TYPE, Value::buildAutomatic([4 => 'a', 5 => 'b'])::TYPE);
-Assert::same(DictValue::TYPE, Value::buildAutomatic(['a' => 'x', 'y' => 'z'])::TYPE);
+Assert::same(DictValue::TYPE, ValueFactory::buildAutomatic([4 => 'a', 5 => 'b'])::TYPE);
+Assert::same(DictValue::TYPE, ValueFactory::buildAutomatic(['a' => 'x', 'y' => 'z'])::TYPE);
 
-Assert::same(FuncValue::TYPE, Value::buildAutomatic(function() {})::TYPE);
-Assert::same(FuncValue::TYPE, Value::buildAutomatic(function(NumberValue $x, DictValue $y) { return 1; })::TYPE);
+Assert::same(FuncValue::TYPE, ValueFactory::buildAutomatic(function() {})::TYPE);
+Assert::same(FuncValue::TYPE, ValueFactory::buildAutomatic(function(NumberValue $x, DictValue $y) { return 1; })::TYPE);
 
 //
 // Getting string representation of values.
@@ -77,9 +77,9 @@ Assert::same('rx"abc"', $v->getStringRepr());
 
 // List.
 $v = new ListValue([
-	Value::buildAutomatic(1),
-	Value::buildAutomatic("xxx"),
-	Value::buildAutomatic(false),
+	ValueFactory::buildAutomatic(1),
+	ValueFactory::buildAutomatic("xxx"),
+	ValueFactory::buildAutomatic(false),
 	new RegexValue('abc'),
 	new RegexValue('/abc/'),
 ]);
@@ -87,9 +87,9 @@ Assert::same('[1, "xxx", false, rx"abc", rx"/abc/"]', $v->getStringRepr());
 
 // Dict.
 $v = new DictValue(Func::php_array_to_dict_pairs([
-	'aaa' => 1, // Will be converted to Value behind the scenes.
-	'bbb' => Value::buildAutomatic("xxx"),
-	'ccc' => Value::buildAutomatic(false),
+	'aaa' => 1, // Will be converted to AbstractValue behind the scenes.
+	'bbb' => ValueFactory::buildAutomatic("xxx"),
+	'ccc' => ValueFactory::buildAutomatic(false),
 	'ddd' => new RegexValue('abc'),
 	'___' => new RegexValue('/abc/'),
 ]));

@@ -2,10 +2,10 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\ExtensionHub;
-use \Smuuf\Primi\ExtensionScope;
-use \Smuuf\Primi\Structures\NumberValue;
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Scopes\ExtensionScope;
+use \Smuuf\Primi\Values\NumberValue;
+use \Smuuf\Primi\Extensions\ExtensionHub;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -45,8 +45,8 @@ Assert::same($valA, $scopeC->getVariable('some_val'), 'Scope C: Access to value 
 // ScopeB is the middle scope. Variable in lower scopes have priority over
 // variables from top ones.
 $scopeB->setVariable('some_val', $valB);
-Assert::same($valB, $scopeA->getVariable('some_val'), 'Scope A: Value assigned to scope B overrides value from scope C');
-Assert::same($valB, $scopeB->getVariable('some_val'), 'Scope B: Value assigned to scope B overrides value from scope C');
+Assert::same($valB, $scopeA->getVariable('some_val'), 'Scope A: AbstractValue assigned to scope B overrides value from scope C');
+Assert::same($valB, $scopeB->getVariable('some_val'), 'Scope B: AbstractValue assigned to scope B overrides value from scope C');
 Assert::same($valA, $scopeC->getVariable('some_val'), 'Scope C: Still has the original value');
 
 //

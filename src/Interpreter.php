@@ -3,12 +3,14 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Structures\Value;
+use \Smuuf\Primi\Scopes\AbstractScope;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Extensions\ExtensionHub;
 
 /**
  * Primi's primary abstract syntax tree interpreter.
  */
-class Interpreter extends RawInterpreter {
+class Interpreter extends DirectInterpreter {
 
 	/**
 	 * Path to temporary directory where ASTs will be cached.
@@ -87,7 +89,7 @@ class Interpreter extends RawInterpreter {
 	/**
 	 * Main entrypoint for running a Primi source code provided as text.
 	 */
-	public function run(string $source): Value {
+	public function run(string $source): AbstractValue {
 
 		$this->context->pushCall('<program>');
 		return $this->execute($source, $this->context);

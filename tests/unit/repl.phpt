@@ -2,6 +2,8 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Drivers\UserIoDriverInterface;
+
 require __DIR__ . '/../bootstrap.php';
 
 putenv('NO_COLOR=1');
@@ -38,7 +40,7 @@ $expected = [
 	'...', // ... - skip checking the rest.
 ];
 
-$driver = new class implements \Smuuf\Primi\ICliIoDriver {
+$driver = new class implements UserIoDriverInterface {
 
 	public $lines = [];
 	public $buffer = '';
