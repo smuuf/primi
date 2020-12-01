@@ -19,7 +19,7 @@ class NumberLiteral extends SimpleHandler {
 	public static function reduce(array &$node): void {
 
 		// As string.
-		$node['number'] = $value = \str_replace('_', '', $node['text']);
+		$node['number'] = \str_replace('_', '', $node['text']);
 		unset($node['text']);
 
 	}
