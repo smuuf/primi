@@ -25,6 +25,8 @@ class StringLiteral extends SimpleHandler {
 		$node['text'] = \mb_substr(
 			$node['text'], 1, \mb_strlen($node['text']) - 2
 		);
+		unset($node['quote']);
+		unset($node['core']);
 
 	}
 

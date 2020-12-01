@@ -33,21 +33,46 @@ class CompiledParser extends Parser\Packrat {
 
 /*!* Primi
 
-# Previous StringLiteral regex causing PREG_JIT_STACKLIMIT_ERROR
-# StringLiteral: /"(.|\n)*?"|'(.|\n)*?'/
+#
+# Strings.
+#
 
-# Carefully crafted (or stolen somewhere?) string matching regex which supports
-# both " and ' quotes, doesn't cause JIT stack overflow and also supports escaped quotes.
-StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
+# String content is either:
+# a) backslash-followed-by-whatever,
+# b) whatever-but-not-the-used-opening-quote-char
+StringInside: ( /\\./ | /[^{$quote}\\]/ )*
+StringLiteral: quote:/['"]/ core:StringInside "$quote"
+#StringLiteral: ( '"' ( / (\\.)|[^"] /s )* '"' ) | ( "\'" ( / (\\.)|[^'] /s )* "\'" )
+#StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
+
+
+#
+# F-Strings
+#
+
+# Currently only allowed things in f-string expression: variables.
+FStringExpr: core:Variable
+# Either: "backslash followed by whatever" or "{{" or "}}", or "whatever unless { or } or ending quotes"
+FStringTxt: ( / (\\.)+ / | "{{" | "}}" | / [^\{\}{$quote}] / )*
+FStringInside: parts:FStringTxt ( "{" parts:FStringExpr "}" parts:FStringTxt )*
+FStringLiteral: "f" quote:/['"]/ core:FStringInside "$quote"
+
+#
+# Others.
+#
+
 NumberLiteral: / -?\d[\d_]*(\.[\d_]+)? /
+
 # Literals for true|false must NOT be followed by any possible characters representing variable name.
 BoolLiteral: ( "true" | "false" ) !VariableName
+
 # Literal for null must NOT be followed by any possible characters representing variable name.
 NullLiteral: "null" !VariableName
 RegexLiteral: "rx" core:StringLiteral
 Nothing: ""
 
-Literal: skip:NumberLiteral | skip:StringLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
+Literal: &/["']/ skip:StringLiteral | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral )
+#Literal: skip:StringLiteral | skip:NumberLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
 VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
 AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
