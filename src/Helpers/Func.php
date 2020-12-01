@@ -369,4 +369,17 @@ abstract class Func {
 
 	}
 
+	/**
+	 * Return best available high-res time.
+	 */
+	public static function hrtime(): float {
+
+		// hrtime() is available only from PHP 7.3
+		if (\PHP_VERSION_ID < 73000) {
+			return \microtime(\true);
+		}
+
+		return \hrtime(\true);
+	}
+
 }

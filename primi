@@ -4,9 +4,10 @@
 // Composer's autoload.
 
 use \Smuuf\Primi\Repl;
-use \Smuuf\Primi\Stats;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Ex\BaseException;
+use \Smuuf\Primi\Parser\ParserHandler;
+use \Smuuf\Primi\Helpers\Stats;
 
 require __DIR__ . "/vendor/autoload.php";
 
@@ -74,6 +75,20 @@ if ($config['input_is_code']) {
 
 }
 
+if ($config['parser_stats']) {
+
+	$ph = new ParserHandler($source);
+	$ph->run();
+
+	echo "Parser stats:\n";
+	foreach ($ph->getStats() as $name => $value) {
+		$value = round($value, 4);
+		echo "- {$name}: {$value}\n";
+	}
+	die;
+
+}
+
 // Create interpreter - with cache.
 $interpreter = new Interpreter(null, __DIR__ . "/temp/");
 $scope = $interpreter->getCurrentScope();
@@ -108,7 +123,8 @@ function parse_arguments(array $args): array {
 		'print_scope' => false,
 		'input_is_code' => false,
 		'input' => false,
-		'print_process_stats' => false
+		'print_process_stats' => false,
+		'parser_stats' => false,
 	];
 
 	while ($a = array_shift($args)) {
@@ -120,6 +136,10 @@ function parse_arguments(array $args): array {
 			case "-t":
 			case "--tree":
 				$config['tree'] = true;
+			break;
+			case "-pst":
+			case "--parser-stats":
+				$config['parser_stats'] = true;
 			break;
 			case "-s":
 			case "--source":
