@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\StdLib;
 
-use \Smuuf\Primi\Extensions\Extension;
 use \Smuuf\Primi\Values\NumberValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Extensions\Extension;
 
 class DatetimeExtension extends Extension {
 
@@ -14,14 +15,7 @@ class DatetimeExtension extends Extension {
 	 * keeps increasing by 1 every second.
 	 */
 	public static function time_monotonic(): NumberValue {
-
-		// hrtime() is available only from PHP 7.3
-		if (PHP_VERSION_ID < 73000) {
-			return new NumberValue((string) \microtime(\true));
-		}
-
-		return new NumberValue((string) \hrtime(\true));
-
+		return new NumberValue((string) Func::hrtime());
 	}
 
 	/**

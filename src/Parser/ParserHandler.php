@@ -4,12 +4,16 @@ namespace Smuuf\Primi\Parser;
 
 use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Timer;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 class ParserHandler extends CompiledParser {
 
 	/** @var string Primi source code that is to be parsed and executed. */
 	private $source;
+
+	/** @var array<string, scalar> Parser statistics. */
+	private $stats = [];
 
 	public function __construct($source) {
 
@@ -20,9 +24,19 @@ class ParserHandler extends CompiledParser {
 
 	}
 
+	/**
+	 * Return parser stats.
+	 */
+	public function getStats(): array {
+		return $this->stats;
+	}
+
 	public function run(): array {
 
+		$t = (new Timer)->start();
 		$result = $this->match_Program();
+		$this->stats['parsing'] = $t->get();
+
 		if ($result['text'] !== $this->source) {
 
 			// $this->pos is an internal PEG Parser position counter and
@@ -31,7 +45,11 @@ class ParserHandler extends CompiledParser {
 
 		}
 
-		return self::processAST($result, $this->source);
+		$t = (new Timer)->start();
+		$processed = $this->processAST($result, $this->source);
+		$this->stats['ast_postprocess'] = $t->get();
+
+		return $processed;
 
 	}
 
@@ -65,11 +83,19 @@ class ParserHandler extends CompiledParser {
 
 	}
 
-	private static function processAST(array $ast, string $source): array {
+	private function processAST(array $ast, string $source): array {
 
-		$ast = self::preprocessNode($ast);
-		$ast = self::reduceNode($ast);
-		$ast = self::addPositions($ast, $source);
+		$t = (new Timer)->start();
+		self::preprocessNode($ast);
+		$this->stats['ast_postprocess_preprocess_nodes'] = $t->get();
+
+		$t = (new Timer)->start();
+		self::reduceNode($ast);
+		$this->stats['ast_postprocess_reduce_nodes'] = $t->get();
+
+		$t = (new Timer)->start();
+		self::addPositions($ast, $source);
+		$this->stats['ast_postprocess_add_position'] = $t->get();
 
 		return $ast;
 
@@ -78,60 +104,52 @@ class ParserHandler extends CompiledParser {
 	 * Go recursively through each of the nodes and strip unecessary data
 	 * in the abstract syntax tree.
 	 */
-	private static function preprocessNode(array $node) {
+	private static function preprocessNode(array &$node): void {
 
 		// If node has "skip" node defined, replace the whole node with the
 		// "skip" subnode.
-		foreach ($node as $key => &$item) {
-			if ($key === 'skip') {
-				return self::preprocessNode($item);
-			}
-			if (\is_array($item)) {
-				$item = self::preprocessNode($item);
-			}
-		}
+		unset($node['_matchrule']);
+		foreach ($node as &$item) {
 
-		return $node;
+			while ($inner = ($item['skip'] ?? \false)) {
+				$item = $inner;
+			}
+
+			if (\is_array($item)) {
+				self::preprocessNode($item);
+			}
+
+		}
 
 	}
 
 	/**
-	 * Go recursively through each of the nodes and strip unecessary data
+	 * Go recursively through each of the nodes and strip unnecessary data
 	 * in the abstract syntax tree.
 	 */
-	private static function reduceNode(array $node) {
-
-		while ($inner = ($node['skip'] ?? \false)) {
-			$node = $inner;
-		}
+	private static function reduceNode(array &$node): void {
 
 		foreach ($node as &$item) {
 			if (\is_array($item)) {
-				$item = self::reduceNode($item);
+				self::reduceNode($item);
 			}
 		}
 
-		if (
-			($name = $node['name'] ?? \false)
-			&& ($handler = HandlerFactory::getFor($name, \false))
-		) {
-
-			// Remove text from nodes that don't need it.
-			if (!$handler::NODE_NEEDS_TEXT) {
-				unset($node['text']);
-			}
-
-			// If a handler knows how to reduce its node, let it.
-			$reduced = $handler::reduce($node);
-			// If anything changed, reduce that node further.
-			$node = $reduced !== \null && $reduced !== $node
-				? self::reduceNode($reduced)
-				: $node;
-
+		if (!isset($node['name'])) {
+			return;
 		}
 
-		unset($node['_matchrule']);
-		return $node;
+		if (!$handler = HandlerFactory::getFor($node['name'], \false)) {
+			return;
+		}
+
+		// Remove text from nodes that don't need it.
+		if (!$handler::NODE_NEEDS_TEXT) {
+			unset($node['text']);
+		}
+
+		// If a handler knows how to reduce its node, let it.
+		$handler::reduce($node);
 
 	}
 
@@ -139,7 +157,7 @@ class ParserHandler extends CompiledParser {
 	 * Recursively iterate the node and its children and add information about
 	 * the node's offset (line & position) for later (e.g. error messages).
 	 */
-	private static function addPositions(array $node, string $source): array {
+	private static function addPositions(array &$node, string $source): void {
 
 		if (isset($node['offset'])) {
 
@@ -157,11 +175,9 @@ class ParserHandler extends CompiledParser {
 
 		foreach ($node as &$item) {
 			if (\is_array($item)) {
-				$item = self::addPositions($item, $source);
+				self::addPositions($item, $source);
 			}
 		}
-
-		return $node;
 
 	}
 
