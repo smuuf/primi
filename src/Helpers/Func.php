@@ -32,9 +32,14 @@ abstract class Func {
 	 * it will be converted automatically to a `AbstractValue` object.
 	 */
 	public static function php_array_to_dict_pairs(array $array): \Generator {
+
 		foreach (Func::iterator_as_tuples($array) as [$key, $value]) {
-			yield [ValueFactory::buildAutomatic($key),	ValueFactory::buildAutomatic($value)];
+			yield [
+				ValueFactory::buildAutomatic($key),
+				ValueFactory::buildAutomatic($value)
+			];
 		}
+
 	}
 
 	/**
@@ -238,10 +243,13 @@ abstract class Func {
 		// ArgumentCountError exception does not provide these numbers itself,
 		// so we have to extract it from the internal PHP exception message.
 		if (!\preg_match('#(?<passed>\d+)\s+passed.*(?<expected>\d+)\s+expected#', $msg, $m)) {
-			throw new EngineInternalError("Unable to parse argument info from: '{$msg}'");
+			throw new EngineInternalError("Unable to parse argument count info from: '{$msg}'");
 		}
 
-		return [$m['passed'], $m['expected']];
+		return [
+			(int) $m['passed'],
+			(int) $m['expected']
+		];
 
 	}
 
@@ -261,7 +269,11 @@ abstract class Func {
 			throw new EngineInternalError("Unable to parse argument types from: '{$msg}'");
 		}
 
-		return [$m['index'], ($m['passed'])::TYPE, ($m['expected'])::TYPE];
+		return [
+			(int) $m['index'],
+			($m['passed'])::TYPE,
+			($m['expected'])::TYPE
+		];
 
 	}
 
@@ -340,7 +352,7 @@ abstract class Func {
 		$handler = HandlerFactory::getFor($firstOperand['name']);
 		$first = $handler::run($firstOperand, $context);
 
-		yield $first;
+		yield [null, $first];
 
 		// Go through each of the operands and yield tuples of
 		// [operand 1, operator, operand 2] that go after each other.

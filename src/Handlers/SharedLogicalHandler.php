@@ -54,25 +54,13 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 	): BoolValue {
 
 		$gen = Func::yield_left_to_right($node, $context);
-		$first = $gen->current();
-
-		// If the first operand is truthy, we short-circuit.
-		if (!$first->isTruthy()) {
-			return new BoolValue(\false);
-		}
-
-		$gen->next();
-		while ($gen->valid()) {
-
-			[$_, $next] = $gen->current();
+		foreach ($gen as [$_, $operand]) {
 
 			// Short-circuiting OR operator: if any of the results is already
 			// true, do not do the rest.
-			if (!$next->isTruthy()) {
+			if (!$operand->isTruthy()) {
 				return new BoolValue(\false);
 			}
-
-			$gen->next();
 
 		}
 
@@ -86,25 +74,13 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 	): AbstractValue {
 
 		$gen = Func::yield_left_to_right($node, $context);
-		$first = $gen->current();
-
-		// If the first operand is truthy, we short-circuit.
-		if ($first->isTruthy()) {
-			return new BoolValue(\true);
-		}
-
-		$gen->next();
-		while ($gen->valid()) {
-
-			[$_, $next] = $gen->current();
+		foreach ($gen as [$_, $operand]) {
 
 			// Short-circuiting OR operator: if any of the results is already
-			// true, do not do the rest.
-			if ($next->isTruthy()) {
-				return $next;
+			// truthy, do not do the rest and return the first truthy value.
+			if ($operand->isTruthy()) {
+				return $operand;
 			}
-
-			$gen->next();
 
 		}
 
