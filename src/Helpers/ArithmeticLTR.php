@@ -20,15 +20,14 @@ class ArithmeticLTR {
 	): AbstractValue {
 
 		$gen = Func::yield_left_to_right($node, $context);
+		foreach ($gen as [$operator, $operand]) {
 
-		$result = $gen->current();
-		$gen->next();
+			if ($operator === null) {
+				$result = $operand;
+				continue;
+			}
 
-		while ($gen->valid()) {
-
-			[$op, $next] = $gen->current();
-			$result = static::evaluate($op, $result, $next);
-			$gen->next();
+			$result = static::evaluate($operator, $result, $operand);
 
 		}
 

@@ -21,18 +21,17 @@ class ComparisonLTR {
 		Context $context
 	): AbstractValue {
 
-		$gen = Func::yield_left_to_right($node, $context);
-
 		$result = \true;
-		$left = $gen->current();
-		$gen->next();
 
-		while ($gen->valid()) {
+		$gen = Func::yield_left_to_right($node, $context);
+		foreach ($gen as [$operator, $right]) {
 
-			[$op, $right] = $gen->current();
-			$result &= static::evaluate($op, $left, $right);
-			$gen->next();
+			if ($operator === null) {
+				$left = $right;
+				continue;
+			}
 
+			$result &= static::evaluate($operator, $left, $right);
 			$left = $right;
 
 		}
