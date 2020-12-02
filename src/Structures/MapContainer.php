@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
 /**
  * Map container structure supporting Primi value objects as keys.
@@ -19,11 +20,13 @@ use \Smuuf\Primi\Values\AbstractValue;
  *
  * @internal
  */
-class MapContainer extends \Smuuf\Primi\StrictObject implements
+class MapContainer implements
 	\ArrayAccess,
 	\IteratorAggregate,
 	\Countable
 {
+
+	use StrictObject;
 
 	/** @var AbstractValue[] Storage for dict values. */
 	private $values = [];

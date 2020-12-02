@@ -4,9 +4,7 @@ namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\ValueFriends;
-use \Smuuf\Primi\Structures\FnContainer;
 
 abstract class AbstractValue extends ValueFriends {
 

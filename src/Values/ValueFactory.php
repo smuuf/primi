@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Helpers\Func;
@@ -15,7 +17,7 @@ abstract class ValueFactory {
 			case \is_bool($value):
 				return new BoolValue($value);
 			case \is_numeric($value):
-				return new NumberValue(Func::scientific_to_decimal($value));
+				return new NumberValue(Func::scientific_to_decimal((string) $value));
 			case \is_callable($value);
 				// Must be before "is_array" case, because some "arrays"
 				// can be in reality "callables".

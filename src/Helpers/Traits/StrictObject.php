@@ -1,8 +1,8 @@
 <?php
 
-namespace Smuuf\Primi;
+namespace Smuuf\Primi\Helpers\Traits;
 
-abstract class StrictObject {
+trait StrictObject {
 
 	/**
 	 * Used when trying to access undeclared or inaccessible property.
@@ -12,7 +12,7 @@ abstract class StrictObject {
 	public function __get(string $name) {
 
 		throw new \LogicException(\sprintf(
-			"Cannot read an undeclared property '%s' in %s.",
+			"Cannot read an undeclared property '%s' in %s",
 			$name,
 			\get_called_class()
 		));

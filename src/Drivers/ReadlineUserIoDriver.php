@@ -2,9 +2,11 @@
 
 namespace Smuuf\Primi\Drivers;
 
-use \Smuuf\Primi\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
-class ReadlineUserIoDriver extends StrictObject implements UserIoDriverInterface {
+class ReadlineUserIoDriver implements UserIoDriverInterface {
+
+	use StrictObject;
 
 	/**
 	 * Keep the latest item added to history for future reference.

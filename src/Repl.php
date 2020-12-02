@@ -13,10 +13,13 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Colors;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Drivers\ReadlineUserIoDriver;
 use \Smuuf\Primi\Drivers\UserIoDriverInterface;
 
-class Repl extends \Smuuf\Primi\StrictObject {
+class Repl {
+
+	use StrictObject;
 
 	private const DEFAULT_REPL_ID = "<repl>";
 

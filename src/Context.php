@@ -2,13 +2,15 @@
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
 
-class Context extends StrictObject {
+class Context {
+
+	use StrictObject;
 
 	/** @var string[] Call stack list. */
 	protected $callStack = [];

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Ex\BinaryOperationError;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
-class ArithmeticLTR extends StrictObject {
+class ArithmeticLTR {
+
+	use StrictObject;
 
 	public static function handle(
 		array $node,
