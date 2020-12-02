@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Scopes;
 
-use \Smuuf\Primi\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\AbstractValue;
 
@@ -14,8 +14,9 @@ use \Smuuf\Primi\Values\AbstractValue;
  * and/or fetch variables. Other scope implementations can use more exotic
  * ways of storing/fetching variables.
  */
-abstract class AbstractScope extends StrictObject {
+abstract class AbstractScope {
 
+	use StrictObject;
 	//use WatchLifecycle;
 
 	/** @var AbstractScope|null Parent scope, if any. */

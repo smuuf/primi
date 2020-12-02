@@ -4,8 +4,11 @@ use \Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-$object = new class extends \Smuuf\Primi\StrictObject {
+$object = new class {
+
+	use \Smuuf\Primi\Helpers\Traits\StrictObject;
 	// Nothing to see here.
+
 };
 
 Assert::exception(function() use ($object) {

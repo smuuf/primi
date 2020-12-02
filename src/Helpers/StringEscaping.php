@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
-class StringEscaping extends \Smuuf\Primi\StrictObject {
+class StringEscaping {
+
+	use StrictObject;
 
 	/**
 	 * Escape sequences that are supported in string literals.

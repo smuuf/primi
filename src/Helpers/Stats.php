@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
 /**
  * A static runtime statistics gatherer.
  */
-abstract class Stats extends StrictObject {
+abstract class Stats {
+
+	use StrictObject;
 
 	/** @var bool If true, statistics are gathered. Disabled by default. */
 	private static $enabled = \false;

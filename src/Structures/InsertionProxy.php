@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
 /**
  * Insertion proxy is a special structure that encapsulates a value object which
@@ -16,7 +19,9 @@ use \Smuuf\Primi\Values\AbstractValue;
  * @internal
  * @see \Smuuf\Primi\Handlers\VariableVector
  */
-class InsertionProxy extends \Smuuf\Primi\StrictObject {
+class InsertionProxy{
+
+	use StrictObject;
 
 	protected $target;
 	protected $key;

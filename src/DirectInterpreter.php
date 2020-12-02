@@ -2,12 +2,12 @@
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ControlFlowException;
 use \Smuuf\Primi\Ex\ContextAwareException;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 /**
@@ -18,7 +18,9 @@ use \Smuuf\Primi\Handlers\HandlerFactory;
  *
  * @see https://en.wikipedia.org/wiki/Interpreter_(computing)#Abstract_Syntax_Tree_interpreters
  */
-class DirectInterpreter extends StrictObject {
+class DirectInterpreter {
+
+	use StrictObject;
 
 	/**
 	 * Execute source code within a given context.

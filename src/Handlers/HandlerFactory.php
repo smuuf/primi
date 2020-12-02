@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
 /**
  * Static helper class for getting correct handler class for specific AST node.
  */
-abstract class HandlerFactory extends StrictObject {
+abstract class HandlerFactory {
+
+	use StrictObject;
 
 	/** @var array<string, string|null> Dict of handler classes we know exist. */
 	private static $handlersCache = [];

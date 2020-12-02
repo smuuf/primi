@@ -2,7 +2,11 @@
 
 namespace Smuuf\Primi\Helpers;
 
-class Colors extends \Smuuf\Primi\StrictObject {
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
+
+abstract class Colors {
+
+	use StrictObject;
 
 	const COLOR_FORMAT = "\033[%sm";
 	const COLORS = [

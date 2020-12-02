@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\StrictObject;
 use \Smuuf\Primi\Ex\RelationError;
 use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\BoolValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
-class ComparisonLTR extends StrictObject {
+class ComparisonLTR {
+
+	use StrictObject;
 
 	public static function handle(
 		array $node,

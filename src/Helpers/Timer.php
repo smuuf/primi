@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
-class Timer extends StrictObject{
+class Timer {
+
+	use StrictObject;
 
 	/** @var float|null Point in time where timer started. */
 	private $time = null;

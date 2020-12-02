@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Context;
@@ -13,12 +15,15 @@ use \Smuuf\Primi\Values\ValueFactory;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Stats;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 /**
  * @internal
  */
-class FnContainer extends \Smuuf\Primi\StrictObject {
+class FnContainer {
+
+	use StrictObject;
 
 	/** @var \Closure Closure wrapping the function itself. */
 	protected $closure;
@@ -108,9 +113,12 @@ class FnContainer extends \Smuuf\Primi\StrictObject {
 		$rf = new \ReflectionFunction($closure);
 		$callId = $rf->getName();
 
-		// Determine whether context object should be injected into args.
-		$docComment = $rf->getDocComment();
-		$injectContext = \strpos($docComment, '@injectContext') !== \false;
+		// Determine whether the runtime context object should be injected into
+		// the function args (as the first one).
+		$injectContext = false;
+		if ($docComment = $rf->getDocComment()) {
+			$injectContext = \strpos($docComment, '@injectContext') !== \false;
+		}
 
 		Func::check_allowed_parameter_types_of_function($rf);
 
