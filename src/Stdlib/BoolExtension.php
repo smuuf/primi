@@ -1,6 +1,6 @@
 <?php
 
-namespace Smuuf\Primi\StdLib;
+namespace Smuuf\Primi\Stdlib;
 
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Extensions\Extension;

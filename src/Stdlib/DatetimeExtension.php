@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\StdLib;
+namespace Smuuf\Primi\Stdlib;
 
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Helpers\Func;
