@@ -11,7 +11,7 @@ class Timer {
 	use StrictObject;
 
 	/** @var float|null Point in time where timer started. */
-	private $time = null;
+	private $time = \null;
 
 	/**
 	 * Start the timer (set a point in time to measure from).
@@ -28,7 +28,7 @@ class Timer {
 	 */
 	public function get(): float {
 
-		if ($this->time === null) {
+		if ($this->time === \null) {
 			throw new \LogicException("Timer hasn't been started");
 		}
 

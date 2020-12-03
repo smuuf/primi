@@ -16,7 +16,7 @@ class FStringLiteral extends StringLiteral {
 		$result = '';
 		foreach ($node['parts'] as $part) {
 
-			if (is_array($part)) {
+			if (\is_array($part)) {
 
 				// Expr node (no other thing would be an array at this point).
 				$handler = HandlerFactory::getFor($part['core']['name']);
@@ -51,7 +51,7 @@ class FStringLiteral extends StringLiteral {
 			// to deal with them later.
 			if ($part['name'] !== 'FStringExpr') {
 				// Convert double-curly-braces to single ones.
-				$unified[] = str_replace(['{{', '}}'], ['{', '}'], $part['text']);
+				$unified[] = \str_replace(['{{', '}}'], ['{', '}'], $part['text']);
 			} else {
 				// Keep expr nodes as-is.
 				$unified[] = $part;

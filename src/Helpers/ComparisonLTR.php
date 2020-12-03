@@ -26,7 +26,7 @@ class ComparisonLTR {
 		$gen = Func::yield_left_to_right($node, $context);
 		foreach ($gen as [$operator, $right]) {
 
-			if ($operator === null) {
+			if ($operator === \null) {
 				$left = $right;
 				continue;
 			}
