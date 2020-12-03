@@ -15,6 +15,6 @@ namespace Smuuf\Primi\Helpers;
 abstract class ValueFriends {
 
 	/** @var mixed  */
-	protected $value = null;
+	protected $value = \null;
 
 }

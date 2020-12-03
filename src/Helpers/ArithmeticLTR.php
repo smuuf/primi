@@ -22,7 +22,7 @@ class ArithmeticLTR {
 		$gen = Func::yield_left_to_right($node, $context);
 		foreach ($gen as [$operator, $operand]) {
 
-			if ($operator === null) {
+			if ($operator === \null) {
 				$result = $operand;
 				continue;
 			}

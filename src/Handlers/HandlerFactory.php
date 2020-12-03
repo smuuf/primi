@@ -28,7 +28,7 @@ abstract class HandlerFactory {
 	 *
 	 * @return string
 	 */
-	final public static function getFor(string $name, ?bool $strict = true) {
+	final public static function getFor(string $name, ?bool $strict = \true) {
 
 		// Using caching is faster than repeatedly building strings and checking
 		// classes and stuff.

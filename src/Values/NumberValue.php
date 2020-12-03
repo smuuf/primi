@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Stats;
-use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Stats;
 
 class NumberValue extends AbstractValue {
 
@@ -21,7 +21,7 @@ class NumberValue extends AbstractValue {
 			throw new EngineError("Cannot create number from empty string");
 		}
 
-		$this->value = Func::normalize_decimal($value);
+		$this->value = $value;
 		Stats::add('value_count_number');
 
 	}
@@ -31,7 +31,7 @@ class NumberValue extends AbstractValue {
 	}
 
 	public function getLength(): ?int {
-		return \strlen($this->value);
+		return \strlen(Func::normalize_decimal($this->value));
 	}
 
 	public function getStringRepr(): string {
