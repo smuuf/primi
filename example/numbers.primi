@@ -1,3 +1,9 @@
+// Long numbers can be separated using underscores for improved readability.
+
+assert(1_000_000 == 1000000)
+assert(1_0 == 10)
+assert(1_0_._00_0_0_001 == 10.0000001)
+
 x = 789 * (2 + 3) * 1
 assert(x == 3945)
 

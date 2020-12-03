@@ -253,7 +253,7 @@ assert(x == false)
 // the result of OR operation.
 a = b = false
 tmp = (a = 1) or (b = 1)
-assert(tmp)
+assert(tmp == 1)
 assert(a == 1)
 assert(b == false)
 

@@ -22,8 +22,12 @@ assert(result == 'xyzZAQ:5.123')
 
 a = 4 / (2 - 1) * 100
 damn = 153 * 2
+
 x = "zaplaťte pouze {} Kč za skvělou {}".format(a, damn)
-assert(x == "zaplaťte pouze 400 Kč za skvělou 306", "String formatting with concatenation")
+assert(x == "zaplaťte pouze 400 Kč za skvělou 306", "String formatting with string_format()")
+
+x = f"zaplaťte pouze {a} Kč za skvělou {damn}"
+assert(x == "zaplaťte pouze 400 Kč za skvělou 306", "String formatting with f-strings.")
 
 //
 // String vs string comparison.

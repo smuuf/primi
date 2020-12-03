@@ -1,0 +1,51 @@
+//
+// f-strings.
+//
+
+//
+// Simple f-strings with a single expression.
+//
+
+a = 1
+assert(f"x{a}y" == "x1y")
+
+a = 'hello there'
+assert(f"x{a}y" == "xhello therey")
+
+a = false
+assert(f"x{a}y" == "xfalsey")
+
+a = null
+assert(f"x{a}y" == "xnully")
+
+a = {}
+assert(f"x{a}x" == "x{}x")
+
+//
+// How to put literal { or } in f-strings.
+//
+single_braces = "<this is an f-string>"
+assert(f"X {{double curly-braces make literal braces}} vs {single_braces} Y" == "X {double curly-braces make literal braces} vs <this is an f-string> Y")
+
+//
+// f-strings with multiple expressions.
+//
+
+a = 1
+b = 'XXX'
+c = [9, 8, 7, {'a': 'A'}]
+
+assert('1|XXX|[9, 8, 7, {"a": "A"}]' == f"{a}|{b}|{c}")
+
+//
+// Using undefined variable in f-string raises error.
+//
+
+try {
+	print(f"{undefined_var}");
+	raised_error = 0
+} catch {
+	raised_error = 1
+}
+assert(raised_error == 1)
+
