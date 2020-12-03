@@ -9,7 +9,7 @@ use \Smuuf\Primi\Values\NullValue;
 class NullLiteral extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
-		return new NullValue;
+		return NullValue::build();
 	}
 
 }

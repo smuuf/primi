@@ -13,7 +13,6 @@ use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\ValueFactory;
 use \Smuuf\Primi\Extensions\Extension;
 
 class CliExtension extends Extension {
@@ -31,7 +30,7 @@ class CliExtension extends Extension {
 		$nl = $nl !== \null ? $nl->isTruthy() : \true; // Newline by default.
 		echo $value->getStringValue() . ($nl ? "\n" : '');
 
-		return new NullValue;
+		return NullValue::build();
 
 	}
 
@@ -46,7 +45,7 @@ class CliExtension extends Extension {
 	public static function debugger(Context $ctx): AbstractValue {
 
 		$repl = new Repl('<debugger>');
-		return $repl->start($ctx) ?? new NullValue;
+		return $repl->start($ctx) ?? NullValue::build();
 
 	}
 
@@ -58,7 +57,7 @@ class CliExtension extends Extension {
 	 * @injectContext
 	 */
 	public static function get_traceback(Context $ctx): ListValue {
-		return ValueFactory::buildAutomatic($ctx->getTraceback());
+		return AbstractValue::buildAuto($ctx->getTraceback());
 	}
 
 	/**
@@ -98,7 +97,7 @@ class CliExtension extends Extension {
 			throw new RuntimeError(\sprintf("Assertion failed%s", $desc));
 		}
 
-		return new BoolValue(\true);
+		return BoolValue::build(\true);
 
 	}
 

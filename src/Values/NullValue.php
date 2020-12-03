@@ -4,12 +4,19 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Stats;
 
 class NullValue extends AbstractValue {
 
 	const TYPE = "null";
+
+	/** @var self Stored singleton for all null values. */
+	private static $interned = null;
+
+	public static function build($_ = null) {
+		return self::$interned ?? (self::$interned = new self);
+	}
 
 	public function __construct() {
 		Stats::add('value_count_null');

@@ -36,7 +36,7 @@ class ComparisonLTR {
 
 		}
 
-		return new BoolValue((bool) $result);
+		return BoolValue::build((bool) $result);
 
 	}
 

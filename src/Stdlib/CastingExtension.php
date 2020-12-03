@@ -28,7 +28,7 @@ class CastingExtension extends Extension {
 	 * ```
 	 */
 	public static function to_string(AbstractValue $value): StringValue {
-		return new StringValue($value->getStringValue());
+		return StringValue::build($value->getStringValue());
 	}
 
 	/**
@@ -83,7 +83,7 @@ class CastingExtension extends Extension {
 	 * ```
 	 */
 	public static function to_bool(AbstractValue $value): BoolValue {
-		return new BoolValue($value->isTruthy());
+		return BoolValue::build($value->isTruthy());
 	}
 
 	/**
@@ -110,7 +110,7 @@ class CastingExtension extends Extension {
 		}
 
 		if ($value instanceof BoolValue) {
-			return new NumberValue($value->value ? '1' : '0');
+			return NumberValue::build($value->value ? '1' : '0', true);
 		}
 
 		Func::allow_argument_types(
@@ -124,7 +124,7 @@ class CastingExtension extends Extension {
 			throw new RuntimeError("Invalid number literal '$str'");
 		}
 
-		return new NumberValue((string) $str);
+		return NumberValue::build((string) $str);
 
 	}
 
@@ -207,7 +207,7 @@ class CastingExtension extends Extension {
 		$string = $value->value;
 		$string = \mb_substr($string, 1, \mb_strlen($string) - 3);
 
-		return new StringValue($string);
+		return StringValue::build($string);
 	}
 
 }

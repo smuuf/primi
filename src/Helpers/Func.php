@@ -10,7 +10,6 @@ use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\ValueFactory;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 abstract class Func {
@@ -35,8 +34,8 @@ abstract class Func {
 
 		foreach (Func::iterator_as_tuples($array) as [$key, $value]) {
 			yield [
-				ValueFactory::buildAutomatic($key),
-				ValueFactory::buildAutomatic($value)
+				AbstractValue::buildAuto($key),
+				AbstractValue::buildAuto($value)
 			];
 		}
 

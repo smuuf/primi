@@ -13,7 +13,7 @@ class NumberLiteral extends SimpleHandler {
 	const NODE_NEEDS_TEXT = \true;
 
 	protected static function handle(array $node, Context $context) {
-		return new NumberValue($node['number']);
+		return NumberValue::build($node['number']);
 	}
 
 	public static function reduce(array &$node): void {

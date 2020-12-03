@@ -9,7 +9,6 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\ValueFactory;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Extensions\Extension;
 
@@ -33,7 +32,7 @@ class StandardExtension extends Extension {
 			throw new RuntimeError("Type '$type' does not support length.");
 		}
 
-		return new NumberValue((string) $value->getLength());
+		return NumberValue::build((string) $value->getLength(), true);
 
 	}
 
@@ -47,7 +46,7 @@ class StandardExtension extends Extension {
 	 * ```
 	 */
 	public static function type(AbstractValue $value): StringValue {
-		return new StringValue($value::TYPE);
+		return StringValue::build($value::TYPE);
 	}
 
 	public static function range(
@@ -77,7 +76,7 @@ class StandardExtension extends Extension {
 		}
 
 		return new ListValue(
-			\array_map([ValueFactory::class, 'buildAutomatic'], $range)
+			\array_map([AbstractValue::class, 'buildAuto'], $range)
 		);
 
 	}

@@ -4,7 +4,7 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Values\{
-	ValueFactory,
+	AbstractValue,
 	StringValue,
 	NumberValue,
 	RegexValue,
@@ -44,7 +44,7 @@ Assert::same([
 Assert::truthy($scope->getVariables());
 
 $multi = [
-	'var_c' => ($varC = new BoolValue(false)),
+	'var_c' => ($varC = BoolValue::build(false)),
 	'var_d' => ($varD = new RegexValue("[abc]")),
 ];
 

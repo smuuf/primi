@@ -71,7 +71,7 @@ class ListExtension extends Extension {
 			}
 		}
 
-		return new NumberValue((string) $counter);
+		return NumberValue::build((string) $counter, true);
 
 	}
 
@@ -138,7 +138,7 @@ class ListExtension extends Extension {
 		ListValue $list,
 		AbstractValue $needle
 	): BoolValue {
-		return new BoolValue($list->doesContain($needle));
+		return BoolValue::build($list->doesContain($needle));
 	}
 
 	/**
@@ -173,7 +173,7 @@ class ListExtension extends Extension {
 		// If the index is not found, this will return null.
 		$index = $list->protectedIndex((int) $index->value, \false);
 		if ($index === \null) {
-			return $default ?? new NullValue;
+			return $default ?? NullValue::build();
 		}
 
 		return $list->value[$index];
@@ -194,7 +194,7 @@ class ListExtension extends Extension {
 		AbstractValue $value
 	): NullValue {
 		$list->value[] = $value;
-		return new NullValue;
+		return NullValue::build();
 	}
 
 	/**
@@ -213,7 +213,7 @@ class ListExtension extends Extension {
 
 		// array_unshift() will reindex internal array, which is what we want.
 		\array_unshift($list->value, $value);
-		return new NullValue;
+		return NullValue::build();
 
 	}
 

@@ -16,7 +16,7 @@ class BoolExtension extends Extension {
 	 * ```
 	 */
 	public static function bool_not(BoolValue $value): BoolValue {
-		return new BoolValue(!$value->value);
+		return BoolValue::build(!$value->value);
 	}
 
 	/**
@@ -29,7 +29,7 @@ class BoolExtension extends Extension {
 	 * ```
 	 */
 	public static function bool_and(BoolValue $a, BoolValue $b): BoolValue {
-		return new BoolValue($a->value && $b->value);
+		return BoolValue::build($a->value && $b->value);
 	}
 
 	/**
@@ -48,7 +48,7 @@ class BoolExtension extends Extension {
 	 * ```
 	 */
 	public static function bool_or(BoolValue $a, BoolValue $b): BoolValue {
-		return new BoolValue($a->value xor $b->value);
+		return BoolValue::build($a->value xor $b->value);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class BoolExtension extends Extension {
 	 * ```
 	 */
 	public static function bool_xor(BoolValue $a, BoolValue $b): BoolValue {
-		return new BoolValue($a->value xor $b->value);
+		return BoolValue::build($a->value xor $b->value);
 	}
 
 }

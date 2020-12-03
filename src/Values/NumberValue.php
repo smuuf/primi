@@ -9,37 +9,74 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Stats;
 
+/**
+ * Class for representing numbers in Primi.
+ *
+ * NOTE: You should _never_ modify the internal $value property directly,
+ * as it may later lead to unpredictable results.
+ */
 class NumberValue extends AbstractValue {
 
 	/** @const int Floating point precision for bcmath operations. */
 	const PRECISION = 128;
 	const TYPE = "number";
 
-	public function __construct(string $value) {
+	/** @var array<string, self> Dict for storing interned numbers. */
+	private static $interned = [];
 
-		if ($value === '') {
+	/**
+	 * @param string $number Number as string.
+	 * @param string $normalized (Optional) If `true`, the number in string
+	 * will be normalized. You can use this when you're absolutely sure the
+	 * number is already normalized.
+	 */
+	public static function build($number = null) {
+
+		if ($number === null) {
+			throw new EngineError("Missing argument for NumberValue::build()");
+		}
+
+		// Numbers up to 10 characters (after normalizing) will be interned.
+		if (strlen($number) <= 10) {
+			return self::$interned[$number]
+				?? (self::$interned[$number] = new self($number));
+		}
+
+		return new self($number);
+
+	}
+
+	public function __construct(string $number) {
+
+		if ($number === '') {
 			throw new EngineError("Cannot create number from empty string");
 		}
 
-		$this->value = $value;
+		$this->value = Func::normalize_decimal($number);
 		Stats::add('value_count_number');
 
 	}
 
 	public function isTruthy(): bool {
-		return (bool) $this->value;
+
+		// Intentionally loose comparison. Better than casting to bool, because:
+		// '00.000' == 0 // true (we want that), but
+		// (bool) '00.000' // true (and we want false)
+
+		return $this->value != 0;
+
 	}
 
 	public function getLength(): ?int {
-		return \strlen(Func::normalize_decimal($this->value));
+		return \strlen($this->value);
 	}
 
 	public function getStringRepr(): string {
-		return Func::normalize_decimal($this->value);
+		return $this->value;
 	}
 
 	public function hash(): string {
-		return \md5(Func::normalize_decimal($this->value));
+		return \md5($this->value);
 	}
 
 	public function doAddition(AbstractValue $right): ?AbstractValue {
@@ -48,7 +85,7 @@ class NumberValue extends AbstractValue {
 			return \null;
 		}
 
-		return new self(\bcadd($this->value, $right->value, self::PRECISION));
+		return new self(bcadd($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -58,7 +95,7 @@ class NumberValue extends AbstractValue {
 			return \null;
 		}
 
-		return new self(\bcsub($this->value, $right->value, self::PRECISION));
+		return new self(bcsub($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -68,7 +105,7 @@ class NumberValue extends AbstractValue {
 			return \null;
 		}
 
-		return new self(\bcmul($this->value, $right->value, self::PRECISION));
+		return new self(bcmul($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -83,7 +120,7 @@ class NumberValue extends AbstractValue {
 			throw new RuntimeError("Division by zero");
 		}
 
-		return new self(\bcdiv($this->value, $right->value, self::PRECISION));
+		return new self(bcdiv($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -103,7 +140,7 @@ class NumberValue extends AbstractValue {
 			throw new RuntimeError("Exponent must be integer");
 		}
 
-		return new self(\bcpow($this->value, $right->value, self::PRECISION));
+		return new self(bcpow($this->value, $right->value, self::PRECISION));
 
 	}
 

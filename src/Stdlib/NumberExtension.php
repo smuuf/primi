@@ -18,7 +18,7 @@ class NumberExtension extends Extension {
 		NumberValue $n,
 		NumberValue $precision = \null
 	): NumberValue {
-		return new NumberValue((string) \round(
+		return NumberValue::build((string) \round(
 			(float) $n->value,
 			$precision ? (int) $precision->value : 0
 		));
@@ -28,21 +28,21 @@ class NumberExtension extends Extension {
 	 * Returns the absolute value of number `n`.
 	 */
 	public static function number_abs(NumberValue $n): NumberValue {
-		return new NumberValue((string) \abs((float) $n->value));
+		return NumberValue::build((string) \abs((float) $n->value));
 	}
 
 	/**
 	 * Returns number `n` rounded up.
 	 */
 	public static function number_ceil(NumberValue $n): NumberValue {
-		return new NumberValue((string) \ceil((float) $n->value));
+		return NumberValue::build((string) \ceil((float) $n->value));
 	}
 
 	/**
 	 * Returns number `n` rounded down.
 	 */
 	public static function number_floor(NumberValue $n): NumberValue {
-		return new NumberValue((string) \floor((float) $n->value));
+		return NumberValue::build((string) \floor((float) $n->value));
 	}
 
 	/**
@@ -115,7 +115,7 @@ class NumberExtension extends Extension {
 		NumberValue $b
 	): BoolValue {
 		$truth = ((int) $a->value % (int) $b->value) === 0;
-		return new BoolValue($truth);
+		return BoolValue::build($truth);
 	}
 
 }

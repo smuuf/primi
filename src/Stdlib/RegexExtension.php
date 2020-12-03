@@ -26,10 +26,10 @@ class RegexExtension extends Extension {
 	): AbstractValue {
 
 		if (!\preg_match($regex->value, $haystack->value, $matches)) {
-			return new BoolValue(false);
+			return BoolValue::build(false);
 		}
 
-		return new StringValue($matches[0]);
+		return StringValue::build($matches[0]);
 
 	}
 

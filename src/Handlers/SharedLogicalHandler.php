@@ -59,12 +59,12 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 			// Short-circuiting OR operator: if any of the results is already
 			// true, do not do the rest.
 			if (!$operand->isTruthy()) {
-				return new BoolValue(\false);
+				return BoolValue::build(\false);
 			}
 
 		}
 
-		return new BoolValue(\true);
+		return BoolValue::build(\true);
 
 	}
 
@@ -84,7 +84,7 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 
 		}
 
-		return new BoolValue(\false);
+		return BoolValue::build(\false);
 
 	}
 
