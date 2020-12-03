@@ -20,14 +20,14 @@ class ExtensionHub {
 	 * @const string[]
 	 */
 	const ESSENTIAL_EXTENSIONS = [
-		\Smuuf\Primi\StdLib\StandardExtension::class,
-		\Smuuf\Primi\StdLib\StringExtension::class,
-		\Smuuf\Primi\StdLib\NumberExtension::class,
-		\Smuuf\Primi\StdLib\DictExtension::class,
-		\Smuuf\Primi\StdLib\ListExtension::class,
-		\Smuuf\Primi\StdLib\RegexExtension::class,
-		\Smuuf\Primi\StdLib\CliExtension::class,
-		\Smuuf\Primi\StdLib\CastingExtension::class,
+		\Smuuf\Primi\Stdlib\StandardExtension::class,
+		\Smuuf\Primi\Stdlib\StringExtension::class,
+		\Smuuf\Primi\Stdlib\NumberExtension::class,
+		\Smuuf\Primi\Stdlib\DictExtension::class,
+		\Smuuf\Primi\Stdlib\ListExtension::class,
+		\Smuuf\Primi\Stdlib\RegexExtension::class,
+		\Smuuf\Primi\Stdlib\CliExtension::class,
+		\Smuuf\Primi\Stdlib\CastingExtension::class,
 	];
 
 	/**
@@ -35,10 +35,10 @@ class ExtensionHub {
 	 * @const string[]
 	 */
 	const DEFAULT_EXTENSIONS = [
-		\Smuuf\Primi\StdLib\HashExtension::class,
-		\Smuuf\Primi\StdLib\DatetimeExtension::class,
+		\Smuuf\Primi\Stdlib\HashExtension::class,
+		\Smuuf\Primi\Stdlib\DatetimeExtension::class,
 		\PHP_SAPI === 'cli' // CliExtension only in CLI mode.
-			? \Smuuf\Primi\StdLib\CliExtension::class
+			? \Smuuf\Primi\Stdlib\CliExtension::class
 			: \false,
 	];
 

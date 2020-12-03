@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\StdLib;
+namespace Smuuf\Primi\Stdlib;
 
 use \Smuuf\Primi\Extensions\Extension;
 use \Smuuf\Primi\Values\BoolValue;
