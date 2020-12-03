@@ -16,8 +16,8 @@ function get_val(AbstractValue $v) {
 
 $null = new NullValue;
 $nullTwo = new NullValue;
-$true = new BoolValue(true);
-$false = new BoolValue(false);
+$true = BoolValue::build(true);
+$false = BoolValue::build(false);
 
 // Always null.
 

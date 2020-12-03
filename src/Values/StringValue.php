@@ -4,21 +4,47 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\IndexError;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\StringEscaping;
 
 class StringValue extends AbstractValue {
 
 	const TYPE = "string";
 
-	public function __construct(string $value) {
+	/** @var array<string, self> Dict for storing interned strings. */
+	private static $interned = [];
+
+	/**
+	 * @param string $number Number as string.
+	 * @param string $normalized (Optional) If `true`, the number in string
+	 * will be normalized. You can use this when you're absolutely sure the
+	 * number is already normalized.
+	 */
+	public static function build($str = null) {
+
+		if ($str === null) {
+			throw new EngineError("Missing argument for StringValue::build()");
+		}
+
+		// Strings up to 1000 characters will be interned.
+		if (strlen($str) <= 1000) {
+			return self::$interned[$str]
+				?? (self::$interned[$str] = new self($str));
+		}
+
+		return new self($str);
+
+	}
+
+	public function __construct(string $str) {
 
 		Stats::add('value_count_string');
-		$this->value = $value;
+		$this->value = $str;
 
 	}
 
@@ -171,7 +197,7 @@ class StringValue extends AbstractValue {
 		$strlen = \mb_strlen($string);
 		for ($i = 0; $i < $strlen; $i++) {
 
-			yield new NumberValue((string) $i)
+			yield NumberValue::build((string) $i, true)
 				=> new self(\mb_substr($string, $i, 1));
 
 		}

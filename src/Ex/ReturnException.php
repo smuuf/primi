@@ -19,7 +19,7 @@ class ReturnException extends ControlFlowException {
 	}
 
 	public function getValue() {
-		return $this->value ?? new NullValue;
+		return $this->value ?? NullValue::build();
 	}
 
 }

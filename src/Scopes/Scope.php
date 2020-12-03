@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Scopes;
 
-use \Smuuf\Primi\Values\ValueFactory;
 use \Smuuf\Primi\Values\AbstractValue;
 
 /**
@@ -27,7 +26,7 @@ class Scope extends AbstractScope {
 		foreach ($pairs as $name => $value) {
 
 			if (!$value instanceof AbstractValue) {
-				$value = ValueFactory::buildAutomatic($value);
+				$value = AbstractValue::buildAuto($value);
 			}
 
 			$this->setVariable($name, $value);

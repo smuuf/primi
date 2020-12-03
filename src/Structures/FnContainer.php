@@ -11,7 +11,6 @@ use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\ValueFactory;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Stats;
@@ -98,7 +97,7 @@ class FnContainer {
 			}
 
 			// Return null if no "return" was present.
-			return new NullValue;
+			return NullValue::build();
 
 		};
 
@@ -166,7 +165,7 @@ class FnContainer {
 			}
 
 			if (!$result instanceof AbstractValue) {
-				return ValueFactory::buildAutomatic($result);
+				return AbstractValue::buildAuto($result);
 			}
 
 			return $result;

@@ -87,7 +87,7 @@ class ListValue extends AbstractValue {
 
 		$index = 0; // Always index from zero with incrementing by 1.
 		foreach ($this->value as $value) {
-			yield new NumberValue((string) ($index++)) => $value;
+			yield NumberValue::build((string) ($index++), true) => $value;
 		}
 
 	}

@@ -95,11 +95,11 @@ Assert::same(
 
 // Subtraction with undefined results will return ordinary null.
 Assert::null($string->doSubtraction(new NumberValue(1)));
-Assert::null($string->doSubtraction(new BoolValue(true)));
+Assert::null($string->doSubtraction(BoolValue::build(true)));
 Assert::null($string->doSubtraction(new DictValue([])));
 
 // Addition with undefined results will return ordinary null.
-Assert::null($string->doAddition(new BoolValue(false)));
+Assert::null($string->doAddition(BoolValue::build(false)));
 Assert::null($string->doAddition(new RegexValue("[abc]+")));
 Assert::null($string->doAddition(new DictValue([])));
 
@@ -149,7 +149,7 @@ Assert::null((new StringValue("2.1"))->isEqualTo(new NumberValue(2.1)));
 Assert::null((new StringValue("50"))->isEqualTo(new NumberValue(5)));
 Assert::null((new StringValue("2.0"))->isEqualTo(new NumberValue(2.0)));
 
-Assert::null($string->isEqualTo(new BoolValue(false)));
+Assert::null($string->isEqualTo(BoolValue::build(false)));
 Assert::null($string->isEqualTo(new NullValue()));
 Assert::null($string->isEqualTo(new ListValue([])));
 Assert::null($string->isEqualTo(new DictValue([])));

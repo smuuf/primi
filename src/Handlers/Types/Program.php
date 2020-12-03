@@ -17,7 +17,7 @@ class Program extends SimpleHandler {
 			$returnValue = $handler::run($sub, $context);
 		}
 
-		return $returnValue ?? new NullValue;
+		return $returnValue ?? NullValue::build();
 
 	}
 

@@ -36,7 +36,7 @@ class DictExtension extends Extension {
 	): AbstractValue {
 
 		try {
-			return $dict->value[$key] ?? $default ?? new NullValue;
+			return $dict->value[$key] ?? $default ?? NullValue::build();
 		} catch (UnhashableTypeException $e) {
 			throw new TypeError($e->getMessage());
 		}
@@ -58,7 +58,7 @@ class DictExtension extends Extension {
 		DictValue $dict,
 		AbstractValue $needle
 	): BoolValue {
-		return new BoolValue($dict->value->findValue($needle) !== \null);
+		return BoolValue::build($dict->value->findValue($needle) !== \null);
 	}
 
 	/**
@@ -78,7 +78,7 @@ class DictExtension extends Extension {
 	): BoolValue {
 
 		try {
-			return new BoolValue($dict->doesContain($key));
+			return BoolValue::build($dict->doesContain($key));
 		} catch (UnhashableTypeException $e) {
 			throw new TypeError($e->getMessage());
 		}

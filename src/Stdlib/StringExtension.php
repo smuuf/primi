@@ -39,7 +39,7 @@ class StringExtension extends Extension {
 			$result .= \mb_substr($original, $i, 1);
 		}
 
-		return new StringValue($result);
+		return StringValue::build($result);
 
 	}
 
@@ -133,7 +133,7 @@ class StringExtension extends Extension {
 			);
 		}
 
-		return new StringValue(\sprintf($prepared, ...$items));
+		return StringValue::build(\sprintf($prepared, ...$items));
 
 	}
 
@@ -179,7 +179,7 @@ class StringExtension extends Extension {
 
 			}
 
-			return new StringValue(\str_replace($from, $to, $string->value));
+			return StringValue::build(\str_replace($from, $to, $string->value));
 
 		}
 
@@ -189,13 +189,13 @@ class StringExtension extends Extension {
 
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
 			// Handle both string/number values the same way.
-			return new StringValue(
+			return StringValue::build(
 				\str_replace(
 					(string) $search->value, $replace->value, $string->value
 				)
 			);
 		} elseif ($search instanceof RegexValue) {
-			return new StringValue(
+			return StringValue::build(
 				\preg_replace(
 					$search->value, $replace->value, $string->value
 				)
@@ -228,7 +228,7 @@ class StringExtension extends Extension {
 			$result .= \mb_substr($string->value, $i, 1);
 		}
 
-		return new StringValue($result);
+		return StringValue::build($result);
 
 	}
 
@@ -267,7 +267,7 @@ class StringExtension extends Extension {
 		}
 
 		return new ListValue(\array_map(function($part) {
-			return new StringValue($part);
+			return StringValue::build($part);
 		}, $splat ?? []));
 
 	}
@@ -285,7 +285,7 @@ class StringExtension extends Extension {
 		StringValue $haystack,
 		AbstractValue $needle
 	): BoolValue {
-		return new BoolValue($haystack->doesContain($needle));
+		return BoolValue::build($haystack->doesContain($needle));
 	}
 
 	/**
@@ -304,11 +304,12 @@ class StringExtension extends Extension {
 		// Allow only some value types.
 		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
-		return new NumberValue(
-			(string) \mb_substr_count(
-				(string) $haystack->value, (string) $needle->value
-			)
+		$count = (string) \mb_substr_count(
+			(string) $haystack->value,
+			(string) $needle->value
 		);
+
+		return NumberValue::build($count, true);
 
 	}
 
@@ -329,9 +330,9 @@ class StringExtension extends Extension {
 
 		$pos = \mb_strpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return new NumberValue((string) $pos);
+			return NumberValue::build((string) $pos, true);
 		} else {
-			return new NullValue;
+			return NullValue::build();
 		}
 
 	}
@@ -353,9 +354,9 @@ class StringExtension extends Extension {
 
 		$pos = \mb_strrpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return new NumberValue((string) $pos);
+			return NumberValue::build((string) $pos, true);
 		} else {
-			return new NullValue;
+			return NullValue::build();
 		}
 
 	}
@@ -397,7 +398,7 @@ class StringExtension extends Extension {
 			}
 		}
 
-		return new StringValue(\implode($string->value, $prepared));
+		return StringValue::build(\implode($string->value, $prepared));
 
 	}
 

@@ -94,7 +94,7 @@ Assert::same(
 // Addition with unsupported formats will result in null - unhandled case.
 Assert::null($integer->doAddition(new StringValue("4")));
 Assert::null($integer->doAddition(new DictValue([])));
-Assert::null($integer->doAddition(new BoolValue(true)));
+Assert::null($integer->doAddition(BoolValue::build(true)));
 Assert::null($integer->doAddition(new RegexValue("/[abc]/")));
 
 //
@@ -125,7 +125,7 @@ Assert::same(
 // Subtraction with unsupported formats will result in null - unhandled case.
 Assert::null($integer->doSubtraction(new StringValue("1")));
 Assert::null($integer->doSubtraction(new DictValue([])));
-Assert::null($integer->doSubtraction(new BoolValue(false)));
+Assert::null($integer->doSubtraction(BoolValue::build(false)));
 Assert::null($integer->doSubtraction(new RegexValue("/[abc]/")));
 
 //
@@ -169,7 +169,7 @@ Assert::null($integer->doMultiplication(new StringValue(" b")));
 Assert::null($posFloat->doMultiplication(new StringValue(" a")));
 Assert::null($negFloat->doMultiplication(new StringValue(" b")));
 Assert::null($integer->doMultiplication(new DictValue([])));
-Assert::null($integer->doMultiplication(new BoolValue(false)));
+Assert::null($integer->doMultiplication(BoolValue::build(false)));
 Assert::null($integer->doMultiplication(new RegexValue("/[abc]/")));
 
 //
@@ -201,7 +201,7 @@ Assert::exception(function() use ($integer) {
 // Subtraction with unsupported formats will result in null - unhandled case.
 Assert::null($integer->doDivision(new StringValue("1")));
 Assert::null($integer->doDivision(new ListValue([])));
-Assert::null($integer->doDivision(new BoolValue(false)));
+Assert::null($integer->doDivision(BoolValue::build(false)));
 Assert::null($integer->doDivision(new RegexValue("/[abc]/")));
 
 //

@@ -20,7 +20,7 @@ class Negation extends SimpleHandler {
 		// input.
 		$isNegation = \count($node['nots'] ?? []) % 2;
 
-		return new BoolValue($isNegation ? !$truthness : $truthness);
+		return BoolValue::build($isNegation ? !$truthness : $truthness);
 
 	}
 

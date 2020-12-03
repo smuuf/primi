@@ -32,7 +32,7 @@ class FStringLiteral extends StringLiteral {
 
 		}
 
-		return new StringValue($result);
+		return StringValue::build($result);
 
 	}
 

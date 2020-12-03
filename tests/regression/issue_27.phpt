@@ -10,14 +10,14 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\ValueFactory;
+use \Smuuf\Primi\Values\AbstractValue;
 
 require __DIR__ . "/../bootstrap.php";
 
 $interpreter = new Interpreter;
 $scope = $interpreter->getCurrentScope();
 
-$scope->setVariable('teste', ValueFactory::buildAutomatic(function() {
+$scope->setVariable('teste', AbstractValue::buildAuto(function() {
         return 0.00000000001;
 }));
 $interpreter->run('a = teste(); b = 3 + a; c = b ** 3');
