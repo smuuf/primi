@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "smuuf/php-peg",
-            "version": "2.2.2",
+            "version": "2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smuuf/php-peg.git",
-                "reference": "a54ec295e9a45fb266ec664a216530cd9bc36398"
+                "reference": "270db35dc448760c7dcd27a4c0927b0b32f381eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/a54ec295e9a45fb266ec664a216530cd9bc36398",
-                "reference": "a54ec295e9a45fb266ec664a216530cd9bc36398",
+                "url": "https://api.github.com/repos/smuuf/php-peg/zipball/270db35dc448760c7dcd27a4c0927b0b32f381eb",
+                "reference": "270db35dc448760c7dcd27a4c0927b0b32f381eb",
                 "shasum": ""
             },
             "require": {
@@ -69,9 +69,9 @@
                 "peg"
             ],
             "support": {
-                "source": "https://github.com/smuuf/php-peg/tree/master"
+                "source": "https://github.com/smuuf/php-peg/tree/2.2.3"
             },
-            "time": "2020-08-23T09:41:43+00:00"
+            "time": "2020-12-03T23:58:16+00:00"
         }
     ],
     "packages-dev": [
@@ -148,16 +148,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.57",
+            "version": "0.12.58",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f9909d1d0c44b4cbaf72babcf80e8f14d6fdd55b"
+                "reference": "2a4847df6047b30af28854ed9dc95304cdb56ae5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f9909d1d0c44b4cbaf72babcf80e8f14d6fdd55b",
-                "reference": "f9909d1d0c44b4cbaf72babcf80e8f14d6fdd55b",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2a4847df6047b30af28854ed9dc95304cdb56ae5",
+                "reference": "2a4847df6047b30af28854ed9dc95304cdb56ae5",
                 "shasum": ""
             },
             "require": {
@@ -188,7 +188,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.57"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.58"
             },
             "funding": [
                 {
@@ -204,7 +204,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-21T12:53:28+00:00"
+            "time": "2020-11-29T13:32:03+00:00"
         },
         {
             "name": "smuuf/phpcb",
