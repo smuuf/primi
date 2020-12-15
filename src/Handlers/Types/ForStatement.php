@@ -8,6 +8,7 @@ use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\BreakException;
 use \Smuuf\Primi\Ex\ContinueException;
+
 /**
  * Node fields:
  * left: A source iterator.
@@ -33,7 +34,15 @@ class ForStatement extends SimpleHandler {
 		$itemVariableName = $node['item']['text'];
 		$blockHandler = HandlerFactory::getFor($node['right']['name']);
 
+		// 1-bit value for ticking task queue once per two iterations.
+		$tickBit = 1;
+
 		foreach ($iter as $k => $i) {
+
+			// Switch the bit from 1/0 or vice versa.
+			if ($tickBit ^= 1) {
+				$context->getTaskQueue()->tick();
+			}
 
 			if ($keyVariableName) {
 				$context->setVariable($keyVariableName, $k);

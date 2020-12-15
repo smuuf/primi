@@ -14,6 +14,7 @@ use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Drivers\ReadlineUserIoDriver;
 use \Smuuf\Primi\Drivers\UserIoDriverInterface;
 
@@ -21,7 +22,10 @@ class Repl {
 
 	use StrictObject;
 
-	private const DEFAULT_REPL_ID = "<repl>";
+	/**
+	 * @const string How this REPL identifies itself in call stack.
+	 */
+	private const DEFAULT_REPL_NAME = "<repl>";
 
 	private const HISTORY_FILE = '.primi_history';
 	private const PRIMARY_PROMPT = '>>> ';
@@ -29,14 +33,14 @@ class Repl {
 
 	private const PHP_ERROR_HEADER = "PHP ERROR:";
 	private const ERROR_REPORT_PLEA =
-		"This is probably a bug in Primi or any "
-		. "of its components. Please report this to the maintainer.";
+		"This is probably a bug in Primi or any of its components. "
+		. "Please report this to the maintainer.";
 
 	/** @var string Full path to readline history file. */
 	private static $historyFilePath;
 
 	/** @var string REPL identifies itself in callstack with this string. */
-	protected $replId;
+	protected $replName;
 
 	/**
 	 * IO driver used for user input/output.
@@ -57,22 +61,25 @@ class Repl {
 	public static $noExtras = false;
 
 	public function __construct(
-		?string $replId = null,
+		?string $replName = null,
 		UserIoDriverInterface $driver = null
 	) {
 
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 
-		$this->replId = $replId ?? self::DEFAULT_REPL_ID;
+		$this->replName = $replName ?? self::DEFAULT_REPL_NAME;
 		$this->driver = $driver ?? new ReadlineUserIoDriver;
+
+		$this->loadHistory();
+
+		// Allow saving history even on serious errors.
+		register_shutdown_function(function(): void {
+			$this->saveHistory();
+		});
 
 	}
 
 	protected function printHelp() {
-
-		if (self::$noExtras) {
-			return;
-		}
 
 		$this->driver->output(Colors::get("\n".
 			"{green}Use '{_}exit{green}' to exit.\n" .
@@ -93,24 +100,31 @@ class Repl {
 	 */
 	public function start(?Context $ctx = null): ?AbstractValue {
 
-		$this->printHelp();
-		$this->loadHistory();
-
-		// Allow saving history even on serious errors.
-		register_shutdown_function(function(): void {
-			$this->saveHistory();
-		});
-
 		// If context was not provided, create and use a new one.
 		$ctx = $ctx ?? new Context(new Scope);
-		$ctx->pushCall($this->replId);
 
-		// Print out level (position in call stack).
+		// Automatically handle callstack push/pop using wrapper.
+		$wrapper = new ContextPushPopWrapper($ctx, $this->replName);
+		$retval = $wrapper->wrap(function($ctx) {
+
+			// Print out level (position in call stack).
+			if (!self::$noExtras) {
+				$this->driver->output(self::getLevelInfo($ctx, true));
+				$this->printHelp();
+			}
+
+			$retval = $this->loop(new DirectInterpreter, $ctx);
+			$this->saveHistory();
+
+			return $retval;
+
+		});
+
 		if (!self::$noExtras) {
-			$this->driver->output(self::getLevelInfo($ctx, true));
+			$this->driver->output("Exiting REPL...\n");
 		}
 
-		return $this->loop(new DirectInterpreter, $ctx);
+		return $retval;
 
 	}
 
@@ -156,9 +170,7 @@ class Repl {
 
 			try {
 
-				// Ensure that there's a semicolon at the end.
-				// This way users won't have to put it in there themselves.
-				$result = $intepreter->execute("$input;", $ctx);
+				$result = $intepreter->execute("$input", $ctx);
 
 				// Store the result into _ variable for quick'n'easy retrieval.
 				$scope->setVariable('_', $result);
@@ -347,7 +359,10 @@ class Repl {
 
 	}
 
-
+	/**
+	 * Return string with human-friendly information about current level
+	 * of nested calls (that is the number of entries in the call stack).
+	 */
 	private static function getLevelInfo(
 		Context $ctx,
 		bool $full = false

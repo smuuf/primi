@@ -368,7 +368,7 @@ class StringExtension extends Extension {
 	 * ```js
 	 * ','.join(['a', 'b', 3]) == "a,b,3"
 	 * ':::'.join({'a': 1, 'b': 2, 'c': '3'}) == "1:::2:::3"
-	 * '-PADDING-'.join("abc") == "a-PADDING-b-PADDING-3" // String is also iterable.
+	 * '-PADDING-'.join("abc") == "a-PADDING-b-PADDING-c" // String is also iterable.
 	 * ```
 	 */
 	public static function string_join(

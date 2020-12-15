@@ -18,7 +18,7 @@ class Timer {
 	 */
 	public function start(): self {
 
-		$this->time = Func::hrtime();
+		$this->time = Func::monotime();
 		return $this;
 
 	}
@@ -32,7 +32,7 @@ class Timer {
 			throw new \LogicException("Timer hasn't been started");
 		}
 
-		return Func::hrtime() - $this->time;
+		return Func::monotime() - $this->time;
 
 	}
 

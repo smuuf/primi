@@ -15,6 +15,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 /**
@@ -48,6 +49,7 @@ class FnContainer {
 	) {
 
 		$callId = $callId ?? '<unknown>';
+		$definitionArgsCount = \count($definitionArgs);
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
@@ -55,15 +57,16 @@ class FnContainer {
 			$entryNode,
 			$definitionScope,
 			$definitionArgs,
+			$definitionArgsCount,
 			$callId
 		) {
 
 			// Check number of passed arguments.
-			$args = \array_splice($args, 0, \count($definitionArgs));
-			if (\count($definitionArgs) > \count($args)) {
+			$args = \array_splice($args, 0, $definitionArgsCount);
+			if ($definitionArgsCount > \count($args)) {
 				throw new ArgumentCountError(
 					\count($args),
-					\count($definitionArgs)
+					$definitionArgsCount
 				);
 			}
 
@@ -76,28 +79,24 @@ class FnContainer {
 			$scope->setParent($definitionScope);
 			$scope->setVariables($args);
 
-			$ctx->pushScope($scope);
-			$ctx->pushCall($callId);
-
-			try {
+			$wrapper = new ContextPushPopWrapper($ctx, $callId, $scope);
+			return $wrapper->wrap(function($ctx) use ($entryNode) {
 
 				// Run the function body and expect a ReturnException with the
 				// return value.
-				$handler = HandlerFactory::getFor($entryNode['name']);
-				$handler::run($entryNode, $ctx);
 
-			} catch (ReturnException $e) {
-				return $e->getValue();
-			} finally {
+				try {
+					$handler = HandlerFactory::getFor($entryNode['name']);
+					$handler::run($entryNode, $ctx);
+				} catch (ReturnException $e) {
+					return $e->getValue();
+				}
 
-				// Remove the latest context stack items.
-				$ctx->popScope();
-				$ctx->popCall();
+				// Return null if no "return" was present (i.e. no
+				// ReturnException was thrown from inside the called function).
+				return NullValue::build();
 
-			}
-
-			// Return null if no "return" was present.
-			return NullValue::build();
+			});
 
 		};
 
@@ -110,13 +109,15 @@ class FnContainer {
 		$closure = \Closure::fromCallable($fn);
 
 		$rf = new \ReflectionFunction($closure);
-		$callId = $rf->getName();
+		$callId = "{$rf->getName()}() (native)";
 
 		// Determine whether the runtime context object should be injected into
 		// the function args (as the first one).
 		$injectContext = false;
+		$addToStack = true;
 		if ($docComment = $rf->getDocComment()) {
 			$injectContext = \strpos($docComment, '@injectContext') !== \false;
+			$addToStack = \strpos($docComment, '@noStack') === \false;
 		}
 
 		Func::check_allowed_parameter_types_of_function($rf);
@@ -124,6 +125,7 @@ class FnContainer {
 		$wrapper = function(Context $ctx, array $args) use (
 			$closure,
 			$injectContext,
+			$addToStack,
 			$callId
 		) {
 
@@ -132,7 +134,11 @@ class FnContainer {
 			}
 
 			// Add this function call to the call stack.
-			$ctx->pushCall($callId);
+			// This is done manually without ContextPushPopWrapper to avoid
+			// performance overhead.
+			if ($addToStack) {
+				$ctx->pushCall($callId);
+			}
 
 			try {
 				$result = $closure(...$args);
@@ -161,7 +167,14 @@ class FnContainer {
 				));
 
 			} finally {
-				$ctx->popCall(); // Remove the latest entry from call stack.
+
+				// Remove the latest entry from call stack.
+				// This is done manually without ContextPushPopWrapper to avoid
+				// performance overhead.
+				if ($addToStack) {
+					$ctx->popCall();
+				}
+
 			}
 
 			if (!$result instanceof AbstractValue) {
@@ -187,10 +200,10 @@ class FnContainer {
 		$this->isPhpFunction = $isPhpFunction;
 	}
 
-	public function callClosure(...$args): ?AbstractValue {
+	public function callClosure(Context $ctx, array $args): ?AbstractValue {
 
 		Stats::add('func_calls');
-		return ($this->closure)(...$args);
+		return ($this->closure)($ctx, $args);
 
 	}
 

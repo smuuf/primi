@@ -75,6 +75,10 @@ class ExtensionHub {
 	 * Register a PHP class as an extension to a target Primi  <...>AbstractValue class.
 	 * Optionally pass an array of <PHP class> => <AbstractValue class> pairs to
 	 * register multiple extensions at once.
+	 *
+	 * @param string|array<string>|Extension|array<Extension> $extension A list
+	 * of extensions or a single extension - as a class name or as an instance
+	 * of `Extension` class.
 	 */
 	public function add($extension): void {
 

@@ -10,8 +10,8 @@ class UnhashableTypeException extends EngineException {
 	protected $type;
 
 	public function __construct(string $type) {
-		$this->type = $type;
 		parent::__construct("Unhashable type '$type'");
+		$this->type = $type;
 	}
 
 	public function getType(): string {

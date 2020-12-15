@@ -23,12 +23,13 @@ class CliExtension extends Extension {
 	 * Prints value to standard output.
 	 */
 	public static function print(
-		AbstractValue $value,
+		AbstractValue $value = null,
 		BoolValue $nl = \null
 	): NullValue {
 
+		$text = $value === null ? '' : $value->getStringValue();
 		$nl = $nl !== \null ? $nl->isTruthy() : \true; // Newline by default.
-		echo $value->getStringValue() . ($nl ? "\n" : '');
+		echo $text . ($nl ? "\n" : '');
 
 		return NullValue::build();
 
@@ -41,12 +42,11 @@ class CliExtension extends Extension {
 	 * session for debugging at the specified line.
 	 *
 	 * @injectContext
+	 * @noStack
 	 */
 	public static function debugger(Context $ctx): AbstractValue {
-
 		$repl = new Repl('<debugger>');
 		return $repl->start($ctx) ?? NullValue::build();
-
 	}
 
 	/**
@@ -55,6 +55,7 @@ class CliExtension extends Extension {
 	 * Return traceback as a list.
 	 *
 	 * @injectContext
+	 * @noStack
 	 */
 	public static function get_traceback(Context $ctx): ListValue {
 		return AbstractValue::buildAuto($ctx->getTraceback());
@@ -63,7 +64,7 @@ class CliExtension extends Extension {
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
 	 *
-	 * Returns memory peak usage used by Primi (or rather PHP behind it) in
+	 * Returns memory peak usage used by Primi _(engine behind the scenes)_ in
 	 * bytes.
 	 */
 	public static function memory_get_peak_usage(): NumberValue {
@@ -73,7 +74,8 @@ class CliExtension extends Extension {
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
 	 *
-	 * Returns current usage used by Primi (or rather PHP behind it) in bytes.
+	 * Returns current memory usage used by Primi _(engine behind the scenes)_
+	 * in bytes.
 	 */
 	public static function memory_get_usage(): NumberValue {
 		return new NumberValue((string) \memory_get_peak_usage());
@@ -82,8 +84,8 @@ class CliExtension extends Extension {
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
 	 *
-	 * This function returns true if a boolean value passed into it is `true`
-	 * and throws error if it's `false`. Optional string decription can be
+	 * This function returns `true` if a `bool` value passed into it is `true`
+	 * and throws error if it's `false`. Optional `string` description can be
 	 * provided, which will be visible in the eventual error message.
 	 */
 	public static function assert(

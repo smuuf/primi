@@ -6,6 +6,7 @@ use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Extensions\ExtensionHub;
+use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 
 /**
  * Primi's primary abstract syntax tree interpreter.
@@ -59,13 +60,6 @@ class Interpreter extends DirectInterpreter {
 		$extHub = $extHub ?? new ExtensionHub;
 		$extHub->apply($context->getCurrentScope());
 
-		if (function_exists('pcntl_async_signals')) {
-			pcntl_async_signals(true);
-			pcntl_signal(SIGINT, function() {
-				$this->context->addEvent('SIGINT');
-			});
-		}
-
 	}
 
 	/**
@@ -91,8 +85,10 @@ class Interpreter extends DirectInterpreter {
 	 */
 	public function run(string $source): AbstractValue {
 
-		$this->context->pushCall('<program>');
-		return $this->execute($source, $this->context);
+		$wrapper = new ContextPushPopWrapper($this->context, '<main>');
+		return $wrapper->wrap(function() use ($source) {
+			return $this->execute($source, $this->context);
+		});
 
 	}
 
