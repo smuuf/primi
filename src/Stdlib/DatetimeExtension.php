@@ -15,7 +15,7 @@ class DatetimeExtension extends Extension {
 	 * keeps increasing by 1 every second.
 	 */
 	public static function time_monotonic(): NumberValue {
-		return new NumberValue((string) Func::hrtime());
+		return new NumberValue((string) Func::monotime());
 	}
 
 	/**

@@ -5,9 +5,12 @@ namespace Smuuf\Primi;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ControlFlowException;
 use \Smuuf\Primi\Ex\ContextAwareException;
+use Smuuf\Primi\Ex\SystemException;
+use \Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Wrappers\CatchPosixSignalsWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 /**
@@ -31,7 +34,7 @@ class DirectInterpreter {
 	 * a context representing a runtime-in-progress (and access local variables,
 	 * for example).
 	 */
-	public function execute(string $source, Context $context): AbstractValue {
+	public function execute(string $source, Context $ctx): AbstractValue {
 
 		// Each node must have two keys: 'name' and 'text'.
 		// These are provided by the PHP-PEG itself, so we should be able to
@@ -43,10 +46,28 @@ class DirectInterpreter {
 
 		$ast = $this->getSyntaxTree($source);
 
+		// Register signal handling.
+		PosixSignalTaskEmitter::catch(SIGINT);
+		PosixSignalTaskEmitter::catch(SIGQUIT);
+
 		try {
-			$handler = HandlerFactory::getFor($ast['name']);
-			return $handler::run($ast, $context);
-		} catch (ContextAwareException $e) {
+
+			$wrapper = new CatchPosixSignalsWrapper($ctx->getTaskQueue());
+			return $wrapper->wrap(function() use ($ast, $ctx) {
+
+				$handler = HandlerFactory::getFor($ast['name']);
+				$retval = $handler::run($ast, $ctx);
+
+				// This is the end of a single runtime, so run any tasks that
+				// may be still left in the task queue (this means, for example,
+				// that all callbacks in the queue will still be executed).
+				$ctx->getTaskQueue()->deplete();
+
+				return $retval;
+
+			});
+
+		} catch (ContextAwareException|SystemException $e) {
 			throw new RuntimeError($e->getMessage());
 		} catch (ControlFlowException $e) {
 			$what = $e::ID;

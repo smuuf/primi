@@ -49,6 +49,22 @@ class StandardExtension extends Extension {
 		return StringValue::build($value::TYPE);
 	}
 
+	/**
+	 * Return a list containing numbers from `start` to `end` _(including)_.
+	 * If the `end` is not specified, numbers from `0` to the value of the
+	 * first argument `start` is returned. Optional third argument `step` can
+	 * be specified for steps other than `1`.
+	 *
+	 * ```js
+	 * range(0) == [0]
+	 * range(1) == [0, 1]
+	 * range(5) == [0, 1, 2, 3, 4, 5]
+	 * range(2, 7) == [2, 3, 4, 5, 6, 7]
+	 * range(2, -7) == [2, 1, 0, -1, -2, -3, -4, -5, -6, -7]
+	 * range(2, -7, 3) == [2, -1, -4, -7]
+	 * range(5, 10, 3) == [5, 8] // The last number that could be obtained by incrementing 3 is 8.
+	 * ```
+	 */
 	public static function range(
 		NumberValue $start,
 		?NumberValue $end = \null,
@@ -63,7 +79,7 @@ class StandardExtension extends Extension {
 			throw new RuntimeError("All arguments must be integers.");
 		}
 
-		// If only one agrument is passed, the range will go from 0 to that
+		// If only one argument is passed, the range will go from 0 to that
 		// number.
 		if ($end === \null) {
 			$range = \range(0, $start->value);

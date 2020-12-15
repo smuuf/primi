@@ -4,6 +4,7 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Interpreter;
+use Smuuf\Primi\Tasks\Types\PosixSignalTask;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -27,11 +28,13 @@ $i->run($src);
 Assert::same('60', $ctx->getVariable('result')->getInternalValue());
 
 Assert::exception(function() use ($i, $ctx, $src) {
-
 	// Add SIGINT event to event queue.
-	$ctx->addEvent('SIGINT');
-
-	// SimpleHandler::run() will raise exception based on the SIGINT event.
+	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGINT));
+	// Exception will be thrown based on the simulated "SIGINT" signal task job.
 	$i->run($src);
-
 }, RuntimeError::class, '#Received SIGINT#');
+
+Assert::exception(function() use ($i, $ctx, $src) {
+	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGTERM));
+	$i->run($src);
+}, RuntimeError::class, '#Received SIGTERM#');

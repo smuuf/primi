@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Tasks\TaskQueue;
 use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
 class Context {
 
@@ -18,33 +21,22 @@ class Context {
 	/** @var AbstractScope[] Scope stack list. */
 	protected $scopeStack = [];
 
-	/** @var string[] Event queue. */
-	protected $eventQueue = [];
-
 	/**
 	 * Direct reference to the scope on the top of the stack.
 	 * @var AbstractScope
 	 */
 	protected $currentScope = \null;
 
+	/** @var TaskQueue Task queue for this context. */
+	protected $taskQueue;
+
 	public function __construct(?AbstractScope $scope = \null) {
 		$this->pushScope($scope ?? new Scope);
+		$this->taskQueue = new TaskQueue($this);
 	}
 
-	// Events.
-
-	public function addEvent(string $name): void {
-		$this->eventQueue[] = $name;
-	}
-
-	public function getEvent(): ?string {
-
-		if ($this->eventQueue) {
-			return \array_pop($this->eventQueue);
-		}
-
-		return null;
-
+	public function getTaskQueue(): TaskQueue {
+		return $this->taskQueue;
 	}
 
 	// Callstack management.
@@ -63,6 +55,7 @@ class Context {
 
 	public function popCall(): void {
 		\array_pop($this->callStack);
+		$this->taskQueue->tick();
 	}
 
 	// Scope management.
@@ -78,8 +71,8 @@ class Context {
 
 	public function popScope(): void {
 
+		// At least one scope needs to be present at all times.
 		if (\count($this->scopeStack) === 1) {
-			// At least one scope needs to be present at all times.
 			throw new EngineInternalError("Cannot pop last scope");
 		}
 

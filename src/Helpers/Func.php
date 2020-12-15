@@ -11,6 +11,7 @@ use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\Helpers\ContextManagers\ContextManagerInterface;
 
 abstract class Func {
 
@@ -381,16 +382,22 @@ abstract class Func {
 	}
 
 	/**
-	 * Return best available high-res time.
+	 * Return best available time for measuring things - as seconds.
 	 */
-	public static function hrtime(): float {
+	public static function monotime(): float {
 
 		// hrtime() is available only from PHP 7.3
 		if (\PHP_VERSION_ID < 73000) {
 			return \microtime(\true);
 		}
 
-		return \hrtime(\true);
+		// Nanoseconds to seconds.
+		return \hrtime(\true) / 1e9;
+
+	}
+
+	public static function unique_id(): string {
+		return md5(random_bytes(128));
 	}
 
 }

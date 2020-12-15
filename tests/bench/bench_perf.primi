@@ -68,10 +68,11 @@ function bench_dicts() {
 	}
 
 	print('|', false)
-	return result;
+	return result
 
 }
 
 bench_function_calls()
 bench_regex_matches()
 bench_dicts()
+print()

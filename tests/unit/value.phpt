@@ -2,6 +2,7 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Values\{
 	AbstractValue,
 	StringValue,
@@ -10,11 +11,18 @@ use \Smuuf\Primi\Values\{
 	DictValue,
 	ListValue,
 	FuncValue,
-	BoolValue
+	BoolValue,
+	NullValue
 };
 use \Smuuf\Primi\Helpers\Func;
 
 require __DIR__ . '/../bootstrap.php';
+
+Assert::exception(function() {
+	AbstractValue::build('whatever');
+}, EngineError::class, '#does not implement factory method#');
+
+Assert::same(NullValue::TYPE, AbstractValue::buildAuto(null)::TYPE);
 
 Assert::same(NumberValue::TYPE, AbstractValue::buildAuto(1)::TYPE);
 Assert::same(NumberValue::TYPE, AbstractValue::buildAuto(-1)::TYPE);

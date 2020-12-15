@@ -16,6 +16,9 @@ abstract class Stats {
 	/** @var bool If true, statistics are gathered. Disabled by default. */
 	private static $enabled = \false;
 
+	/** @var float Point in time when stats gathering was enabled. */
+	private static $startTime = 0;
+
 	/** @var array Dictionary for gathered statistics. */
 	private static $stats = [];
 
@@ -24,6 +27,7 @@ abstract class Stats {
 	 */
 	public static function enable(bool $state = \true): void {
 		self::$enabled = $state;
+		self::$startTime = Func::monotime();
 	}
 
 	/**
@@ -70,6 +74,23 @@ abstract class Stats {
 	 */
 	public static function single(string $name): int {
 		return self::$stats[$name] ?? 0;
+	}
+
+	public static function print(): void {
+
+		echo Colors::get("{yellow}Stats:{_}\n");
+
+		$mb = round(memory_get_peak_usage() / 1e6, 2);
+		echo "Memory peak: {$mb} MB\n";
+
+		$duration = round(Func::monotime() - self::$startTime, 2);
+		echo "Runtime duration: {$duration} s\n";
+
+		ksort(self::$stats);
+		foreach (self::$stats as $name => $value) {
+			echo "{$name}: {$value}\n";
+		}
+
 	}
 
 }

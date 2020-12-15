@@ -127,8 +127,8 @@ class ListExtension extends Extension {
 	 * [1, 2, 3, 1].contains(666) == false
 	 *
 	 * // NOTE: Lists with same items with different order are different.
-	 * [[1, 2], 'xxx'.contains([1, 2]) == true
-	 * [[1, 2], 'xxx'.contains([2, 1]) == false
+	 * [[1, 2], 'xxx'].contains([1, 2]) == true
+	 * [[1, 2], 'xxx'].contains([2, 1]) == false
 	 *
 	 * // NOTE: Dicts with same items with different order are the same.
 	 * [{'b': 2, 'a': 1}, 'xxx'].contains({'a': 1, 'b': 2}) == true
