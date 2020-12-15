@@ -19,7 +19,7 @@ class NullValue extends AbstractValue {
 	}
 
 	public function __construct() {
-		Stats::add('value_count_null');
+		Stats::add('values_null');
 	}
 
 	public function getStringRepr(): string {

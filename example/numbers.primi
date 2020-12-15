@@ -1,3 +1,7 @@
+assert_not = (truth, desc) => {
+	assert(!truth, desc)
+}
+
 // Long numbers can be separated using underscores for improved readability.
 
 assert(1_000_000 == 1000000)
@@ -7,26 +11,11 @@ assert(1_0_._00_0_0_001 == 10.0000001)
 x = 789 * (2 + 3) * 1
 assert(x == 3945)
 
-x = a = (789 * (2 + 3)) * 1
+x = (789 * (2 + 3)) * 1
 assert(x == 3945)
 
-x = b = 123*456*789/2.3+111
+x = 123*456*789/2.3+111
 assert(x.round(6) == 19240733.608696)
-
-x = (456*789*123/2.3)+111
-assert(x.round(6) == 19240733.608696)
-
-x = a + b
-assert(x.round(6) == 19244678.608696)
-
-x = b + a
-assert(x.round(6) == 19244678.608696)
-
-x = (b + a).round() * 123
-assert(x == 2367095517)
-
-x = (a + b).round() * 123 * 999123
-assert(x == 2365019574231591)
 
 x = 37 * 2 / 8
 assert(x == 9.25)
@@ -41,42 +30,62 @@ assert("-1" != -1, _)
 assert("0.0001" != 0.0001, _)
 assert("-0.0001" != 0.0001, _)
 
-_ = 'Number zero is considered to be falsy'
+//
+// Equality of numbers with bool values.
+//
+
+_ = 'Number 0 is equal to false'
 assert(0 == false, _)
 
-_ = 'Any non-zero number is considered truthy'
-assert(1 == true, _)
-assert(0.0001 == true, _)
-assert(-1 == true, _)
-assert(-0.0001 == true, _)
+_ = 'Number 0.00000 is equal to false'
+assert(0.0 == false, _)
 
-x = 9.sqrt()
-assert(x == 3)
-x = 3.pow()
-assert(x == 9)
-x = 3.pow(2)
-assert(x == 9)
-x = 3.pow(4)
-assert(x == 81)
-x = 3.pow(400)
-assert(x == 70550791086553325712464271575934796216507949612787315762871223209262085551582934156579298529447134158154952334825355911866929793071824566694145084454535257027960285323760313192443283334088001)
-x = 0.cos()
-assert(x == 1)
-x = 0.sin()
-assert(x == 0)
-x = 1.3.ceil()
-assert(x == 2)
-x = 1.8.floor()
-assert(x == 1)
-x = 1.6.round()
-assert(x == 2)
-x = 1.5.round()
-assert(x == 2)
-x = 1.49.round()
-assert(x == 1)
+_ = 'Number 1 is equal to false'
+assert(1 == true, _)
+
+_ = 'Number 1.00000 (regardless of number of 0s after decimal point) is equal to false'
+assert(1 == true, _)
+
+_ = 'Number 1.00000000000000000000000001 is not equal to either true nor false'
+assert_not(1.00000000000000000000000001 == true, _)
+assert_not(1.00000000000000000000000001 == false, _)
+
+_ = 'Number 0.00000000000000000000000001 is not equal to either true nor false'
+assert_not(1.00000000000000000000000001 == true, _)
+assert_not(1.00000000000000000000000001 == false, _)
+
+_ = 'All other numbers ({}) not equal to 1 or 0 equal to either true nor false'
+nums = [-10 ** 53, 0.1 ** 53, -1, -1.1, 1.1, 0.1, -0.1, 0.9999, -1.0001]
+for (n in nums) {
+	assert_not(n == true, _.format(n))
+	assert_not(n == false, _.format(n))
+}
+
+//
+// Truthiness of number values.
+//
+
+_ = 'All numbers not equal to 0 are considered to be truthy (this is different from being equal to true)'
+assert(to_bool(1) == true, _)
+assert(to_bool(-1) == true, _)
+assert(to_bool(1.1) == true, _)
+assert(to_bool(-1.1) == true, _)
+assert(to_bool(0.1) == true, _)
+assert(to_bool(-0.1) == true, _)
+assert(to_bool(2) == true, _)
+assert(to_bool(-2) == true, _)
+
+assert(to_bool(0) == false, _)
+assert(to_bool(0.0) == false, _)
+assert(to_bool(0.000) == false, _)
+assert(to_bool(0.0001) == true, _)
+
+//
+// Really large/small numbers.
+//
 
 x = 999888777666555333222111 * (1 / 123456789123456789)
 assert(x == 8099099.1647018015068854937045588927195850237401246160432331059853221644745307967101311500702925656315632472553219758888065562641124968)
 
-assert((1 / 10 ** 128) > 0, 'Really small float numbers are precise up to 128 digits.')
-assert((1 / 10 ** 129) == 0, 'Really small float numbers requiring more than 128 digit precision are rounded.')
+assert((1 / 10 ** 128) > 0, 'Really small float numbers are precise up to 128 digits')
+assert((1 / 10 ** 129) == 0, 'Really small float numbers requiring more than 128 digit precision are rounded')

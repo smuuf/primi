@@ -17,7 +17,7 @@ class FuncValue extends AbstractValue {
 
 	public function __construct(FnContainer $fn) {
 		$this->value = $fn;
-		Stats::add('value_count_func');
+		Stats::add('values_func');
 	}
 
 	public function isTruthy(): bool {

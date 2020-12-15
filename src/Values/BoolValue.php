@@ -6,7 +6,6 @@ namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Stats;
 
 class BoolValue extends AbstractValue {
@@ -29,7 +28,7 @@ class BoolValue extends AbstractValue {
 
 	public function __construct(bool $value) {
 		$this->value = $value;
-		Stats::add('value_count_bool');
+		Stats::add('values_bool');
 	}
 
 	public function getStringRepr(): string {
@@ -46,7 +45,17 @@ class BoolValue extends AbstractValue {
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 
-		if (!Func::is_any_of_types($right, BoolValue::class, NumberValue::class)) {
+		if ($right instanceof NumberValue) {
+			// Comparison with numbers - the only rules:
+			// a) 1 == true
+			// b) 0 == false
+			// c) Anything else is false.
+			// Number is normalized upon construction, so for example '01.00' is
+			// stored as '1', or '0.00' is '0', so the mechanism below works.
+			return $right->value === ($this->value ? '1' : '0');
+		}
+
+		if (!$right instanceof BoolValue) {
 			return \null;
 		}
 

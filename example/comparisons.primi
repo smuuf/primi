@@ -195,23 +195,30 @@ assert((false != false) == false)
 
 // Comparing booleans with numbers.
 
-x = true == 1
-assert(x == true)
+_ = "'true == 1' is true"
+assert(true == 1, _)
+_ = "'1 == true' is true"
+assert(1 == true, _)
 
-x = true == 0
-assert(x == false)
+_ = "'true == 0' is false"
+assert((true == 0) == false, _)
+_ = "'0 == true' is false"
+assert((0 == true) == false, _)
 
-x = true == -1
-assert(x == true)
+_ = "'false == 1' is false"
+assert((false == 1) == false, _)
+_ = "'1 == false' is false"
+assert((1 == false) == false, _)
 
-x = 1 == true
-assert(x == true)
+_ = "'false == 0' is true"
+assert(false == 0, _)
+_ = "'0 == false' is true"
+assert(0 == false, _)
 
-x = 0 == true
-assert(x == false)
-
-x = -1 == true
-assert(x == true)
+_ = "'false == -1' is false"
+assert((false == -1) == false, _)
+_ = "'-1 == false' is false"
+assert((false == -1) == false, _)
 
 // Comparing booleans with nulls.
 
