@@ -48,7 +48,7 @@ class BoolExtension extends Extension {
 	 * ```
 	 */
 	public static function bool_or(BoolValue $a, BoolValue $b): BoolValue {
-		return BoolValue::build($a->value xor $b->value);
+		return BoolValue::build($a->value || $b->value);
 	}
 
 	/**

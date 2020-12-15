@@ -26,9 +26,6 @@ class NumberValue extends AbstractValue {
 
 	/**
 	 * @param string $number Number as string.
-	 * @param string $normalized (Optional) If `true`, the number in string
-	 * will be normalized. You can use this when you're absolutely sure the
-	 * number is already normalized.
 	 */
 	public static function build($number = null) {
 
@@ -53,7 +50,7 @@ class NumberValue extends AbstractValue {
 		}
 
 		$this->value = Func::normalize_decimal($number);
-		Stats::add('value_count_number');
+		Stats::add('values_number');
 
 	}
 
@@ -147,7 +144,13 @@ class NumberValue extends AbstractValue {
 	public function isEqualTo(AbstractValue $right): ?bool {
 
 		if ($right instanceof BoolValue) {
-			return $this->value == $right->value;
+			// Comparison with numbers: The only truths:
+			// a) 1 == true
+			// b) 0 == false
+			// Anything else is false.
+			// Number is normalized upon construction, so for example '01.00' is
+			// stored as '1', or '0.00' is '0', so the mechanism below works.
+			return $this->value === ($right->value ? '1' : '0');
 		}
 
 		if ($right instanceof NumberValue) {

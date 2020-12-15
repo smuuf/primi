@@ -48,8 +48,8 @@ class StringExtension extends Extension {
 	 * replaced by additional arguments.
 	 *
 	 * Placeholders can be either _(but these can't be combined)_:
-	 * - Non-positional: `{}`
-	 * - Positional: `{0}`, `{1}`, `{2}`, etc.
+	 *   - Non-positional: `{}`
+	 *   - Positional: `{0}`, `{1}`, `{2}`, etc.
 	 *
 	 * ```js
 	 * "x{}x, y{}y".format(1, 2) == "x1x, y2y"

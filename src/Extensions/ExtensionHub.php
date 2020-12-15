@@ -21,13 +21,14 @@ class ExtensionHub {
 	 */
 	const ESSENTIAL_EXTENSIONS = [
 		\Smuuf\Primi\Stdlib\StandardExtension::class,
-		\Smuuf\Primi\Stdlib\StringExtension::class,
-		\Smuuf\Primi\Stdlib\NumberExtension::class,
-		\Smuuf\Primi\Stdlib\DictExtension::class,
-		\Smuuf\Primi\Stdlib\ListExtension::class,
-		\Smuuf\Primi\Stdlib\RegexExtension::class,
-		\Smuuf\Primi\Stdlib\CliExtension::class,
 		\Smuuf\Primi\Stdlib\CastingExtension::class,
+		\Smuuf\Primi\Stdlib\CliExtension::class,
+		\Smuuf\Primi\Stdlib\BoolExtension::class,
+		\Smuuf\Primi\Stdlib\NumberExtension::class,
+		\Smuuf\Primi\Stdlib\StringExtension::class,
+		\Smuuf\Primi\Stdlib\ListExtension::class,
+		\Smuuf\Primi\Stdlib\DictExtension::class,
+		\Smuuf\Primi\Stdlib\RegexExtension::class,
 	];
 
 	/**

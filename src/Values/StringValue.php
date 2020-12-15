@@ -21,9 +21,6 @@ class StringValue extends AbstractValue {
 
 	/**
 	 * @param string $number Number as string.
-	 * @param string $normalized (Optional) If `true`, the number in string
-	 * will be normalized. You can use this when you're absolutely sure the
-	 * number is already normalized.
 	 */
 	public static function build($str = null) {
 
@@ -43,7 +40,7 @@ class StringValue extends AbstractValue {
 
 	public function __construct(string $str) {
 
-		Stats::add('value_count_string');
+		Stats::add('values_string');
 		$this->value = $str;
 
 	}
@@ -197,7 +194,7 @@ class StringValue extends AbstractValue {
 		$strlen = \mb_strlen($string);
 		for ($i = 0; $i < $strlen; $i++) {
 
-			yield NumberValue::build((string) $i, true)
+			yield NumberValue::build((string) $i)
 				=> new self(\mb_substr($string, $i, 1));
 
 		}

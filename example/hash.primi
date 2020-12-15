@@ -1,0 +1,56 @@
+function hash_or_false(hash_fn) {
+	return (arg) => {
+		try {
+			return hash_fn(arg)
+		} catch {
+			return false;
+		}
+	}
+}
+
+assert(hash_md5('hello') == '5d41402abc4b2a76b9719d911017c592')
+assert(hash_md5('123') == '202cb962ac59075b964b07152d234b70')
+
+assert(hash_sha256('hello') == '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824')
+assert(hash_sha256('123') == 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3')
+
+hash_md5_or_false = hash_or_false(hash_md5)
+hash_sha256_or_false = hash_or_false(hash_sha256)
+
+//
+// md5
+//
+
+_ = 'Hashing number raises error.'
+assert(hash_md5_or_false(123) == false, _);
+
+_ = 'Hashing bool raises error.'
+assert(hash_md5_or_false(true) == false, _);
+
+_ = 'Hashing null raises error.'
+assert(hash_md5_or_false(null) == false, _);
+
+_ = 'Hashing list raises error.'
+assert(hash_md5_or_false([]) == false, _);
+
+_ = 'Hashing dict raises error.'
+assert(hash_md5_or_false({}) == false, _);
+
+//
+// sha215
+//
+
+_ = 'Hashing number raises error.'
+assert(hash_sha256_or_false(123) == false, _);
+
+_ = 'Hashing bool raises error.'
+assert(hash_sha256_or_false(true) == false, _);
+
+_ = 'Hashing null raises error.'
+assert(hash_sha256_or_false(null) == false, _);
+
+_ = 'Hashing list raises error.'
+assert(hash_sha256_or_false([]) == false, _);
+
+_ = 'Hashing dict raises error.'
+assert(hash_sha256_or_false({}) == false, _);

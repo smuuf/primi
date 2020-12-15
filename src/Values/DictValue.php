@@ -24,7 +24,7 @@ class DictValue extends AbstractValue {
 	 */
 	public function __construct(iterable $tuples = []) {
 		$this->value = MapContainer::fromTuples($tuples);
-		Stats::add('value_count_dict');
+		Stats::add('values_dict');
 	}
 
 	public function __clone() {

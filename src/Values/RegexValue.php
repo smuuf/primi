@@ -24,7 +24,7 @@ class RegexValue extends AbstractValue {
 		// we won't need to deal with any escaping of input.
 		$this->value = "\x07$regex\x07u";
 
-		Stats::add('value_count_regex');
+		Stats::add('values_regex');
 
 	}
 
