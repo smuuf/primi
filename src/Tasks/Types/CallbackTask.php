@@ -13,7 +13,7 @@ class CallbackTask implements TaskInterface {
 
 	use StrictObject;
 
-	/** @var FnContainer Callback function. */
+	/** @var FuncValue Callback function. */
 	private $fn = null;
 
 	/** @var array Arguments passed to callback. */
@@ -21,6 +21,7 @@ class CallbackTask implements TaskInterface {
 
 	public function __construct(FuncValue $fn, array $args = []) {
 		$this->fn = $fn;
+		$this->args = $args;
 	}
 
 	public function execute(Context $ctx): void {

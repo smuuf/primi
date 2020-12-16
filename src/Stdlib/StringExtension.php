@@ -309,7 +309,7 @@ class StringExtension extends Extension {
 			(string) $needle->value
 		);
 
-		return NumberValue::build($count, true);
+		return NumberValue::build($count);
 
 	}
 
@@ -330,7 +330,7 @@ class StringExtension extends Extension {
 
 		$pos = \mb_strpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return NumberValue::build((string) $pos, true);
+			return NumberValue::build((string) $pos);
 		} else {
 			return NullValue::build();
 		}
@@ -354,7 +354,7 @@ class StringExtension extends Extension {
 
 		$pos = \mb_strrpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return NumberValue::build((string) $pos, true);
+			return NumberValue::build((string) $pos);
 		} else {
 			return NullValue::build();
 		}

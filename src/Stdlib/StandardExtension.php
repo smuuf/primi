@@ -32,7 +32,7 @@ class StandardExtension extends Extension {
 			throw new RuntimeError("Type '$type' does not support length.");
 		}
 
-		return NumberValue::build((string) $value->getLength(), true);
+		return NumberValue::build((string) $value->getLength());
 
 	}
 

@@ -71,7 +71,7 @@ class ListExtension extends Extension {
 			}
 		}
 
-		return NumberValue::build((string) $counter, true);
+		return NumberValue::build((string) $counter);
 
 	}
 

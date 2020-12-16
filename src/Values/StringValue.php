@@ -19,9 +19,6 @@ class StringValue extends AbstractValue {
 	/** @var array<string, self> Dict for storing interned strings. */
 	private static $interned = [];
 
-	/**
-	 * @param string $number Number as string.
-	 */
 	public static function build($str = null) {
 
 		if ($str === null) {
