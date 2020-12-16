@@ -110,7 +110,7 @@ class CastingExtension extends Extension {
 		}
 
 		if ($value instanceof BoolValue) {
-			return NumberValue::build($value->value ? '1' : '0', true);
+			return NumberValue::build($value->value ? '1' : '0');
 		}
 
 		Func::allow_argument_types(
