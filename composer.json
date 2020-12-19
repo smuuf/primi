@@ -20,6 +20,8 @@
 	},
 	"require": {
 		"php": ">=7.1",
+		"ext-bcmath" : "*",
+		"ext-mbstring" : "*",
 		"smuuf/php-peg": "^2",
 		"smuuf/better-php-exceptions": "^0.1"
 	},
