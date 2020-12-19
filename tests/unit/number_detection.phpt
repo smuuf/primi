@@ -68,7 +68,6 @@ if (PHP_VERSION_ID < 80000) {
 Assert::true(Func::is_round_int(" 1"));
 Assert::false(Func::is_round_int(""));
 Assert::false(Func::is_round_int(" "));
-Assert::false(Func::is_round_int(" 1. "));
 Assert::false(Func::is_round_int(" 1.1 "));
 Assert::false(Func::is_round_int(" 0.1 "));
 Assert::false(Func::is_round_int("1.0E-44"));
@@ -77,6 +76,13 @@ Assert::false(Func::is_round_int("1.9E-44"));
 Assert::false(Func::is_round_int("-1.2E-44"));
 Assert::false(Func::is_round_int("1.0E-44"));
 Assert::false(Func::is_round_int("-1.0E-44"));
+
+if (PHP_MAJOR_VERSION > 7) {
+	// PHP 8 changed how \is_numeric() works.
+	Assert::true(Func::is_round_int(" 1. "));
+} else {
+	Assert::false(Func::is_round_int(" 1. "));
+}
 
 //
 // Passing floats instead of strings-
