@@ -18,6 +18,10 @@ use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
+use \Smuuf\BetterExceptions\BetterException;
+use \Smuuf\BetterExceptions\Types\ReturnTypeError;
+use \Smuuf\BetterExceptions\Types\ArgumentTypeError;
+
 /**
  * @internal
  */
@@ -109,7 +113,10 @@ class FnContainer {
 		$closure = \Closure::fromCallable($fn);
 
 		$rf = new \ReflectionFunction($closure);
+		Func::check_allowed_parameter_types_of_function($rf);
+
 		$callId = "{$rf->getName()}() (native)";
+		$requiredArgumentCount = $rf->getNumberOfRequiredParameters();
 
 		// Determine whether the runtime context object should be injected into
 		// the function args (as the first one).
@@ -120,10 +127,10 @@ class FnContainer {
 			$addToStack = \strpos($docComment, '@noStack') === \false;
 		}
 
-		Func::check_allowed_parameter_types_of_function($rf);
 
 		$wrapper = function(Context $ctx, array $args) use (
 			$closure,
+			$requiredArgumentCount,
 			$injectContext,
 			$addToStack,
 			$callId
@@ -133,44 +140,47 @@ class FnContainer {
 				\array_unshift($args, $ctx);
 			}
 
+			if ($requiredArgumentCount > \count($args)) {
+				throw new ArgumentCountError(
+					\count($args),
+					$requiredArgumentCount
+				);
+			}
+
 			// Add this function call to the call stack.
-			// This is done manually without ContextPushPopWrapper to avoid
-			// performance overhead.
+			// This is done manually without ContextPushPopWrapper for
+			// performance reasons.
 			if ($addToStack) {
 				$ctx->pushCall($callId);
 			}
 
 			try {
 				$result = $closure(...$args);
-			} catch (\ArgumentCountError $e) {
-
-				[$passed, $expected] = Func::parse_argument_count_error($e);
-				throw new ArgumentCountError($passed, $expected);
-
 			} catch (\TypeError $e) {
+
+				$better = BetterException::from($e);
 
 				// We want to handle only argument type errors. Return type
 				// errors are a sign of badly used return type hint for PHP
 				// function and should bubble up (be rethrown) for the
 				// developer to see it.
-				if (\strpos($e->getMessage(), 'TypeError: Return') !== \false) {
+				if ($better instanceof ReturnTypeError) {
 					throw $e;
 				}
 
-				[$index, $passed, $expected] = Func::parse_argument_type_error($e);
-
+				/** @var ArgumentTypeError $better */
 				throw new TypeError(\sprintf(
 					"Expected '%s' but got '%s' as argument %d",
-					$expected,
-					$passed,
-					$index
+					Func::php_types_to_primi_types($better->getExpected()),
+					Func::php_types_to_primi_types($better->getActual()),
+					$better->getArgumentIndex()
 				));
 
 			} finally {
 
 				// Remove the latest entry from call stack.
-				// This is done manually without ContextPushPopWrapper to avoid
-				// performance overhead.
+				// This is done manually without ContextPushPopWrapper for
+				// performance reasons.
 				if ($addToStack) {
 					$ctx->popCall();
 				}

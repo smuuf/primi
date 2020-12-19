@@ -176,5 +176,7 @@ HELP;
 
 function header_string(string $env = null) {
 	$env = $env ? "($env)" : null;
-	return "Primi language {$env}, Copyright (c) Premysl Karbula\n";
+	$php = PHP_VERSION;
+	return "Primi language {$env}, Copyright (c) Premysl Karbula\n"
+		. "Running on PHP {$php}\n";
 }
