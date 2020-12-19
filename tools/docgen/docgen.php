@@ -74,11 +74,11 @@ if (!$extensionFiles = glob($phpFilesGlob)) {
 
 function get_relevant_methods(string $className): array {
 
-	$classRef = new \ReflectionClass("\Smuuf\Primi\StdLib\\{$className}");
+	$classRef = new \ReflectionClass("\Smuuf\Primi\Stdlib\\{$className}");
 
 	// We want methods that are both public AND static AND non-PHP-magic.
 	return array_filter(
-		$classRef->getMethods(\ReflectionMethod::IS_STATIC),
+		$classRef->getMethods(),
 		function ($ref) {
 			return $ref->isPublic()
 				&& \strpos($ref->getName(), '__') !== 0;
@@ -183,7 +183,7 @@ foreach ($extensionFiles as $filepath) {
 				warn("Class '$className, method '$methodName', referencing non-existent Primi type having class " . $returnTypeRef->getName());
 			}
 		} else {
-			warn("Class '$className, method '$methodName', return type does not hint Value|Context");
+			warn("Class '$className, method '$methodName', return type does not hint Value");
 		}
 
 		if (!$text) {
@@ -210,7 +210,7 @@ function remove_doc_tags(string $text) {
 
 function build_markdown(array $data): string {
 
-	$fnBullet = "###";
+	$fnBullet = "### <i style='color: DodgerBlue; font-size: 90%'>fn</i>";
 	$md = '';
 
 	// List extensions alphabetically.
