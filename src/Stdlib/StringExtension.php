@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib;
 
-use \Smuuf\Primi\Extensions\Extension;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Helpers\Func;
@@ -16,6 +15,7 @@ use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
+use \Smuuf\Primi\Extensions\Extension;
 
 class StringExtension extends Extension {
 

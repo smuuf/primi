@@ -6,12 +6,10 @@ namespace Smuuf\Primi\Stdlib;
 
 use \Smuuf\Primi\Repl;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Extensions\Extension;
 
@@ -79,28 +77,6 @@ class CliExtension extends Extension {
 	 */
 	public static function memory_get_usage(): NumberValue {
 		return new NumberValue((string) \memory_get_peak_usage());
-	}
-
-	/**
-	 * _**Only in [CLI](https://w.wiki/QPE)**_.
-	 *
-	 * This function returns `true` if a `bool` value passed into it is `true`
-	 * and throws error if it's `false`. Optional `string` description can be
-	 * provided, which will be visible in the eventual error message.
-	 */
-	public static function assert(
-		BoolValue $assumption,
-		?StringValue $description = \null
-	): BoolValue {
-
-		$desc = $description;
-		if ($assumption->value !== \true) {
-			$desc = ($desc && $desc->value !== '') ? " ($desc->value)" : '';
-			throw new RuntimeError(\sprintf("Assertion failed%s", $desc));
-		}
-
-		return BoolValue::build(\true);
-
 	}
 
 }

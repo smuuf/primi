@@ -3,9 +3,9 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Ex\ControlFlowException;
 use \Smuuf\Primi\Ex\ContextAwareException;
-use Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Values\AbstractValue;

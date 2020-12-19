@@ -2,9 +2,9 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Interpreter;
-use Smuuf\Primi\Tasks\Types\PosixSignalTask;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Tasks\Types\PosixSignalTask;
 
 require __DIR__ . '/../bootstrap.php';
 
