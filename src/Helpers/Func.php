@@ -11,7 +11,6 @@ use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
-use Smuuf\Primi\Helpers\ContextManagers\ContextManagerInterface;
 
 abstract class Func {
 
@@ -138,6 +137,21 @@ abstract class Func {
 		);
 	}
 
+	/**
+	 * Converts a number represented with scientific notation to a decimal
+	 * number which is returned as a string.
+	 *
+	 * If there's not a decimal point, or there's no exponent present in the
+	 * number, or even if the `$number` is not really a number, the original
+	 * value is returned.
+	 *
+	 * Examples:
+	 * `1.123E+6` -> `1123000`
+	 * `987654.123E-6` -> `0.98765412`
+	 * `987654.123` -> `987654.123`
+	 * `987654` -> `987654`
+	 * `not a number, bruh` -> `not a number, bruh`
+	 */
 	public static function scientific_to_decimal(string $number): string {
 
 		// If not even with decimal point, just return the original.
@@ -163,10 +177,11 @@ abstract class Func {
 
 	/**
 	 * Helper for easy type-checking inside Primi extensions.
-	 * Checks if a N-th parameter value is of a certain allowed type(s) and
-	 * throws a TypeError if it's not.
-	 * The exception is handled by Primi's function-invoking logic and converted
-	 * into a user-readable error.
+	 *
+	 * Given an argument index, its value as object, and allowed types (as class
+	 * names) as the rest of the arguments, this function either throws a
+	 * TypeError exception with a user-friendly message or doesn't do
+	 * anything.
 	 */
 	public static function allow_argument_types(
 		int $index,
@@ -182,14 +197,9 @@ abstract class Func {
 			}
 		}
 
-		// Convert Primi value classes names to Primi type names.
-		$expectedNames = \array_map(function($class) {
-			return $class::TYPE;
-		}, $allowedTypes);
-
 		throw new TypeError(\sprintf(
 			"Expected '%s' but got '%s' as argument %d",
-			\implode("|", $expectedNames),
+			Func::php_types_to_primi_types($allowedTypes),
 			$arg::TYPE,
 			$index
 		));
@@ -205,10 +215,10 @@ abstract class Func {
 		return !isset($array[0]) ? [$array] : $array;
 	}
 
-	public static function hash(...$args): string {
-		return \md5(\json_encode($args));
-	}
-
+	/**
+	 * Return a `[line, pos]` tuple for given (probably multiline) string and
+	 * some offset.
+	 */
 	public static function get_position_estimate(string $string, int $offset): array {
 
 		$substring = \mb_substr($string, 0, $offset);
@@ -227,53 +237,6 @@ abstract class Func {
 			: \mb_strlen($lastLine);
 
 		return [$line, $pos];
-
-	}
-
-	/**
-	 * Parse `\ArgumentCountError` message and return a tuple of integers
-	 * representing:
-	 * 1. Number of arguments passed.
-	 * 2. Number of arguments expected.
-	 */
-	public static function parse_argument_count_error(\ArgumentCountError $e): array {
-
-		$msg = $e->getMessage();
-
-		// ArgumentCountError exception does not provide these numbers itself,
-		// so we have to extract it from the internal PHP exception message.
-		if (!\preg_match('#(?<passed>\d+)\s+passed.*(?<expected>\d+)\s+expected#', $msg, $m)) {
-			throw new EngineInternalError("Unable to parse argument count info from: '{$msg}'");
-		}
-
-		return [
-			(int) $m['passed'],
-			(int) $m['expected']
-		];
-
-	}
-
-	/**
-	 * Parse `\TypeError` *argument type* message and return a tuple representing:
-	 * 1. Index of wrong argument.
-	 * 2. Passed type as Primi type name.
-	 * 3. Expected type as Primi type name.
-	 */
-	public static function parse_argument_type_error(\TypeError $e): array {
-
-		$msg = $e->getMessage();
-
-		// ArgumentCountError exception does not provide these numbers itself,
-		// so we have to extract it from the internal PHP exception message.
-		if (!\preg_match('#Argument (?<index>\d+).*of (?<expected>[\\\\a-z]+)(?: or null)?, instance of (?<passed>[\\\\a-z]+) given#i', $msg, $m)) {
-			throw new EngineInternalError("Unable to parse argument types from: '{$msg}'");
-		}
-
-		return [
-			(int) $m['index'],
-			($m['passed'])::TYPE,
-			($m['expected'])::TYPE
-		];
 
 	}
 
@@ -305,11 +268,14 @@ abstract class Func {
 
 					$typeName = $type->getName();
 
+
 					// a) Invalid if not hinting some AbstractValue class or its descendants.
 					// b) Invalid if not hinting the Context class.
-					if (!\is_a($typeName, AbstractValue::class, \true)
-						&& !\is_a($typeName, Context::class, \true)
+					if (\is_a($typeName, AbstractValue::class, \true)
+						|| \is_a($typeName, Context::class, \true)
 					) {
+						$types[] = $typeName;
+					} else {
 						$invalid = "Type '$typeName' is not an allowed type";
 					}
 
@@ -329,14 +295,12 @@ abstract class Func {
 				$paramPosition = $rp->getPosition();
 				$fqn = $className ? "{$className}::{$fnName}()" : "{$fnName}()";
 
-				$msg = "Parameter {$paramPosition} '\${$paramName}' is invalid:"
-					. " $invalid";
+				$msg = "Parameter {$paramPosition} '\${$paramName}' for function {$fqn} "
+					. "is invalid: $invalid";
 
 				throw new EngineError($msg);
 
 			};
-
-			$types[] = $typeName;
 
 		}
 
@@ -344,13 +308,40 @@ abstract class Func {
 
 	}
 
-	public static function yield_left_to_right(array $node, Context $context) {
+	/**
+	 * Helper function for easier left-to-right evaluation of various abstract
+	 * trees representing logical/mathematical operations.
+	 *
+	 * Return a generator yielding tuples of `[operator, operand]` with the
+	 * excaption of first iteration, where the tuple `[null, first operand]` is
+	 * returned.
+	 *
+	 * For example when primi source code `1 and 2 and 3` is parsed and then
+	 * represented in a similar way to...
+	 *
+	 * ```php
+	 * [
+	 * 'operands' => ['Number 1', 'Number 2', 'Number 3']
+	 * 'ops' => ['Operator AND #1', 'Operator AND #2']
+	 * ]
+	 * ```
+	 *
+	 * ... the generator will yield (in this order):
+	 * - `[null, 'Number 1']`
+	 * - `['Operator AND #1', 'Number 2']`
+	 * - `['Operator AND #2', 'Number 3']`
+	 *
+	 * This way client code can, for example, implement short-circuiting by
+	 * using the result so-far and not processing the rest of what the generator
+	 * would yield.
+	 */
+	public static function yield_left_to_right(array $node, Context $ctx) {
 
 		$operands = $node['operands'];
 
 		$firstOperand = $operands[0];
 		$handler = HandlerFactory::getFor($firstOperand['name']);
-		$first = $handler::run($firstOperand, $context);
+		$first = $handler::run($firstOperand, $ctx);
 
 		yield [null, $first];
 
@@ -361,7 +352,7 @@ abstract class Func {
 
 			$nextOperand = $operands[$i];
 			$handler = HandlerFactory::getFor($nextOperand['name']);
-			$next = $handler::run($nextOperand, $context);
+			$next = $handler::run($nextOperand, $ctx);
 
 			// Extract the text of the assigned operator node.
 			$op = $node['ops'][$i - 1]['text'];
@@ -372,12 +363,28 @@ abstract class Func {
 
 	}
 
-	public static function enumerate(iterable $it, int $start = 0) {
+	/**
+	 * Converts PHP class names to Primi type names represented as string.
+	 * Types can be passed as a single class name or array of PHP class names.
+	 *
+	 * Throws an exception if any PHP class name doesn't represent a Primi type.
+	 */
+	public static function php_types_to_primi_types($types): string {
 
-		$count = $start;
-		foreach ($it as $k => $v) {
-			yield ++$count => [$k, $v];
-		}
+		$types = is_string($types) ? [$types] : $types;
+		$primiTypes = \array_map(function($class) {
+
+			if (!is_subclass_of($class, AbstractValue::class, true)) {
+				throw new EngineInternalError(
+					"Cannot convert PHP class name '$class' to Primi type"
+				);
+			}
+
+			return $class::TYPE;
+
+		}, $types);
+
+		return implode('|', $primiTypes);
 
 	}
 
@@ -396,6 +403,9 @@ abstract class Func {
 
 	}
 
+	/**
+	 * Return a random, hopefully quite unique string.
+	 */
 	public static function unique_id(): string {
 		return md5(random_bytes(128));
 	}

@@ -4,8 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "367e05da62800a7148e81fdd45d886ca",
+    "content-hash": "19fcd5b5f7a5a5943eca7597ddad05dc",
     "packages": [
+        {
+            "name": "smuuf/better-php-exceptions",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/smuuf/better-php-exceptions.git",
+                "reference": "8abbcaecfdefcc331244dcdf309b8f69cc2bd6ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/smuuf/better-php-exceptions/zipball/8abbcaecfdefcc331244dcdf309b8f69cc2bd6ad",
+                "reference": "8abbcaecfdefcc331244dcdf309b8f69cc2bd6ad",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "nette/tester": "^2.0",
+                "phpstan/phpstan": "^0.12"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Smuuf\\BetterExceptions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Premysl Karbula",
+                    "email": "premavansmuuf+composer@gmail.com"
+                }
+            ],
+            "description": "Package providing better and improved PHP exceptions.",
+            "support": {
+                "issues": "https://github.com/smuuf/better-php-exceptions/issues",
+                "source": "https://github.com/smuuf/better-php-exceptions"
+            },
+            "time": "2020-12-19T15:33:34+00:00"
+        },
         {
             "name": "smuuf/php-peg",
             "version": "2.2.3",
@@ -148,16 +192,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.58",
+            "version": "0.12.63",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "2a4847df6047b30af28854ed9dc95304cdb56ae5"
+                "reference": "c97ec4754bd53099a06c24847bd2870b99966b6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2a4847df6047b30af28854ed9dc95304cdb56ae5",
-                "reference": "2a4847df6047b30af28854ed9dc95304cdb56ae5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c97ec4754bd53099a06c24847bd2870b99966b6a",
+                "reference": "c97ec4754bd53099a06c24847bd2870b99966b6a",
                 "shasum": ""
             },
             "require": {
@@ -188,7 +232,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.58"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.63"
             },
             "funding": [
                 {
@@ -204,7 +248,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-29T13:32:03+00:00"
+            "time": "2020-12-15T16:37:16+00:00"
         },
         {
             "name": "smuuf/phpcb",
