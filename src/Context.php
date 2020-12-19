@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Tasks\TaskQueue;
 use \Smuuf\Primi\Scopes\Scope;
@@ -15,24 +17,53 @@ class Context {
 
 	use StrictObject;
 
+	/**
+	 * If greater than one, this number sets the maximum call stack size.
+	 * When this maximum is reached, RuntimeError is thrown.
+	 *
+	 * Every function invocated within Primi runtime increases the call stack
+	 * size +1 (which is then decreased -1 when the function returns).
+	 *
+	 * @var int
+	 */
+	public static $callStackLimit = 1024;
+
+	/**
+	 * Value of static property self::$callStackLimit fixed when
+	 * initializing new instance of Context (to ignore later modifications).
+	 *
+	 * @var int
+	 */
+	private $maxCallStackSize;
+
 	/** @var string[] Call stack list. */
-	protected $callStack = [];
+	private $callStack = [];
 
 	/** @var AbstractScope[] Scope stack list. */
-	protected $scopeStack = [];
+	private $scopeStack = [];
 
 	/**
 	 * Direct reference to the scope on the top of the stack.
 	 * @var AbstractScope
 	 */
-	protected $currentScope = \null;
+	private $currentScope = \null;
 
 	/** @var TaskQueue Task queue for this context. */
-	protected $taskQueue;
+	private $taskQueue;
 
 	public function __construct(?AbstractScope $scope = \null) {
-		$this->pushScope($scope ?? new Scope);
+
+		if (self::$callStackLimit < 0) {
+			throw new EngineError("Maximum call stack size cannot be negative");
+		}
+
+		// Render the class property into instance property to ensure changing
+		// the static one doesn't change behavior of existing contexts.
+		$this->maxCallStackSize = self::$callStackLimit;
+
 		$this->taskQueue = new TaskQueue($this);
+		$this->pushScope($scope ?? new Scope);
+
 	}
 
 	public function getTaskQueue(): TaskQueue {
@@ -50,12 +81,28 @@ class Context {
 	}
 
 	public function pushCall(string $callId): void {
+
 		$this->callStack[] = $callId;
+
+		if (
+			$this->maxCallStackSize
+			&& count($this->callStack) === $this->maxCallStackSize
+		) {
+
+			throw new RuntimeError(sprintf(
+				"Maximum call stack size (%d) reached",
+				$this->maxCallStackSize
+			));
+
+		}
+
 	}
 
 	public function popCall(): void {
+
 		\array_pop($this->callStack);
 		$this->taskQueue->tick();
+
 	}
 
 	// Scope management.
