@@ -7,8 +7,9 @@ namespace Smuuf\Primi\Helpers;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RelationError;
 use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\BoolValue;
+use \Smuuf\Primi\Values\NullValue;
+use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
@@ -22,6 +23,11 @@ class ComparisonLTR {
 	): AbstractValue {
 
 		$result = \true;
+
+		// This shouldn't be necessary, since the first operator yielded below
+		// will always be null - and the result would be set to be the first
+		// operand, but let's make static analysis happy.
+		$left = NullValue::build();
 
 		$gen = Func::yield_left_to_right($node, $context);
 		foreach ($gen as [$operator, $right]) {

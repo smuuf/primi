@@ -143,6 +143,9 @@ class MapContainer implements
 	}
 
 	/**
+	 * Returns a generator yielding keys and items from this container (as
+	 * expected).
+	 *
 	 * @returns \Generator<string, AbstractValue, null, null>
 	 */
 	public function getIterator(): \Generator {
@@ -153,6 +156,12 @@ class MapContainer implements
 
 	}
 
+	/**
+	 * Returns a generator yielding keys and items from this container in
+	 * reversed order.
+	 *
+	 * @returns \Generator<string, AbstractValue, null, null>
+	 */
 	public function getReverseIterator(): \Generator {
 
 		$reversed = \array_reverse($this->values, \true);

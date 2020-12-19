@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\BinaryOperationError;
+use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
@@ -18,6 +19,11 @@ class ArithmeticLTR {
 		array $node,
 		Context $context
 	): AbstractValue {
+
+		// This shouldn't be necessary, since the first operator yielded below
+		// will always be null - and the result would be set to be the first
+		// operand, but let's make static analysis happy.
+		$result = NullValue::build();
 
 		$gen = Func::yield_left_to_right($node, $context);
 		foreach ($gen as [$operator, $operand]) {
