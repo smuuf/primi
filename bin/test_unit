@@ -2,12 +2,35 @@
 
 cd $(dirname $0)
 
-if [[ "$1" == "--coverage" ]]; then
-	COV_FORMAT="xml"
-	if [[ "$2" == "html" ]]; then
-		COV_FORMAT="html"
-	fi
+INTERPRETER="php"
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    --php)
+    INTERPRETER="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --coverage)
+    COVERAGE=1
+    COV_FORMAT="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [[ ! -z "$COVERAGE" ]]; then
         COV="-d memory_limit=-1 --coverage ../coverage.$COV_FORMAT --coverage-src ../src/"
 fi
 
-./../vendor/nette/tester/src/tester -p phpdbg $COV -C ../tests
+./../vendor/nette/tester/src/tester -p $INTERPRETER $COV -C ../tests $@

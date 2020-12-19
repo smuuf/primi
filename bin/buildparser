@@ -4,5 +4,5 @@ cd `dirname $0`/..
 
 rm -f ./temp/*.json
 
-php ./vendor/smuuf/php-peg/bin/peg ./src/parser/Grammar.peg ./src/parser/CompiledParser.php
+php ./vendor/smuuf/php-peg/bin/peg ./src/Parser/Grammar.peg ./src/Parser/CompiledParser.php
 
