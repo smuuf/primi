@@ -1,5 +1,5 @@
 ## BoolExtension
-### **`bool_and`**(_bool_ **`a`**, _bool_ **`b`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`bool_and`**(_bool_ **`a`**, _bool_ **`b`**)  → _bool_
 
 Returns result of logical `AND` between two boolean values.
 
@@ -10,7 +10,7 @@ bool_and(true, false) == false
 ```
 
 ---
-### **`bool_not`**(_bool_ **`value`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`bool_not`**(_bool_ **`value`**)  → _bool_
 
 Returns a negation (logical `NOT`) of a single boolean value.
 
@@ -20,7 +20,7 @@ bool_not(true) == false
 ```
 
 ---
-### **`bool_or`**(_bool_ **`a`**, _bool_ **`b`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`bool_or`**(_bool_ **`a`**, _bool_ **`b`**)  → _bool_
 
 Returns an `OR` of two boolean values.
 
@@ -37,7 +37,7 @@ bool_or(false, false) == false
 ```
 
 ---
-### **`bool_xor`**(_bool_ **`a`**, _bool_ **`b`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`bool_xor`**(_bool_ **`a`**, _bool_ **`b`**)  → _bool_
 
 Returns an exclusive `OR` (`XOR`) of two boolean values.
 
@@ -55,7 +55,7 @@ bool_xor(false, false) == false
 
 ---
 ## CastingExtension
-### **`to_bool`**(_any_ **`value`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`to_bool`**(_any_ **`value`**)  → _bool_
 
 Returns a new `bool` value based on argument's truthness.
 
@@ -73,7 +73,7 @@ to_bool('1') == true
 ```
 
 ---
-### **`to_dict`**(_any_ **`value`**)  → _dict_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`to_dict`**(_any_ **`value`**)  → _dict_
 
 Returns a new dict containing items of some iterable value.
 
@@ -89,7 +89,7 @@ c_list = ['a', 'b', 'c']
 ```
 
 ---
-### **`to_list`**(_any_ **`value`**)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`to_list`**(_any_ **`value`**)  → _list_
 
 Returns a new `list` containing items of some iterable value.
 
@@ -105,7 +105,7 @@ c_list = ['a', 'b', 'c']
 ```
 
 ---
-### **`to_number`**(_any_ **`value`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`to_number`**(_any_ **`value`**)  → _number_
 
 Cast a `number|string|bool` value to `number`.
 
@@ -123,7 +123,7 @@ to_number(fal) == 0
 ```
 
 ---
-### **`to_regex`**(_any_ **`value`**, *[_bool_ **`escape`**]*)  → _regex_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`to_regex`**(_any_ **`value`**, *[_bool_ **`escape`**]*)  → _regex_
 
 Convert `string` to a `regex` value. If the optional `escape` argument
 is `true`, the any characters with special regex meaning will be
@@ -135,7 +135,7 @@ to_regex("Why so serious...?", true) == rx"Why so serious\.\.\.\?"
 ```
 
 ---
-### **`to_string`**(_any_ **`value`**)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`to_string`**(_any_ **`value`**)  → _string_
 
 Return a `string` representation of value.
 
@@ -150,16 +150,7 @@ to_string(to_string) == "<function: native>"
 
 ---
 ## CliExtension
-### **`assert`**(_bool_ **`assumption`**, *[_string_ **`description`**]*)  → _bool_
-
-_**Only in [CLI](https://w.wiki/QPE)**_.
-
-This function returns true if a boolean value passed into it is `true`
-and throws error if it's `false`. Optional string decription can be
-provided, which will be visible in the eventual error message.
-
----
-### **`debugger`**()  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`debugger`**()  → _any_
 
 _**Only in [CLI](https://w.wiki/QPE)**_.
 
@@ -168,8 +159,9 @@ session for debugging at the specified line.
 
 
 
+
 ---
-### **`get_traceback`**()  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`get_traceback`**()  → _list_
 
 _**Only in [CLI](https://w.wiki/QPE)**_.
 
@@ -177,23 +169,25 @@ Return traceback as a list.
 
 
 
+
 ---
-### **`memory_get_peak_usage`**()  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`memory_get_peak_usage`**()  → _number_
 
 _**Only in [CLI](https://w.wiki/QPE)**_.
 
-Returns memory peak usage used by Primi (or rather PHP behind it) in
+Returns memory peak usage used by Primi _(engine behind the scenes)_ in
 bytes.
 
 ---
-### **`memory_get_usage`**()  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`memory_get_usage`**()  → _number_
 
 _**Only in [CLI](https://w.wiki/QPE)**_.
 
-Returns current usage used by Primi (or rather PHP behind it) in bytes.
+Returns current memory usage used by Primi _(engine behind the scenes)_
+in bytes.
 
 ---
-### **`print`**(_any_ **`value`**, *[_bool_ **`nl`**]*)  → _null_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`print`**(*[_any_ **`value`**]*, *[_bool_ **`nl`**]*)  → _null_
 
 _**Only in [CLI](https://w.wiki/QPE)**_.
 
@@ -201,19 +195,19 @@ Prints value to standard output.
 
 ---
 ## DatetimeExtension
-### **`time_monotonic`**()  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`time_monotonic`**()  → _number_
 
 Returns high-resolution monotonic time. It is an arbitrary number that
 keeps increasing by 1 every second.
 
 ---
-### **`time_unix`**()  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`time_unix`**()  → _number_
 
 Returns high-resolution UNIX time.
 
 ---
 ## DictExtension
-### **`dict_copy`**(_dict_ **`dict`**)  → _dict_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_copy`**(_dict_ **`dict`**)  → _dict_
 
 Returns a new shallow copy of this dict.
 
@@ -227,7 +221,7 @@ b_dict == {'a': 1, 100: 'nope'}
 ```
 
 ---
-### **`dict_get`**(_dict_ **`dict`**, _any_ **`key`**, *[_any_ **`default`**]*)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_get`**(_dict_ **`dict`**, _any_ **`key`**, *[_any_ **`default`**]*)  → _any_
 
 Returns value stored under `key`, if it in dict, otherwise returns the
 value of the `default` argument, which is `null` by default, but can
@@ -242,7 +236,7 @@ d.get('100', ['one', 'hundred']) == ['one', 'hundred']
 ```
 
 ---
-### **`dict_has_key`**(_dict_ **`dict`**, _any_ **`key`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_has_key`**(_dict_ **`dict`**, _any_ **`key`**)  → _bool_
 
 Returns `true` if the key exists in dict. Return `false` otherwise.
 
@@ -255,7 +249,7 @@ d.has_key('yes') == false
 ```
 
 ---
-### **`dict_has_value`**(_dict_ **`dict`**, _any_ **`needle`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_has_value`**(_dict_ **`dict`**, _any_ **`needle`**)  → _bool_
 
 Returns `true` if the value exists in dict. Return `false` otherwise.
 
@@ -268,7 +262,7 @@ d.has_value(false) == false
 ```
 
 ---
-### **`dict_keys`**(_dict_ **`dict`**)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_keys`**(_dict_ **`dict`**)  → _list_
 
 Returns a new `list` containing **keys** from this `dict`.
 
@@ -277,7 +271,7 @@ Returns a new `list` containing **keys** from this `dict`.
 ```
 
 ---
-### **`dict_map`**(_dict_ **`dict`**, _function_ **`fn`**)  → _dict_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_map`**(_dict_ **`dict`**, _function_ **`fn`**)  → _dict_
 
 Returns a new dict with same keys but values returned by a passed
 function _(callback)_ applied to each item.
@@ -293,7 +287,7 @@ a_dict.map(fn) == {"key_a": "key_a|val_a", "key_b": "key_b|val_b"}
 
 
 ---
-### **`dict_reverse`**(_dict_ **`dict`**)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_reverse`**(_dict_ **`dict`**)  → _any_
 
 Returns a new `dict` with original `dict`'s items in reversed order.
 
@@ -302,7 +296,7 @@ Returns a new `dict` with original `dict`'s items in reversed order.
 ```
 
 ---
-### **`dict_values`**(_dict_ **`dict`**)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`dict_values`**(_dict_ **`dict`**)  → _list_
 
 Returns a new `list` containing **values** from this `dict`.
 
@@ -312,7 +306,7 @@ Returns a new `list` containing **values** from this `dict`.
 
 ---
 ## HashExtension
-### **`hash_md5`**(_string_ **`val`**)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`hash_md5`**(_string_ **`val`**)  → _string_
 
 Return [`md5` hash](https://en.wikipedia.org/wiki/MD5) representation
 of a `string` value as `string`.
@@ -323,7 +317,7 @@ hash_md5('123') == '202cb962ac59075b964b07152d234b70'
 ```
 
 ---
-### **`hash_sha256`**(_string_ **`val`**)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`hash_sha256`**(_string_ **`val`**)  → _string_
 
 Return [`sha256` hash](https://en.wikipedia.org/wiki/SHA-2) representation
 of a `string` value as `string`.
@@ -335,7 +329,7 @@ hash_sha256('123') == 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f
 
 ---
 ## ListExtension
-### **`list_contains`**(_list_ **`list`**, _any_ **`needle`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_contains`**(_list_ **`list`**, _any_ **`needle`**)  → _bool_
 
 Returns `true` if the `needle` is present in the `list` at least once.
 
@@ -344,20 +338,20 @@ Returns `true` if the `needle` is present in the `list` at least once.
 [1, 2, 3, 1].contains(666) == false
 
 // NOTE: Lists with same items with different order are different.
-[[1, 2], 'xxx'.contains([1, 2]) == true
-[[1, 2], 'xxx'.contains([2, 1]) == false
+[[1, 2], 'xxx'].contains([1, 2]) == true
+[[1, 2], 'xxx'].contains([2, 1]) == false
 
 // NOTE: Dicts with same items with different order are the same.
 [{'b': 2, 'a': 1}, 'xxx'].contains({'a': 1, 'b': 2}) == true
 ```
 
 ---
-### **`list_copy`**(_list_ **`list`**)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_copy`**(_list_ **`list`**)  → _list_
 
 Returns a new copy of the `list`.
 
 ---
-### **`list_count`**(_list_ **`list`**, _any_ **`needle`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_count`**(_list_ **`list`**, _any_ **`needle`**)  → _number_
 
 Returns number of occurrences of some value in the `list`.
 
@@ -374,7 +368,7 @@ Returns number of occurrences of some value in the `list`.
 ```
 
 ---
-### **`list_get`**(_list_ **`list`**, _number_ **`index`**, *[_any_ **`default`**]*)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_get`**(_list_ **`list`**, _number_ **`index`**, *[_any_ **`default`**]*)  → _any_
 
 Returns an item from `list` by its index _(starting at 0)_. Negative
 indexes can be used to get items from the end.
@@ -399,7 +393,7 @@ by default)_
 ```
 
 ---
-### **`list_map`**(_list_ **`list`**, _function_ **`fn`**)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_map`**(_list_ **`list`**, _function_ **`fn`**)  → _list_
 
 Returns a new `list` from results of a passed function _(callback)_
 applied to each item.
@@ -413,7 +407,7 @@ Callback arguments: `callback(value)`.
 
 
 ---
-### **`list_pop`**(_list_ **`list`**, *[_number_ **`index`**]*)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_pop`**(_list_ **`list`**, *[_number_ **`index`**]*)  → _any_
 
 Remove (pop) item at specified `index` from the `list` and return it.
 
@@ -429,7 +423,7 @@ a_list.pop(-3) == 1 // a_list == [3, 4], 1 is returned
 ```
 
 ---
-### **`list_prepend`**(_list_ **`list`**, _any_ **`value`**)  → _null_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_prepend`**(_list_ **`list`**, _any_ **`value`**)  → _null_
 
 Prepend an item to the beginning of the `list`.
 
@@ -440,7 +434,7 @@ a_list == [{'some_key': 'some_value'}, 'a', 'b', 'c']
 ```
 
 ---
-### **`list_push`**(_list_ **`list`**, _any_ **`value`**)  → _null_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_push`**(_list_ **`list`**, _any_ **`value`**)  → _null_
 
 Add (push) an item to the end of the `list`.
 
@@ -451,7 +445,7 @@ a_list == ['a', 'b', 'c', {'some_key': 'some_value'}]
 ```
 
 ---
-### **`list_random`**(_list_ **`list`**)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_random`**(_list_ **`list`**)  → _any_
 
 Returns a random item from the `list`.
 
@@ -460,7 +454,7 @@ Returns a random item from the `list`.
 ```
 
 ---
-### **`list_reverse`**(_list_ **`list`**)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_reverse`**(_list_ **`list`**)  → _list_
 
 Returns a new `list` with values of the original `list` reversed.
 
@@ -469,7 +463,7 @@ Returns a new `list` with values of the original `list` reversed.
 ```
 
 ---
-### **`list_shuffle`**(_list_ **`list`**)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`list_shuffle`**(_list_ **`list`**)  → _list_
 
 Returns a new `list` with shuffled items.
 
@@ -479,69 +473,69 @@ Returns a new `list` with shuffled items.
 
 ---
 ## NumberExtension
-### **`number_abs`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_abs`**(_number_ **`n`**)  → _number_
 
 Returns the absolute value of number `n`.
 
 ---
-### **`number_atan`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_atan`**(_number_ **`n`**)  → _number_
 
 Returns the arc tangent of number `n` specified in radians.
 
 ---
-### **`number_ceil`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_ceil`**(_number_ **`n`**)  → _number_
 
 Returns number `n` rounded up.
 
 ---
-### **`number_cos`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_cos`**(_number_ **`n`**)  → _number_
 
 Returns the cosine of number `n` specified in radians.
 
 ---
-### **`number_divisible_by`**(_number_ **`a`**, _number_ **`b`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_divisible_by`**(_number_ **`a`**, _number_ **`b`**)  → _bool_
 
 Return `true` if first argument is divisible by the second argument.
 
 ---
-### **`number_floor`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_floor`**(_number_ **`n`**)  → _number_
 
 Returns number `n` rounded down.
 
 ---
-### **`number_mod`**(_number_ **`a`**, _number_ **`b`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_mod`**(_number_ **`a`**, _number_ **`b`**)  → _number_
 
 Returns the remainder (modulo) of the division of the arguments.
 
 ---
-### **`number_pow`**(_number_ **`n`**, *[_number_ **`power`**]*)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_pow`**(_number_ **`n`**, *[_number_ **`power`**]*)  → _number_
 
 Returns number `n` squared to the power of `power`.
 
 ---
-### **`number_round`**(_number_ **`n`**, *[_number_ **`precision`**]*)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_round`**(_number_ **`n`**, *[_number_ **`precision`**]*)  → _number_
 
 Returns number `n` rounded to specified `precision`. If the
 precision is not specified, a default `precision` of zero is used.
 
 ---
-### **`number_sin`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_sin`**(_number_ **`n`**)  → _number_
 
 Returns the sine of number `n` specified in radians.
 
 ---
-### **`number_sqrt`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_sqrt`**(_number_ **`n`**)  → _number_
 
 Returns the square root of a number `n`.
 
 ---
-### **`number_tan`**(_number_ **`n`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`number_tan`**(_number_ **`n`**)  → _number_
 
 Returns the tangent of number `n` specified in radians.
 
 ---
 ## RegexExtension
-### **`regex_match`**(_regex_ **`regex`**, _string_ **`haystack`**)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`regex_match`**(_regex_ **`regex`**, _string_ **`haystack`**)  → _any_
 
 Regular expression match. Returns the first matching string. Otherwise
 returns `false`.
@@ -552,7 +546,14 @@ rx"[xyz]+".match("abbcxxyzzdeef") == "xxyzz"
 
 ---
 ## StandardExtension
-### **`len`**(_any_ **`value`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`assert`**(_bool_ **`assumption`**, *[_string_ **`description`**]*)  → _bool_
+
+This function returns `true` if a `bool` value passed into it is `true`
+and throws error if it's `false`. Optional `string` description can be
+provided, which will be visible in the eventual error message.
+
+---
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`len`**(_any_ **`value`**)  → _number_
 
 Returns length of a value.
 
@@ -564,12 +565,25 @@ len({'a': 1, 'b': 'c'}) == 2
 ```
 
 ---
-### **`range`**(_number_ **`start`**, *[_number_ **`end`**]*, *[_number_ **`step`**]*)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`range`**(_number_ **`start`**, *[_number_ **`end`**]*, *[_number_ **`step`**]*)  → _list_
 
-_Missing description._
+Return a list containing numbers from `start` to `end` _(including)_.
+If the `end` is not specified, numbers from `0` to the value of the
+first argument `start` is returned. Optional third argument `step` can
+be specified for steps other than `1`.
+
+```js
+range(0) == [0]
+range(1) == [0, 1]
+range(5) == [0, 1, 2, 3, 4, 5]
+range(2, 7) == [2, 3, 4, 5, 6, 7]
+range(2, -7) == [2, 1, 0, -1, -2, -3, -4, -5, -6, -7]
+range(2, -7, 3) == [2, -1, -4, -7]
+range(5, 10, 3) == [5, 8] // The last number that could be obtained by incrementing 3 is 8.
+```
 
 ---
-### **`type`**(_any_ **`value`**)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`type`**(_any_ **`value`**)  → _string_
 
 Return type of value as string.
 
@@ -581,7 +595,7 @@ type(type) == 'function'
 
 ---
 ## StringExtension
-### **`string_contains`**(_string_ **`haystack`**, _any_ **`needle`**)  → _bool_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_contains`**(_string_ **`haystack`**, _any_ **`needle`**)  → _bool_
 
 Returns `true` if the `string` contains `needle`. Returns `false`
 otherwise.
@@ -592,7 +606,7 @@ otherwise.
 ```
 
 ---
-### **`string_find_first`**(_string_ **`haystack`**, _any_ **`needle`**)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_find_first`**(_string_ **`haystack`**, _any_ **`needle`**)  → _any_
 
 Returns the position _(index)_ of **first** occurrence of `needle` in
 the `string`. If the `needle` was not found, `null` is returned.
@@ -604,7 +618,7 @@ the `string`. If the `needle` was not found, `null` is returned.
 ```
 
 ---
-### **`string_find_last`**(_string_ **`haystack`**, _any_ **`needle`**)  → _any_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_find_last`**(_string_ **`haystack`**, _any_ **`needle`**)  → _any_
 
 Returns the position _(index)_ of **last** occurrence of `needle` in
 the `string`. If the `needle` was not found, `null` is returned.
@@ -616,7 +630,7 @@ the `string`. If the `needle` was not found, `null` is returned.
 ```
 
 ---
-### **`string_format`**(_string_ **`str`**, *[_any_ **`items`**]*)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_format`**(_string_ **`str`**, *[_any_ **`items`**]*)  → _string_
 
 Returns a new `string` with placeholders from the original `string`
 replaced by additional arguments.
@@ -631,7 +645,7 @@ Placeholders can be either _(but these can't be combined)_:
 ```
 
 ---
-### **`string_join`**(_string_ **`string`**, _any_ **`iterable`**)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_join`**(_string_ **`string`**, _any_ **`iterable`**)  → _string_
 
 Join items from `iterable` with this `string` and return the result as
 a new string.
@@ -639,11 +653,11 @@ a new string.
 ```js
 ','.join(['a', 'b', 3]) == "a,b,3"
 ':::'.join({'a': 1, 'b': 2, 'c': '3'}) == "1:::2:::3"
-'-PADDING-'.join("abc") == "a-PADDING-b-PADDING-3" // String is also iterable.
+'-PADDING-'.join("abc") == "a-PADDING-b-PADDING-c" // String is also iterable.
 ```
 
 ---
-### **`string_number_of`**(_string_ **`haystack`**, _any_ **`needle`**)  → _number_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_number_of`**(_string_ **`haystack`**, _any_ **`needle`**)  → _number_
 
 Returns `number` of occurrences of `needle` in a string.
 
@@ -653,7 +667,7 @@ Returns `number` of occurrences of `needle` in a string.
 ```
 
 ---
-### **`string_replace`**(_string_ **`string`**, _any_ **`search`**, *[_string_ **`replace`**]*)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_replace`**(_string_ **`string`**, _any_ **`search`**, *[_string_ **`replace`**]*)  → _string_
 
 Perform search and replace and return the results as new `string`.
 
@@ -668,7 +682,7 @@ _(and `replace` argument is omitted)_.
 ```
 
 ---
-### **`string_reverse`**(_string_ **`string`**)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_reverse`**(_string_ **`string`**)  → _string_
 
 Return reversed string.
 
@@ -677,7 +691,7 @@ Return reversed string.
 ```
 
 ---
-### **`string_shuffle`**(_string_ **`str`**)  → _string_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_shuffle`**(_string_ **`str`**)  → _string_
 
 Returns a new `string` from shuffled characters of the original `string`.
 
@@ -686,7 +700,7 @@ Returns a new `string` from shuffled characters of the original `string`.
 ```
 
 ---
-### **`string_split`**(_string_ **`string`**, *[_any_ **`delimiter`**]*)  → _list_
+### <i style='color: DodgerBlue; font-size: 90%'>fn</i> **`string_split`**(_string_ **`string`**, *[_any_ **`delimiter`**]*)  → _list_
 
 Split original `string` by some `delimiter` and return result the as a
 `list`. If the `delimiter` is not specified, the `string` is splat by
