@@ -5,19 +5,26 @@ on: [push]
 jobs:
   Tests:
     runs-on: ubuntu-latest
+    strategy:
+          matrix:
+            php-versions: ['7.4', '8.0', 'latest']
     steps:
     - uses: actions/checkout@v1
-    - name: Install
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, bcmath
+        coverage: none
+    - name: Install dependencies
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $HOME/cc-test-reporter
         composer install --optimize-autoloader
         chmod +x ./primi ./bin/* $HOME/cc-test-reporter
     - name: Prepare
       run: $HOME/cc-test-reporter before-build
-    - name: Disable xdebug
-      run: sudo phpdismod xdebug
     - name: Run tests
-      run: chmod +x ./primi ./bin/* && ./bin/test --coverage
+      run: chmod +x ./primi ./bin/* && ./bin/test --php phpdbg --coverage xml
     - name: Run benchmarks
       run: ./bin/bench
     - name: Run static analysis
