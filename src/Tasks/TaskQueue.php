@@ -76,10 +76,15 @@ class TaskQueue {
 	 * Tasks with ETA in the future are skipped and kept in the queue..
 	 */
 	public function deplete(): void {
-		$this->executeQueued();
+		$this->executeQueued(true);
 	}
 
-	private function executeQueued(): void {
+	/**
+	 * Execute queued tasks. Tasks with ETA in the future will be skipped
+	 * and placed into the queue again, unless `$force` parameter is `true`, in
+	 * which case all tasks, regardless on their ETA, will be executed.
+	 */
+	private function executeQueued(bool $force = false): void {
 
 		// Because asynchronous events (e.g. signals) could modify (add tasks to)
 		// the $queue property while we're iterating through it, and
@@ -94,7 +99,7 @@ class TaskQueue {
 		$skipped = [];
 		foreach ($queue as [$task, $eta]) {
 
-			if ($eta > Func::monotime()) {
+			if ($eta > Func::monotime() && !$force) {
 				$skipped[] = [$task, $eta];
 				continue;
 			}
