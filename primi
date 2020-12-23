@@ -8,6 +8,7 @@ use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Helpers\Stats;
+use \Smuuf\Primi\Helpers\Colors;
 
 require __DIR__ . "/vendor/autoload.php";
 
@@ -178,5 +179,5 @@ function header_string(string $env = null) {
 	$env = $env ? "($env)" : null;
 	$php = PHP_VERSION;
 	return "Primi language {$env}, Copyright (c) Premysl Karbula\n"
-		. "Running on PHP {$php}\n";
+		. Colors::get("{yellow}Running on PHP {$php}{_}\n");
 }

@@ -82,7 +82,8 @@ class Repl {
 	protected function printHelp() {
 
 		$this->driver->output(Colors::get("\n".
-			"{green}Use '{_}exit{green}' to exit.\n" .
+			"{green}Use '{_}exit{green}' to exit REPL or '{_}exit!{green}' " .
+			"to terminate the process.\n" .
 			"Use '{_}?{green}' to view local variables, " .
 			"'{_}??{green}' to view all variables, " .
 			"'{_}?tb{green}' to see traceback. \n" .
@@ -166,6 +167,10 @@ class Repl {
 					// Catch a non-command 'exit'.
 					// Return the result of last expression executed, or null.
 					return $result ?? null;
+				case 'exit!':
+					// Catch a non-command 'exit'.
+					// Just quit the whole thing.
+					die(1);
 			}
 
 			try {

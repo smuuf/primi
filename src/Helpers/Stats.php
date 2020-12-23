@@ -78,19 +78,33 @@ abstract class Stats {
 
 	public static function print(): void {
 
-		echo Colors::get("{yellow}Stats:{_}\n");
+		self::out(Colors::get("{yellow}Runtime stats:{_}"));
+
+		// Print general stats.
+
+		self::out(Colors::get("{green}General:{_}"));
+
+		self::out("PHP: " . PHP_VERSION);
 
 		$mb = round(memory_get_peak_usage() / 1e6, 2);
-		echo "Memory peak: {$mb} MB\n";
+		self::out("Memory peak: {$mb} MB");
 
 		$duration = round(Func::monotime() - self::$startTime, 2);
-		echo "Runtime duration: {$duration} s\n";
+		self::out("Runtime duration: {$duration} s");
+
+		// Print gathered stats.
+
+		self::out(Colors::get("{green}Gathered:{_}"));
 
 		ksort(self::$stats);
 		foreach (self::$stats as $name => $value) {
-			echo "{$name}: {$value}\n";
+			self::out("- {$name}: {$value}");
 		}
 
+	}
+
+	private static function out(string $text): void {
+		echo "$text\n";
 	}
 
 }
