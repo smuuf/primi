@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Ex\ControlFlowException;
@@ -46,9 +47,12 @@ class DirectInterpreter {
 
 		$ast = $this->getSyntaxTree($source);
 
-		// Register signal handling.
-		PosixSignalTaskEmitter::catch(SIGINT);
-		PosixSignalTaskEmitter::catch(SIGQUIT);
+		// Register signal handling - maybe.
+		if (Config::getEffectivePosixSignalHandling()) {
+			PosixSignalTaskEmitter::catch(SIGINT);
+			PosixSignalTaskEmitter::catch(SIGQUIT);
+			PosixSignalTaskEmitter::catch(SIGTERM);
+		}
 
 		try {
 
