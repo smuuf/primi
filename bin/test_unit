@@ -2,7 +2,8 @@
 
 cd $(dirname $0)
 
-INTERPRETER="php"
+# Select phpdbg if available, or php.
+INTERPRETER=$(command -v phpdbg php | head -n1)
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
