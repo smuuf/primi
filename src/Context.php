@@ -18,17 +18,6 @@ class Context {
 	use StrictObject;
 
 	/**
-	 * If greater than one, this number sets the maximum call stack size.
-	 * When this maximum is reached, RuntimeError is thrown.
-	 *
-	 * Every function invocated within Primi runtime increases the call stack
-	 * size +1 (which is then decreased -1 when the function returns).
-	 *
-	 * @var int
-	 */
-	public static $callStackLimit = 1024;
-
-	/**
 	 * Value of static property self::$callStackLimit fixed when
 	 * initializing new instance of Context (to ignore later modifications).
 	 *
@@ -53,13 +42,9 @@ class Context {
 
 	public function __construct(?AbstractScope $scope = \null) {
 
-		if (self::$callStackLimit < 0) {
-			throw new EngineError("Maximum call stack size cannot be negative");
-		}
-
-		// Render the class property into instance property to ensure changing
-		// the static one doesn't change behavior of existing contexts.
-		$this->maxCallStackSize = self::$callStackLimit;
+		// Render the config value into instance property to ensure changing
+		// of the config doesn't change behavior of existing contexts.
+		$this->maxCallStackSize = Config::getCallStackLimit();
 
 		$this->taskQueue = new TaskQueue($this);
 		$this->pushScope($scope ?? new Scope);
