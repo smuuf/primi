@@ -1,6 +1,4 @@
-assert_not = (truth, desc) => {
-	assert(!truth, desc)
-}
+from helpers import assert_not
 
 // Long numbers can be separated using underscores for improved readability.
 

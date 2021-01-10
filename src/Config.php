@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
 final class Config {
@@ -16,14 +17,52 @@ final class Config {
 	}
 
 	//
+	// Paths to some important directories.
+	//
+
+	public static function getSrcDir(): string {
+		return __DIR__;
+	}
+
+	//
+	// Directories for native modules.
+	//
+
+	private static array $nativeModuleDirs = [
+		__DIR__ . '/Stdlib/Modules/Native',
+	];
+
+	public static function addNativeModuleDir(string $path): void {
+		self::$nativeModuleDirs[] = Func::validate_dirs([$path])[0];
+	}
+
+	public static function getNativeModuleDirs(): array {
+		return self::$nativeModuleDirs;
+	}
+
+	//
+	// Directories for Primi modules.
+	//
+
+	private static array $primiModuleDirs = [
+		__DIR__ . '/Stdlib/Modules/Primi', // Stdlib Primi modules directory.
+	];
+
+	public static function addPrimiModuleDir(string $path): void {
+		self::$primiModuleDirs[] = Func::validate_dirs([$path])[0];
+	}
+
+	public static function getPrimiModuleDirs(): array {
+		return self::$primiModuleDirs;
+	}
+
+	//
 	// Callstack limit.
 	//
 
 	/**
 	 * If greater than one, this number sets the maximum call stack size.
 	 * When this maximum is reached, RuntimeError is thrown.
-	 *
-	 * @var int
 	 */
 	private static int $callStackLimit = 1024;
 
@@ -137,6 +176,24 @@ final class Config {
 	 */
 	public static function getSigQuitDebugging(): bool {
 		return self::$sigQuitDebugging;
+	}
+
+	//
+	// Import paths management.
+	//
+
+	private static array $importPaths = [
+		'.', // Current working directory.
+	];
+
+	/**
+	 * If POSIX signal handling is enabled, received SIGQUIT causes a debugging
+	 * session to be injected into currently executed code.
+	 *
+	 * SIGQUIT can usually be sent from terminal via `CTRL+\`.
+	 */
+	public static function getImportPaths(): array {
+		return self::$importPaths;
 	}
 
 }

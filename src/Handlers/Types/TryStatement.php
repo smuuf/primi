@@ -3,8 +3,8 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Ex\ContextAwareException;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 
 class TryStatement extends SimpleHandler {
@@ -17,7 +17,7 @@ class TryStatement extends SimpleHandler {
 			$mainHandler = HandlerFactory::getFor($node['main']['name']);
 			return $mainHandler::run($node['main'], $context);
 
-		} catch (ContextAwareException $e) {
+		} catch (ErrorException $e) {
 
 			// Execute the onerror block if any error occurred with the main
 			// code.

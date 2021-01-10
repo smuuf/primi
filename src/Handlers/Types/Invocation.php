@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\ChainedHandler;
@@ -30,7 +31,13 @@ class Invocation extends ChainedHandler {
 		}
 
 		// Gather info about call location - for some quality tracebacks.
-		$result = $fn->invoke($context, $arguments);
+		$callsite = new Location(
+			$context->getCurrentModule(),
+			$node['_l'],
+			$node['_p']
+		);
+
+		$result = $fn->invoke($context, $arguments, $callsite);
 
 		if ($result === null) {
 			throw new RuntimeError(

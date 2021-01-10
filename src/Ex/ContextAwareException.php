@@ -7,8 +7,7 @@ namespace Smuuf\Primi\Ex;
 use \Smuuf\Primi\Context;
 
 /**
- * Helper exception that is thrown only in `SimpleHandler` and `ChainedHandler`
- * and converted into `RuntimeError` when caught in `DirectInterpreter::execute()`.
+ * Helper exception that is thrown only in `SimpleHandler` and `ChainedHandler`.
  */
 class ContextAwareException extends EngineException {
 
@@ -18,17 +17,7 @@ class ContextAwareException extends EngineException {
 		Context $ctx = null
 	) {
 
-		// If there's any traceback, add it to the error.
-		if ($tb = $ctx->getTraceback()) {
 
-			$tbMsg = "\nTraceback:";
-			foreach ($tb as $level => $callId)  {
-				$tbMsg .= "\n[$level] $callId";
-			}
-
-		} else {
-			$tbMsg = '';
-		}
 
 		$msg = \sprintf(
 			"%s @ line %s, position %s%s\n",

@@ -28,28 +28,28 @@ abstract class PosixSignalTaskEmitter {
 
 	public static function catch(int $signum): void {
 
-		if (!function_exists('pcntl_async_signals')) {
+		if (!\function_exists('pcntl_async_signals')) {
 			return;
 		}
 
 		// Call this only once - before registering the first signal handler.
 		if (!self::$signalsToCatch) {
-			pcntl_async_signals(true);
+			\pcntl_async_signals(\true);
 		}
 
 		// A specific signal can be registered only once.
-		if (in_array($signum, self::$signalsToCatch, true)) {
+		if (\in_array($signum, self::$signalsToCatch, \true)) {
 			return;
 		}
 
-		pcntl_signal($signum, [self::class, 'handle']);
+		\pcntl_signal($signum, [self::class, 'handle']);
 
 	}
 
 	public static function registerTaskQueue(TaskQueue $queue) {
 
 		// A specific receiver instance can be added only once.
-		if (in_array($queue, self::$queues, true)) {
+		if (\in_array($queue, self::$queues, \true)) {
 			throw new EngineInternalError('This receiver is already registered');
 		}
 
@@ -66,8 +66,8 @@ abstract class PosixSignalTaskEmitter {
 	 */
 	public static function unregisterTaskQueue(TaskQueue $queue) {
 
-		$index = array_search($queue, self::$queues, true);
-		if ($index === false) {
+		$index = \array_search($queue, self::$queues, \true);
+		if ($index === \false) {
 			throw new EngineInternalError('This receiver was not previously registered');
 		}
 

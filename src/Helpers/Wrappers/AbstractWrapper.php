@@ -37,7 +37,9 @@ abstract class AbstractWrapper {
 
 		$enterRetval = $this->executeBefore();
 		try {
-			return $fn($enterRetval);
+			$retval = $fn($enterRetval);
+			unset($fn);
+			return $retval;
 		} finally {
 			$this->executeAfter();
 		}

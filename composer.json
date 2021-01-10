@@ -19,11 +19,12 @@
 		}
 	},
 	"require": {
-		"php": ">=7.1",
+		"php": ">=7.4",
 		"ext-bcmath" : "*",
 		"ext-mbstring" : "*",
 		"smuuf/php-peg": "^2",
-		"smuuf/better-php-exceptions": "^0.1"
+		"smuuf/better-php-exceptions": "^0",
+		"symfony/polyfill-php80": "^1.20"
 	},
 	"require-dev": {
 		"smuuf/phpcb": "dev-master",

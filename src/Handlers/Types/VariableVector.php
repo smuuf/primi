@@ -5,23 +5,55 @@ namespace Smuuf\Primi\Handlers\Types;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Handlers\SimpleHandler;
+use Smuuf\Primi\Helpers\Func;
 
+/**
+ * This handler is used to access nested items or attributes and prepare it
+ * for nested assignment.
+ *
+ * For example, this is a vector:
+ * ```js
+ * a[1].b['x'].c[0] = 'yes'
+ * ```
+ *
+ * The code is saying that someone wants to:
+ *
+ * _Store 'yes' under index `0` of the value `c`, which is an attribute of value
+ * stored in `b` under the key `x`, which itself is the value stored under
+ * index `1` of the value `a`._
+ *
+ * We need to process this chunk of AST nodes and **return an insertion proxy**,
+ * which can then be used for assignment in the `Assignment` handler.
+ */
 class VariableVector extends SimpleHandler {
 
-	/**
-	 * This handler returns a final part of the chain - a value object that's
-	 * derived from the vector and which supports insertion. All values but the
-	 * last part of the chain also must support key access.
-	 */
 	protected static function handle(array $node, Context $context) {
 
-		// Handle the item; pass in the origin subject.
+		// Retrieve the original value.
 		$handler = HandlerFactory::getFor($node['core']['name']);
 		$value = $handler::run($node['core'], $context);
 
-		// There's chain, so handle it, too.
-		$handler = HandlerFactory::getFor($node['vector']['name']);
-		return $handler::chain($node['vector'], $context, $value);
+		// And handle the nesting according to the specified vector.
+		foreach ($node['vector'] as $next) {
+			$handler = HandlerFactory::getFor($next['name']);
+			$value = $handler::chain($next, $context, $value);
+		}
+
+		return $value;
+
+	}
+
+	public static function reduce(array &$node): void {
+
+		$node['vector'] = Func::ensure_indexed($node['vector']);
+
+		// Mark the last vector node as leaf, so it knows that we expect
+		// insertion proxy from it.
+		$first = true;
+		for ($i = count($node['vector']); $i !== 0; $i--) {
+			$node['vector'][$i - 1]['leaf'] = $first;
+			$first = false;
+		}
 
 	}
 

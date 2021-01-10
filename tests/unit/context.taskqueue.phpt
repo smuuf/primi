@@ -3,7 +3,7 @@
 use \Tester\Assert;
 
 use \Smuuf\Primi\Interpreter;
-use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Tasks\Types\PosixSignalTask;
 
 require __DIR__ . '/../bootstrap.php';
@@ -32,9 +32,9 @@ Assert::exception(function() use ($i, $ctx, $src) {
 	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGINT));
 	// Exception will be thrown based on the simulated "SIGINT" signal task job.
 	$i->run($src);
-}, RuntimeError::class, '#Received SIGINT#');
+}, ErrorException::class, '#Received SIGINT#');
 
 Assert::exception(function() use ($i, $ctx, $src) {
 	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGTERM));
 	$i->run($src);
-}, RuntimeError::class, '#Received SIGTERM#');
+}, ErrorException::class, '#Received SIGTERM#');

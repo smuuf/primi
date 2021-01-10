@@ -14,7 +14,10 @@ namespace Smuuf\Primi\Helpers;
  */
 abstract class ValueFriends {
 
-	/** @var mixed  */
+	/** @var mixed Value itself. */
 	protected $value = \null;
+
+	/** Value object attributes. */
+	protected array $attrs = [];
 
 }

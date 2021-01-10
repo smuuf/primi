@@ -35,7 +35,7 @@ class PosixSignalTask implements TaskInterface {
 					throw new SystemException('Received SIGQUIT');
 				}
 
-				$repl = new Repl('<debugger>');
+				$repl = new Repl('debugger');
 				$repl->start($ctx);
 				return;
 

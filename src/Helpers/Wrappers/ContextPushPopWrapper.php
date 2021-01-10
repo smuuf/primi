@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers\Wrappers;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\CallFrame;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
@@ -12,22 +13,21 @@ class ContextPushPopWrapper extends AbstractWrapper {
 
 	use StrictObject;
 
-	/** @var Context */
-	private $ctx;
+	private Context $ctx;
 
-	/** @var string Call ID to push to call stack. */
-	private $callId;
+	/** Call frame to push to call stack. */
+	private ?CallFrame $call;
 
-	/** @var AbstractScope|null (optional) Scope to push to scope stack. */
-	private $scope;
+	/** Scope to push to scope stack. (optional) */
+	private ?AbstractScope $scope;
 
 	public function __construct(
 		Context $ctx,
-		string $callId,
+		?CallFrame $call = null,
 		?AbstractScope $scope = null
 	) {
 		$this->ctx = $ctx;
-		$this->callId = $callId;
+		$this->call = $call;
 		$this->scope = $scope;
 	}
 
@@ -36,7 +36,10 @@ class ContextPushPopWrapper extends AbstractWrapper {
 	 */
 	public function executeBefore() {
 
-		$this->ctx->pushCall($this->callId);
+		if ($this->call) {
+			$this->ctx->pushCall($this->call);
+		}
+
 		if ($this->scope) {
 			$this->ctx->pushScope($this->scope);
 		}
@@ -50,9 +53,14 @@ class ContextPushPopWrapper extends AbstractWrapper {
 	 */
 	public function executeAfter() {
 
-		$this->ctx->popCall();
+		if ($this->call) {
+			$this->ctx->popCall();
+			unset($this->call);
+		}
+
 		if ($this->scope) {
 			$this->ctx->popScope();
+			unset($this->scope);
 		}
 
 	}

@@ -59,6 +59,8 @@ class CatchPosixSignalsWrapper extends AbstractWrapper {
 			PosixSignalTaskEmitter::unregisterTaskQueue($this->tq);
 		}
 
+		unset($this->tq);
+
 	}
 
 }

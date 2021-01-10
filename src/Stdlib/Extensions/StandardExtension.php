@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\Stdlib;
+namespace Smuuf\Primi\Stdlib\Extensions;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
@@ -15,6 +15,7 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Extensions\Extension;
+use \Smuuf\Primi\Tasks\Types\CallbackTask;
 
 class StandardExtension extends Extension {
 
@@ -118,6 +119,24 @@ class StandardExtension extends Extension {
 		}
 
 		return BoolValue::build(\true);
+
+	}
+
+	/**
+	 * @injectContext
+	 */
+	public function async_delay(
+		Context $ctx,
+		FuncValue $fn,
+		NumberValue $delay
+	): NullValue {
+
+		$ctx->getTaskQueue()->addTask(
+			new CallbackTask($fn),
+			(float) $delay->value
+		);
+
+		return NullValue::build();
 
 	}
 

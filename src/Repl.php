@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Ex\BaseError;
+use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Ex\EngineException;
 use \Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Scopes\Scope;
@@ -25,7 +25,7 @@ class Repl {
 	/**
 	 * @const string How this REPL identifies itself in call stack.
 	 */
-	private const DEFAULT_REPL_NAME = "<repl>";
+	private const REPL_NAME_FORMAT = "<repl: %s>";
 
 	private const HISTORY_FILE = '.primi_history';
 	private const PRIMARY_PROMPT = '>>> ';
@@ -67,15 +67,10 @@ class Repl {
 
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 
-		$this->replName = $replName ?? self::DEFAULT_REPL_NAME;
+		$this->replName = sprintf(self::REPL_NAME_FORMAT, $replName ?? 'cli');
 		$this->driver = $driver ?? new ReadlineUserIoDriver;
 
 		$this->loadHistory();
-
-		// Allow saving history even on serious errors.
-		register_shutdown_function(function(): void {
-			$this->saveHistory();
-		});
 
 	}
 
@@ -105,7 +100,8 @@ class Repl {
 		$ctx = $ctx ?? new Context(new Scope);
 
 		// Automatically handle callstack push/pop using wrapper.
-		$wrapper = new ContextPushPopWrapper($ctx, $this->replName);
+		$frame = new CallFrame($this->replName, null);
+		$wrapper = new ContextPushPopWrapper($ctx, $frame);
 		$retval = $wrapper->wrap(function($ctx) {
 
 			// Print out level (position in call stack).
@@ -122,7 +118,7 @@ class Repl {
 		});
 
 		if (!self::$noExtras) {
-			$this->driver->output("Exiting REPL...\n");
+			$this->driver->output(Colors::get("{yellow}Exiting REPL...{_}\n"));
 		}
 
 		return $retval;
@@ -173,23 +169,26 @@ class Repl {
 					die(1);
 			}
 
+			$this->saveHistory();
+			$source = new Source($input, false);
+
 			try {
 
-				$result = $intepreter->execute("$input", $ctx);
+				$result = $intepreter::execute($source, $ctx);
 
 				// Store the result into _ variable for quick'n'easy retrieval.
 				$scope->setVariable('_', $result);
 				$this->printResult($result);
 
-			} catch (BaseError|SystemException $e) {
+			} catch (ErrorException|SystemException $e) {
 
 				$this->driver->output(Colors::get("{red}ERR: "));
 				$this->driver->output($e->getMessage());
 
 			} catch (EngineException|\Throwable $e) {
 
-				// All exceptions other than BaseError are like to be a problem
-				// with Primi or PHP - print the whole PHP exception.
+				// All exceptions other than ErrorException are like to be a
+				// problem with Primi or PHP - print the whole PHP exception.
 				$this->printPhpTraceback($e);
 
 			}
@@ -244,15 +243,8 @@ class Repl {
 	 */
 	private function printTraceback(Context $ctx): void {
 
-		$this->driver->output(Colors::get(
-			"{yellow}Traceback:{_}\n"
-		));
-
-		foreach ($ctx->getTraceback() as $level => $callId)  {
-			$this->driver->output(Colors::get(
-				"{yellow}[$level]{_} $callId\n"
-			));
-		}
+		$tbString = Func::get_traceback_as_string($ctx->getCallStack(), true);
+		$this->driver->output($tbString);
 
 	}
 

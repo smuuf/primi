@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\Stdlib;
+namespace Smuuf\Primi\Stdlib\Extensions;
 
 use \Smuuf\Primi\Repl;
 use \Smuuf\Primi\Context;
@@ -43,7 +43,7 @@ class CliExtension extends Extension {
 	 * @noStack
 	 */
 	public static function debugger(Context $ctx): AbstractValue {
-		$repl = new Repl('<debugger>');
+		$repl = new Repl('debugger');
 		return $repl->start($ctx) ?? NullValue::build();
 	}
 
@@ -57,26 +57,6 @@ class CliExtension extends Extension {
 	 */
 	public static function get_traceback(Context $ctx): ListValue {
 		return AbstractValue::buildAuto($ctx->getTraceback());
-	}
-
-	/**
-	 * _**Only in [CLI](https://w.wiki/QPE)**_.
-	 *
-	 * Returns memory peak usage used by Primi _(engine behind the scenes)_ in
-	 * bytes.
-	 */
-	public static function memory_get_peak_usage(): NumberValue {
-		return new NumberValue((string) \memory_get_peak_usage());
-	}
-
-	/**
-	 * _**Only in [CLI](https://w.wiki/QPE)**_.
-	 *
-	 * Returns current memory usage used by Primi _(engine behind the scenes)_
-	 * in bytes.
-	 */
-	public static function memory_get_usage(): NumberValue {
-		return new NumberValue((string) \memory_get_peak_usage());
 	}
 
 }
