@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Location;
+use \Smuuf\Primi\CallFrame;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\ReturnException;
 use \Smuuf\Primi\Ex\ArgumentCountError;
@@ -47,22 +49,29 @@ class FnContainer {
 	 */
 	public static function build(
 		array $entryNode,
+		string $definitionName,
+		string $definitionModule,
 		array $definitionArgs = [],
-		?AbstractScope $definitionScope = \null,
-		?string $callId = \null
+		?AbstractScope $definitionScope = \null
 	) {
 
-		$callId = $callId ?? '<unknown>';
 		$definitionArgsCount = \count($definitionArgs);
+
+		// Prepare call name (will always be the same for all calls).
+		$callName = "{$definitionName} in {$definitionModule}";
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
-		$closure = function(Context $ctx, array $args) use (
+		$closure = function(
+			Context $ctx,
+			array $args,
+			?Location $callsite = null
+		) use (
 			$entryNode,
 			$definitionScope,
 			$definitionArgs,
 			$definitionArgsCount,
-			$callId
+			$callName
 		) {
 
 			// Check number of passed arguments.
@@ -83,7 +92,9 @@ class FnContainer {
 			$scope->setParent($definitionScope);
 			$scope->setVariables($args);
 
-			$wrapper = new ContextPushPopWrapper($ctx, $callId, $scope);
+			$frame = new CallFrame($callName, $callsite);
+
+			$wrapper = new ContextPushPopWrapper($ctx, $frame, $scope);
 			return $wrapper->wrap(function($ctx) use ($entryNode) {
 
 				// Run the function body and expect a ReturnException with the
@@ -115,7 +126,7 @@ class FnContainer {
 		$rf = new \ReflectionFunction($closure);
 		Func::check_allowed_parameter_types_of_function($rf);
 
-		$callId = "{$rf->getName()}() (native)";
+		$callName = "{$rf->getName()} in <native>";
 		$requiredArgumentCount = $rf->getNumberOfRequiredParameters();
 
 		// Determine whether the runtime context object should be injected into
@@ -127,13 +138,16 @@ class FnContainer {
 			$addToStack = \strpos($docComment, '@noStack') === \false;
 		}
 
-
-		$wrapper = function(Context $ctx, array $args) use (
+		$wrapper = function(
+			Context $ctx,
+			array $args,
+			?Location $callsite = null
+		) use (
 			$closure,
 			$requiredArgumentCount,
 			$injectContext,
 			$addToStack,
-			$callId
+			$callName
 		) {
 
 			if ($injectContext) {
@@ -151,7 +165,8 @@ class FnContainer {
 			// This is done manually without ContextPushPopWrapper for
 			// performance reasons.
 			if ($addToStack) {
-				$ctx->pushCall($callId);
+				$frame = new CallFrame($callName, $callsite);
+				$ctx->pushCall($frame);
 			}
 
 			try {
@@ -210,10 +225,14 @@ class FnContainer {
 		$this->isPhpFunction = $isPhpFunction;
 	}
 
-	public function callClosure(Context $ctx, array $args): ?AbstractValue {
+	public function callClosure(
+		Context $ctx,
+		array $args,
+		?Location $callsite = null
+	): ?AbstractValue {
 
 		Stats::add('func_calls');
-		return ($this->closure)($ctx, $args);
+		return ($this->closure)($ctx, $args, $callsite);
 
 	}
 

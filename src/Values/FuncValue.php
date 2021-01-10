@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Structures\FnContainer;
 
@@ -16,8 +17,8 @@ class FuncValue extends AbstractValue {
 	const TYPE = "function";
 
 	public function __construct(FnContainer $fn) {
-		$this->value = $fn;
 		Stats::add('values_func');
+		$this->value = $fn;
 	}
 
 	public function isTruthy(): bool {
@@ -33,11 +34,12 @@ class FuncValue extends AbstractValue {
 
 	public function invoke(
 		Context $context,
-		array $args = []
+		array $args = [],
+		?Location $callsite = null
 	): ?AbstractValue {
 
 		// Simply call the closure with passed arguments and other info.
-		return $this->value->callClosure($context, $args);
+		return $this->value->callClosure($context, $args, $callsite);
 
 	}
 

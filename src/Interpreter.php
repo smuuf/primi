@@ -16,16 +16,11 @@ class Interpreter extends DirectInterpreter {
 	/**
 	 * Path to temporary directory where ASTs will be cached.
 	 * If `null`, AST cache will not be used at all.
-	 *
-	 * @var null|string
 	 */
-	private $tempDir;
+	private ?string $tempDir;
 
-	/**
-	 * Runtime context the interpreter works with.
-	 * @var Context
-	 */
-	private $context;
+	/** Runtime context the interpreter works with. */
+	private Context $context;
 
 	/**
 	 * Create a new instance of interpreter.
@@ -54,11 +49,8 @@ class Interpreter extends DirectInterpreter {
 		$this->tempDir = $tmp;
 
 		// Create new context, if it was not provided.
-		$context = $context ?? new Context;
+		$context = $context ?? new Context(null, $extHub);
 		$this->context = $context;
-
-		$extHub = $extHub ?? new ExtensionHub;
-		$extHub->apply($context->getCurrentScope());
 
 	}
 
@@ -81,13 +73,22 @@ class Interpreter extends DirectInterpreter {
 	}
 
 	/**
-	 * Main entrypoint for running a Primi source code provided as text.
+	 * Main entrypoint for running a Primi source code.
+	 *
+	 * @param string|Source
 	 */
-	public function run(string $source): AbstractValue {
+	public function run($source): AbstractValue {
 
-		$wrapper = new ContextPushPopWrapper($this->context, '<main>');
-		return $wrapper->wrap(function() use ($source) {
-			return $this->execute($source, $this->context);
+		// Convert string source to source object, if necessary.
+		if (is_string($source)) {
+			$source = new Source($source, false);
+		}
+
+		$frame = new CallFrame("<main: {$source->getId()}>", null);
+
+		$wrapper = new ContextPushPopWrapper($this->context, $frame);
+		return $wrapper->wrap(function($ctx) use ($source) {
+			return self::execute($source, $ctx);
 		});
 
 	}
@@ -100,7 +101,7 @@ class Interpreter extends DirectInterpreter {
 			return $ast;
 		}
 
-		$ast = parent::getSyntaxTree($source);
+		$ast = parent::loadSyntaxTree($source);
 
 		// Store/cache parsed AST, if caching is enabled.
 		$this->storeAST($ast, $source);

@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Helpers\Func;
@@ -41,7 +42,7 @@ abstract class AbstractValue extends ValueFriends {
 			case $value instanceof AbstractValue:
 				return $value;
 			default:
-				return StringValue::build($value);
+				return StringValue::build((string) $value);
 		}
 
 	}
@@ -168,10 +169,12 @@ abstract class AbstractValue extends ValueFriends {
 	 *
 	 * @param Context $context Runtime context of the call-site.
 	 * @param array<AbstractValue> $args Array dictionary of call arguments.
+	 * @param Location $callsite Call site location (optional).
 	 */
 	public function invoke(
 		Context $context,
-		array $args = []
+		array $args = [],
+		?Location $callsite = null
 	): ?AbstractValue {
 		return \null;
 	}
@@ -197,6 +200,27 @@ abstract class AbstractValue extends ValueFriends {
 	 * supported.
 	 */
 	public function itemGet(AbstractValue $key): ?AbstractValue {
+		return \null;
+	}
+
+
+	/**
+	 * Assign an attr to the value.
+	 *
+	 * Must return true on successful assignment, or `false` if assignment is
+	 * not supported.
+	 */
+	public function attrSet(StringValue $key, AbstractValue $value): bool {
+		return \false;
+	}
+
+	/**
+	 * Returns an attr from the value.
+	 *
+	 * Must return some value object, or `null` if such operation is not
+	 * supported.
+	 */
+	public function attrGet(StringValue $key): ?AbstractValue {
 		return \null;
 	}
 

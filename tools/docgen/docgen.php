@@ -57,16 +57,6 @@ $outputFile = $argv[1];
 
 $warnings = [];
 
-// Polyfills for pre-PHP 8 versions.
-if (!function_exists('str_ends_with')) {
-	function str_starts_with(string $haystack, string $needle): bool {
-		return \strncmp($haystack, $needle, \strlen($needle)) === 0;
-	}
-	function str_ends_with(string $haystack, string $needle): bool {
-		return $needle === '' || $needle === \substr($haystack, -\strlen($needle));
-	}
-}
-
 line(Colors::get("Parsing files at {cyan}$phpFilesGlob{_} ..."));
 if (!$extensionFiles = glob($phpFilesGlob)) {
 	err("No files found at $phpFilesGlob");
@@ -74,7 +64,7 @@ if (!$extensionFiles = glob($phpFilesGlob)) {
 
 function get_relevant_methods(string $className): array {
 
-	$classRef = new \ReflectionClass("\Smuuf\Primi\Stdlib\\{$className}");
+	$classRef = new \ReflectionClass("\Smuuf\Primi\Stdlib\\Extensions\\{$className}");
 
 	// We want methods that are both public AND static AND non-PHP-magic.
 	return array_filter(

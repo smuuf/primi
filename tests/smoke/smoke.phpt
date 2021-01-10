@@ -1,5 +1,6 @@
 <?php
 
+use Smuuf\Primi\Source;
 use \Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -10,7 +11,7 @@ define('ROOT_DIR', realpath(__DIR__ . '/../../'));
 // preprocessing will be tested (and included in coverage), too.
 $useAstCache = (bool) getenv('X_PRIMI_TESTS_ASTCACHE');
 
-function run_primi_source(string $source) {
+function run_primi_file(string $path) {
 
 	global $useAstCache;
 	$cachePath = $useAstCache
@@ -20,6 +21,7 @@ function run_primi_source(string $source) {
 	$interpreter = new \Smuuf\Primi\Interpreter(null, $cachePath);
 
 	// Run interpreter
+	$source = new Source($path, true);
 	$interpreter->run($source);
 
 }
@@ -31,8 +33,7 @@ foreach (glob(ROOT_DIR . '/example/*.primi') as $path) {
 	echo "Running: $shortpath ...\n";
 
 	Assert::noError(function() use ($path) {
-		$source = file_get_contents($path);
-		run_primi_source($source);
+		run_primi_file($path);
 	});
 
 }

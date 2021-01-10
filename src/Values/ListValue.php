@@ -98,7 +98,7 @@ class ListValue extends AbstractValue {
 			!Func::is_any_of_types($index, NumberValue::class)
 			|| !Func::is_round_int($index->value)
 		) {
-			throw new RuntimeError("List index must be integer.");
+			throw new RuntimeError("List index must be integer");
 		}
 
 		// Numbers are internally stored as strings, so get it as PHP integer.
@@ -117,7 +117,7 @@ class ListValue extends AbstractValue {
 			!Func::is_any_of_types($index, NumberValue::class)
 			|| !Func::is_round_int($index->value)
 		) {
-			throw new RuntimeError("List index must be integer.");
+			throw new RuntimeError("List index must be integer");
 		}
 
 		// Numbers are internally stored as strings, so get it as PHP integer.
@@ -146,7 +146,7 @@ class ListValue extends AbstractValue {
 
 		// ... and that number must be an integer.
 		if (!Func::is_round_int((string) $right->value)) {
-			throw new RuntimeError("List can be only multiplied by an integer.");
+			throw new RuntimeError("List can be only multiplied by an integer");
 		}
 
 		// Helper contains at least one empty array, so array_merge doesn't
@@ -189,7 +189,7 @@ class ListValue extends AbstractValue {
 		// Primi value objects). Non-strict search allows to match dictionaries
 		// with the same key-values but in different order.
 		return \in_array($right, $this->value);
-;
+
 	}
 
 	/**

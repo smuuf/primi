@@ -374,7 +374,12 @@ abstract class Func {
 		$types = is_string($types) ? [$types] : $types;
 		$primiTypes = \array_map(function($class) {
 
-			if (!is_subclass_of($class, AbstractValue::class, true)) {
+			// Resolve PHP nulls as Primi nulls.
+			if ($class === 'null') {
+				return 'null';
+			}
+
+			if (!is_a($class, AbstractValue::class, true)) {
 				throw new EngineInternalError(
 					"Cannot convert PHP class name '$class' to Primi type"
 				);
@@ -408,6 +413,52 @@ abstract class Func {
 	 */
 	public static function unique_id(): string {
 		return md5(random_bytes(128));
+	}
+
+	/**
+	 * @param array<CallFrame> $callstack Callstack.
+	 */
+	public static function get_traceback_as_string(
+		array $callstack,
+		bool $colors = false
+	): string {
+
+		$result = Colors::getMaybe(
+			$colors,
+			"{yellow}Traceback:{_}\n"
+		);
+
+		foreach ($callstack as $level => $call)  {
+
+			$result .= Colors::getMaybe(
+				$colors,
+				"{yellow}[$level]{_} {$call}\n"
+				//." {green}in {$module}{_}\n"
+			);
+
+		}
+
+		return $result;
+
+	}
+
+	public static function validate_dirs(array $paths): array {
+
+		// Check paths and normalize them to realpaths.
+		$result = [];
+		foreach ($paths as &$path) {
+
+			$rp = \realpath($path);
+			if ($rp === \false || !is_dir($rp)) {
+				throw new EngineError("Path '$path' is not a valid directory");
+			}
+
+			$result[] = $rp;
+
+		}
+
+		return $result;
+
 	}
 
 }

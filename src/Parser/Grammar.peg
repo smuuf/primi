@@ -16,7 +16,8 @@ class CompiledParser extends Parser\Packrat {
 
 	private const RESERVED_WORDS = [
 		'false', 'true', 'null', 'if', 'else', 'return', 'for', 'and', 'or',
-		'function', 'break', 'continue', 'while', 'try', 'catch', 'not', 'in'
+		'function', 'break', 'continue', 'while', 'try', 'catch', 'not', 'in',
+		'import'
 	];
 
 	/**
@@ -45,7 +46,6 @@ StringLiteral: quote:/['"]/ core:StringInside "$quote"
 #StringLiteral: ( '"' ( / (\\.)|[^"] /s )* '"' ) | ( "\'" ( / (\\.)|[^'] /s )* "\'" )
 #StringLiteral: / ("[^"\\]*(\\.[^"\\]*)*")|('[^'\\]*(\\.[^'\\]*)*') /s
 
-
 #
 # F-Strings
 #
@@ -64,7 +64,7 @@ FStringLiteral: "f" quote:/['"]/ core:FStringInside "$quote"
 NumberLiteral: / -?\d[\d_]*(\.[\d_]+)? /
 
 # Literals for true|false must NOT be followed by any possible characters representing variable name.
-BoolLiteral: ( "true" | "false" ) !VariableName
+BoolLiteral: / \b(true|false)\b /
 
 # Literal for null must NOT be followed by any possible characters representing variable name.
 NullLiteral: "null" !VariableName
@@ -82,9 +82,6 @@ DictDefinition: "{" __ ( items:DictItem ( __ "," __ items:DictItem )* )? __ ( ",
 ListDefinition: "[" __ ( items:Expression ( __ "," __ items:Expression )* )? __ ( "," __ )? "]"
 
 AbstractValue: skip:Literal | skip:Variable | skip:ListDefinition | skip:DictDefinition
-VariableVector: core:Variable vector:Vector
-Vector: ( "[" __ ( index:Expression | index:Nothing ) __ "]" ) vector:Vector?
-Mutable: skip:VariableVector | skip:VariableName
 
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
@@ -101,6 +98,25 @@ NegationOperator: "!"
 Expression: skip:AnonymousFunction | skip:Assignment | skip:CondExpr
 Assignment: left:Mutable __ AssignmentOperator __ right:Expression
 
+#
+# Accessing variables and their items or attributes - for writing.
+#
+
+Mutable: skip:VariableVector | skip:VariableName
+VariableVector: core:Variable ( ( vector:VectorAttr | vector:VectorItem )+ vector:VectorItemNoIndex? | vector:VectorItemNoIndex )
+VectorItem: "[" __ index:Expression __ "]"
+VectorItemNoIndex: "[" __ "]"
+VectorAttr: "." attr:VariableName
+
+#
+# Accessing variables and their items or attributes - for reading.
+#
+
+Chain: &/[\[\(\.]/ ( core: AttrAccess | core:Dereference | core:Invocation ) chain:Chain?
+Dereference: "[" __ key:Expression __ "]"
+Invocation: "(" __ args:ArgumentList? __ ")"
+AttrAccess: "." attr:VariableName
+
 # The order of how these rules are nested is very important, as it defines
 # their priority. We also need that they all are left-associative.
 CondExpr: true:LogicalOr ( ] "if" __ "(" __ cond:Expression __ ")" __ "else" ] false:LogicalOr )?
@@ -113,15 +129,17 @@ Exponentiation: operands:Negation ( __ ops:PowerOperator __ operands:Negation )*
 Negation: ( nots:NegationOperator )* core:Operand
 Operand: ( ( "(" __ core:Expression __ ")" | core:AbstractValue ) chain:Chain? ) | skip:AbstractValue
 
-Chain: &/[\[\(\.]/ ( core:Dereference | core:Invocation | core:ChainedFunction ) chain:Chain?
-Dereference: "[" __ key:Expression __ "]"
-Invocation: "(" __ args:ArgumentList? __ ")"
-ChainedFunction: "." fn:Variable invo:Invocation
-
 ArgumentList: args:Expression ( __ "," __ args:Expression )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block
+
+# Import statement:
+# 'from a.b.c import d' (import specific symbol from module)
+# 'import a.b.c' (import module as a whole)
+ImportStatement:
+	( "from" ] ( module: ( VariableName ("." VariableName)* ) ) ] "import" ] ( symbol: VariableName ) )
+	| ( "import" ] ( module: ( VariableName ("." VariableName)* ) ) )
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
 ForStatement: "for" __ "(" __ ( key:VariableName __ ":" __ )? item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
@@ -136,7 +154,7 @@ BreakStatement: "break"
 ContinueStatement: "continue"
 
 # &/[iwft]/ - No sub-rules will be even tried if the string does not start with a expected letter.
-BlockStatements: &/[iwft]/ ( skip:IfStatement | skip:WhileStatement | skip:FunctionDefinition | skip:ForStatement | skip:TryStatement)
+BlockStatements: &/[iwft]/ ( skip:IfStatement | skip:WhileStatement | skip:FunctionDefinition | skip:ForStatement | skip:TryStatement | skip:ImportStatement)
 
 # !/[\s\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
 Statement: !/[\s\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )

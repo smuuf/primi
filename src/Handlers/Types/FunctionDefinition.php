@@ -14,14 +14,15 @@ class FunctionDefinition extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
-		$callId = "{$node['fnName']}() (defined at {$node['_l']}:{$node['_p']})";
+		$name = "{$node['fnName']}()";
 		$currentScope = $context->getCurrentScope();
 
 		$fnc = FnContainer::build(
 			$node['body'],
+			$name,
+			$context->getCurrentModule(),
 			$node['params'],
 			$currentScope,
-			$callId
 		);
 
 		$currentScope->setVariable($node['fnName'], new FuncValue($fnc));

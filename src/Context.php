@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Tasks\TaskQueue;
@@ -12,50 +11,101 @@ use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Modules\Importer;
+use \Smuuf\Primi\Extensions\ExtensionHub;
 
 class Context {
 
 	use StrictObject;
 
+	//
+	// Call stack.
+	//
+
 	/**
 	 * Value of static property self::$callStackLimit fixed when
 	 * initializing new instance of Context (to ignore later modifications).
-	 *
-	 * @var int
 	 */
-	private $maxCallStackSize;
+	private int $maxCallStackSize;
 
-	/** @var string[] Call stack list. */
-	private $callStack = [];
+	/** @var CallFrame[] Call stack list. */
+	private array $callStack = [];
+
+	//
+	// Scope stack.
+	//
 
 	/** @var AbstractScope[] Scope stack list. */
-	private $scopeStack = [];
+	private array $scopeStack = [];
 
-	/**
-	 * Direct reference to the scope on the top of the stack.
-	 * @var AbstractScope
-	 */
-	private $currentScope = \null;
+	/** Direct reference to the scope on the top of the stack. */
+	private AbstractScope $currentScope;
 
-	/** @var TaskQueue Task queue for this context. */
-	private $taskQueue;
+	//
+	// Insides.
+	//
 
-	public function __construct(?AbstractScope $scope = \null) {
+	/** Task queue for this context. */
+	private TaskQueue $taskQueue;
+
+	/** Importer instance */
+	private Importer $importer;
+
+	/** ExtensionHub instance. */
+	private ExtensionHub $extensionHub;
+
+	public function __construct(
+		?AbstractScope $globalScope = \null,
+		?ExtensionHub $extHub = \null
+	) {
+
+		$this->extensionHub = $extHub ?? new ExtensionHub;
 
 		// Render the config value into instance property to ensure changing
 		// of the config doesn't change behavior of existing contexts.
 		$this->maxCallStackSize = Config::getCallStackLimit();
 
 		$this->taskQueue = new TaskQueue($this);
-		$this->pushScope($scope ?? new Scope);
+		$this->importer = new Importer($this);
+
+		if ($globalScope) {
+			$this->extensionHub->apply($globalScope);
+		} else {
+			$globalScope = $this->buildNewGlobalScope();
+		}
+
+		$this->pushScope($globalScope);
 
 	}
+
+	// "Global scope" factory.
+
+	public function buildNewGlobalScope(): AbstractScope {
+
+		$scope = new Scope;
+		$this->extensionHub->apply($scope);
+
+		return $scope;
+
+	}
+
+	// Task queue management.
 
 	public function getTaskQueue(): TaskQueue {
 		return $this->taskQueue;
 	}
 
-	// Callstack management.
+	// Importer management.
+
+	public function getImporter(): Importer {
+		return $this->importer;
+	}
+
+	public function getCurrentModule(): string {
+		return end($this->callStack)->getName();
+	}
+
+	// Call stack management.
 
 	public function getCallStack(): array {
 		return $this->callStack;
@@ -65,9 +115,9 @@ class Context {
 		return $this->callStack;
 	}
 
-	public function pushCall(string $callId): void {
+	public function pushCall(CallFrame $call): void {
 
-		$this->callStack[] = $callId;
+		$this->callStack[] = $call;
 
 		if (
 			$this->maxCallStackSize

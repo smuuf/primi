@@ -11,6 +11,7 @@ use \Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Helpers\Wrappers\CatchPosixSignalsWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
@@ -35,7 +36,10 @@ class DirectInterpreter {
 	 * a context representing a runtime-in-progress (and access local variables,
 	 * for example).
 	 */
-	public function execute(string $source, Context $ctx): AbstractValue {
+	public static function execute(
+		Source $source,
+		Context $ctx
+	): AbstractValue {
 
 		// Each node must have two keys: 'name' and 'text'.
 		// These are provided by the PHP-PEG itself, so we should be able to
@@ -45,7 +49,7 @@ class DirectInterpreter {
 		// passing the AST's root node to its dedicated handler (determined by
 		// node's "name").
 
-		$ast = $this->getSyntaxTree($source);
+		$ast = self::loadSyntaxTree($source->getCode());
 
 		// Register signal handling - maybe.
 		if (Config::getEffectivePosixSignalHandling()) {
@@ -54,10 +58,10 @@ class DirectInterpreter {
 			PosixSignalTaskEmitter::catch(SIGTERM);
 		}
 
-		try {
+		$wrapper = new CatchPosixSignalsWrapper($ctx->getTaskQueue());
+		return $wrapper->wrap(function() use ($ast, $ctx) {
 
-			$wrapper = new CatchPosixSignalsWrapper($ctx->getTaskQueue());
-			return $wrapper->wrap(function() use ($ast, $ctx) {
+			try {
 
 				$handler = HandlerFactory::getFor($ast['name']);
 				$retval = $handler::run($ast, $ctx);
@@ -69,18 +73,19 @@ class DirectInterpreter {
 
 				return $retval;
 
-			});
+			} catch (ContextAwareException|SystemException $e) {
+				throw new RuntimeError($e->getMessage());
+			} catch (ControlFlowException $e) {
+				$what = $e::ID;
+				throw new RuntimeError("Cannot '{$what}' from global scope");
+			}
 
-		} catch (ContextAwareException|SystemException $e) {
-			throw new RuntimeError($e->getMessage());
-		} catch (ControlFlowException $e) {
-			$what = $e::ID;
-			throw new RuntimeError("Cannot '{$what}' from global scope");
-		}
+		});
+
 
 	}
 
-	public function getSyntaxTree(string $source): array {
+	protected static function loadSyntaxTree(string $source): array {
 		return (new ParserHandler($source))->run();
 	}
 

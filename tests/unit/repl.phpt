@@ -6,6 +6,7 @@ use \Smuuf\Primi\Drivers\UserIoDriverInterface;
 
 require __DIR__ . '/../bootstrap.php';
 
+// So that output is not messed up by color codes and we can test it easily.
 putenv('NO_COLOR=1');
 
 $counter = 0;
@@ -24,19 +25,19 @@ $commands = [
 // This is expected output. This will be compared with actual output down below.
 // Asterisk * means that the line can be whatever.
 $expected = [
-	"ERR: Undefined variable 'a' @ line 1, position 0",
+	"ERR: Undefined variable 'a' @ <repl: cli> on line 1, position 0",
 	"Traceback:",
-	"[0] <repl>",
+	"[0] <repl: cli>",
 	"1",
-	"ERR: Undefined variable 'b' @ line 1, position 0",
+	"ERR: Undefined variable 'b' @ <repl: cli> on line 1, position 0",
 	"Traceback:",
-	"[0] <repl>",
+	"[0] <repl: cli>",
 	"1",
 	"a: 1",
 	"_: 1",
 	"<function: user>",
 	"Traceback:",
-	"[0] <repl>",
+	"[0] <repl: cli>",
 	'...', // ... - skip checking the rest.
 ];
 

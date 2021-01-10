@@ -9,11 +9,11 @@ use \Smuuf\Primi\Handlers\HandlerFactory;
 
 class ParserHandler extends CompiledParser {
 
-	/** @var string Primi source code that is to be parsed and executed. */
-	private $source;
+	/** Primi source code that is to be parsed and executed. */
+	private string $source;
 
 	/** @var array<string, scalar> Parser statistics. */
-	private $stats = [];
+	private array $stats = [];
 
 	public function __construct($source) {
 

@@ -2,9 +2,10 @@
 
 namespace Smuuf\Primi\Scopes;
 
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\WatchLifecycle;
 
 /**
  * Abstract base class for "variable scope" structure. Allows for custom
@@ -19,8 +20,8 @@ abstract class AbstractScope {
 	use StrictObject;
 	//use WatchLifecycle;
 
-	/** @var AbstractScope|null Parent scope, if any. */
-	protected $parent = null;
+	/** Parent scope, if any. */
+	protected ?AbstractScope $parent = null;
 
 	final public function setParent(self $parent): void {
 
@@ -58,7 +59,7 @@ abstract class AbstractScope {
 	 * will be included too (variables in child scopes have priority over those
 	 * from parent scopes).
 	 */
-	public function getVariables(bool $includeParents = \false): array {
+	final public function getVariables(bool $includeParents = \false): array {
 
 		$fromParents = ($includeParents && $this->parent)
 			// Recursively up, if there's a parent scope.

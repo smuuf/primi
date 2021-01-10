@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\Stdlib;
+namespace Smuuf\Primi\Stdlib\Extensions;
 
 use \Smuuf\Primi\Extensions\Extension;
 use \Smuuf\Primi\Values\BoolValue;
@@ -67,34 +67,6 @@ class NumberExtension extends Extension {
 		$result = $n->doPower($power ?? new NumberValue('2'));
 		return $result;
 
-	}
-
-	/**
-	 * Returns the sine of number `n` specified in radians.
-	 */
-	public static function number_sin(NumberValue $n): NumberValue {
-		return new NumberValue((string) \sin((float) $n->value));
-	}
-
-	/**
-	 * Returns the cosine of number `n` specified in radians.
-	 */
-	public static function number_cos(NumberValue $n): NumberValue {
-		return new NumberValue((string) \cos((float) $n->value));
-	}
-
-	/**
-	 * Returns the tangent of number `n` specified in radians.
-	 */
-	public static function number_tan(NumberValue $n): NumberValue {
-		return new NumberValue((string) \tan((float) $n->value));
-	}
-
-	/**
-	 * Returns the arc tangent of number `n` specified in radians.
-	 */
-	public static function number_atan(NumberValue $n): NumberValue {
-		return new NumberValue((string) \atan((float) $n->value));
 	}
 
 	/**

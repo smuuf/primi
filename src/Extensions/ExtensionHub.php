@@ -20,15 +20,15 @@ class ExtensionHub {
 	 * @const string[]
 	 */
 	const ESSENTIAL_EXTENSIONS = [
-		\Smuuf\Primi\Stdlib\StandardExtension::class,
-		\Smuuf\Primi\Stdlib\CastingExtension::class,
-		\Smuuf\Primi\Stdlib\CliExtension::class,
-		\Smuuf\Primi\Stdlib\BoolExtension::class,
-		\Smuuf\Primi\Stdlib\NumberExtension::class,
-		\Smuuf\Primi\Stdlib\StringExtension::class,
-		\Smuuf\Primi\Stdlib\ListExtension::class,
-		\Smuuf\Primi\Stdlib\DictExtension::class,
-		\Smuuf\Primi\Stdlib\RegexExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\StandardExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\CastingExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\CliExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\BoolExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\NumberExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\StringExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\ListExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\DictExtension::class,
+		\Smuuf\Primi\Stdlib\Extensions\RegexExtension::class,
 	];
 
 	/**
@@ -36,10 +36,8 @@ class ExtensionHub {
 	 * @const string[]
 	 */
 	const DEFAULT_EXTENSIONS = [
-		\Smuuf\Primi\Stdlib\HashExtension::class,
-		\Smuuf\Primi\Stdlib\DatetimeExtension::class,
 		\PHP_SAPI === 'cli' // CliExtension only in CLI mode.
-			? \Smuuf\Primi\Stdlib\CliExtension::class
+			? \Smuuf\Primi\Stdlib\Extensions\CliExtension::class
 			: \false,
 	];
 
@@ -47,12 +45,11 @@ class ExtensionHub {
 	private $extensions = [];
 
 	/**
-	 * Is `true` if extension hub was already applied to a scope and is now
-	 * locked. If so, new extensions cannot be added.
-	 *
-	 * @var bool
+	 * Materialized extension scope will be stored (cached) into this property.
+	 * Once materiailzed, no more extensions can be registered to this hub
+	 * instance.
 	 */
-	private $isLocked = \false;
+	private ?ExtensionScope $materializedScope = \null;
 
 	public function __construct(
 		array $extensions = [],
@@ -83,9 +80,9 @@ class ExtensionHub {
 	 */
 	public function add($extension): void {
 
-		if ($this->isLocked) {
+		if ($this->materializedScope) {
 			throw new EngineError(
-				"This ExtensionHub instance was already applied and is now locked"
+				"ExtensionHub was already materialized and is now locked"
 			);
 		}
 
@@ -112,10 +109,10 @@ class ExtensionHub {
 	}
 
 	/**
-	 * Create new `ExtensionScope` filled with items provided by the extension
-	 * hub and add it as the top parent for the scope passed as argument.
-	 *
-	 * If the top parent already is some `ExtensionScope`, do not do anything.
+	 * If not already materialized, materialize current extension hub into
+	 * `ExtensionScope` filled with items provided by extensions and return it.
+	 * If the extension hub was already materialized, return the already
+	 * existing `ExtensionScope`.
 	 */
 	public function apply(AbstractScope $scope): void {
 
@@ -126,10 +123,16 @@ class ExtensionHub {
 			return;
 		}
 
+		$extScope = $this->materializedScope ?? $this->buildExtensionScope();
+		$topScope->setParent($extScope);
+
+	}
+
+	private function buildExtensionScope(): ExtensionScope {
+
 		// Lock this extension hub to avoid adding new extensions - this
 		// ensures consistency (extensions added to the hub later wouldn't be
 		// available).
-		$this->isLocked = \true;
 		$extScope = new ExtensionScope;
 
 		foreach ($this->extensions as $ext) {
@@ -143,7 +146,8 @@ class ExtensionHub {
 
 		}
 
-		$topScope->setParent($extScope);
+		$this->materializedScope = $extScope;
+		return $extScope;
 
 	}
 

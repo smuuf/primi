@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\Stdlib;
+namespace Smuuf\Primi\Stdlib\Extensions;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Extensions\Extension;

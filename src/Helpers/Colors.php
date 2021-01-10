@@ -56,12 +56,36 @@ abstract class Colors {
 
 	];
 
-	public static function get(string $string, bool $revert = true): string {
+	public static function getMaybe(
+		bool $apply,
+		string $string,
+		bool $reset = true
+	): string {
+
+		$handler = $apply ? [self::class, 'handler'] : fn() => '';
+		return self::apply($string, $handler, $reset);
+
+	}
+
+	public static function get(string $string, bool $reset = true): string {
+		return self::apply($string, [self::class, 'handler'], $reset);
+	}
+
+	private static function apply(
+		string $string,
+		callable $handler,
+		bool $reset = true
+	): string {
+
+		// Insert reset character if we should reset styles on end.
+		if ($reset) {
+			$string .= '{_}';
+		}
 
 		return \preg_replace_callback(
 			'#(?<!\\\\)\{([a-z_-][a-z-]*)\}#i',
-			[self::class, 'handler'],
-			$string . ($revert ? '{_}' : \null) // Insert reset character if we should reset styles on end.
+			$handler,
+			$string
 		);
 
 	}

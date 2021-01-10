@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Ex\SystemException;
-use \Smuuf\Primi\Ex\ContextAwareException;
 
 /**
  * Base node handler class for evaluating some AST node within given context.
@@ -22,7 +23,19 @@ abstract class SimpleHandler extends Handler {
 		try {
 			return static::handle($node, $context);
 		} catch (RuntimeError|SystemException $e) {
-			throw new ContextAwareException($e->getMessage(), $node, $context);
+
+			$location = new Location(
+				$context->getCurrentModule(),
+				(int) $node['_l'],
+				(int) $node['_p']
+			);
+
+			throw new ErrorException(
+				$e->getMessage(),
+				$location,
+				$context->getCallStack()
+			);
+
 		}
 
 	}
