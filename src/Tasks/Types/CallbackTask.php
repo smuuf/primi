@@ -7,7 +7,7 @@ namespace Smuuf\Primi\Tasks\Types;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Tasks\TaskInterface;
 use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 class CallbackTask implements TaskInterface {
 

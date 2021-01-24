@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\SystemException;

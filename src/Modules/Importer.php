@@ -9,7 +9,7 @@ use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Ex\ModuleNotFoundError;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Helpers\Wrappers\ImportStackWrapper;
 use \Smuuf\Primi\Modules\DotPath;
 

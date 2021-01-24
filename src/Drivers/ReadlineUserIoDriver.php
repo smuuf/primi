@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Drivers;
 
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 class ReadlineUserIoDriver implements UserIoDriverInterface {
 

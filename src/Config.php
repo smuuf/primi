@@ -6,7 +6,7 @@ namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 final class Config {
 

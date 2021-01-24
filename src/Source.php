@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 /**
  * CLI helper class for representing Primi source code - provided either as

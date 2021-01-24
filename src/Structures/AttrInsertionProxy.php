@@ -6,7 +6,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 /**
  * @internal

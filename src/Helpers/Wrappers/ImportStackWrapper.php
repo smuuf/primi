@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers\Wrappers;
 
 use \Smuuf\Primi\Ex\CircularImportError;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Modules\DotPath;
 use \Smuuf\Primi\Modules\Importer;
 

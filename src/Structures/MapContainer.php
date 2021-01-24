@@ -7,7 +7,7 @@ namespace Smuuf\Primi\Structures;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 /**
  * Map container structure supporting Primi value objects as keys.

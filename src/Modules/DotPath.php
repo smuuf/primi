@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Modules;
 
 use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 class DotPath {
 

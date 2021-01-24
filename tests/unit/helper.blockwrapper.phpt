@@ -3,7 +3,7 @@
 use \Tester\Assert;
 
 use \Smuuf\Primi\Helpers\Wrappers\AbstractWrapper;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 require __DIR__ . '/../bootstrap.php';
 

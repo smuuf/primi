@@ -7,7 +7,7 @@ namespace Smuuf\Primi\Tasks;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Stats;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 class TaskQueue {
 
