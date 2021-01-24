@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 /**
  * Static helper class for getting correct handler class for specific AST node.

@@ -4,7 +4,7 @@ namespace Smuuf\Primi\Scopes;
 
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Helpers\Traits\WatchLifecycle;
 
 /**

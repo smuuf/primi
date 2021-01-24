@@ -12,7 +12,7 @@ use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Modules\Importer;
-use \Smuuf\Primi\Extensions\ExtensionHub;
+use \Smuuf\StrictObject;
 
 class Context {
 

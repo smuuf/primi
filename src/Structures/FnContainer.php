@@ -16,7 +16,7 @@ use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Stats;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 

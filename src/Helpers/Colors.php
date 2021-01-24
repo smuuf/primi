@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 abstract class Colors {
 

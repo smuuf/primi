@@ -7,7 +7,7 @@ namespace Smuuf\Primi\Helpers\Wrappers;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\CallFrame;
 use \Smuuf\Primi\Scopes\AbstractScope;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 class ContextPushPopWrapper extends AbstractWrapper {
 

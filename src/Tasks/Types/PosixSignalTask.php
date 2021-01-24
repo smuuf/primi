@@ -10,7 +10,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Tasks\TaskInterface;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\StrictObject;
 
 class PosixSignalTask implements TaskInterface {
 

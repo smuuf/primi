@@ -6,7 +6,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $object = new class {
 
-	use \Smuuf\Primi\Helpers\Traits\StrictObject;
+	use \Smuuf\StrictObject;
 	// Nothing to see here.
 
 };
