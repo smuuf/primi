@@ -1,10 +1,10 @@
 <?php
 
-namespace Smuuf\Primi\Parser;
+namespace Smuuf\Primi\Parser\Compiled;
 
 use \hafriedlander\Peg\Parser;
 
-class CompiledParser extends Parser\Packrat {
+class PrimiParser extends Parser\Packrat {
 
 	// Add these properties so PHPStan doesn't complain about undefined properties.
 
@@ -50,8 +50,7 @@ StringLiteral: quote:/['"]/ core:StringInside "$quote"
 # F-Strings
 #
 
-# Currently only allowed things in f-string expression: variables.
-FStringExpr: core:Variable
+FStringExpr: core:CondExpr
 # Either: "backslash followed by whatever" or "{{" or "}}", or "whatever unless { or } or ending quotes"
 FStringTxt: ( / (\\.)+ / | "{{" | "}}" | / [^\{\}{$quote}] / )*
 FStringInside: parts:FStringTxt ( "{" parts:FStringExpr "}" parts:FStringTxt )*
@@ -137,9 +136,11 @@ FunctionDefinition: "function" [ function:VariableName __ "(" __ params:Function
 # Import statement:
 # 'from a.b.c import d' (import specific symbol from module)
 # 'import a.b.c' (import module as a whole)
+#ImportStatement:
+#	( "from" ] ( module: ( VariableName ("." VariableName)* ) ) ] "import" ] ( symbol: VariableName ) )
+#	| ( "import" ] ( module: ( VariableName ("." VariableName)* ) ) )
 ImportStatement:
-	( "from" ] ( module: ( VariableName ("." VariableName)* ) ) ] "import" ] ( symbol: VariableName ) )
-	| ( "import" ] ( module: ( VariableName ("." VariableName)* ) ) )
+	"import" ] ( module: ( "."* VariableName ("." VariableName)* ) ) > ( ":" > symbols: VariableName ( > "," > symbols: VariableName )* )?
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
 ForStatement: "for" __ "(" __ ( key:VariableName __ ":" __ )? item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
