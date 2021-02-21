@@ -25,8 +25,8 @@ class StringValue extends AbstractValue {
 			throw new EngineError("Missing argument for StringValue::build()");
 		}
 
-		// Strings up to 1000 characters will be interned.
-		if (strlen($str) <= 1000) {
+		// Strings up to 512 characters will be interned.
+		if (strlen($str) <= 512) {
 			return self::$interned[$str]
 				?? (self::$interned[$str] = new self($str));
 		}
@@ -104,7 +104,7 @@ class StringValue extends AbstractValue {
 			return new self(\str_repeat($this->value, (int) $multiplier));
 		}
 
-		throw new RuntimeError("String multiplier must be a positive integer.");
+		throw new RuntimeError("String multiplier must be a positive integer");
 
 	}
 
@@ -169,7 +169,7 @@ class StringValue extends AbstractValue {
 	public function doesContain(AbstractValue $right): ?bool {
 
 		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
-			throw new TypeError("'in' for string requires 'string|regex' as left operand.");
+			throw new TypeError("'in' for string requires 'string|regex' as left operand");
 		}
 
 		if ($right instanceof RegexValue) {

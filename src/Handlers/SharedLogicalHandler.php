@@ -33,7 +33,7 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 			default:
 				// Unknown operator - should not ever happen, unless there's
 				// any unexpected output of source code parting.
-				throw new EngineInternalError("Unknown operator '$type'.");
+				throw new EngineInternalError("Unknown operator '$type'");
 		}
 
 	}

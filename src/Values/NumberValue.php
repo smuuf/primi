@@ -33,8 +33,8 @@ class NumberValue extends AbstractValue {
 			throw new EngineError("Missing argument for NumberValue::build()");
 		}
 
-		// Numbers up to 5 characters (after normalizing) will be interned.
-		if (strlen($number) <= 5) {
+		// Numbers up to 16 characters will be interned.
+		if (strlen($number) <= 16) {
 			return self::$interned[$number]
 				?? (self::$interned[$number] = new self($number));
 		}

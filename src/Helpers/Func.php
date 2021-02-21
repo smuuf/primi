@@ -313,7 +313,7 @@ abstract class Func {
 	 * trees representing logical/mathematical operations.
 	 *
 	 * Return a generator yielding tuples of `[operator, operand]` with the
-	 * excaption of first iteration, where the tuple `[null, first operand]` is
+	 * exception of first iteration, where the tuple `[null, first operand]` is
 	 * returned.
 	 *
 	 * For example when primi source code `1 and 2 and 3` is parsed and then
