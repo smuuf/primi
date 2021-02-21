@@ -96,7 +96,7 @@ class DictValue extends AbstractValue {
 	public function itemSet(?AbstractValue $key, AbstractValue $value): bool {
 
 		if ($key === \null) {
-			throw new RuntimeError("Must specify key when inserting into dict.");
+			throw new RuntimeError("Must specify key when inserting into dict");
 		}
 
 		$this->value[$key] = $value;

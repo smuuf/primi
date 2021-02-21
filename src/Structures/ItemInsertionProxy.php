@@ -32,7 +32,7 @@ class ItemInsertionProxy implements InsertionProxyInterface {
 		$success = $this->target->itemSet($this->key, $value);
 		if ($success === \false) {
 			throw new TypeError(sprintf(
-				"Type '%s' does not support item assignment.",
+				"Type '%s' does not support item assignment",
 				($this->target)::TYPE
 			));
 		}

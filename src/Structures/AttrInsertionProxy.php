@@ -32,7 +32,7 @@ class AttrInsertionProxy implements InsertionProxyInterface {
 		$success = $this->target->attrSet($this->key, $value);
 		if ($success === \false) {
 			throw new TypeError(sprintf(
-				"Type '%s' does not support attribute assignment.",
+				"Type '%s' does not support attribute assignment",
 				($this->target)::TYPE
 			));
 		}

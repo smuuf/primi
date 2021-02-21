@@ -26,7 +26,7 @@ class BoolValue extends AbstractValue {
 
 	}
 
-	public function __construct(bool $value) {
+	private function __construct(bool $value) {
 		$this->value = $value;
 		Stats::add('values_bool');
 	}
