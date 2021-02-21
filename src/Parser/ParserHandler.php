@@ -2,24 +2,30 @@
 
 namespace Smuuf\Primi\Parser;
 
-use \Smuuf\Primi\Ex\SyntaxError;
+use \hafriedlander\Peg\Parser\Basic as PegParser;
+
+use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Timer;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
-class ParserHandler extends CompiledParser {
+class ParserHandler {
 
-	/** Primi source code that is to be parsed and executed. */
+	/** Primi source code as string that is to be parsed and executed. */
 	private string $source;
 
 	/** @var array<string, scalar> Parser statistics. */
 	private array $stats = [];
 
-	public function __construct($source) {
+	/** @var object Compiled parser object. */
+	private PegParser $parser;
 
+	public function __construct(string $source) {
+
+		$class = ParserFactory::getParserClass();
 		$source = self::sanitizeSource($source);
 
-		parent::__construct($source);
+		$this->parser = new $class($source);
 		$this->source = $source;
 
 	}
@@ -34,14 +40,14 @@ class ParserHandler extends CompiledParser {
 	public function run(): array {
 
 		$t = (new Timer)->start();
-		$result = $this->match_Program();
+		$result = $this->parser->match_Program();
 		$this->stats['parsing'] = $t->get();
 
 		if ($result['text'] !== $this->source) {
 
 			// $this->pos is an internal PEG Parser position counter and
 			// we will use it to determine the line and position in the source.
-			$this->syntaxError($this->pos, $this->source);
+			$this->syntaxError($this->parser->pos, $this->source);
 
 		}
 
@@ -56,19 +62,18 @@ class ParserHandler extends CompiledParser {
 	private function syntaxError(int $position, string $source) {
 
 		$line = \false;
-		$pos = \false;
 
 		if ($position !== \false) {
-			[$line, $pos] = Func::get_position_estimate(
+			[$line, $_] = Func::get_position_estimate(
 				$this->source,
 				$position
 			);
 		}
 
-		// Show a bit of code where the syntax error occured.
+		// Show a bit of code where the syntax error occurred.
 		$excerpt = \mb_substr($source, $position, 20);
 
-		throw new SyntaxError((int) $line, (int) $pos, $excerpt);
+		throw new InternalSyntaxError((int) $line, $excerpt);
 
 	}
 
