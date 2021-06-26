@@ -1,0 +1,10 @@
+print('hello to math package inside external_lib library')
+
+function random_number() {
+	return 4
+}
+
+import std.types
+import std.math
+
+assert(type(math.sin) == types.FunctionType)

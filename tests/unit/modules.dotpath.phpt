@@ -1,100 +1,115 @@
 <?php
 
+use Smuuf\Primi\Ex\ImportBeyondTopException;
 use Smuuf\Primi\Ex\EngineInternalError;
 use \Tester\Assert;
 
-use \Smuuf\Primi\Modules\DotPath;
+use \Smuuf\Primi\Modules\Dotpath;
 
 require __DIR__ . '/../bootstrap.php';
 
 //
-// Absolute dot paths.
+// Absolute dotpaths.
 //
 
-$dp = new DotPath('a');
-Assert::false($dp->isRelative());
-Assert::same(['a'], $dp->getParts());
+$dp = new Dotpath('a');
+Assert::same('a', $dp->getAbsolute());
 
-$dp = new DotPath('a.b');
-Assert::false($dp->isRelative());
-Assert::same(['a', 'b'], $dp->getParts());
+$dp = new Dotpath('a.b');
+Assert::same('a.b', $dp->getAbsolute());
 
-$dp = new DotPath('a.b.c');
-Assert::false($dp->isRelative());
-Assert::same(['a', 'b', 'c'], $dp->getParts());
+$dp = new Dotpath('a.b.c');
+Assert::same('a.b.c', $dp->getAbsolute());
 
-$dp = new DotPath('a1.b2.c3');
-Assert::false($dp->isRelative());
-Assert::same(['a1', 'b2', 'c3'], $dp->getParts());
+$dp = new Dotpath('a1.b2.c3');
+Assert::same('a1.b2.c3', $dp->getAbsolute());
 
 //
-// Relative dot paths.
+// Absolute dotpaths with origin - origin is ignored.
 //
 
-$dp = new DotPath('.a.b.c');
-Assert::true($dp->isRelative());
-Assert::same(['.', 'a', 'b', 'c'], $dp->getParts());
+$dp = new Dotpath('a.b.c', '');
+Assert::same('a.b.c', $dp->getAbsolute());
 
-$dp = new DotPath('..a.b.c');
-Assert::true($dp->isRelative());
-Assert::same(['.', '..', 'a', 'b', 'c'], $dp->getParts());
+$dp = new Dotpath('a.b.c', 'x');
+Assert::same('a.b.c', $dp->getAbsolute());
 
-$dp = new DotPath('...a.b.c');
-Assert::true($dp->isRelative());
-Assert::same(['.', '..', '..', 'a', 'b', 'c'], $dp->getParts());
+$dp = new Dotpath('a', 'x.y.z');
+Assert::same('a', $dp->getAbsolute());
 
-$dp = new DotPath('.a');
-Assert::true($dp->isRelative());
-Assert::same(['.', 'a'], $dp->getParts());
-
-$dp = new DotPath('..a');
-Assert::true($dp->isRelative());
-Assert::same(['.', '..', 'a'], $dp->getParts());
-
-$dp = new DotPath('...a');
-Assert::true($dp->isRelative());
-Assert::same(['.', '..', '..', 'a'], $dp->getParts());
+$dp = new Dotpath('a.b.c', 'x.y.z');
+Assert::same('a.b.c', $dp->getAbsolute());
 
 //
-// Test exceptions caused by invalid dot paths.
+// Relative dotpaths.
+//
+
+$dp = new Dotpath('.a', 'package');
+Assert::same('package.a', $dp->getAbsolute());
+
+$dp = new Dotpath('.a.b.c', 'package.x');
+Assert::same('package.x.a.b.c', $dp->getAbsolute());
+
+$dp = new Dotpath('.a.b.c', 'package.x.y');
+Assert::same('package.x.y.a.b.c', $dp->getAbsolute());
+
+$dp = new Dotpath('..a.b.c', 'package.x.y');
+Assert::same('package.x.a.b.c', $dp->getAbsolute());
+
+$dp = new Dotpath('...a.b.c', 'package.x.y');
+Assert::same('package.a.b.c', $dp->getAbsolute());
+
+// Relative import reached beyond even the package, so expect an error.
+Assert::exception(
+	fn() => new Dotpath('.....a.b.c', 'package.x.y'),
+	ImportBeyondTopException::class
+);
+
+Assert::exception(
+	fn() => new Dotpath('................a.b.c', 'package.x.y'),
+	ImportBeyondTopException::class
+);
+
+//
+// Test internal exceptions caused by invalid dotpaths.
 //
 
 Assert::exception(
-	fn() => new DotPath(''),
+	fn() => new Dotpath(''),
 	EngineInternalError::class
 );
 
 Assert::exception(
-	fn() => new DotPath('0'),
+	fn() => new Dotpath('0'),
 	EngineInternalError::class
 );
 
 Assert::exception(
-	fn() => new DotPath('123.a.b'),
+	fn() => new Dotpath('123.a.b'),
 	EngineInternalError::class
 );
 
 Assert::exception(
-	fn() => new DotPath('..123.a.b'),
+	fn() => new Dotpath('..123.a.b'),
 	EngineInternalError::class
 );
 
 Assert::exception(
-	fn() => new DotPath('a/b'),
+	fn() => new Dotpath('a/b'),
 	EngineInternalError::class
 );
 
 Assert::exception(
-	fn() => new DotPath('a|b'),
+	fn() => new Dotpath('a|b'),
 	EngineInternalError::class
 );
 
 Assert::exception(
-	fn() => new DotPath('a.b/c'),
+	fn() => new Dotpath('a.b/c'),
 	EngineInternalError::class
 );
 
 Assert::exception(
-	fn() => new DotPath('x.3.z'),
+	fn() => new Dotpath('x.3.z'),
 	EngineInternalError::class
 );
