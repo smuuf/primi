@@ -1,4 +1,0 @@
-// pragma:one_liners
-a = []..4; // EX
-_b = []; b = _b..4; // EX
-c = 1..50..2; // EX

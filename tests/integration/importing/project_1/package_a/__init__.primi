@@ -1,0 +1,2 @@
+imported_package_a = true
+module_var = 'package_a_|__init__'

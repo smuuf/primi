@@ -1,0 +1,14 @@
+function pipe(fns) {
+
+	return function(arg) {
+
+		result = arg
+		for (fn in fns) {
+			result = fn(result)
+		}
+
+		return result
+
+	}
+
+}

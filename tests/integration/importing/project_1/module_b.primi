@@ -1,0 +1,18 @@
+import package_a.package_a_a
+
+try {
+	success = false
+	// This should fail - the module package_a_a doesn't have this attribute.
+	print(package_a_a.some_unknown_attribute)
+} catch {
+	success = true
+}
+
+assert(success)
+
+// Import doesn't have to be on the top of the file.
+import package_a.package_a_a.module_a
+
+assert(module_a.var == 'package_a|package_a_a|module_a')
+
+var = 'module_b'

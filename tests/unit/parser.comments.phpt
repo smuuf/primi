@@ -43,7 +43,7 @@ Assert::same('after // slashes//', get_ast($code)['stmts'][0]['right']['text']);
 // Helpers.
 
 function get_ast(string $source) {
-	return (new \Smuuf\Primi\ParserHandler($source))->run();
+	return (new \Smuuf\Primi\Parser\ParserHandler($source))->run();
 }
 
 function get_ast_array_simple() {

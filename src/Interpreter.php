@@ -2,91 +2,138 @@
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Scopes\AbstractScope;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Extensions\ExtensionHub;
+use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
+
 /**
- * Direct abstract syntax tree interpreter.
- * @see https://en.wikipedia.org/wiki/Interpreter_(computing)#Abstract_Syntax_Tree_interpreters
+ * Primi's primary abstract syntax tree interpreter.
  */
-class Interpreter extends \Smuuf\Primi\StrictObject {
+class Interpreter extends DirectInterpreter {
 
-	private $tempDir;
-	private $context;
+	/**
+	 * Path to temporary directory where ASTs will be cached.
+	 * If `null`, AST cache will not be used at all.
+	 */
+	private ?string $tempDir;
 
+	/** Runtime context the interpreter works with. */
+	private Context $context;
+
+	/**
+	 * Create a new instance of interpreter.
+	 *
+	 * @param string|null $tempDir _(optional)_ Path to temporary directory used
+	 * to cache parsed AST. If not specified, parsed Primi files will not be
+	 * cached.
+	 * @param ExtensionHub|null $extHub _(optional)_ Instance of extension hub
+	 * to be used.
+	 */
 	public function __construct(
-		?IContext $context = null,
-		string $tempDir = ''
+		Context $context = null,
+		?string $tempDir = null,
+		?ExtensionHub $extHub = null
 	) {
 
-		$this->tempDir = rtrim($tempDir, "/") ?: "";
-		$this->context = $context ?: new Context;
+		// If temp directory was not specified, do not cache parsed AST.
+		$tmp = $tempDir !== null
+			? realpath($tempDir) // Returns false if path does not exist.
+			: null;
 
-		self::applyExtensions($this->context);
+		if ($tmp === false) {
+			throw new EngineError("Specified temp directory '$tempDir' does not exist");
+		}
+
+		$this->tempDir = $tmp;
+
+		// Create new context, if it was not provided.
+		$context = $context ?? new Context(null, $extHub);
+		$this->context = $context;
 
 	}
 
-	protected static function applyExtensions(IContext $context) {
-		$context->setVariables(ExtensionHub::get(), true);
+	/**
+	 * Returns scope the runtime is currently in.
+	 *
+	 * Most probably this will be the global scope, unless there are some
+	 * shenanigans going on with concurrency and this method is called when the
+	 * interpreter is currently in some other, nested scope.
+	 */
+	public function getCurrentScope(): AbstractScope {
+		return $this->context->getCurrentScope();
 	}
 
-	public function getContext(): IContext {
+	/**
+	 * Returns the primary runtime context.
+	 */
+	public function getContext(): Context {
 		return $this->context;
 	}
 
-	public function run(string $source) {
+	/**
+	 * Main entrypoint for running a Primi source code.
+	 *
+	 * @param string|Source
+	 */
+	public function run($source): AbstractValue {
 
-		$ast = $this->getSyntaxTree($source);
-
-		// Each node must have two keys: 'name' and 'text'.
-		// These are provided by the PHP-PEG itself, so we should be able to
-		// be counting on it.
-
-		// We begin the process of interpreting a source code simply by
-		// passing the AST's root node to its dedicated handler (determined by
-		// node's "name").
-
-		try {
-
-			$handler = HandlerFactory::get($ast['name']);
-			return $handler::handle($ast, $this->context);
-
-		} catch (ReturnException $e) {
-			throw new ErrorException("Cannot 'return' from global scope");
-		} catch (BreakException $e) {
-			throw new ErrorException("Cannot 'break' from global scope");
+		// Convert string source to source object, if necessary.
+		if (is_string($source)) {
+			$source = new Source($source, false);
 		}
+
+		$frame = new CallFrame("<main: {$source->getId()}>", null);
+
+		$wrapper = new ContextPushPopWrapper($this->context, $frame);
+		return $wrapper->wrap(function($ctx) use ($source) {
+			return self::execute($source, $ctx);
+		});
 
 	}
 
 	public function getSyntaxTree(string $source): array {
 
-		if ($this->tempDir && $ast = $this->loadCachedAST($source)) {
+		// Use cached parsed AST, if caching is enabled and cached AST is
+		// available for this source code string.
+		if ($ast = $this->loadAST($source)) {
 			return $ast;
 		}
 
-		$parser = new ParserHandler($source);
-		$ast = $parser->run();
+		$ast = parent::loadSyntaxTree($source);
 
-		if ($this->tempDir) {
-			$this->storeCachedAST($ast, $source);
-		}
+		// Store/cache parsed AST, if caching is enabled.
+		$this->storeAST($ast, $source);
 
 		return $ast;
 
 	}
 
-	protected function loadCachedAST(string $source) {
+	protected function loadAST(string $source): ?array {
+
+		if ($this->tempDir === null) {
+			return null;
+		}
 
 		$path = self::buildCachedPath($source, $this->tempDir);
 		if (is_file($path)) {
 			return json_decode(file_get_contents($path), true);
 		}
 
-		return false;
+		return null;
 
 	}
 
-	protected function storeCachedAST(array $ast, string $source) {
+	protected function storeAST(array $ast, string $source): void {
+
+		if ($this->tempDir === null) {
+			return;
+		}
+
 		$path = self::buildCachedPath($source, $this->tempDir);
 		file_put_contents($path, json_encode($ast));
+
 	}
 
 	private static function buildCachedPath(string $source, string $path): string {
@@ -94,15 +141,3 @@ class Interpreter extends \Smuuf\Primi\StrictObject {
 	}
 
 }
-
-ExtensionHub::add([
-	\Smuuf\Primi\Psl\StandardExtension::class,
-	\Smuuf\Primi\Psl\StringExtension::class,
-	\Smuuf\Primi\Psl\NumberExtension::class,
-	\Smuuf\Primi\Psl\ArrayExtension::class,
-	\Smuuf\Primi\Psl\RegexExtension::class,
-	\Smuuf\Primi\Psl\BoolExtension::class,
-	\Smuuf\Primi\Psl\CastingExtension::class,
-	\Smuuf\Primi\Psl\HashExtension::class
-]);
-

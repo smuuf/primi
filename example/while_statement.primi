@@ -1,11 +1,9 @@
-// No semicolons anywhere!
-
 a = 5
 counter = 0
 while (a) {
-   counter = counter + 1
-   x = a
-   a = a - 1
+    counter = counter + 1
+    x = a
+    a = a - 1
 }
 assert(a == 0)
 assert(counter == 5)
@@ -13,9 +11,44 @@ assert(counter == 5)
 a = 10
 c = 0
 while (10 <= a < 20) {
-   a = a + 2
-   c = c + 1
+    a = a + 2
+    c = c + 1
 }
 
 assert(a == 20)
 assert(c == 5)
+
+// Continue...
+
+c = 0
+data = []
+while (c <= 10) {
+
+    div = c / 2
+
+    if (div != div.round()) {
+        // If the number is odd, continue to the next iteration.
+        c = c + 1
+        continue
+    }
+
+    data.push(c)
+    c = c + 1
+
+}
+assert(data == [0, 2, 4, 6, 8, 10])
+
+// Continue...
+
+c = 0
+data = []
+while (c <= 10) {
+
+    c = c + 1
+    if (c > 5) {
+        break
+    }
+    data.push(c)
+
+}
+assert(data == [1, 2, 3, 4, 5])

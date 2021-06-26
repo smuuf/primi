@@ -22,8 +22,12 @@ assert(result == 'xyzZAQ:5.123')
 
 a = 4 / (2 - 1) * 100
 damn = 153 * 2
+
 x = "zaplaťte pouze {} Kč za skvělou {}".format(a, damn)
-assert(x == "zaplaťte pouze 400 Kč za skvělou 306", "String formatting with concatenation")
+assert(x == "zaplaťte pouze 400 Kč za skvělou 306", "String formatting with string_format()")
+
+x = f"zaplaťte pouze {a} Kč za skvělou {damn}"
+assert(x == "zaplaťte pouze 400 Kč za skvělou 306", "String formatting with f-strings.")
 
 //
 // String vs string comparison.
@@ -52,7 +56,7 @@ assert(result == false)
 //
 
 x = "ahojahojahojahojahoj"
-if (x == r'(ahoj){5}') { // A little bit of regex sneaked in here.
+if (x == rx'(ahoj){5}') { // A little bit of regex sneaked in here.
 	x = "nazdárek!"
 }
 assert(x == "nazdárek!", "String vs regex matching")
@@ -121,3 +125,36 @@ assert(changes == 15)
 assert(result == "Kdyz zacináme myslet, nemáme k dispozici nic jiného nez myšlenku v " +
 	"jeji cisté neurcenosti, neboť k urceni jiz patři jedno nebo nejaké " +
 	"jiné, ale na zacátku ješte nemáme zádné jiné...")
+
+//
+// String comparison with strings.
+//
+
+_ = "Strings are compared lexicographically (based on ASCII, so 'A' is lower than 'a')"
+assert('c' > 'a', _)
+assert('b' > 'a', _)
+assert(('a' > 'a') == false, _)
+assert(('a' < 'a') == false, _)
+assert('b' < 'c', _)
+assert('b' <= 'c', _)
+assert('b' <= 'b', _)
+assert('c' >= 'b', _)
+assert('c' >= 'c', _)
+
+assert('A' < 'a', _)
+assert('B' < 'b', _)
+assert('C' < 'c', _)
+assert('a' > 'A', _)
+assert('b' > 'B', _)
+assert('c' > 'C', _)
+assert(('A' > 'a') == false, _)
+assert(('B' > 'b') == false, _)
+assert(('C' > 'c') == false, _)
+assert(('a' < 'A') == false, _)
+assert(('b' < 'B') == false, _)
+assert(('c' < 'C') == false, _)
+
+assert('aa' > 'a', _)
+assert('ab' > 'aa', _)
+assert('a' < 'aa', _)
+assert('aa' < 'ab', _)

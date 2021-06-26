@@ -1,7 +1,8 @@
 #!/bin/bash
 
-cd $(dirname $(dirname $0))
-
-php ./vendor/smuuf/php-peg/bin/peg ./src/parser/Grammar.peg ./src/parser/CompiledParser.php
+cd `dirname $0`/..
 
 rm -f ./temp/*.json
+
+php ./vendor/smuuf/php-peg/bin/peg ./src/Parser/Grammar.peg ./src/Parser/CompiledParser.php
+

@@ -1,0 +1,133 @@
+a = {0: 'a', true: 'b'}
+assert(len(a) == 2, "Dict reports correct length")
+
+b = { // Can be multiline
+	true: 'b',
+	0: 'a', // With comments.
+}
+
+_ = "Simple dicts with different order but same 'key: value' pairs are the same"
+assert(a == b, _)
+
+a = {
+	0: 'a',
+	true: 'b',
+	1: '111',
+	false: 'c',
+	null: 'd',
+	'0': 'g',
+	'00': 'h',
+	00: 'overwrites_first_key', // Because integer 00 == 0
+}
+assert(len(a) == 7, "Dict reports correct length")
+
+_ = "Correct result of dict_get function"
+assert(a.get(0) == 'overwrites_first_key', _)
+assert(a.get(true) == 'b', _)
+assert(a.get(1) == '111', _)
+assert(a.get(false) == 'c', _)
+assert(a.get(null) == 'd', _)
+assert(a.get('0') == 'g', _)
+assert(a.get('00') == 'h', _)
+
+b = {
+	false: 'c',
+	'0': 'g',
+	'00': 'h',
+	0: 'a',
+	00: 'overwrites_first_key', // Because integer 00 == 0
+	true: 'b',
+	1: '111',
+	null: 'd',
+}
+assert(len(b) == 7, "Dict reports correct length")
+
+_ = "Complex dicts with different order but same 'key: value' pairs are the same"
+assert(a == b, _)
+
+//
+// Modifying dict values.
+//
+
+b[1] = '112'
+assert(b[1] == '112', "Dicts can have values changed")
+assert(a != b, "After changing value of one dict, dicts are not the same")
+assert(b.get('completely_new_key') == null)
+
+b['completely_new_key'] = {'i_think': 'wow!'}
+assert(b.get('completely_new_key') == {'i_think': 'wow!'})
+
+_ = "Modifying dict values: References are kept."
+new_dict = {}
+b['some_new_dict'] = new_dict
+new_dict['new_key'] = 'new_value'
+assert(b['some_new_dict']['new_key'] == 'new_value', _)
+
+//
+// Extreme number keys.
+//
+
+SUPER_BIG_NUMBER_INT = 1223456 ** 789
+SUPER_BIG_NUMBER_FLOAT = 1223456 ** 789 / (10 ** 100)
+SUPER_SMALL_NUMBER_FLOAT = 1 / 10 ** 128
+SUPER_SMALL_NUMBER_FLOAT_TOOSMALL = 1 / 10 ** 129 // Will be exactly zero.
+
+c = {
+	0000000000000000.0000000000000000000000001: 'first',
+	0.0000000000000000000000001: 'second',
+	00000000000000010000000000000000.0000000000000000000000001: 'first',
+	10000000000000000.0000000000000000000000001: 'second',
+	SUPER_BIG_NUMBER_INT: 'bigint1',
+	SUPER_BIG_NUMBER_INT + 1: 'bigint2',
+	SUPER_BIG_NUMBER_INT - 1: 'bigint3',
+	SUPER_BIG_NUMBER_FLOAT: 'bigfloat1',
+	SUPER_BIG_NUMBER_FLOAT + 1: 'bigfloat2',
+	SUPER_BIG_NUMBER_FLOAT - 1: 'bigfloat3',
+	SUPER_SMALL_NUMBER_FLOAT: 'smallfloat1',
+	SUPER_SMALL_NUMBER_FLOAT + 1: 'smallfloat2',
+	SUPER_SMALL_NUMBER_FLOAT - 1: 'smallfloat3',
+	SUPER_SMALL_NUMBER_FLOAT_TOOSMALL: 'toosmall_first',
+	0: 'toosmall_second',
+}
+
+_ = 'Dictionaries can have really large integer numbers as keys without collisions'
+assert(c[SUPER_BIG_NUMBER_INT] == 'bigint1', _)
+assert(c[SUPER_BIG_NUMBER_INT + 1] == 'bigint2', _)
+assert(c[SUPER_BIG_NUMBER_INT - 1] == 'bigint3', _)
+
+_ = 'Dictionaries can have really large float numbers as keys without collisions'
+assert(c[SUPER_BIG_NUMBER_FLOAT] == 'bigfloat1', _)
+assert(c[SUPER_BIG_NUMBER_FLOAT + 1] == 'bigfloat2', _)
+assert(c[SUPER_BIG_NUMBER_FLOAT - 1] == 'bigfloat3', _)
+
+_ = 'Dictionaries can have really small float numbers as keys with up to 128 decimal digits without collisions'
+assert(c[SUPER_SMALL_NUMBER_FLOAT] == 'smallfloat1', _)
+assert(c[SUPER_SMALL_NUMBER_FLOAT + 1] == 'smallfloat2', _)
+assert(c[SUPER_SMALL_NUMBER_FLOAT - 1] == 'smallfloat3', _)
+
+_ = 'All values containing word "first" are overwritten by other keys that normalized into collisions'
+for (value in c) {
+	assert(value.contains('first') == false, _)
+}
+
+empty_dict = {}
+assert(true == empty_dict.get('_', true))
+assert(false == empty_dict.get('_', false))
+assert([] == empty_dict.get('_', []))
+assert({} == empty_dict.get('_', {}))
+assert({'x': 123, 'y': 456} == empty_dict.get('_', {'y': 456, 'x': 123}))
+
+// Testing a large dict with 500_000 items.
+// May be a bit slow for common tests, so uncomment this if needed.
+//
+// initial_memory = memory_get_usage()
+//
+// large_dict = {}
+// c = 0
+// while (c <= 500_000) {
+// 	large_dict[c] = hash_md5(c)
+// 	c = c + 1
+// }
+// assert(len(large_dict) == 500_000)
+//
+// print('Large dict needed {} MB of memory'.format((memory_get_usage() - initial_memory) / 10**6)

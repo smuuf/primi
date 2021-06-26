@@ -5,7 +5,7 @@ declare(strict_types=1);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
-const MAX_ITER = 500000;
+const MAX_ITER = 50000;
 
 //
 // Run some CPU intensive tasks and measure their duration in pure PHP.
@@ -51,9 +51,37 @@ function bench_regex_matches() {
 
 }
 
+function bench_dicts() {
+
+	$c = 0;
+	$result = [];
+
+	while ($c < MAX_ITER) {
+
+		$dict = [
+			'a' => true,
+			'b' => false,
+			'c' => null,
+			'd' => 'áhojky, plantážníku!',
+			'keys' => ['a', 'b', 'c'],
+		];
+
+		foreach ($dict['keys'] as $name) {
+			$result[] = $dict[$name];
+		}
+
+		$c = $c + 1;
+
+	}
+
+	return $result;
+
+}
+
 $results = [
 	'bench_function_calls' => measure('bench_function_calls'),
 	'bench_regex_matches' => measure('bench_regex_matches'),
+	'bench_dicts' => measure('bench_dicts'),
 ];
 
 //

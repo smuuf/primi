@@ -1,0 +1,2 @@
+var = '<main_import_path>/some_lib/__init__'
+print(var)

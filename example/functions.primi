@@ -108,8 +108,8 @@ result_3 = anon(anon_short, 10, 100)
 censor = (words) => {
 	filtered = []
 	for (word in words) {
-		if (word.length() != 4) {
-			filtered.array_push(word)
+		if (word.len() != 4) {
+			filtered.push(word)
 		}
 	}
 	return filtered
@@ -135,7 +135,7 @@ try {
 	}
 	// Call without all expected arguments.
 	fn(1)
-} on error {
+} catch {
 	was_error = true
 }
 assert(was_error, 'Calling function without all arguments raises error')
@@ -155,7 +155,7 @@ try {
 		will_not_happen_A = false
 	}
 	will_not_happen_B = false
-} on error {
+} catch {
 	was_error = true
 }
 assert(was_error, 'Iterating over function raises error')

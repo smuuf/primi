@@ -1,0 +1,4 @@
+// Assert that the first argument is false.
+assert_not = (truth, desc) => {
+	assert(!truth, desc)
+}

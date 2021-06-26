@@ -1,19 +1,30 @@
 <?php
 
-use \Smuuf\Primi\ExtensionHub;
-use \Smuuf\Primi\Structures\{
+use \Tester\Assert;
+
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Values\{
+	AbstractValue,
 	StringValue,
 	NumberValue,
 	RegexValue,
-	ArrayValue,
+	DictValue,
+	ListValue,
 	BoolValue
 };
-
-use \Tester\Assert;
+use \Smuuf\Primi\Extensions\ExtensionHub;
 
 require __DIR__ . '/../bootstrap.php';
 
-$fns = ExtensionHub::get();
+function get_val(AbstractValue $v) {
+	return $v->getInternalValue();
+}
+
+$extHub = new ExtensionHub;
+$ctx = new Context;
+$scope = new Scope;
+$extHub->apply($scope);
 
 $integer = new NumberValue("1");
 $biggerInteger = new NumberValue("20");
@@ -32,240 +43,246 @@ $posZeroFloat = new NumberValue("+0.0");
 $negZeroFloat = new NumberValue("-0.0");
 
 //
-// Test int vs float detection.
+// All numbers are actually stored as strings.
 //
 
-// Test that various input correcly decide which is int and which is float.
-Assert::type('int', $integer->getInternalValue());
-Assert::type('int', $posInteger->getInternalValue());
-Assert::type('int', $negInteger->getInternalValue());
-Assert::type('float', $integeryFloat->getInternalValue());
-Assert::type('float', $posIntegeryFloat->getInternalValue());
-Assert::type('float', $negIntegeryFloat->getInternalValue());
-Assert::type('float', $float->getInternalValue());
-Assert::type('float', $posFloat->getInternalValue());
-Assert::type('float', $negFloat->getInternalValue());
-Assert::type('int', $zero->getInternalValue());
-Assert::type('int', $posZero->getInternalValue());
-Assert::type('int', $negZero->getInternalValue());
-Assert::type('float', $posZeroFloat->getInternalValue());
-Assert::type('float', $negZeroFloat->getInternalValue());
-
-//
-// Numeric string detection.
-//
-
-// Test correct detection of "numeric" string.
-Assert::true(NumberValue::isNumeric("1"));
-Assert::true(NumberValue::isNumeric("1.2"));
-Assert::true(NumberValue::isNumeric("0.0"));
-Assert::true(NumberValue::isNumeric("-0.0"));
-Assert::true(NumberValue::isNumeric("-1.2"));
-Assert::true(NumberValue::isNumeric("-1"));
-Assert::false(NumberValue::isNumeric("hell no"));
-Assert::false(NumberValue::isNumeric("not 1"));
-Assert::false(NumberValue::isNumeric("1 owl"));
-Assert::false(NumberValue::isNumeric("2 2"));
-Assert::true(NumberValue::isNumeric("+0.0"));
-Assert::false(NumberValue::isNumeric("+-1"));
+Assert::type('string', get_val($integer));
+Assert::type('string', get_val($posInteger));
+Assert::type('string', get_val($negInteger));
+Assert::type('string', get_val($integeryFloat));
+Assert::type('string', get_val($posIntegeryFloat));
+Assert::type('string', get_val($negIntegeryFloat));
+Assert::type('string', get_val($float));
+Assert::type('string', get_val($posFloat));
+Assert::type('string', get_val($negFloat));
+Assert::type('string', get_val($zero));
+Assert::type('string', get_val($posZero));
+Assert::type('string', get_val($negZero));
+Assert::type('string', get_val($posZeroFloat));
+Assert::type('string', get_val($negZeroFloat));
 
 //
 // Test addition.
 //
 
 // Addition with a negative 0 constructed from string.
-Assert::same(1, $integer->doAddition(new NumberValue("-0"))->getInternalValue());
+Assert::same(
+	"1",
+	get_val($integer->doAddition(new NumberValue("-0")))
+);
 // Addition with a negative 5 constructed from string.
-Assert::same(-4, $integer->doAddition(new NumberValue("-5"))->getInternalValue());
+Assert::same(
+	"-4",
+	get_val($integer->doAddition(new NumberValue("-5")))
+);
 // Addition with a proper zero Number value.
-Assert::same(1, $integer->doAddition(new NumberValue(0))->getInternalValue());
+Assert::same(
+	"1",
+	get_val($integer->doAddition(new NumberValue(0)))
+);
 // Addition with a proper Number one.
-Assert::same(2, $integer->doAddition(new NumberValue(1))->getInternalValue());
+Assert::same(
+	"2",
+	get_val($integer->doAddition(new NumberValue(1)))
+);
 // Addition with a proper negative Number.
-Assert::same(-122, $integer->doAddition(new NumberValue(-123))->getInternalValue());
+Assert::same(
+	"-122",
+	get_val($integer->doAddition(new NumberValue(-123)))
+);
 
-// Addition with unsupported formats will result in type error.
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new StringValue("4"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new BoolValue(true));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doAddition(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+// Addition with unsupported formats will result in null - unhandled case.
+Assert::null($integer->doAddition(new StringValue("4")));
+Assert::null($integer->doAddition(new DictValue([])));
+Assert::null($integer->doAddition(BoolValue::build(true)));
+Assert::null($integer->doAddition(new RegexValue("/[abc]/")));
 
 //
 // Test subtraction.
 //
 
-Assert::same(1, $integer->doSubtraction(new NumberValue("-0"))->getInternalValue());
-Assert::same(6, $integer->doSubtraction(new NumberValue("-5"))->getInternalValue());
-Assert::same(1, $integer->doSubtraction(new NumberValue(0))->getInternalValue());
-Assert::same(0, $integer->doSubtraction(new NumberValue(1))->getInternalValue());
-Assert::same(124, $integer->doSubtraction(new NumberValue(-123))->getInternalValue());
+Assert::same(
+	'1',
+	get_val($integer->doSubtraction(new NumberValue("-0")))
+);
+Assert::same(
+	'6',
+	get_val($integer->doSubtraction(new NumberValue("-5")))
+);
+Assert::same(
+	'1',
+	get_val($integer->doSubtraction(new NumberValue(0)))
+);
+Assert::same(
+	'0',
+	get_val($integer->doSubtraction(new NumberValue(1)))
+);
+Assert::same(
+	'124',
+	get_val($integer->doSubtraction(new NumberValue(-123)))
+);
 
-// Subtraction with unsupported formats will result in type error.
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new StringValue("1"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doSubtraction(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+// Subtraction with unsupported formats will result in null - unhandled case.
+Assert::null($integer->doSubtraction(new StringValue("1")));
+Assert::null($integer->doSubtraction(new DictValue([])));
+Assert::null($integer->doSubtraction(BoolValue::build(false)));
+Assert::null($integer->doSubtraction(new RegexValue("/[abc]/")));
 
 //
 // Test multiplication.
 //
 
 // Multiplication with numbers.
-Assert::same(0, $float->doMultiplication(new NumberValue("-0"))->getInternalValue());
-Assert::same(-11.5, $float->doMultiplication(new NumberValue("-5"))->getInternalValue());
-Assert::same(0, $float->doMultiplication(new NumberValue(0))->getInternalValue());
-Assert::same(2.3, $float->doMultiplication(new NumberValue(1))->getInternalValue());
-Assert::same(-282.9, $float->doMultiplication(new NumberValue(-123))->getInternalValue());
+
+Assert::same(
+	'0',
+	get_val($float->doMultiplication(new NumberValue("-0")))
+);
+Assert::same(
+	'-11.5',
+	get_val($float->doMultiplication(new NumberValue("-5")))
+);
+Assert::same(
+	'0',
+	get_val($float->doMultiplication(new NumberValue(0)))
+);
+Assert::same(
+	"2.3",
+	get_val($float->doMultiplication(new NumberValue(1)))
+);
+Assert::same(
+	"-282.9",
+	get_val($float->doMultiplication(new NumberValue(-123)))
+);
 
 // Multiplication by a string.
-$result = $biggerInteger->doMultiplication(new StringValue(" "))->getInternalValue();
-Assert::same("                    ", $result);
-$result = $biggerInteger->doMultiplication(new StringValue(" _ěšč"))->getInternalValue();
+// Number X String is not supported by Number, but
+// String X Number is supported.
+$string = new StringValue(" _ěšč");
+$result = $biggerInteger->doMultiplication($string);
+Assert::null($result);
+$result = get_val($string->doMultiplication($biggerInteger));
 Assert::same(" _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč", $result);
 
-// Multiplication with unsupported formats will result in type error.
-Assert::exception(function() use ($posFloat) {
-	$posFloat->doMultiplication(new StringValue(" a"));
-}, \TypeError::class);
-Assert::exception(function() use ($negFloat) {
-	$negFloat->doMultiplication(new StringValue(" b"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doMultiplication(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doMultiplication(new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doMultiplication(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+// Multiplication with unsupported formats will result in null - unhandled case.
+Assert::null($integer->doMultiplication(new StringValue(" b")));
+Assert::null($posFloat->doMultiplication(new StringValue(" a")));
+Assert::null($negFloat->doMultiplication(new StringValue(" b")));
+Assert::null($integer->doMultiplication(new DictValue([])));
+Assert::null($integer->doMultiplication(BoolValue::build(false)));
+Assert::null($integer->doMultiplication(new RegexValue("/[abc]/")));
 
 //
 // Test division.
 //
 
+Assert::same(
+	"-0.46",
+	get_val($float->doDivision(new NumberValue("-5")))
+);
+Assert::same(
+	"2.3",
+	get_val($float->doDivision(new NumberValue(1)))
+);
+Assert::same(
+	"-1.15",
+	get_val($float->doDivision(new NumberValue(-2)))
+);
+
+// Division by zero is handled.
 Assert::exception(function() use ($float) {
 	$float->doDivision(new NumberValue("-0"));
-}, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
+}, \Smuuf\Primi\Ex\RuntimeError::class, '#Division.*zero#');
 Assert::exception(function() use ($integer) {
 	$integer->doDivision(new NumberValue(0));
-}, \Smuuf\Primi\ErrorException::class, '#Division.*zero#');
-Assert::same(-0.46, $float->doDivision(new NumberValue("-5"))->getInternalValue());
-Assert::same(2.3, $float->doDivision(new NumberValue(1))->getInternalValue());
-Assert::same(-1.15, $float->doDivision(new NumberValue(-2))->getInternalValue());
+}, \Smuuf\Primi\Ex\RuntimeError::class, '#Division.*zero#');
 
-// Subtaction with unsupported formats will result in type error.
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new StringValue("1"));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new ArrayValue([]));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new BoolValue(false));
-}, \TypeError::class);
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new RegexValue("/[abc]/"));
-}, \TypeError::class);
+
+// Subtraction with unsupported formats will result in null - unhandled case.
+Assert::null($integer->doDivision(new StringValue("1")));
+Assert::null($integer->doDivision(new ListValue([])));
+Assert::null($integer->doDivision(BoolValue::build(false)));
+Assert::null($integer->doDivision(new RegexValue("/[abc]/")));
 
 //
 // Test comparison.
 //
 
-function extract_bool_value(BoolValue $b) {
-	return $b->getInternalValue();
-}
+$tmp = $integer->isEqualTo(new NumberValue("-1"));
+Assert::false($tmp);
 
-$tmp = $integer->doComparison("==", new NumberValue("-1"));
-Assert::false(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("-1"));
+Assert::true(!$tmp);
 
-$tmp = $integer->doComparison("!=", new NumberValue("-1"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("1"));
+Assert::true($tmp);
 
-$tmp = $integer->doComparison("==", new NumberValue("1"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("1.0"));
+Assert::true($tmp);
 
-$tmp = $integer->doComparison("==", new NumberValue("1.0"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $integer->isEqualTo(new NumberValue("2"));
+Assert::true(!$tmp);
 
-$tmp = $integer->doComparison("!=", new NumberValue("2"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo(">", new NumberValue("2"));
+Assert::true($tmp);
 
-$tmp = $float->doComparison(">", new NumberValue("2"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo("<", new NumberValue("2.3"));
+Assert::false($tmp);
 
-$tmp = $float->doComparison("<", new NumberValue("2.3"));
-Assert::false(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo(">=", new NumberValue("2.31"));
+Assert::false($tmp);
 
-$tmp = $float->doComparison(">=", new NumberValue("2.31"));
-Assert::false(extract_bool_value($tmp));
-
-$tmp = $float->doComparison("<=", new NumberValue("2.31"));
-Assert::true(extract_bool_value($tmp));
+$tmp = $float->hasRelationTo("<=", new NumberValue("2.31"));
+Assert::true($tmp);
 
 //
 // Methods...
 //
 
-$tmp = $fns['abs']->invoke([$integer])->getInternalValue();
-Assert::same(1, $tmp);
-$tmp = $fns['abs']->invoke([$biggerInteger])->getInternalValue();
-Assert::same(20, $tmp);
-$tmp = $fns['abs']->invoke([$posFloat])->getInternalValue();
-Assert::same(2.3, $tmp);
-$tmp = $fns['abs']->invoke([$negFloat])->getInternalValue();
-Assert::same(2.3, $tmp);
+$fn = $scope->getVariable('number_abs');
+$tmp = $fn->invoke($ctx, [$integer]);
+Assert::same("1", get_val($tmp));
+$tmp = $fn->invoke($ctx, [$biggerInteger]);
+Assert::same("20", get_val($tmp));
+$tmp = $fn->invoke($ctx, [$posFloat]);
+Assert::same("2.3", get_val($tmp));
+$tmp = $fn->invoke($ctx, [$negFloat]);
+Assert::same("2.3", get_val($tmp));
 
-$tmp = $fns['sqrt']->invoke([$integer])->getInternalValue();
-Assert::type('int', $tmp);
-$tmp = $fns['pow']->invoke([$integer, new NumberValue(4)])->getInternalValue();
-Assert::type('int', $tmp);
-$tmp = $fns['sin']->invoke([$integer])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['cos']->invoke([$integer])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['tan']->invoke([$integer])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['atan']->invoke([$integer])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['ceil']->invoke([$integer])->getInternalValue();
-Assert::type('int', $tmp);
-$tmp = $fns['floor']->invoke([$integer])->getInternalValue();
-Assert::type('int', $tmp);
-$tmp = $fns['round']->invoke([$integer])->getInternalValue();
-Assert::type('int', $tmp);
+$tmp = $scope->getVariable('number_sqrt')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_pow')->invoke($ctx, [$integer, new NumberValue(4)]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_sin')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_cos')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_tan')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_atan')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_ceil')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_floor')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_round')->invoke($ctx, [$integer]);
+Assert::type('string',  get_val($tmp));
 
-$tmp = $fns['sqrt']->invoke([$float])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['pow']->invoke([$float, new NumberValue(4)])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['sin']->invoke([$float])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['cos']->invoke([$float])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['tan']->invoke([$float])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['atan']->invoke([$float])->getInternalValue();
-Assert::type('float', $tmp);
-$tmp = $fns['ceil']->invoke([$float])->getInternalValue();
-Assert::type('int', $tmp);
-$tmp = $fns['floor']->invoke([$float])->getInternalValue();
-Assert::type('int', $tmp);
-$tmp = $fns['round']->invoke([$float])->getInternalValue();
-Assert::type('int', $tmp);
+$tmp = $scope->getVariable('number_sqrt')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_pow')->invoke($ctx, [$float, new NumberValue(4)]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_sin')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_cos')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_tan')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_atan')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_ceil')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_floor')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));
+$tmp = $scope->getVariable('number_round')->invoke($ctx, [$float]);
+Assert::type('string',  get_val($tmp));

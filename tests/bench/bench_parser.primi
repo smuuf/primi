@@ -1,0 +1,276 @@
+// This should be some complex code which should use most (as much as possible)
+// language and syntax constructs Primi supports, so benchmarking the parser
+// can give the best results.
+
+a = 1
+b = 2
+c = 3
+x = a + (b / (c + 4))
+
+some_list = [
+	 // Comment A
+	['number', 123], // Comment B
+	['string', 'abc'], // Comment C
+	['regex', rx'\d+'], // Comment D
+	['list', [1, 2, 3]],
+	['dict', {'a': 'aa', 'b': 'bb', 'c': 'cc'}],
+	['bool', true],
+	['null', null],
+	[
+		'nested',
+		[
+			// Comment A
+			['number', 123], // Comment B
+			['string', 'abc'], // Comment C
+			['regex', rx'\d+'], // Comment D
+			['list', [1, 2, 3]],
+			['dict', {'a': 'aa', 'b': 'bb', 'c': 'cc'}],
+			['bool', true],
+			['null', null],
+		]
+	]
+]
+
+some_dict = {
+	'number': 123,
+	'string': 'abc',
+	'regex': rx'\d+',
+	'list': [1, 2, 3],
+	// Comment XYZ
+	'dict': {'a': 'aa', 'b': 'bb', 'c': 'cc'},
+	'bool': true,
+	'null': null,
+}
+
+tmp_a = some_dict.get('number').to_string().replace('2', '0') if (some_list[0][1] >= 120) else 'none'
+tmp_b = some_dict.get('undefined', true).to_string().replace('2', '0') == '1'
+
+supernested = {
+	'x': {
+		'y': {
+			'z': {
+				'x': {
+					'y': {
+						'z': 123
+					}
+				}
+			}
+		}
+	}
+}
+
+supernested.get('x', {}).get('y', {}).get('z', {}).get('x', {}).get('y', {}).get('z', 789)
+
+if (tmp_b) {
+
+	max_iter = 5000
+
+	function bench_function_calls() {
+
+		adder = function(x, y) {
+			return x + y
+		}
+
+		result = -1024
+		c = 0
+		while (c < max_iter) {
+			result = result + adder(c, 1)
+			c = c + 1
+		}
+
+		return c
+
+	}
+
+	bench_function_calls()
+
+}
+
+function bench_regex_matches() {
+
+	max_iter = 100
+
+	haystack = "Když začínáme myslet, nemáme k dispozici nic jiného než myšlenku v " +
+		"její čisté neurčenosti, neboť k určení již patří jedno nebo nějaké " +
+		"jiné, ale na začátku ještě nemáme žádné jiné..."
+
+	result = 0
+	c = 0
+	while (c < max_iter) {
+		result = result + (haystack == rx"^.*(zač).*(,)?.*?(\.)").to_number()
+		c = c + 1
+	}
+
+	return c
+
+}
+
+bench_regex_matches()
+
+// Were going to collect results from the function below.
+collected = []
+function collector(item) {
+	collected.push(item)
+}
+
+// Whoa, a recursive Fibonacci function!
+function fib(a, b, limit) {
+	result = a + b;
+	if (result > limit) {
+		return
+	}
+	collector(result)
+	fib(b, result, limit);
+}
+
+fib(1, 0, 20000000);
+gimme_number = (x, y) => {
+	return range(y, x)[5]
+}
+
+fib(1, 0, 400 if (gimme_number(1000, 100) > 500) else 200);
+
+fib_func = fib
+fib_func(1, 0, 400 if (gimme_number(collected.len(), 100) > 500) else 200);
+
+assert(type(collected.len()) == 'number', 'Some description bruh')
+assert(collected[35] == 14930352, 'Correct 36th number in Fibonacci sequence')
+
+some_list = [
+	// Comment A
+	['number', [123]], // Comment B
+	['string', 'abc'], // Comment C
+	['regex', rx'\d+'], // Comment D
+	['list', [1, 2, 3]],
+	['dict', {
+		'number': 123,
+		'string': 'abc',
+		'regex': rx'\d+',
+		'list': [1, 2, 3],
+		// Comment XYZ
+		'dict': {
+			'number': 123,
+			'string': 'abc',
+			'regex': rx'\d+',
+			'list': [1, 2, 3],
+			// Comment XYZ
+			'dict': {'a': 'aa', 'b': 'bb', 'c': 'cc'},
+			'bool': true,
+			'null': null,
+		},
+		'bool': true,
+		'null': null,
+	}],
+	['bool', true],
+	['null', null],
+]
+
+some_dict = some_list.get(0, []).get(1, []).get(1 + 3, collected[0])
+
+a = 10
+c = 0
+while (10 <= a < 20) {
+	a = a + 2
+	c = c + 1
+	while (10 <= a < 20) {
+		a = a + 2
+		c = c + 1
+		while (10 <= a < (4 if (true) else 5)) {
+			a = a + 2
+			c = c + 1
+			for (v in some_dict) {
+				print(k)
+			}
+
+			some_list = [
+				// Comment A
+				['number', 123], // Comment B
+				['string', 'abc'], // Comment C
+				['regex', rx'\d+'], // Comment D
+				['list', [1, 2, 3]],
+				['dict', {'a': 'aa', 'b': 'bb', 'c': 'cc'}],
+				['bool', true],
+				['null', null],
+			]
+
+			some_dict = {
+				'number': 123,
+				'string': 'abc',
+				'regex': rx'\d+',
+				'list': [1, 2, 3],
+				// Comment XYZ
+				'dict': {'a': 'aa', 'b': 'bb', 'c': 'cc'},
+				'bool': true,
+				'null': null,
+				'function': (x,y,z) => {
+					while (10 <= a < 20) {
+						a = a + 2
+						c = c + 1
+						while (10 <= a < 20) {
+							a = a + 2
+							c = c + 1
+						}
+					}
+				}
+			}
+
+			tmp_a = some_dict.get('number').to_string().replace('2', '0') if (some_list[0][1] >= 120) else 'none'
+			tmp_b = some_dict.get('undefined', true).to_string().replace('2', '0') == '1'
+
+			supernested = {
+				'x': {
+					'y': {
+						'z': {
+							'x': {
+								'y': {
+									'z': 123,
+									'c': [
+										// Comment A
+										['number', 123], // Comment B
+										['string', 'abc'], // Comment C
+										['regex', rx'\d+'], // Comment D
+										['list', [1, 2, 3]],
+										['dict', {'a': 'aa', 'b': 'bb', 'c': 'cc'}],
+										['bool', true],
+										['null', null],
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+
+			supernested.get('x', {}).get('y', {}).get('z', {}).get('x', {}).get('y', {}).get('z', 789)
+
+			if (tmp_b) {
+
+				max_iter = 5000
+
+				function bench_function_calls() {
+
+					adder = function(x, y) {
+						return x + y
+					}
+
+					result = -1024
+					c = 0
+					while (c < max_iter) {
+						result = result + adder(c, 1)
+						c = c + 1
+					}
+
+					return c
+
+				}
+
+				bench_function_calls()
+
+			}
+
+		}
+	}
+}
+
+assert(a == 20)
+assert(c == 5)

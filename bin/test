@@ -3,10 +3,6 @@
 cd $(dirname $0)
 declare -i RESULT=0
 
-if [[ "$1" == "--coverage" ]]; then
-	COV="--coverage"
-fi
-
 function info() {
     echo "███ $1"
 }
@@ -16,7 +12,7 @@ info "Smoke tests"
 RESULT+=$?
 
 info "Unit tests"
-./test_unit $COV
+./test_unit $@
 RESULT+=$?
 
 info "Exit code: $RESULT"

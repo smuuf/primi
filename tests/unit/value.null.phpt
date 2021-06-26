@@ -2,22 +2,22 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Structures\{
+use \Smuuf\Primi\Values\{
 	BoolValue,
 	NullValue,
-	Value
+	AbstractValue
 };
 
 require __DIR__ . '/../bootstrap.php';
 
-function get_val(Value $v) {
+function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
 
 $null = new NullValue;
 $nullTwo = new NullValue;
-$true = new BoolValue(true);
-$false = new BoolValue(false);
+$true = BoolValue::build(true);
+$false = BoolValue::build(false);
 
 // Always null.
 
@@ -36,11 +36,11 @@ Assert::same(null, get_val(new NullValue(null)));
 //
 
 // Equality.
-Assert::same(true, get_val($null->doComparison("==", $nullTwo)));
-Assert::same(true, get_val($null->doComparison("==", $false)));
-Assert::same(false, get_val($null->doComparison("==", $true)));
+Assert::true($null->isEqualTo($nullTwo));
+Assert::null($null->isEqualTo($false));
+Assert::null($null->isEqualTo($true));
 
 // Inequality.
-Assert::same(false, get_val($null->doComparison("!=", $nullTwo)));
-Assert::same(false, get_val($null->doComparison("!=", $false)));
-Assert::same(true, get_val($null->doComparison("!=", $true)));
+Assert::false(!$null->isEqualTo($nullTwo));
+Assert::null($null->isEqualTo($false));
+Assert::null($null->isEqualTo($true));

@@ -2,9 +2,36 @@
 
 cd $(dirname $0)
 
-if [[ "$1" == "--coverage" ]]; then
-        # "-p phpdbg"
-        COV="-d memory_limit=-1 --coverage ../coverage.xml --coverage-src ../src/"
+# Select phpdbg if available, or php.
+INTERPRETER=$(command -v phpdbg php | head -n1)
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    --php)
+    INTERPRETER="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --coverage)
+    COVERAGE=1
+    COV_FORMAT="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [[ ! -z "$COVERAGE" ]]; then
+        COV="-d memory_limit=-1 --coverage ../coverage.$COV_FORMAT --coverage-src ../src/"
 fi
 
-./../vendor/nette/tester/src/tester $COV -C ../tests
+./../vendor/nette/tester/src/tester -p $INTERPRETER $COV -C ../tests $@

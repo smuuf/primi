@@ -1,0 +1,27 @@
+// This is absolute import and "libs" import path has higher priority than
+// current script's directory (which is appended to import paths).
+// Thus, this imports a package "<libs>/some_lib".
+
+import some_lib
+some_lib_a = some_lib
+
+// This is relative import, but since it's made from main module, which has
+// no parent package, it still resolves via "libs" import path, which has
+// higher priority than current main module's path/dir.
+import .some_lib
+some_lib_b = some_lib
+
+//assert(some_lib_a != some_lib_b)
+assert(some_lib_a.var == '<libs_import_path>/some_lib/__init__')
+assert(some_lib_b.var == '<libs_import_path>/some_lib/__init__')
+
+// This should load internal_lib package from this scripts directory.
+import internal_lib
+internal_lib_a = internal_lib
+
+// This should also import the internal_lib package from this scripts directory.
+// But not load again - it should already be in cached in imported modules.
+import .internal_lib
+internal_lib_b = internal_lib
+
+assert(internal_lib_a == internal_lib_b)

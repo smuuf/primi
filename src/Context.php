@@ -1,94 +1,185 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\StrictObject;
-use \Smuuf\Primi\Structures\Value;
-use \Smuuf\Primi\Structures\FuncValue;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Tasks\TaskQueue;
+use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Scopes\AbstractScope;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Modules\Importer;
+use \Smuuf\StrictObject;
 
-class Context extends StrictObject implements IContext {
+class Context {
 
-	// use WatchLifecycle;
+	use StrictObject;
 
-	private static $globals = [];
-	private $vars = [];
-
-	public function reset(bool $wipeGlobals = false) {
-
-		if ($wipeGlobals) {
-			self::$globals = [];
-		}
-
-		$this->vars = [];
-
-	}
-
-	// Variables.
-
-	public function setVariable(
-		string $name,
-		Value $value,
-		bool $global = false
-	) {
-
-		if ($global) {
-			self::$globals[$name] = $value;
-		} else {
-			$this->vars[$name] = $value;
-		}
-
-	}
+	//
+	// Call stack.
+	//
 
 	/**
-	 * Set multiple variables to the context using an array as parameter.
-	 *
-	 * @param array<string, Value> $pairs
+	 * Value of static property self::$callStackLimit fixed when
+	 * initializing new instance of Context (to ignore later modifications).
 	 */
-	public function setVariables(array $pairs, bool $global = false) {
+	private int $maxCallStackSize;
 
-		foreach ($pairs as $name => $value) {
+	/** @var CallFrame[] Call stack list. */
+	private array $callStack = [];
 
-			if (!$value instanceof Value) {
-				$value = Value::buildAutomatic($value);
-			}
+	//
+	// Scope stack.
+	//
 
-			$this->setVariable($name, $value, $global);
+	/** @var AbstractScope[] Scope stack list. */
+	private array $scopeStack = [];
+
+	/** Direct reference to the scope on the top of the stack. */
+	private AbstractScope $currentScope;
+
+	//
+	// Insides.
+	//
+
+	/** Task queue for this context. */
+	private TaskQueue $taskQueue;
+
+	/** Importer instance */
+	private Importer $importer;
+
+	/** ExtensionHub instance. */
+	private ExtensionHub $extensionHub;
+
+	public function __construct(
+		?AbstractScope $globalScope = \null,
+		?ExtensionHub $extHub = \null
+	) {
+
+		$this->extensionHub = $extHub ?? new ExtensionHub;
+
+		// Render the config value into instance property to ensure changing
+		// of the config doesn't change behavior of existing contexts.
+		$this->maxCallStackSize = Config::getCallStackLimit();
+
+		$this->taskQueue = new TaskQueue($this);
+		$this->importer = new Importer($this);
+
+		if ($globalScope) {
+			$this->extensionHub->apply($globalScope);
+		} else {
+			$globalScope = $this->buildNewGlobalScope();
+		}
+
+		$this->pushScope($globalScope);
+
+	}
+
+	// "Global scope" factory.
+
+	public function buildNewGlobalScope(): AbstractScope {
+
+		$scope = new Scope;
+		$this->extensionHub->apply($scope);
+
+		return $scope;
+
+	}
+
+	// Task queue management.
+
+	public function getTaskQueue(): TaskQueue {
+		return $this->taskQueue;
+	}
+
+	// Importer management.
+
+	public function getImporter(): Importer {
+		return $this->importer;
+	}
+
+	public function getCurrentModule(): string {
+		return end($this->callStack)->getName();
+	}
+
+	// Call stack management.
+
+	public function getCallStack(): array {
+		return $this->callStack;
+	}
+
+	public function getTraceback(): array {
+		return $this->callStack;
+	}
+
+	public function pushCall(CallFrame $call): void {
+
+		$this->callStack[] = $call;
+
+		if (
+			$this->maxCallStackSize
+			&& count($this->callStack) === $this->maxCallStackSize
+		) {
+
+			throw new RuntimeError(sprintf(
+				"Maximum call stack size (%d) reached",
+				$this->maxCallStackSize
+			));
 
 		}
 
 	}
 
-	public function getVariable(string $name): ?Value {
+	public function popCall(): void {
 
-		// Variables of current context instance have higher priority than
-		// global variables.
-		if (isset($this->vars[$name])) {
-			return $this->vars[$name];
-		}
-
-		if (isset(self::$globals[$name])) {
-			return self::$globals[$name];
-		}
-
-		// This should be slightly faster than throwing exceptions for undefined
-		// variables.
-		return null;
+		\array_pop($this->callStack);
+		$this->taskQueue->tick();
 
 	}
 
-	public function getVariables(bool $includeGlobals = false): array {
-		return $this->vars + ($includeGlobals ? self::$globals : []);
+	// Scope management.
+
+	public function getCurrentScope(): AbstractScope {
+		return $this->currentScope;
 	}
 
-	// Debugging.
+	public function pushScope(AbstractScope $scope): void {
+		$this->scopeStack[] = $scope;
+		$this->currentScope = $scope;
+	}
 
-	public function ___debug_zvals() {
+	public function popScope(): void {
 
-		if (extension_loaded('xdebug_debug_zval')) {
-			$tmp = $this;
-			xdebug_debug_zval('tmp');
+		// At least one scope needs to be present at all times.
+		if (\count($this->scopeStack) === 1) {
+			throw new EngineInternalError("Cannot pop last scope");
 		}
 
+		\array_pop($this->scopeStack);
+		$this->currentScope = \end($this->scopeStack);
+
+	}
+
+	// Direct access to the current scope - which is the one on the top of the
+	// stack (compatibility with Primi <0.5).
+
+	public function getVariable(string $name): ?AbstractValue {
+		return $this->currentScope->getVariable($name);
+	}
+
+	public function getVariables(bool $includeParents = \false): array {
+		return $this->currentScope->getVariables($includeParents);
+	}
+
+	public function setVariable(string $name, AbstractValue $value) {
+		$this->currentScope->setVariable($name, $value);
+	}
+
+	public function setVariables(array $pairs) {
+		$this->currentScope->setVariables($pairs);
 	}
 
 }

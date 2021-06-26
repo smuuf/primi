@@ -14,14 +14,19 @@
 		"source": "https://github.com/smuuf/primi"
 	},
 	"autoload":{
-		 "classmap": ["src/"]
+		"psr-4": {
+			"Smuuf\\Primi\\": "src/"
+		}
 	},
 	"require": {
-		"php": ">=7.1",
-		"smuuf/php-peg": "^2"
+		"php": ">=7.4",
+		"ext-bcmath" : "*",
+		"ext-mbstring" : "*",
+		"smuuf/php-peg": "^2",
+		"smuuf/better-php-exceptions": "^0",
+		"smuuf/strict-object": "^1.0"
 	},
 	"require-dev": {
-		"smuuf/koloader": "dev-master",
 		"smuuf/phpcb": "dev-master",
 		"nette/tester": "^2.0",
 		"phpstan/phpstan": "^0.12"

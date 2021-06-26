@@ -26,9 +26,9 @@ assert(!x == false)
 x = 0 - 5 + 2 + 3
 assert(!x == true)
 
-empty_array = []
-negated_empty_array = !empty_array
-double_negated_empty_array = !!empty_array
-assert(empty_array.to_bool() == false) // Arrays currently need explicit to_bool cast to be able to be compared with bool.
-assert(negated_empty_array == true)
-assert(double_negated_empty_array == false)
+empty_list = []
+negated_empty_list = !empty_list
+double_negated_empty_list = !!empty_list
+assert(empty_list.to_bool() == false) // Arrays currently need explicit to_bool cast to be able to be compared with bool.
+assert(negated_empty_list == true)
+assert(double_negated_empty_list == false)

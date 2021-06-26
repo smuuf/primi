@@ -1,0 +1,18 @@
+import std.types
+
+import package
+assert(package.var == 'relative_math')
+
+try {
+	success = false
+	import ..std.math
+} catch {
+	success = true
+}
+assert(success, 'Relative import beyond top-level package results in error')
+
+import std.math
+assert(type(math.sin) == types.FunctionType)
+
+import external_lib
+assert(external_lib.var == 'hello to external_lib library')
