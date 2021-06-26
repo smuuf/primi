@@ -1,0 +1,2 @@
+imported_package_a_module_a = true
+module_var = 'package_a|module_a'

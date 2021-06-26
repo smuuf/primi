@@ -1,0 +1,16 @@
+// We actually need this, but also is a part of testing, ha!
+import std.types
+
+// Absolute import - top-level package cannot have any other.
+import module_a
+
+assert(type(module_a) == types.ModuleType)
+assert(module_a.var == 'module_a')
+
+// Absolute import - top-level package cannot have any other.
+import module_b
+
+assert(module_b.var == 'module_b')
+
+main_module = true
+var = 'main'
