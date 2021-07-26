@@ -11,7 +11,7 @@ use \Smuuf\Primi\Ex\ContextAwareException;
 use \Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject as _StrictObject;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Helpers\Wrappers\CatchPosixSignalsWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
