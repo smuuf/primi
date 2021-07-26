@@ -8,7 +8,7 @@ use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Scopes\ExtensionScope;
 use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject as _StrictObject;
 use \Smuuf\Primi\Structures\FnContainer;
 
 class ExtensionHub {
