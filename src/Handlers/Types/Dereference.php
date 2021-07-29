@@ -16,9 +16,13 @@ class Dereference extends ChainedHandler {
 		AbstractValue $subject
 	) {
 
-		$handler = HandlerFactory::getFor($node['key']['name']);
-		$key = $handler::run($node['key'], $context);
-
+		$handler = '';
+		$key = '';
+		if(isset($node['core'])){
+			$handler = HandlerFactory::getFor($node['core']['key']['name']);
+			$key = $handler::run($node['core']['key'], $context);
+		}
+		
 		$returned = $subject->itemGet($key);
 		if ($returned === null) {
 			throw new RuntimeError(\sprintf(

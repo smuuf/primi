@@ -17,7 +17,7 @@ class Chain extends ChainedHandler {
 
 		// Handle the item; pass in the origin subject.
 		$handler = HandlerFactory::getFor($node['core']['name']);
-		$value = $handler::chain($node['core'], $context, $subject);
+		$value = $handler::chain($node, $context, $subject);
 
 		// If there's chain, handle it, too.
 		if (isset($node['chain'])) {

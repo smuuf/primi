@@ -7,6 +7,8 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\ChainedHandler;
+use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Handlers\Types\Variable;
 
 class AttrAccess extends ChainedHandler {
 
@@ -16,7 +18,7 @@ class AttrAccess extends ChainedHandler {
 		AbstractValue $subject
 	) {
 
-		$attrName = StringValue::build($node['attr']);
+		$attrName = StringValue::build($node['core']['attr']);
 
 		//
 		// If the UFCS didn't match any typed call, try ordinary attr access.
@@ -28,8 +30,23 @@ class AttrAccess extends ChainedHandler {
 		// If the UFCS didn't match any typed call, try ordinary attr access.
 		//
 
-		$value = $subject->attrGet($attrName);
+		$typedName = self::inferTypedName($attrName->getInternalValue(), $subject);
 
+		$fn = $context->getVariable($typedName);
+
+		if ($fn === null) {
+			$fn = Variable::fetch($attrName->getInternalValue(), $context);
+		}
+
+		$invocation = $node['chain']['core'];
+		$invocation['prepend_arg'] = $subject;
+
+		$value = HandlerFactory::getFor('Invocation')::chain($invocation, $context, $fn);
+		
+		$fn = function() use($value){return $value;};
+		$value = AbstractValue::buildAuto($fn);
+		/**/
+		
 		if ($value) {
 			return $value;
 		}

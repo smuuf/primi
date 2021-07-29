@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Cli;
 
-use Smuuf\Primi\Config;
+use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Repl;
 use \Smuuf\Primi\Source;
 use \Smuuf\Primi\Interpreter;
@@ -12,7 +12,8 @@ use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\Colors;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject as _StrictObject;;
+use \Smuuf\StrictObject;
 
 class Entrypoint {
 

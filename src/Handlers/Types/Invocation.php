@@ -21,6 +21,11 @@ class Invocation extends ChainedHandler {
 		if (isset($node['args'])) {
 			$handler = HandlerFactory::getFor($node['args']['name']);
 			$arguments = $handler::run($node['args'], $context);
+		}elseif(isset($node['core'])){
+			if (isset($node['core']['args'])) {
+				$handler = HandlerFactory::getFor($node['core']['args']['name']);
+				$arguments = $handler::run($node['core']['args'], $context);
+			}
 		}
 
 		// If the node contains an argument to be prepended to the arg list,

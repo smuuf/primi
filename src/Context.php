@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Extensions\ExtensionHub;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Tasks\TaskQueue;
 use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
+use \Smuuf\Primi\Helpers\Traits\StrictObject as _StrictObject;
 use \Smuuf\Primi\Modules\Importer;
 use \Smuuf\StrictObject;
 
