@@ -29,7 +29,9 @@ abstract class Handler {
 	 * parser. AST node array is passed by reference.
 	 */
 	public static function reduce(array &$node): void {
+
 		// Nothing is done to the AST node by default.
+
 	}
 
 }

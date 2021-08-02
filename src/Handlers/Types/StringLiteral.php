@@ -14,7 +14,7 @@ class StringLiteral extends SimpleHandler {
 	const NODE_NEEDS_TEXT = \true;
 
 	protected static function handle(array $node, Context $context) {
-		return StringValue::build(StringEscaping::unescapeString($node['text']));
+		return StringValue::build($node['text']);
 	}
 
 	public static function reduce(array &$node): void {
@@ -22,9 +22,12 @@ class StringLiteral extends SimpleHandler {
 		// Trim quotes from the start and the end using substr().
 		// Using trim("\"'", ...) would make "abc'" into abc instead of abc',
 		// so do this a little more directly.
-		$node['text'] = \mb_substr(
-			$node['text'], 1, \mb_strlen($node['text']) - 2
+		$node['text'] = StringEscaping::unescapeString(
+			\mb_substr(
+				$node['text'], 1, \mb_strlen($node['text']) - 2
+			)
 		);
+
 		unset($node['quote']);
 		unset($node['core']);
 

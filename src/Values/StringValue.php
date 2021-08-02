@@ -26,7 +26,7 @@ class StringValue extends AbstractValue {
 		}
 
 		// Strings up to 512 characters will be interned.
-		if (strlen($str) <= 512) {
+		if (\strlen($str) <= 512) {
 			return self::$interned[$str]
 				?? (self::$interned[$str] = new self($str));
 		}
