@@ -37,28 +37,60 @@ class ForStatement extends SimpleHandler {
 		// 1-bit value for ticking task queue once per two iterations.
 		$tickBit = 1;
 
-		foreach ($iter as $k => $i) {
+		if ($keyVariableName === false) {
 
-			// Switch the bit from 1/0 or vice versa.
-			if ($tickBit ^= 1) {
-				$context->getTaskQueue()->tick();
+			//
+			// Iteration without keys.
+			//
+
+			foreach ($iter as $i) {
+
+				// Switch the bit from 1/0 or vice versa.
+				if ($tickBit ^= 1) {
+					$context->getTaskQueue()->tick();
+				}
+
+				$context->setVariable($itemVariableName, $i);
+
+				try {
+					$blockHandler::run($node['right'], $context);
+				} catch (ContinueException $e) {
+					continue;
+				} catch (BreakException $e) {
+					break;
+				}
+
 			}
 
-			if ($keyVariableName) {
+		} else {
+
+			//
+			// Iteration with keys.
+			//
+
+			foreach ($iter as $k => $i) {
+
+				// Switch the bit from 1/0 or vice versa.
+				if ($tickBit ^= 1) {
+					$context->getTaskQueue()->tick();
+				}
+
 				$context->setVariable($keyVariableName, $k);
-			}
+				$context->setVariable($itemVariableName, $i);
 
-			$context->setVariable($itemVariableName, $i);
+				try {
+					$blockHandler::run($node['right'], $context);
+				} catch (ContinueException $e) {
+					continue;
+				} catch (BreakException $e) {
+					break;
+				}
 
-			try {
-				$blockHandler::run($node['right'], $context);
-			} catch (ContinueException $e) {
-				continue;
-			} catch (BreakException $e) {
-				break;
 			}
 
 		}
+
+		$context->getTaskQueue()->tick();
 
 	}
 

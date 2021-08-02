@@ -17,7 +17,7 @@ abstract class HandlerFactory {
 	/** @var array<string, string|null> Dict of handler classes we know exist. */
 	private static $handlersCache = [];
 
-	private const PREFIX = 'Smuuf\\Primi\\Handlers\\Types\\';
+	private const PREFIX = '\\Smuuf\\Primi\\Handlers\\Types\\';
 
 	/**
 	 * Get class for a AST-node-type specific handler identified by handler

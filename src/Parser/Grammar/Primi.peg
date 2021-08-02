@@ -67,7 +67,7 @@ BoolLiteral: / \b(true|false)\b /
 
 # Literal for null must NOT be followed by any possible characters representing variable name.
 NullLiteral: "null" !VariableName
-RegexLiteral: "rx" core:StringLiteral
+RegexLiteral: "rx" quote:/['"]/ core:StringInside "$quote"
 Nothing: ""
 
 Literal: &/["']/ skip:StringLiteral | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral )

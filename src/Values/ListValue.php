@@ -21,7 +21,7 @@ class ListValue extends AbstractValue {
 	public function __construct(array $items) {
 
 		// Ensuring the list is indexed from 0. Keys will be ignored.
-		$this->value = array_values($items);
+		$this->value = \array_values($items);
 		Stats::add('values_list');
 
 	}

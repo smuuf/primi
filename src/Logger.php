@@ -18,11 +18,9 @@ abstract class Logger {
 
 	public static function debug(string $msg): void {
 
-		if (!self::$enabled) {
-			return;
+		if (self::$enabled) {
+			\fwrite(\STDERR, "DEBUG: $msg\n");
 		}
-
-		\fwrite(\STDERR, "DEBUG: $msg\n");;
 
 	}
 

@@ -17,7 +17,7 @@ class TaskQueue {
 	 * Run queued tasks after this time interval passes (in seconds).
 	 * @var int|float
 	 */
-	public static $interval = 0.1;
+	public static $interval = 0.2;
 
 	/** @var Context */
 	private $context;

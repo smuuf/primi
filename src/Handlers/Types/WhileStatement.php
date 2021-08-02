@@ -19,27 +19,29 @@ class WhileStatement extends SimpleHandler {
 		$condHandler = HandlerFactory::getFor($node['left']['name']);
 		$blockHandler = HandlerFactory::getFor($node['right']['name']);
 
-		// 1-bit value for ticking task queue once per two iterations.
-		$tickBit = 1;
+		// Counter for determining when to tick the task queue.
+		$tickCounter = 0;
 
 		while (
 			$condHandler::run($node['left'], $context)->isTruthy()
 		) {
 
-			// Switch the bit from 1/0 or vice versa.
-			if ($tickBit ^= 1) {
-				$context->getTaskQueue()->tick();
-			}
-
 			try {
 				$blockHandler::run($node['right'], $context);
-			} catch (ContinueException $e) {
+			} catch (ContinueException $_) {
 				continue;
-			} catch (BreakException $e) {
+			} catch (BreakException $_) {
 				break;
 			}
 
+			// Tick the task queue every 10 iterations.
+			if ($tickCounter++ % 20 === 0) {
+				$context->getTaskQueue()->tick();
+			}
+
 		}
+
+		$context->getTaskQueue()->tick();
 
 	}
 
