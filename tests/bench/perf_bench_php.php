@@ -6,10 +6,19 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 const MAX_ITER = 50000;
+const TENTH_ITER = MAX_ITER / 10;
 
 //
 // Run some CPU intensive tasks and measure their duration in pure PHP.
 //
+
+function decor($fn) {
+	return function() use ($fn) {
+		echo "(";
+		$fn();
+		echo ")";
+	};
+}
 
 function measure($fn) {
 	$start = microtime(true);
@@ -28,6 +37,9 @@ function bench_function_calls() {
 	while ($c < MAX_ITER) {
 		$result = $result + $adder($c, 1);
 		$c = $c + 1;
+		if ($c % TENTH_ITER === 0) {
+			echo ":";
+		}
 	}
 
 	return $c;
@@ -45,6 +57,9 @@ function bench_regex_matches() {
 	while ($c < MAX_ITER) {
 		$result += preg_match('#^.*(zač).*(,)?.*?(\.)$#', $haystack, $m);
 		$c = $c + 1;
+		if ($c % TENTH_ITER === 0) {
+			echo ":";
+		}
 	}
 
 	return $c;
@@ -72,25 +87,17 @@ function bench_dicts() {
 
 		$c = $c + 1;
 
+		if ($c % TENTH_ITER === 0) {
+			echo ":";
+		}
+
 	}
 
 	return $result;
 
 }
 
-$results = [
-	'bench_function_calls' => measure('bench_function_calls'),
-	'bench_regex_matches' => measure('bench_regex_matches'),
-	'bench_dicts' => measure('bench_dicts'),
-];
-
-//
-// Print results in INI format for easy parsing, if needed.
-//
-
-$total = 0;
-foreach ($results as $name => $time) {
-	echo "$name=$time\n";
-	$total += $time;
-}
-echo "total=$total\n";
+measure(decor('bench_function_calls'));
+measure(decor('bench_regex_matches'));
+measure(decor('bench_dicts'));
+echo "\n";

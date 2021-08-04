@@ -2,74 +2,111 @@
 
 cd $(dirname $0)/..
 
-INTERPRETER="php"
+CLR_RESET="\e[0m"
+CLR_GREEN="\e[0;32m"
+CLR_YELLOW="\e[0;33m"
+
+function info {
+	echo "█ "$1
+}
+
+function header {
+	echo -e "${CLR_GREEN}▄${CLR_RESET}"
+	echo -e "${CLR_GREEN}█${CLR_RESET} $1"
+	echo -e "${CLR_GREEN}▀${CLR_RESET}"
+}
+
+header "Primi performance benchmark"
+
+INTERPRETER=$([[ ! -z "$1" ]] && echo "$1" || echo "php")
+XDEBUG_DISABLED=`$INTERPRETER --rf xdebug_break 2>&1 >/dev/null; echo $?`
 
 # Time format for 'time' command.
 TIMEFORMAT=%R
 
-echo "Clearing AST cache ..."
+info "Using interpreter: "$(which $INTERPRETER)
+$INTERPRETER --version
+
+info "Clearing AST cache ..."
 rm ./temp/ast*.json 2>/dev/null
 rm bench.out 2>/dev/null
 
 ITERS=3
-PERF_STANDARD_PATH='./tests/bench/standard_perf.php'
-BENCH_FILES=$(find ./tests/bench/ -iname "bench*.primi")
+PERF_STANDARD_PATH='./tests/bench/perf_bench_php.php'
+PERF_BENCH_FILE=$(find ./tests/bench/perf_bench_primi.primi)
+OTHER_BENCH_FILES=$(find ./tests/bench/ -iname "bench_*.primi")
 SIMPLE_TIME=0
 TOTAL_TIME=0
 AVG_SCORE=0
 
 function get_precise_time {
-    date +%s.%N
+	date +%s.%N
 }
 
 function measure_time {
-    # We probably should measure only user+kernel time our process really took
-    # (without I/O waits and stuff), but /usr/bin/time, which is handy, returns
-    # insufficient precision (only 2 decimal points).
-    # So lets measure everything.
-    START=`get_precise_time`
-    $1 1>&2
-    END=`get_precise_time`
-    perl -e "printf('%.8f', $END - $START);"
+	# We probably should measure only user+kernel time our process really took
+	# (without I/O waits and stuff), but /usr/bin/time, which is handy, returns
+	# insufficient precision (only 2 decimal points).
+	# So lets measure everything.
+	START=`get_precise_time`
+	$1 1>&2
+	END=`get_precise_time`
+	perl -e "printf('%.8f', $END - $START);"
 }
 
 function timeit_php {
-    echo `measure_time "$INTERPRETER $1"`
+	echo `measure_time "$INTERPRETER $1"`
 }
 
 function timeit_primi {
-    echo `measure_time "./primi $1"`
+	echo `measure_time "./primi $1"`
 }
 
-echo "Measuring perf standard ... "
-PERF_STD=`timeit_php $PERF_STANDARD_PATH`
-echo "$PERF_STD s"
+header "Measuring perf standard (PHP code) ... "
 
-echo "Running benchmarks ..."
+echo -en "${CLR_YELLOW}${PERF_STANDARD_PATH}${CLR_RESET} ... "
+PERF_STD_TIME=`timeit_php $PERF_STANDARD_PATH`
+echo -e "\n█ PHP perf took $PERF_STD_TIME s"
+
+header "Running perf benchmarks (Primi code) ..."
 for i in $(seq $ITERS)
 do
-    [[ "$i" == "1" ]] && STATE='parsing' || STATE='cached'
+	[[ "$i" == "1" ]] && STATE='parsing' || STATE='cached'
 
-    [[ "$STATE" == "parsing" ]] && DESC="With AST parsing" || DESC="With cached AST"
-    echo "█ $DESC ($i / $ITERS)"
+	[[ "$STATE" == "parsing" ]] && DESC="With AST parsing" || DESC="With cached AST"
+	info "Perf benchmark $DESC ($i / $ITERS)"
 
-    for f in $BENCH_FILES
-    do
-        echo -n "$f ... "
-        SIMPLE_TIME=$(timeit_primi $f)
-        SCORE=$(perl -e "printf('%.2f', $SIMPLE_TIME / $PERF_STD)")
-        TOTAL_SCORE=$(perl -e "printf('%.2f', $SCORE + $TOTAL_TIME)")
-        TOTAL_TIME=$(perl -e "printf('%.2f', $SIMPLE_TIME + $TOTAL_TIME)")
-        echo -e "\n█ $SIMPLE_TIME s (${SCORE}x slower)";
-    done
+	echo -en "${CLR_YELLOW}${PERF_BENCH_FILE}${CLR_RESET} ... "
+	SIMPLE_TIME=$(timeit_primi $PERF_BENCH_FILE)
+	SCORE=$(perl -e "printf('%.2f', $SIMPLE_TIME / $PERF_STD_TIME)")
+	TOTAL_TIME=$(perl -e "printf('%.2f', $SIMPLE_TIME + $TOTAL_TIME)")
+	echo -e "\n█ Primi perf took $SIMPLE_TIME s (${SCORE}x slower)";
+
 done
 
 AVG_TIME=`perl -e "printf('%.2f', $TOTAL_TIME / $ITERS);"`
-AVG_SCORE=`perl -e "printf('%.2f', $TOTAL_SCORE / $ITERS);"`
+AVG_SCORE=`perl -e "printf('%.2f', $AVG_TIME / $PERF_STD_TIME);"`
+
+header "Perf benchmark result"
 printf \
-"Results:\n"\
-"- Total: $TOTAL_TIME s\n"\
-"- AVG  : $AVG_TIME s\n"
+"  - Total: $TOTAL_TIME s\n"\
+"  - Avg  : $AVG_TIME s\n"
 
 TODAY=`date +"%d.%m.%Y %H:%M"`
-echo "$TODAY, ${AVG_TIME//,/.}, perf ${AVG_SCORE//,/.}x slower vs ${PERF_STD//,/.}" >> "bench_progress.csv"
+echo "$TODAY, ${AVG_TIME//,/.}, perf ${AVG_SCORE//,/.}x slower vs ${PERF_STD_TIME//,/.}" >> "bench_progress.csv"
+
+header "Running other benchmarks (Primi code) ..."
+for i in $(seq $ITERS)
+do
+	[[ "$i" == "1" ]] && STATE='parsing' || STATE='cached'
+
+	[[ "$STATE" == "parsing" ]] && DESC="With AST parsing" || DESC="With cached AST"
+	info "Other benchmarks $DESC ($i / $ITERS)"
+
+	for F in $OTHER_BENCH_FILES
+	do
+		echo -en "${CLR_YELLOW}${F}${CLR_RESET} ... "
+		SIMPLE_TIME=$(timeit_primi $F)
+		echo -e "\n█ Took $SIMPLE_TIME s";
+	done
+done
