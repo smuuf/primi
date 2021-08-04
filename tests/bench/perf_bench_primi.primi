@@ -1,5 +1,15 @@
+import __engine__.memory
+
 max_iter = 50000
 tenth_iter = max_iter / 10
+
+function decor(fn) {
+	return () => {
+		print("(", false)
+		fn()
+		print(")", false)
+	}
+}
 
 function bench_function_calls() {
 
@@ -10,12 +20,11 @@ function bench_function_calls() {
 	while (c < max_iter) {
 		result = result + adder(c, 1)
 		c = c + 1
-		if (!c.mod(tenth_iter)) {
+		if (c.is_divisible_by(tenth_iter)) {
 			print(':', false)
 		}
 	}
 
-	print('|', false)
 	return c
 
 }
@@ -29,14 +38,13 @@ function bench_regex_matches() {
 	result = 0
 	c = 0
 	while (c < max_iter) {
-		result = result + (haystack == rx"^.*(zač).*(,)?.*?(\.)").to_number()
+		result = result + number(haystack == rx"^.*(zač).*(,)?.*?(\.)")
 		c = c + 1
-		if (!c.mod(tenth_iter)) {
+		if (c.is_divisible_by(tenth_iter)) {
 			print(':', false)
 		}
 	}
 
-	print('|', false)
 	return c
 
 }
@@ -61,18 +69,17 @@ function bench_dicts() {
 		}
 
 		c = c + 1
-		if (!c.mod(tenth_iter)) {
+		if (c.is_divisible_by(tenth_iter)) {
 			print(':', false)
 		}
 
 	}
 
-	print('|', false)
 	return result
 
 }
 
-bench_function_calls()
-bench_regex_matches()
-bench_dicts()
-print()
+decor(bench_function_calls)()
+decor(bench_regex_matches)()
+decor(bench_dicts)()
+print(f" Mem peak {memory.get_peak() / 1_000_000} MB")
