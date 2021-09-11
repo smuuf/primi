@@ -2,7 +2,7 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Scopes\Scope;
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Values\{
 	AbstractValue,
 	StringValue,

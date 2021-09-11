@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Tasks\TaskQueue;
-use \Smuuf\Primi\Scopes\Scope;
-use \Smuuf\Primi\Scopes\AbstractScope;
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Modules\Importer;
-use \Smuuf\StrictObject;
 
 class Context {
 
@@ -35,11 +34,11 @@ class Context {
 	// Scope stack.
 	//
 
-	/** @var AbstractScope[] Scope stack list. */
-	private array $scopeStack = [];
+	/** @var Scope[] Scope stack list. */
+	private $scopeStack = [];
 
 	/** Direct reference to the scope on the top of the stack. */
-	private AbstractScope $currentScope;
+	private Scope $currentScope;
 
 	//
 	// Insides.
@@ -142,11 +141,11 @@ class Context {
 
 	// Scope management.
 
-	public function getCurrentScope(): AbstractScope {
+	public function getCurrentScope(): Scope {
 		return $this->currentScope;
 	}
 
-	public function pushScope(AbstractScope $scope): void {
+	public function pushScope(Scope $scope): void {
 		$this->scopeStack[] = $scope;
 		$this->currentScope = $scope;
 	}

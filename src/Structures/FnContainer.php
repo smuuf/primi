@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
 use \Smuuf\Primi\CallFrame;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\ReturnException;
 use \Smuuf\Primi\Ex\ArgumentCountError;
-use \Smuuf\Primi\Scopes\Scope;
-use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
@@ -53,7 +52,7 @@ class FnContainer {
 		string $definitionName,
 		string $definitionModule,
 		array $definitionArgs = [],
-		?AbstractScope $definitionScope = \null
+		?Scope $definitionScope = \null
 	) {
 
 		$definitionArgsCount = \count($definitionArgs);

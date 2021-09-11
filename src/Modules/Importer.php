@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Modules;
 
 use Smuuf\StrictObject;
+use Smuuf\Primi\Scope;
 use Smuuf\Primi\Logger;
 use Smuuf\Primi\Context;
 use Smuuf\Primi\Ex\ImportError;
@@ -12,7 +13,6 @@ use Smuuf\Primi\Ex\ModuleNotFoundError;
 use Smuuf\Primi\Ex\ImportBeyondTopException;
 use Smuuf\Primi\Ex\ImportRelativeWithoutParentException;
 use Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
-use Smuuf\Primi\Scopes\Scope;
 use Smuuf\Primi\Values\ModuleValue;
 use Smuuf\Primi\Modules\Dotpath;
 use Smuuf\Primi\Helpers\Wrappers\ImportStackWrapper;

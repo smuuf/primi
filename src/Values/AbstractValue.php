@@ -7,6 +7,7 @@ use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\ValueFriends;
 use \Smuuf\Primi\Structures\FnContainer;
 
@@ -23,15 +24,11 @@ abstract class AbstractValue extends ValueFriends {
 
 		switch (\true) {
 			case $value === \null:
-				return NullValue::build();
+				return Interned::null();
 			case \is_bool($value):
-				return BoolValue::build($value);
+				return Interned::bool($value);
 			case \is_int($value) || \is_float($value) || \is_numeric($value):
-				return NumberValue::build(Func::scientific_to_decimal((string) $value));
-			case \is_callable($value);
-				// Must be before "is_array" case, because some "arrays"
-				// can be in reality "callables".
-				return new FuncValue(FnContainer::buildFromClosure($value));
+				return Interned::number(Func::scientific_to_decimal((string) $value));
 			case \is_array($value):
 				$inner = \array_map(__METHOD__, $value);
 				if (Func::is_array_dict($value)) {
@@ -42,7 +39,7 @@ abstract class AbstractValue extends ValueFriends {
 			case $value instanceof AbstractValue:
 				return $value;
 			default:
-				return StringValue::build((string) $value);
+				return Interned::string((string) $value);
 		}
 
 	}
