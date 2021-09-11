@@ -105,8 +105,9 @@ class ParserHandler {
 		return $ast;
 
 	}
+
 	/**
-	 * Go recursively through each of the nodes and strip unecessary data
+	 * Go recursively through each of the nodes and strip unnecessary data
 	 * in the abstract syntax tree.
 	 */
 	private static function preprocessNode(array &$node): void {

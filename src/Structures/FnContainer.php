@@ -15,6 +15,7 @@ use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\StrictObject;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
@@ -107,10 +108,10 @@ class FnContainer {
 					return $e->getValue();
 				}
 
-				// Return null if no "return" was present (i.e. no
-				// ReturnException was thrown from inside the called function).
-				return NullValue::build();
 
+			// Return null if no "return" was present (i.e. no
+			// ReturnException was thrown from inside the called function).
+			return Interned::null();
 			});
 
 		};

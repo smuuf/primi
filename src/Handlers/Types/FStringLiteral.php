@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 class FStringLiteral extends StringLiteral {
@@ -32,7 +32,7 @@ class FStringLiteral extends StringLiteral {
 
 		}
 
-		return StringValue::build($result);
+		return Interned::string($result);
 
 	}
 

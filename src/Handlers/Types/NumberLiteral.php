@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Values\NumberValue;
 
 class NumberLiteral extends SimpleHandler {
 
 	const NODE_NEEDS_TEXT = \true;
 
 	protected static function handle(array $node, Context $context) {
-		return NumberValue::build($node['number']);
+		return Interned::number($node['number']);
 	}
 
 	public static function reduce(array &$node): void {

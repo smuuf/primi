@@ -13,6 +13,7 @@ use \Smuuf\Primi\Values\{
 	FuncValue,
 	BoolValue
 };
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Structures\FnContainer;
 
 require __DIR__ . '/../bootstrap.php';
@@ -44,7 +45,7 @@ Assert::same([
 Assert::truthy($scope->getVariables());
 
 $multi = [
-	'var_c' => ($varC = BoolValue::build(false)),
+	'var_c' => ($varC = Interned::bool(false)),
 	'var_d' => ($varD = new RegexValue("[abc]")),
 ];
 

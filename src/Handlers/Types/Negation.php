@@ -3,10 +3,10 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Values\BoolValue;
+use \Smuuf\Primi\Handlers\HandlerFactory;
 
 class Negation extends SimpleHandler {
 
@@ -20,7 +20,7 @@ class Negation extends SimpleHandler {
 		// input.
 		$isNegation = \count($node['nots'] ?? []) % 2;
 
-		return BoolValue::build($isNegation ? !$truthness : $truthness);
+		return Interned::bool($isNegation ? !$truthness : $truthness);
 
 	}
 

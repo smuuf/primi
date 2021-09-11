@@ -7,6 +7,7 @@ use \Smuuf\Primi\Values\{
 	NullValue,
 	AbstractValue
 };
+use \Smuuf\Primi\Helpers\Interned;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -16,8 +17,8 @@ function get_val(AbstractValue $v) {
 
 $null = new NullValue;
 $nullTwo = new NullValue;
-$true = BoolValue::build(true);
-$false = BoolValue::build(false);
+$true = Interned::bool(true);
+$false = Interned::bool(false);
 
 // Always null.
 

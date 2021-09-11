@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\SimpleHandler;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\StringEscaping;
-use \Smuuf\Primi\Values\StringValue;
+use \Smuuf\Primi\Handlers\SimpleHandler;
 
 class StringLiteral extends SimpleHandler {
 
 	const NODE_NEEDS_TEXT = \true;
 
 	protected static function handle(array $node, Context $context) {
-		return StringValue::build($node['text']);
+		return Interned::string($node['text']);
 	}
 
 	public static function reduce(array &$node): void {
