@@ -1,8 +1,0 @@
-#!/bin/bash
-
-cd `dirname $0`/..
-
-rm -f ./temp/*.json
-
-php ./vendor/smuuf/php-peg/bin/peg ./src/Parser/Grammar.peg ./src/Parser/CompiledParser.php
-
