@@ -13,11 +13,8 @@ class Assignment extends SimpleHandler {
 	protected static function handle(array $node, Context $context) {
 
 		// Execute the right-hand node first.
-		$rightHandler = HandlerFactory::getFor($node['right']['name']);
-		$return = $rightHandler::run($node['right'], $context);
-
-		$leftHandler = HandlerFactory::getFor($node['left']['name']);
-		$target = $leftHandler::run($node['left'], $context);
+		$return = HandlerFactory::runNode($node['right'], $context);
+		$target = HandlerFactory::runNode($node['left'], $context);
 
 		if (\is_string($target)) {
 			// Store the return value into variable in current scope.

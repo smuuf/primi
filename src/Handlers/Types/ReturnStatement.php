@@ -15,8 +15,9 @@ class ReturnStatement extends SimpleHandler {
 			throw new ReturnException;
 		}
 
-		$handler = HandlerFactory::getFor($node['subject']['name']);
-		throw new ReturnException($handler::run($node['subject'], $context));
+		throw new ReturnException(
+			HandlerFactory::runNode($node['subject'], $context)
+		);
 
 	}
 

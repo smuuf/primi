@@ -19,8 +19,7 @@ class Invocation extends ChainedHandler {
 
 		$arguments = [];
 		if (isset($node['args'])) {
-			$handler = HandlerFactory::getFor($node['args']['name']);
-			$arguments = $handler::run($node['args'], $context);
+			$arguments = HandlerFactory::runNode($node['args'], $context);
 		}
 
 		// If the node contains an argument to be prepended to the arg list,
@@ -39,7 +38,7 @@ class Invocation extends ChainedHandler {
 
 		$result = $fn->invoke($context, $arguments, $callsite);
 
-		if ($result === null) {
+		if ($result === \null) {
 			throw new RuntimeError(
 				\sprintf("Trying to invoke a non-function '%s'", $fn::TYPE)
 			);

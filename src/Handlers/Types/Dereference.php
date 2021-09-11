@@ -16,11 +16,10 @@ class Dereference extends ChainedHandler {
 		AbstractValue $subject
 	) {
 
-		$handler = HandlerFactory::getFor($node['key']['name']);
-		$key = $handler::run($node['key'], $context);
+		$key = HandlerFactory::runNode($node['key'], $context);
 
 		$returned = $subject->itemGet($key);
-		if ($returned === null) {
+		if ($returned === \null) {
 			throw new RuntimeError(\sprintf(
 				"Type '%s' does not support item access",
 				$subject::TYPE

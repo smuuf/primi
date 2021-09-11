@@ -16,17 +16,14 @@ class IfStatement extends SimpleHandler {
 	protected static function handle(array $node, Context $context) {
 
 		// Execute the left-hand node and get its return value.
-		$leftHandler = HandlerFactory::getFor($node['left']['name']);
-		$return = $leftHandler::run($node['left'], $context);
+		$result = HandlerFactory::runNode($node['left'], $context);
 
 		// If the result of the left hand equals to truthy value,
 		// execute the code branch stored in the right-hand node.
-		if ($return->isTruthy()) {
-			$rightHandler = HandlerFactory::getFor($node['right']['name']);
-			$rightHandler::run($node['right'], $context);
+		if ($result->isTruthy()) {
+			HandlerFactory::runNode($node['right'], $context);
 		} elseif (isset($node['else'])) {
-			$elseHandler = HandlerFactory::getFor($node['else']['name']);
-			$elseHandler::run($node['else'], $context);
+			HandlerFactory::runNode($node['else'], $context);
 		}
 
 	}

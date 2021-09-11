@@ -12,8 +12,8 @@ class Negation extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
-		$handler = HandlerFactory::getFor($node['core']['name']);
-		$truthness = $handler::run($node['core'], $context)->isTruthy();
+		$truthness = HandlerFactory::runNode($node['core'], $context)
+			->isTruthy();
 
 		// Should we even handle negation? If there's an even number of negation
 		// operators, the result would always have the same truthness as its

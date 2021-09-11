@@ -41,10 +41,8 @@ class DictDefinition extends SimpleHandler {
 		$result = [];
 		foreach ($itemNodes as $itemNode) {
 
-			$keyHandler = HandlerFactory::getFor($itemNode['key']['name']);
-			$valueHandler = HandlerFactory::getFor($itemNode['value']['name']);
-			yield $keyHandler::run($itemNode['key'], $context)
-				=> $valueHandler::run($itemNode['value'], $context);;
+			yield HandlerFactory::runNode($itemNode['key'], $context)
+				=> HandlerFactory::runNode($itemNode['value'], $context);
 
 		}
 
