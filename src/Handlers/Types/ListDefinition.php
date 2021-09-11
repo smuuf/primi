@@ -27,12 +27,7 @@ class ListDefinition extends SimpleHandler {
 
 		$result = [];
 		foreach ($itemNodes as $itemNode) {
-
-			$valueHandler = HandlerFactory::getFor($itemNode['name']);
-			$value = $valueHandler::run($itemNode, $context);
-
-			$result[] = $value;
-
+			$result[] = HandlerFactory::runNode($itemNode, $context);
 		}
 
 		return $result;

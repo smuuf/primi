@@ -30,8 +30,7 @@ class VariableVector extends SimpleHandler {
 	protected static function handle(array $node, Context $context) {
 
 		// Retrieve the original value.
-		$handler = HandlerFactory::getFor($node['core']['name']);
-		$value = $handler::run($node['core'], $context);
+		$value = HandlerFactory::runNode($node['core'], $context);
 
 		// And handle the nesting according to the specified vector.
 		foreach ($node['vector'] as $next) {

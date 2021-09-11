@@ -19,8 +19,7 @@ class FStringLiteral extends StringLiteral {
 			if (\is_array($part)) {
 
 				// Expr node (no other thing would be an array at this point).
-				$handler = HandlerFactory::getFor($part['core']['name']);
-				$value = $handler::run($part['core'], $context);
+				$value = HandlerFactory::runNode($part['core'], $context);
 				$result .= $value->getStringValue();
 
 			} else {

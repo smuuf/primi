@@ -23,8 +23,7 @@ class ArgumentList extends SimpleHandler {
 
 		$list = [];
 		foreach ($node['args'] as $arg) {
-			$handler = HandlerFactory::getFor($arg['name']);
-			$list[] = $handler::run($arg, $context);
+			$list[] = HandlerFactory::runNode($arg, $context);
 		}
 
 		return $list;

@@ -17,8 +17,7 @@ class VectorItem extends ChainedHandler {
 		AbstractValue $subject
 	) {
 
-		$handler = HandlerFactory::getFor($node['index']['name']);
-		$key = $handler::run($node['index'], $context, $subject);
+		$key = HandlerFactory::runNode($node['index'], $context, $subject);
 
 		// If this is a leaf node, return an insertion proxy.
 		if ($node['leaf']) {

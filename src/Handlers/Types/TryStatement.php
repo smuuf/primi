@@ -14,15 +14,12 @@ class TryStatement extends SimpleHandler {
 		try {
 
 			// Execute the main code.
-			$mainHandler = HandlerFactory::getFor($node['main']['name']);
-			return $mainHandler::run($node['main'], $context);
+			return HandlerFactory::runNode($node['main'], $context);
 
 		} catch (ErrorException $e) {
 
-			// Execute the onerror block if any error occurred with the main
-			// code.
-			$errorHandler = HandlerFactory::getFor($node['onerror']['name']);
-			return $errorHandler::run($node['onerror'], $context);
+			// Execute the onerror block if any error occurred with the main code.
+			return HandlerFactory::runNode($node['onerror'], $context);
 
 		}
 

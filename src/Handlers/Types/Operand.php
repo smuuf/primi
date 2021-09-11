@@ -11,8 +11,7 @@ class Operand extends SimpleHandler {
 	protected static function handle(array $node, Context $context) {
 
 		// Handle the item; pass in the chained value, if it was given.
-		$handler = HandlerFactory::getFor($node['core']['name']);
-		$value = $handler::run($node['core'], $context);
+		$value = HandlerFactory::runNode($node['core'], $context);
 
 		// If there's chain, handle it.
 		if (isset($node['chain'])) {
