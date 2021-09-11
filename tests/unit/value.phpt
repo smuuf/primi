@@ -15,6 +15,7 @@ use \Smuuf\Primi\Values\{
 	NullValue
 };
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -70,10 +71,10 @@ $v = new NumberValue("000123.789");
 Assert::same('123.789', $v->getStringRepr());
 
 // Bool: True.
-$v = BoolValue::build(true);
+$v = Interned::bool(true);
 Assert::same('true', $v->getStringRepr());
 // Bool: False
-$v = BoolValue::build(false);
+$v = Interned::bool(false);
 Assert::same('false', $v->getStringRepr());
 
 // Regex 1.

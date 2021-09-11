@@ -2,30 +2,21 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Values\{
 	AbstractValue,
 	StringValue,
 	NumberValue,
 	RegexValue,
 	DictValue,
-	ListValue,
-	BoolValue
+	ListValue
 };
 use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\ExtensionHub;
 
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
-
-$extHub = new ExtensionHub;
-$ctx = new Context;
-$scope = new Scope;
-$extHub->apply($scope);
 
 $integer = new NumberValue("1");
 $biggerInteger = new NumberValue("20");
@@ -235,55 +226,3 @@ Assert::false($tmp);
 
 $tmp = $float->hasRelationTo("<=", new NumberValue("2.31"));
 Assert::true($tmp);
-
-//
-// Methods...
-//
-
-$fn = $scope->getVariable('number_abs');
-$tmp = $fn->invoke($ctx, [$integer]);
-Assert::same("1", get_val($tmp));
-$tmp = $fn->invoke($ctx, [$biggerInteger]);
-Assert::same("20", get_val($tmp));
-$tmp = $fn->invoke($ctx, [$posFloat]);
-Assert::same("2.3", get_val($tmp));
-$tmp = $fn->invoke($ctx, [$negFloat]);
-Assert::same("2.3", get_val($tmp));
-
-$tmp = $scope->getVariable('number_sqrt')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_pow')->invoke($ctx, [$integer, new NumberValue(4)]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_sin')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_cos')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_tan')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_atan')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_ceil')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_floor')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_round')->invoke($ctx, [$integer]);
-Assert::type('string',  get_val($tmp));
-
-$tmp = $scope->getVariable('number_sqrt')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_pow')->invoke($ctx, [$float, new NumberValue(4)]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_sin')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_cos')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_tan')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_atan')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_ceil')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_floor')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
-$tmp = $scope->getVariable('number_round')->invoke($ctx, [$float]);
-Assert::type('string',  get_val($tmp));
