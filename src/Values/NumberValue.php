@@ -4,54 +4,29 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Stats;
 
 /**
- * Class for representing numbers in Primi.
+ * NOTE: You should not instantiate this PHP class directly - use the helper
+ * `Interned::number()` factory to get these.
  *
  * NOTE: You should _never_ modify the internal $value property directly,
  * as it may later lead to unpredictable results.
  */
-class NumberValue extends AbstractValue {
+class NumberValue extends AbstractNativeValue {
 
 	/** @const int Floating point precision for bcmath operations. */
 	const PRECISION = 128;
-	const TYPE = "number";
 
-	/** @var array<string, self> Dict for storing interned numbers. */
-	private static $interned = [];
+	protected const TYPE = "number";
 
 	/**
-	 * @param string $number Number as string.
+	 * NOTE: Protected because you should use the Interned factory for building
+	 * these.
 	 */
-	public static function build($number = null) {
-
-		if ($number === null) {
-			throw new EngineError("Missing argument for NumberValue::build()");
-		}
-
-		// Numbers up to 16 characters will be interned.
-		if (strlen($number) <= 16) {
-			return self::$interned[$number]
-				?? (self::$interned[$number] = new self($number));
-		}
-
-		return new self($number);
-
-	}
-
 	public function __construct(string $number) {
-
-		if ($number === '') {
-			throw new EngineError("Cannot create number from empty string");
-		}
-
 		$this->value = Func::normalize_decimal($number);
-		Stats::add('values_number');
-
 	}
 
 	public function isTruthy(): bool {

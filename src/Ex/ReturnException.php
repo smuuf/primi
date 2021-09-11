@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Ex;
 
-use \Smuuf\Primi\Values\NullValue;
+use \Smuuf\Primi\Helpers\Interned;
 
 class ReturnException extends ControlFlowException {
 
@@ -19,7 +19,7 @@ class ReturnException extends ControlFlowException {
 	}
 
 	public function getValue() {
-		return $this->value ?? NullValue::build();
+		return $this->value ?? Interned::null();
 	}
 
 }

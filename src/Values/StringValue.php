@@ -6,40 +6,21 @@ namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\IndexError;
-use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Stats;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\StringEscaping;
 
-class StringValue extends AbstractValue {
+/**
+ * NOTE: You should not instantiate this PHP class directly - use the helper
+ * `Interned::string()` factory to get these.
+ */
+class StringValue extends AbstractNativeValue {
 
-	const TYPE = "string";
-
-	/** @var array<string, self> Dict for storing interned strings. */
-	private static $interned = [];
-
-	public static function build($str = null) {
-
-		if ($str === null) {
-			throw new EngineError("Missing argument for StringValue::build()");
-		}
-
-		// Strings up to 512 characters will be interned.
-		if (\strlen($str) <= 512) {
-			return self::$interned[$str]
-				?? (self::$interned[$str] = new self($str));
-		}
-
-		return new self($str);
-
-	}
+	protected const TYPE = "string";
 
 	public function __construct(string $str) {
-
-		Stats::add('values_string');
 		$this->value = $str;
-
 	}
 
 	public function getLength(): ?int {
@@ -191,7 +172,7 @@ class StringValue extends AbstractValue {
 		$strlen = \mb_strlen($string);
 		for ($i = 0; $i < $strlen; $i++) {
 
-			yield NumberValue::build((string) $i)
+			yield Interned::number((string) $i)
 				=> new self(\mb_substr($string, $i, 1));
 
 		}

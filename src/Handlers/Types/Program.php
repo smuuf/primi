@@ -3,8 +3,8 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
@@ -17,7 +17,7 @@ class Program extends SimpleHandler {
 			$returnValue = $handler::run($sub, $context);
 		}
 
-		return $returnValue ?? NullValue::build();
+		return $returnValue ?? Interned::null();
 
 	}
 

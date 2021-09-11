@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\Func;
 
-class RegexValue extends AbstractValue {
+/**
+ * NOTE: You should not instantiate this PHP class directly - use the helper
+ * `Interned::regex()` factory to get these.
+ */
+class RegexValue extends AbstractNativeValue {
 
-	const TYPE = "regex";
+	protected const TYPE = "regex";
 
 	/**
 	 * Prepared string for 'truthiness' evaluation.
-	 * Regex value is truthy if the actual 'internal' regex, without delimiters
-	 * and unicode modifier, is empty.
+	 * Regex value is truthy if the actual pattern, without delimiters and
+	 * unicode modifier, is empty.
 	 */
 	const EMPTY_REGEX = "\x07\x07u";
 
@@ -23,8 +26,6 @@ class RegexValue extends AbstractValue {
 		// We'll be using ASCII \x07 (bell) character as delimiters, so
 		// we won't need to deal with any escaping of input.
 		$this->value = "\x07$regex\x07u";
-
-		Stats::add('values_regex');
 
 	}
 

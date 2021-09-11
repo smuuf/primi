@@ -4,31 +4,18 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Helpers\Stats;
 
-class BoolValue extends AbstractValue {
+/**
+ * NOTE: You should not instantiate this PHP class directly - use the helper
+ * `Interned::bool()` factory to get these.
+ */
+class BoolValue extends AbstractNativeValue {
 
-	const TYPE = "bool";
+	protected const TYPE = "bool";
 
-	/** @var array<int, self> Dict for storing interned bool values. */
-	private static $interned = null;
-
-	public static function build($truth = null) {
-
-		if ($truth === null) {
-			throw new EngineError("Missing argument for BoolValue::build()");
-		}
-
-		return self::$interned[$truth]
-			?? (self::$interned[$truth] = new self($truth));
-
-	}
-
-	private function __construct(bool $value) {
+	public function __construct(bool $value) {
 		$this->value = $value;
-		Stats::add('values_bool');
 	}
 
 	public function getStringRepr(): string {
