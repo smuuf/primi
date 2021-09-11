@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Ex\EngineException;
 use \Smuuf\Primi\Ex\SystemException;
-use \Smuuf\Primi\Scopes\Scope;
-use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Helpers\Func;
@@ -229,7 +228,7 @@ class Repl {
 	 * Pretty-prints out all variables of a scope (with or without variables
 	 * from parent scopes).
 	 */
-	private function printScope(AbstractScope $c, bool $includeParents): void {
+	private function printScope(Scope $c, bool $includeParents): void {
 
 		foreach ($c->getVariables($includeParents) as $name => $value)  {
 			$this->driver->output(Colors::get("{lightblue}$name{_}: "));

@@ -2,10 +2,8 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Scopes\Scope;
-use \Smuuf\Primi\Scopes\ExtensionScope;
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Extensions\ExtensionHub;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -14,20 +12,31 @@ require __DIR__ . '/../bootstrap.php';
 //
 
 $scopeA = new Scope;
-Assert::null($scopeA->getParent(), 'New scope has no parent');
+
+/**
+ * Scope does not expose the "parent" property, so let's have a helper function
+ * for inspecting it when testing.
+ */
+function get_scope_parent(Scope $s) {
+	$reflectionProperty = new \ReflectionProperty(Scope::class, 'parent');
+	$reflectionProperty->setAccessible(true);
+	return $reflectionProperty->getValue($s);
+}
+
+Assert::null(get_scope_parent($scopeA), 'New scope has no parent');
 
 $scopeB = new Scope;
 $scopeA->setParent($scopeB);
 
-Assert::same($scopeB, $scopeA->getParent(), 'Scope A has scope B as parent');
-Assert::null($scopeA->getParent()->getParent(), 'Scope B has no parent');
+Assert::same($scopeB, get_scope_parent($scopeA), 'Scope A has scope B as parent');
+Assert::null(get_scope_parent(get_scope_parent($scopeA)), 'Scope B has no parent');
 
 $scopeC = new Scope;
 $scopeB->setParent($scopeC);
 
-Assert::same($scopeB, $scopeA->getParent(), 'Scope A has scope B as parent');
-Assert::same($scopeC, $scopeA->getParent()->getParent(), 'Scope B has scope C as parent');
-Assert::null($scopeA->getParent()->getParent()->getParent(), 'Scope C has no parent');
+Assert::same($scopeB, get_scope_parent($scopeA), 'Scope A has scope B as parent');
+Assert::same($scopeC, get_scope_parent(get_scope_parent($scopeA)), 'Scope B has scope C as parent');
+Assert::null(get_scope_parent(get_scope_parent(get_scope_parent($scopeA))), 'Scope C has no parent');
 
 //
 // Scopes and parents: setting variables and getting variables from parent scopes.
@@ -48,36 +57,3 @@ $scopeB->setVariable('some_val', $valB);
 Assert::same($valB, $scopeA->getVariable('some_val'), 'Scope A: AbstractValue assigned to scope B overrides value from scope C');
 Assert::same($valB, $scopeB->getVariable('some_val'), 'Scope B: AbstractValue assigned to scope B overrides value from scope C');
 Assert::same($valA, $scopeC->getVariable('some_val'), 'Scope C: Still has the original value');
-
-//
-// Scopes and parents: extension hub will add extension scope on the top.
-//
-
-$eh = new ExtensionHub;
-
-// We'll apply the EH to the most bottom node - ScopeA. New instance of
-// ExtensionScope will be added as parent to the top node (which is ScopeC).
-$eh->apply($scopeA);
-
-Assert::same($scopeB, $scopeA->getParent(), 'After applying extension hub to scope A: Scope A still has scope B as parent');
-Assert::same($scopeC, $scopeB->getParent(), 'After applying extension hub to scope A: Scope B still has scope C as parent');
-$extScopeA = $scopeC->getParent();
-Assert::type(ExtensionScope::class, $extScopeA, 'After applying extension hub to scope A: Scope C now has extension scope as parent');
-
-// Applying EH to any of the scopes will not do nothing, because there already
-// is some ExtensionScope present in the hierarchy.
-$eh->apply($scopeA);
-
-Assert::same($scopeB, $scopeA->getParent(), 'After second applying extension hub to scope A: Scope A still has scope B as parent');
-Assert::same($scopeC, $scopeB->getParent(), 'After second applying extension hub to scope A: Scope B still has scope C as parent');
-$extScopeB = $scopeC->getParent();
-Assert::same($extScopeA, $extScopeB, 'After second applying extension hub to scope A: Scope C still has the same extension scope as parent as before');
-Assert::null($extScopeB->getParent(), 'Extension scope has no parent scope');
-
-// Even applying EH to the scope which is the ExtensionScope will not do anything.
-$eh->apply($extScopeB);
-
-Assert::same($scopeB, $scopeA->getParent());
-Assert::same($scopeC, $scopeB->getParent());
-Assert::same($extScopeB, $scopeC->getParent(), 'Nothing happens after applying extension hub to the extension scope, as there already is an extension scope in the hierearchy');
-Assert::null($extScopeB->getParent());

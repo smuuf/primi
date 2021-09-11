@@ -3,9 +3,9 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Scopes\AbstractScope;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Extensions\ExtensionHub;
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 
 /**
