@@ -2,10 +2,8 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Values\{
 	StringValue,
 	NumberValue,
@@ -13,22 +11,15 @@ use \Smuuf\Primi\Values\{
 	NullValue,
 	DictValue,
 	ListValue,
-	BoolValue,
 	AbstractValue,
 };
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Extensions\ExtensionHub;
+use \Smuuf\Primi\Helpers\Interned;
 
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(AbstractValue $v) {
 	return $v->getInternalValue();
 }
-
-$extHub = new ExtensionHub;
-$ctx = new Context;
-$scope = new Scope;
-$extHub->apply($scope, $ctx);
 
 $string = new StringValue("this is a string.");
 $letterA = new StringValue("a");
@@ -184,150 +175,3 @@ $iterable = new StringValue($sourceString);
 foreach ($iterable->getIterator() as $index => $x) {
 	Assert::same($sourceString[get_val($index)], get_val($x));
 }
-
-//
-// Test methods...
-//
-
-// Test classic formatting
-
-$template = new StringValue("1:{},2:{},3:{},4:{}");
-$result = $scope->getVariable('string_format')->invoke($ctx, [
-	$template,
-	new StringValue("FIRST"),
-	new StringValue("SECOND"),
-	new StringValue("THIRD"),
-	new StringValue("FOURTH"),
-]);
-Assert::same("1:FIRST,2:SECOND,3:THIRD,4:FOURTH", get_val($result));
-
-// Test combining positional and non-positional placeholders - forbidden.
-Assert::exception(function() use ($scope, $ctx) {
-	$template = new StringValue("1:{},2:{2},3:{1},4:{}");
-	$scope->getVariable('string_format')->invoke($ctx, [
-		$template,
-		new StringValue("FIRST"),
-		new StringValue("SECOND"),
-		new StringValue("THIRD"),
-		new StringValue("FOURTH"),
-	]);
-}, \Smuuf\Primi\Ex\RuntimeError::class);
-
-// Test too-few-parameters.
-Assert::exception(function() use ($scope, $ctx) {
-	$template = new StringValue("1:{},2:{},3:{},4:{}");
-	$scope->getVariable('string_format')->invoke($ctx, [
-		$template,
-		new StringValue("FIRST"),
-		new StringValue("SECOND"),
-	]);
-}, \Smuuf\Primi\Ex\RuntimeError::class);
-
-// Test placeholder index being too high for passed parameters.
-Assert::exception(function() use ($scope, $ctx) {
-	$template = new StringValue("1:{0},2:{1000}");
-	$scope->getVariable('string_format')->invoke($ctx, [
-		$template,
-		new StringValue("FIRST"),
-		new StringValue("SECOND"),
-	]);
-}, \Smuuf\Primi\Ex\RuntimeError::class);
-
-//
-// Test count.
-//
-
-$fn = $scope->getVariable('string_number_of');
-Assert::same('3', get_val($fn->invoke($ctx, [$string, new StringValue("i")])));
-Assert::same('2', get_val($fn->invoke($ctx, [$string, new StringValue("is")])));
-Assert::same('0', get_val($fn->invoke($ctx, [$string, new StringValue("xoxoxo")])));
-Assert::same('0', get_val($fn->invoke($ctx, [$string, new NumberValue(1)])));
-
-//
-// Test shuffle.
-//
-
-$fn = $scope->getVariable('string_shuffle');
-Assert::same(17, mb_strlen(get_val($fn->invoke($ctx, [$string]))));
-Assert::same(17, mb_strlen(get_val($fn->invoke($ctx, [$unicode]))));
-
-//
-// Test length.
-//
-
-$fn = $scope->getVariable('len');
-Assert::same('17', get_val($fn->invoke($ctx, [$string])));
-Assert::same('1', get_val($fn->invoke($ctx, [$letterA])));
-// Multibyte strings should report length correctly.
-Assert::same('17', get_val($fn->invoke($ctx, [$unicode])));
-
-//
-// Test replacing.
-//
-
-$fn = $scope->getVariable('string_replace');
-
-// Test replacing with array of needle-replacement.
-$pairs = new DictValue(Func::php_array_to_dict_pairs([
-	"is" => "A", // Will be automatically converted to AbstractValue.
-	"i" => "B", // The same.
-	"." => new StringValue("ščř"),
-]));
-
-$result = $fn->invoke($ctx, [$string, $pairs]);
-Assert::same("thA A a strBngščř", get_val($result));
-// Replacing ordinary strings.
-$result = $fn->invoke($ctx, [$string, new StringValue("is"), new StringValue("yes!")]);
-Assert::same("thyes! yes! a string.", get_val($result));
-// Replacing with regex needle.
-$result = $fn->invoke($ctx, [$string, new RegexValue('(i?s|\s)'), new StringValue("no!")]);
-Assert::same("thno!no!no!no!ano!no!tring.", get_val($result));
-
-//
-// Test first/last occurence search.
-//
-
-$fn = $scope->getVariable('string_find_first');
-Assert::same('2', get_val($fn->invoke($ctx, [$string, new StringValue("is")])));
-// First: null when it does not appear in the string.
-Assert::null(get_val($fn->invoke($ctx, [$string, new StringValue("aaa")])));
-
-$fn = $scope->getVariable('string_find_last');
-Assert::same('5', get_val($fn->invoke($ctx, [$string, new StringValue("is")])));
-// Last: null when it does not appear in the string.
-Assert::null(get_val($fn->invoke($ctx, [$string, new StringValue("aaa")])));
-
-//
-// Test splitting.
-//
-
-$fn = $scope->getVariable('string_split');
-$string = new StringValue("hello,how,are,you");
-$result = [];
-foreach (get_val($fn->invoke($ctx, [$string, new StringValue(",")])) as $item) {
-	$result[] = get_val($item);
-}
-Assert::same(["hello", "how", "are", "you"], $result);
-
-$string = new StringValue("well, this ... IS ... awkward!");
-$result = [];
-foreach (get_val($fn->invoke($ctx, [$string, new RegexValue("[,\s\.]+")])) as $item) {
-	$result[] = get_val($item);
-}
-Assert::same(["well", "this", "IS", "awkward!"], $result);
-
-//
-// Test reverse.
-//
-
-$fn = $scope->getVariable('string_reverse');
-
-// Simple ascii string.
-$string = new StringValue("You wake me up, god damn it!");
-Assert::same("!ti nmad dog ,pu em ekaw uoY", get_val($fn->invoke($ctx, [$string])));
-// With accents
-$string = new StringValue("Čauky mňauky, kolovrátku ;D");
-Assert::same("D; uktárvolok ,ykuaňm ykuaČ", get_val($fn->invoke($ctx, [$string])));
-// With the worst smiley ever.
-$string = new StringValue("Yoo 🤣, my mæte 😂!!!");
-Assert::same("!!!😂 etæm ym ,🤣 ooY", get_val($fn->invoke($ctx, [$string])));
