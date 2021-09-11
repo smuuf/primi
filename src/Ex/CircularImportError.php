@@ -7,7 +7,8 @@ namespace Smuuf\Primi\Ex;
 class CircularImportError extends ImportError {
 
 	/**
-	 * @param array<string> $importStack List representing current import stack.
+	 * @param array<string> $nextModule Name of the module causing circular
+	 * import.
 	 */
 	public function __construct(string $nextModule) {
 		parent::__construct("Circular import when importing: {$nextModule}");

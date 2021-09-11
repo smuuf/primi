@@ -4,37 +4,24 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Modules;
 
-use \Smuuf\Primi\CallFrame;
-use \Smuuf\Primi\Values\ModuleValue;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
+use \Smuuf\StrictObject;
+use \Smuuf\Primi\Context;
 
-class NativeModuleLoader extends AbstractModuleLoader {
+class NativeModuleLoader {
 
-	protected static function buildModulePath(
-		string $base,
-		array $pathParts
-	): string {
+	use StrictObject;
 
-		$path = \implode('/', $pathParts);
-		return "$base/{$path}.php";
+	public static function loadModule(Context $ctx, string $filepath): void {
 
-	}
+		// Closure to block access of the file's code to this PHP scope.
+		$loader = fn($modulePath) => require $modulePath;
 
-	public function loadModule(string $path, string $name): ModuleValue {
+		$dict = NativeModuleExecutor::execute(
+			$ctx,
+			$loader($filepath)
+		);
 
-		// Imported module will have its own scope.
-		$scope = $this->ctx->buildNewGlobalScope();
-		$frame = new CallFrame("<module: {$name}>");
-
-		$wrapper = new ContextPushPopWrapper($this->ctx, $frame, $scope);
-		$wrapper->wrap(function() use ($path, $scope) {
-
-			$loader = fn($modulePath) => require $modulePath;
-			$scope->setVariables($loader($path)->execute($this->ctx));
-
-		});
-
-		return new ModuleValue($name, $scope);
+		$ctx->getCurrentScope()->setVariables($dict);
 
 	}
 

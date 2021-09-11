@@ -13,7 +13,7 @@ class ImportStatement extends SimpleHandler {
 		$dotPath = $node['module'];
 		$symbol = $node['symbol'] ?? false;
 
-		$moduleValue = $context->getImporter()->fetchModule($dotPath);
+		$moduleValue = $context->getImporter()->getModule($dotpath);
 
 		// Import only a specific symbol (variable) from the module.
 		if ($symbol) {

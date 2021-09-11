@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers\Wrappers;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\CallFrame;
+use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Scope;
 use \Smuuf\StrictObject;
 
@@ -17,14 +17,13 @@ class ContextPushPopWrapper extends AbstractWrapper {
 
 	/** Call frame to push to call stack. */
 	private ?StackFrame $call;
-	private ?CallFrame $call;
 
 	/** Scope to push to scope stack. (optional) */
 	private ?Scope $scope;
 
 	public function __construct(
 		Context $ctx,
-		?CallFrame $call = null,
+		?StackFrame $call = \null,
 		?Scope $scope = \null
 	) {
 		$this->ctx = $ctx;

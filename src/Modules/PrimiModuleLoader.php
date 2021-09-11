@@ -4,41 +4,22 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Modules;
 
-use \Smuuf\Primi\Source;
-use \Smuuf\Primi\CallFrame;
+use \Smuuf\StrictObject;
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\DirectInterpreter;
-use \Smuuf\Primi\Values\ModuleValue;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
+use \Smuuf\Primi\Code\SourceFile;
 
-class PrimiModuleLoader extends AbstractModuleLoader {
+class PrimiModuleLoader {
 
-	protected static function buildModulePath(
-		string $base,
-		array $pathParts
-	): string {
+	use StrictObject;
 
-		$path = \implode('/', $pathParts);
-		return "$base/{$path}.primi";
+	public static function loadModule(Context $ctx, string $filepath): void {
 
-	}
+		$source = new SourceFile($filepath);
+		$ast = $ctx->getAstProvider()->getAst($source);
 
-	public function loadModule(string $path, string $name): ModuleValue {
-
-		$source = new Source($path, \true, $name);
-
-		// Imported module will have its own scope.
-		$scope = $this->ctx->buildNewGlobalScope();
-		$frame = new CallFrame("<module: {$name}>");
-
-		$wrapper = new ContextPushPopWrapper($this->ctx, $frame, $scope);
-		$wrapper->wrap(function($ctx) use ($source) {
-
-			// Execute the source code within the new scope.
-			DirectInterpreter::execute($source, $ctx);
-
-		});
-
-		return new ModuleValue($name, $scope);
+		// Execute the source code within the new scope.
+		DirectInterpreter::execute($ast, $ctx);
 
 	}
 

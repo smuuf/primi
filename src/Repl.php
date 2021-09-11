@@ -8,14 +8,17 @@ use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Ex\EngineException;
 use \Smuuf\Primi\Ex\SystemException;
-use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Values\NullValue;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Colors;
-use \Smuuf\StrictObject;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Drivers\ReadlineUserIoDriver;
 use \Smuuf\Primi\Drivers\UserIoDriverInterface;
+
+use \Smuuf\StrictObject;
 
 class Repl {
 
@@ -30,7 +33,7 @@ class Repl {
 	private const PRIMARY_PROMPT = '>>> ';
 	private const MULTILINE_PROMPT = '... ';
 
-	private const PHP_ERROR_HEADER = "PHP ERROR:";
+	private const PHP_ERROR_HEADER = "PHP ERROR";
 	private const ERROR_REPORT_PLEA =
 		"This is probably a bug in Primi or any of its components. "
 		. "Please report this to the maintainer.";
@@ -95,26 +98,32 @@ class Repl {
 	 */
 	public function start(?Context $ctx = null): ?AbstractValue {
 
-		// If context was not provided, create and use a new one.
-		$ctx = $ctx ?? new Context(new Scope);
+		// If context was not provided, create and use a new one (context
+		// will create a new scope if it also was not provided).
+		if (!$ctx) {
+			$scope = new Scope;
+			$services = new InterpreterServices(Config::buildDefault());
+			$module = new ModuleValue('__main__', '', $scope);
+			$ctx = new Context($services, getcwd());
+		} else {
+			$module = $ctx->getCurrentModule();
+			$scope = $ctx->getCurrentScope();
+		}
 
-		// Automatically handle callstack push/pop using wrapper.
-		$frame = new CallFrame($this->replName, null);
-		$wrapper = new ContextPushPopWrapper($ctx, $frame);
+		// Print out level (position in call stack).
+		if (!self::$noExtras) {
+			$this->driver->output(self::getLevelInfo($ctx, true));
+			$this->printHelp();
+		}
+
+		$frame = new StackFrame($this->replName, $module);
+
+		$wrapper = new ContextPushPopWrapper($ctx, $frame, $scope);
 		$retval = $wrapper->wrap(function($ctx) {
-
-			// Print out level (position in call stack).
-			if (!self::$noExtras) {
-				$this->driver->output(self::getLevelInfo($ctx, true));
-				$this->printHelp();
-			}
-
-			$retval = $this->loop(new DirectInterpreter, $ctx);
-			$this->saveHistory();
-
-			return $retval;
-
+			return $this->loop($ctx);
 		});
+
+		$this->saveHistory();
 
 		if (!self::$noExtras) {
 			$this->driver->output(Colors::get("{yellow}Exiting REPL...{_}\n"));
@@ -124,9 +133,12 @@ class Repl {
 
 	}
 
-	private function loop(DirectInterpreter $intepreter, Context $ctx): ?AbstractValue {
+	private function loop(Context $ctx): ?AbstractValue {
 
 		$scope = $ctx->getCurrentScope();
+
+		$cellNumber = 1;
+		$retval = null;
 
 		readline_completion_function(function() use ($scope) {
 			return array_keys($scope->getVariables(true));
@@ -161,21 +173,25 @@ class Repl {
 				case 'exit':
 					// Catch a non-command 'exit'.
 					// Return the result of last expression executed, or null.
-					return $result ?? null;
+					return $retval;
 				case 'exit!':
-					// Catch a non-command 'exit'.
+					// Catch a non-command 'exit!'.
 					// Just quit the whole thing.
 					die(1);
 			}
 
 			$this->saveHistory();
-			$source = new Source($input, false);
+			$source = new Source($input);
 
 			try {
 
-				$result = $intepreter::execute($source, $ctx);
+				// May throw syntax error - will be handled by the catch
+				// below.
+				$ast = $ctx->getAstProvider()->getAst($source, false);
+				$result = DirectInterpreter::execute($ast, $ctx);
 
-				// Store the result into _ variable for quick'n'easy retrieval.
+				// Store the result into _ variable for quick'n'easy
+				// retrieval.
 				$scope->setVariable('_', $result);
 				$this->printResult($result);
 
@@ -191,6 +207,8 @@ class Repl {
 				$this->printPhpTraceback($e);
 
 			}
+
+			$cellNumber++;
 
 		}
 
@@ -384,7 +402,7 @@ class Repl {
 
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",
-			$value::TYPE,
+			$value->getTypeName(),
 			Func::object_hash($value)
 		));
 

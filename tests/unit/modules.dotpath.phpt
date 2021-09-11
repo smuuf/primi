@@ -1,7 +1,7 @@
 <?php
 
-use Smuuf\Primi\Ex\ImportBeyondTopException;
-use Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Ex\ImportBeyondTopException;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Tester\Assert;
 
 use \Smuuf\Primi\Modules\Dotpath;

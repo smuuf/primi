@@ -9,18 +9,20 @@
 use \Tester\Assert;
 
 use \Smuuf\Primi\Interpreter;
+use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 
 require __DIR__ . "/../bootstrap.php";
 
 $interpreter = new Interpreter;
-$scope = $interpreter->getCurrentScope();
 
+$scope = new Scope;
 $scope->setVariable('teste', AbstractValue::buildAuto(function() {
         return 0.00000000001;
 }));
-$interpreter->run('a = teste(); b = 3 + a; c = b ** 3');
+
+$interpreter->run('a = teste(); b = 3 + a; c = b ** 3', $scope);
 
 $a = $scope->getVariable('a');
 Assert::type(NumberValue::class, $a);

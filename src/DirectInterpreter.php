@@ -3,16 +3,12 @@
 namespace Smuuf\Primi;
 
 use \Smuuf\StrictObject;
-use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\SystemException;
 use \Smuuf\Primi\Ex\ControlFlowException;
-use \Smuuf\Primi\Ex\ContextAwareException;
+use \Smuuf\Primi\Code\Ast;
 use \Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
-use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Helpers\Wrappers\CatchPosixSignalsWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
@@ -24,7 +20,7 @@ use \Smuuf\Primi\Handlers\HandlerFactory;
  *
  * @see https://en.wikipedia.org/wiki/Interpreter_(computing)#Abstract_Syntax_Tree_interpreters
  */
-class DirectInterpreter {
+abstract class DirectInterpreter {
 
 	use StrictObject;
 
@@ -32,28 +28,20 @@ class DirectInterpreter {
 	 * Execute source code within a given context.
 	 *
 	 * This is a bit lower-level approach to running some source code provided
-	 * as string, which allows the client to specify a context object to run the
-	 * code within. This allows, for example, the REPL to operate within
-	 * a context representing a runtime-in-progress (and access local variables,
-	 * for example).
+	 * as `Ast` object. This allows the client to specify a context object
+	 * to run the code (represented by `Ast` object) within. This in turn
+	 * allows, for example, the REPL to operate within some specific context
+	 * representing a runtime-in-progress (where it can access local variables).
+	 *
+	 * @param Ast $ast `Ast` object representing the AST to execute.
 	 */
 	public static function execute(
-		Source $source,
+		Ast $ast,
 		Context $ctx
 	): AbstractValue {
 
-		// Each node must have two keys: 'name' and 'text'.
-		// These are provided by the PHP-PEG itself, so we should be able to
-		// be counting on it.
-
-		// We begin the process of interpreting a source code simply by
-		// passing the AST's root node to its dedicated handler (determined by
-		// node's "name").
-
-		$ast = self::loadSyntaxTree($source->getCode());
-
 		// Register signal handling - maybe.
-		if (Config::getEffectivePosixSignalHandling()) {
+		if ($ctx->getConfig()->getEffectivePosixSignalHandling()) {
 			PosixSignalTaskEmitter::catch(SIGINT);
 			PosixSignalTaskEmitter::catch(SIGQUIT);
 			PosixSignalTaskEmitter::catch(SIGTERM);
@@ -64,30 +52,32 @@ class DirectInterpreter {
 
 			try {
 
-				$handler = HandlerFactory::getFor($ast['name']);
-				$retval = $handler::run($ast, $ctx);
+				$tree = $ast->getTree();
+				return HandlerFactory::getFor($tree['name']);
 
-				// This is the end of a single runtime, so run any tasks that
-				// may be still left in the task queue (this means, for example,
-				// that all callbacks in the queue will still be executed).
-				$ctx->getTaskQueue()->deplete();
-
-				return $retval;
-
-			} catch (ContextAwareException|SystemException $e) {
-				throw new RuntimeError($e->getMessage());
 			} catch (ControlFlowException $e) {
+
 				$what = $e::ID;
 				throw new RuntimeError("Cannot '{$what}' from global scope");
+
+			} finally {
+
+				try {
+
+					// This is the end of a single runtime, so run any tasks
+					// that may be still left in the task queue (this means, for
+					// example, that all callbacks in the queue will still be
+					// executed).
+					$ctx->getTaskQueue()->deplete();
+
+				} catch (SystemException $e) {
+					throw new RuntimeError($e->getMessage());
+				}
+
 			}
 
 		});
 
-
-	}
-
-	protected static function loadSyntaxTree(string $source): array {
-		return (new ParserHandler($source))->run();
 	}
 
 }

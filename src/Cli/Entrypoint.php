@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Cli;
 
-use Smuuf\Primi\Config;
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Repl;
-use \Smuuf\Primi\Source;
+use \Smuuf\Primi\Logger;
+use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Interpreter;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BaseException;
+use \Smuuf\Primi\Code\Source;
+use \Smuuf\Primi\Code\SourceFile;
 use \Smuuf\Primi\Parser\ParserHandler;
-use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\Colors;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
 
 class Entrypoint {
 
@@ -27,8 +29,10 @@ class Entrypoint {
 		'print_scope' => false,
 		// After the script finishes, print out contents of main global scope.
 		'parser_stats' => false,
-		// The default argument represents Primi code to run..
+		// The default argument represents Primi code to run.
 		'input' => false,
+		// Print verbose logging to stderr.
+		'verbose' => false,
 		// True if the input is not a Primi file to run, but just a string
 		// containing Primi source code to run.
 		'input_is_code' => false,
@@ -44,6 +48,7 @@ class Entrypoint {
 	public function __construct(array $args, string $rootDir) {
 
 		self::init();
+
 		$this->config = $this->parseArguments($this->config, $args);
 		$this->rootDir = $rootDir;
 
@@ -57,7 +62,7 @@ class Entrypoint {
 		}, E_ALL);
 
 		set_exception_handler(function($ex) {
-			echo "PHP ERROR: " . get_class($ex);
+			echo "PHP ERROR " . get_class($ex);
 			echo ": {$ex->getMessage()} @ {$ex->getFile()}:{$ex->getLine()}\n";
 			echo $ex->getTraceAsString() . "\n";
 		});
@@ -67,6 +72,11 @@ class Entrypoint {
 	public function execute(): void {
 
 		$cfg = $this->config;
+
+		// Enable verbose logging.
+		if ($cfg['verbose']) {
+			Logger::enable();
+		}
 
 		// Enable stats gathering, if requested.
 		if ($cfg['print_process_stats']) {
@@ -78,13 +88,9 @@ class Entrypoint {
 		if (empty($cfg['input'])) {
 
 			echo $this->getHeaderString('REPL');
-
-			// When in REPL, add current working dir to Primi module dirs.
-			Config::addPrimiModuleDir('.');
-
-			$i = new Interpreter;
 			$repl = new Repl;
-			$repl->start($i->getContext());
+			$repl->start();
+
 			die;
 
 		}
@@ -92,24 +98,35 @@ class Entrypoint {
 		if ($cfg['input_is_code']) {
 
 			// Input is passed as a string of Primi source code.
-			$source = new Source($cfg['input'], false);
+			$source = new Source($cfg['input']);
 
 		} else {
 
-			$filepath = $cfg['input'];
-
-			// When executing a Primi file, add that file's dir to Primi module
-			// dirs, so that imports starting at that file's path are possible.
-			Config::addPrimiModuleDir('.');
-
-			$source = new Source($filepath, true);
+			try {
+				$filepath = $cfg['input'];
+				$source = new SourceFile($filepath);
+			} catch (EngineError $e) {
+				self::errorExit($e->getMessage());
+			}
 
 		}
 
-		if ($cfg['parser_stats']) {
+		if ($cfg['parser_stats'] || $cfg['only_tree']) {
 
-			$ph = new ParserHandler($source->getCode());
-			$ph->run();
+			$ph = new ParserHandler($source->getSourceCode());
+
+			// Run parser and catch any error that may have occurred.
+			try {
+				$tree = $ph->run();
+			} catch (BaseException $e) {
+				self::errorExit("{$e->getMessage()}");
+			}
+
+			// If requested, just get the syntax tree and die.
+			if ($cfg['only_tree']) {
+				print_r($tree);
+				die;
+			}
 
 			echo "Parser stats:\n";
 			foreach ($ph->getStats() as $name => $value) {
@@ -120,31 +137,30 @@ class Entrypoint {
 
 		}
 
-		// Create interpreter (with caching).
-		$interpreter = new Interpreter(null, $this->rootDir . "/temp/");
-		$scope = $interpreter->getCurrentScope();
-
-		// If requested, just get the syntax tree and die.
-		if ($cfg['only_tree']) {
-			print_r($interpreter->getSyntaxTree($source->getCode()));
-			die;
-		}
+		// Create interpreter.
+		$config = Config::buildDefault();
+		$interpreter = new Interpreter($config);
 
 		// Run interpreter and catch any error that may have occurred.
 		try {
-			$interpreter->run($source);
+			$context = $interpreter->run($source);
 		} catch (BaseException $e) {
-			die("{$e->getMessage()}\n");
+			self::errorExit("{$e->getMessage()}");
 		}
 
 		if ($cfg['print_scope']) {
+			$scope = $context->getCurrentScope();
 			foreach ($scope->getVariables() as $name => $value) {
 				echo "$name: {$value->getStringRepr()}\n";
 			}
 			die;
 		}
 
+	}
 
+	private static function errorExit(string $text): void {
+		echo "$text\n";
+		die(1);
 	}
 
 	private function parseArguments(array $defaults, array $args): array {
@@ -176,6 +192,10 @@ class Entrypoint {
 				case "-st":
 					case "--stats":
 						$cfg['print_process_stats'] = true;
+					break;
+				case "-v":
+					case "--verbose":
+						$cfg['verbose'] = true;
 					break;
 				default:
 					$cfg['input'] = $a;

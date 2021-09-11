@@ -4,37 +4,32 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Ex;
 
-use Smuuf\Primi\Location;
+use \Smuuf\Primi\Location;
 
 class SyntaxError extends ErrorException {
 
-	/** Excerpt string around where the error was. */
-	private string $excerpt;
+	/** Location of the error. */
+	private Location $location;
 
 	public function __construct(
-		int $line,
-		int $position,
+		Location $location,
 		string $excerpt = ''
 	) {
 
-		$near = $excerpt
-			? \sprintf(" near '%s'", \trim($excerpt))
-			: '';
-
-		$loc = new Location('', $line, $position);
-
-		$msg = \sprintf("Syntax error%s", $near);
-		parent::__construct($msg, $loc);
-
-		$this->excerpt = $excerpt;
+		$this->location = $location;
+		$this->message = \sprintf(
+			"Syntax error %s%s",
+			$excerpt ? \sprintf("near '%s' ", \trim($excerpt)) : '',
+			\sprintf("in %s on line %d", $location->getName(), $location->getLine())
+		);
 
 	}
 
 	/**
-	 * Get excerpt from the location of the error.
+	 * Return object representing location of the error.
 	 */
-	public function getExcerpt(): string {
-		return $this->excerpt;
+	public function getLocation(): Location {
+		return $this->location;
 	}
 
 }
