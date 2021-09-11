@@ -337,27 +337,13 @@ abstract class Func {
 	 */
 	public static function yield_left_to_right(array $node, Context $ctx) {
 
-		$operands = $node['operands'];
+		foreach ($node['operands'] as $i => $operand) {
 
-		$firstOperand = $operands[0];
-		$handler = HandlerFactory::getFor($firstOperand['name']);
-		$first = $handler::run($firstOperand, $ctx);
+			// First operator will be null and the last one too.
+			$operator = $node['ops'][$i - 1]['text'] ?? null;
+			$value = HandlerFactory::runNode($operand, $ctx);
 
-		yield [null, $first];
-
-		// Go through each of the operands and yield tuples of
-		// [operand 1, operator, operand 2] that go after each other.
-		$opCount = \count($operands);
-		for ($i = 1; $i < $opCount; $i++) {
-
-			$nextOperand = $operands[$i];
-			$handler = HandlerFactory::getFor($nextOperand['name']);
-			$next = $handler::run($nextOperand, $ctx);
-
-			// Extract the text of the assigned operator node.
-			$op = $node['ops'][$i - 1]['text'];
-
-			yield [$op, $next];
+			yield [$operator, $value];
 
 		}
 
