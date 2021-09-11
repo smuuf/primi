@@ -4,22 +4,42 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\LookupError;
-use \Smuuf\Primi\Scopes\AbstractScope;
+use \Smuuf\Primi\Scope;
 
 /**
- * @property AbstractScope $value Global scope of the module.
+ * @property Scope|null $value Global scope of the module or null, if
+ * the module has no global scope (which is handy for "anonymous" modules that
+ * wrap Primi functions that are wrappers for native PHP functions which might
+ * not be placed in any module).
  */
 class ModuleValue extends AbstractValue {
 
-	const TYPE = "module";
+	protected const TYPE = "Module";
 
-	/** @var string Name/identifier of the module (probably file path). */
+	/** Name of the module */
 	protected string $name;
 
-	public function __construct(string $name, AbstractScope $scope) {
+	/** Package name of the module. */
+	protected string $package;
+
+	public function __construct(
+		string $name,
+		string $package = '',
+		?Scope $scope = \null
+	) {
+
 		$this->name = $name;
+		$this->package = $package;
 		$this->value = $scope;
+
+	}
+
+	public function getName(): string {
+		return $this->name;
+	}
+
+	public function getPackage(): string {
+		return $this->package;
 	}
 
 	public function getStringRepr(): string {
@@ -34,33 +54,32 @@ class ModuleValue extends AbstractValue {
 		return (bool) $this->value->getVariables();
 	}
 
-	public function attrGet(StringValue $key): ?AbstractValue {
-
-		$variableName = $key->getStringValue();
+	/**
+	 * Accessing module attributes equals to accessing variables from module's
+	 * scope.
+	 */
+	public function attrGet(string $key): ?AbstractValue {
 
 		// If the variable is not found, we'll return null instead of value
 		// and AttrAccess handler will throw "unknown attribute" error.
-		$value = $this->value->getVariable($variableName);
-		if ($value === null) {
-			throw new LookupError("Unknown attribute '$variableName'");
-		}
-
-		return $value;
+		return $this->value->getVariable($key);
 
 	}
 
-	public function attrSet(StringValue $key, AbstractValue $value): bool {
-
-		$this->value->setVariable($key->getStringValue(), $value);
+	/**
+	 * Setting module attributes equals to setting variables into module's
+	 * scope.
+	 */
+	public function attrSet(string $key, AbstractValue $value): bool {
+		$this->value->setVariable($key, $value);
 		return \true;
-
 	}
 
 	/**
 	 * The 'in' operator for dictionaries looks for keys and not values.
 	 */
-	public function doesContain(AbstractValue $right): ?bool {
-		return (bool) $this->value->getVariable($right);
+	public function doesContain(AbstractValue $key): ?bool {
+		return (bool) $this->value->getVariable($key->getStringValue());
 	}
 
 }

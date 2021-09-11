@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Handlers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
+use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Ex\SystemException;
@@ -22,10 +23,10 @@ abstract class SimpleHandler extends Handler {
 
 		try {
 			return static::handle($node, $context);
-		} catch (RuntimeError|SystemException $e) {
+		} catch (RuntimeError|SyntaxError|SystemException $e) {
 
 			$location = new Location(
-				$context->getCurrentModule(),
+				$context->getCurrentModule()->getStringRepr(),
 				(int) $node['_l'],
 				(int) $node['_p']
 			);

@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Modules;
 
-use Smuuf\StrictObject;
-use Smuuf\Primi\Scope;
-use Smuuf\Primi\Logger;
-use Smuuf\Primi\Context;
-use Smuuf\Primi\Ex\ImportError;
-use Smuuf\Primi\Ex\ModuleNotFoundError;
-use Smuuf\Primi\Ex\ImportBeyondTopException;
-use Smuuf\Primi\Ex\ImportRelativeWithoutParentException;
-use Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
-use Smuuf\Primi\Values\ModuleValue;
-use Smuuf\Primi\Modules\Dotpath;
-use Smuuf\Primi\Helpers\Wrappers\ImportStackWrapper;
-use Smuuf\Primi\StackFrame;
+use \Smuuf\StrictObject;
+use \Smuuf\Primi\Scope;
+use \Smuuf\Primi\Logger;
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\ImportError;
+use \Smuuf\Primi\Ex\ModuleNotFoundError;
+use \Smuuf\Primi\Ex\ImportBeyondTopException;
+use \Smuuf\Primi\Ex\ImportRelativeWithoutParentException;
+use \Smuuf\Primi\Values\ModuleValue;
+use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
+use \Smuuf\Primi\Helpers\Wrappers\ImportStackWrapper;
+use \Smuuf\Primi\Modules\Dotpath;
+use \Smuuf\Primi\StackFrame;
 
 /**
  * @internal
@@ -269,10 +269,6 @@ class Importer {
 
 	}
 
-	/**
-	 * @param string File/directory representing the module to load, if not
-	 * already in loaded module cache.
-	 */
 	private function loadModule(
 		string $loader,
 		string $filepath,
@@ -290,7 +286,7 @@ class Importer {
 				$packageDotpath
 			) {
 
-				// Imported module will have its own scope.
+				// Imported module will have its own global scope.
 				$scope = new Scope;
 				$module = new ModuleValue(
 					$dotpath,
@@ -308,7 +304,7 @@ class Importer {
 				// be imported again (that would result in circular import).
 				$this->loaded[$dotpath] = $module;
 
-				$frame = new StackFrame("<module>()", $module);
+				$frame = new StackFrame("<module>", $module);
 				$wrapper = new ContextPushPopWrapper($this->ctx, $frame, $scope);
 
 				$wrapper->wrap(function() use (

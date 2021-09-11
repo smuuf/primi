@@ -1,27 +1,25 @@
 <?php
 
-use Smuuf\Primi\Source;
 use \Tester\Assert;
+
+use \Smuuf\Primi\Config;
+use \Smuuf\Primi\Code\SourceFile;
 
 require __DIR__ . '/../bootstrap.php';
 
 define('ROOT_DIR', realpath(__DIR__ . '/../../'));
 
-// During Tester run, this will be false, so Primi files parsing and AST
-// preprocessing will be tested (and included in coverage), too.
-$useAstCache = (bool) getenv('X_PRIMI_TESTS_ASTCACHE');
+$config = Config::buildDefault();;
+$config->setTempDir(null);
+$config->addImportPath(ROOT_DIR . '/example/');
 
 function run_primi_file(string $path) {
 
-	global $useAstCache;
-	$cachePath = $useAstCache
-		? ROOT_DIR . "/temp/"
-		: null;
-
-	$interpreter = new \Smuuf\Primi\Interpreter(null, $cachePath);
+	global $config;
+	$interpreter = new \Smuuf\Primi\Interpreter($config);
 
 	// Run interpreter
-	$source = new Source($path, true);
+	$source = new SourceFile($path);
 	$interpreter->run($source);
 
 }

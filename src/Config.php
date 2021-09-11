@@ -4,56 +4,69 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\StrictObject;
 
-final class Config {
+class Config {
 
 	use StrictObject;
 
-	private function __construct() {
-		// Prevent instantiation.
+	final public static function buildDefault(): Config {
+		return new self;
 	}
 
 	//
-	// Paths to some important directories.
+	// Temporary directory.
 	//
 
-	public static function getSrcDir(): string {
-		return __DIR__;
+	/**
+	 * Path to temporary directory for caching or `null` for disabled caching.
+	 */
+	private ?string $tempDir = '';
+
+	/**
+	 * Set path to temporary directory for caching various stuff for the Primi
+	 * engine.
+	 *
+	 * Default value is empty string, which means default temporary
+	 * directory located inside the Primi library will be used.
+	 *
+	 * If necessary, another _existing_ directory can be specified to be used
+	 * as the temporary directory.
+	 *
+	 * If the temporary directory is set to `null`, caching will be disabled.
+	 */
+	public function setTempDir(?string $path): void {
+
+		$this->tempDir = $path !== null
+			? Func::validate_dirs([$path])[0]
+			: null;
+
+	}
+
+	public function getTempDir(): ?string {
+
+		return $this->tempDir === ''
+			? self::getDefaultTempDir()
+			: null;
+
 	}
 
 	//
-	// Directories for native modules.
+	// Paths for finding modules.
 	//
 
-	private static array $nativeModuleDirs = [
-		__DIR__ . '/Stdlib/Modules/Native',
+	private array $importPaths = [
+		__DIR__ . '/Stdlib/Modules',
 	];
 
-	public static function addNativeModuleDir(string $path): void {
-		self::$nativeModuleDirs[] = Func::validate_dirs([$path])[0];
+	public function addImportPath(string $path): void {
+		$this->importPaths[] = Func::validate_dirs([$path])[0];
 	}
 
-	public static function getNativeModuleDirs(): array {
-		return self::$nativeModuleDirs;
-	}
-
-	//
-	// Directories for Primi modules.
-	//
-
-	private static array $primiModuleDirs = [
-		__DIR__ . '/Stdlib/Modules/Primi', // Stdlib Primi modules directory.
-	];
-
-	public static function addPrimiModuleDir(string $path): void {
-		self::$primiModuleDirs[] = Func::validate_dirs([$path])[0];
-	}
-
-	public static function getPrimiModuleDirs(): array {
-		return self::$primiModuleDirs;
+	public function getImportPaths(): array {
+		return $this->importPaths;
 	}
 
 	//
@@ -62,33 +75,33 @@ final class Config {
 
 	/**
 	 * If greater than one, this number sets the maximum call stack size.
-	 * When this maximum is reached, RuntimeError is thrown.
+	 * If this maximum is reached, `\Smuuf\Primi\Ex\RuntimeError` is thrown.
 	 */
-	private static int $callStackLimit = 1024;
+	private int $callStackLimit = 4096;
 
 	/**
-	 * Set callstack limit for runtime `Context` objects that are created from
-	 * now on. This is the maximum number of allowed nested function calls.
+	 * Set maximum limit for runtime call stack object. This is the maximum
+	 * number of allowed nested function calls.
 	 *
-	 * This can be set to zero to disable any limiting.
+	 * This can be set to zero to disable limiting.
 	 *
 	 * @see Context
 	 */
-	public static function setCallStackLimit(int $limit): void {
+	public function setCallStackLimit(int $limit): void {
 
 		if ($limit < 0) {
 			throw new EngineError('Callstack limit must be positive or zero');
 		}
 
-		self::$callStackLimit = $limit;
+		$this->callStackLimit = $limit;
 
 	}
 
 	/**
 	 * Return current value of configured callstack limit.
 	 */
-	public static function getCallStackLimit(): int {
-		return self::$callStackLimit;
+	public function getCallStackLimit(): int {
+		return $this->callStackLimit;
 	}
 
 	//
@@ -116,7 +129,7 @@ final class Config {
 	 * runtime. For example SIGTERM and SIGINT signals will raise an appropriate
 	 * error.
 	 */
-	private static ?bool $posixSignalHandling = self::POSIX_SIGNALS_AUTO;
+	private ?bool $posixSignalHandling = self::POSIX_SIGNALS_AUTO;
 
 	/**
 	 * Should POSIX signals be handled by the engine?
@@ -125,31 +138,31 @@ final class Config {
 	 * @see self::POSIX_SIGNALS_ENABLED
 	 * @see self::POSIX_SIGNALS_DISABLED
 	 */
-	public static function setPosixSignalHandling(
+	public function setPosixSignalHandling(
 		?bool $state = self::POSIX_SIGNALS_AUTO
 	): void {
-		self::$posixSignalHandling = $state;
+		$this->posixSignalHandling = $state;
 	}
 
 	/**
 	 * Return current value of configured callstack limit.
 	 */
-	public static function getPosixSignalHandling(): ?bool {
-		return self::$posixSignalHandling;
+	public function getPosixSignalHandling(): ?bool {
+		return $this->posixSignalHandling;
 	}
 
 	/**
 	 * Returns `true` or `false` if POSIX signals should be handled based
 	 * by the actual configuration.
 	 */
-	public static function getEffectivePosixSignalHandling(): bool {
+	public function getEffectivePosixSignalHandling(): bool {
 
 		// Explicit enabled or disabled.
-		if (\is_bool(self::$posixSignalHandling)) {
-			return self::$posixSignalHandling;
+		if (\is_bool($this->posixSignalHandling)) {
+			return $this->posixSignalHandling;
 		}
 
-		// Automatic detection.
+		// Automatic detection - handle POSIX signals only in CLI.
 		return \PHP_SAPI === 'cli';
 
 	}
@@ -158,7 +171,7 @@ final class Config {
 	// Posix signal handling - does SIGQUIT inject a debugging session?
 	//
 
-	private static bool $sigQuitDebugging = \true;
+	private bool $sigQuitDebugging = \true;
 
 	/**
 	 * If POSIX signal handling is enabled, received SIGQUIT causes a debugging
@@ -166,34 +179,24 @@ final class Config {
 	 *
 	 * SIGQUIT can usually be sent from terminal via `CTRL+\`.
 	 */
-	public static function setSigQuitDebugging(bool $state): void {
-		self::$sigQuitDebugging = $state;
+	public function setSigQuitDebugging(bool $state): void {
+		$this->sigQuitDebugging = $state;
 	}
 
 
 	/**
 	 * Return current config value of "SIGQUIT debugging".
 	 */
-	public static function getSigQuitDebugging(): bool {
-		return self::$sigQuitDebugging;
+	public function getSigQuitDebugging(): bool {
+		return $this->sigQuitDebugging;
 	}
 
 	//
-	// Import paths management.
+	// Internal helpers.
 	//
 
-	private static array $importPaths = [
-		'.', // Current working directory.
-	];
-
-	/**
-	 * If POSIX signal handling is enabled, received SIGQUIT causes a debugging
-	 * session to be injected into currently executed code.
-	 *
-	 * SIGQUIT can usually be sent from terminal via `CTRL+\`.
-	 */
-	public static function getImportPaths(): array {
-		return self::$importPaths;
+	private static function getDefaultTempDir(): string {
+		return __DIR__ . '/../temp';
 	}
 
 }

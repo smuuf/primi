@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Helpers;
 
+use \Smuuf\StrictObject;
+
 /**
  * Emulate friend visibility - extending classes can access internal `$value`
  * property of `AbstractValue` class.
@@ -13,6 +15,8 @@ namespace Smuuf\Primi\Helpers;
  * method, which would be often.
  */
 abstract class ValueFriends {
+
+	use StrictObject;
 
 	/** @var mixed Value itself. */
 	protected $value = \null;

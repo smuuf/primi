@@ -5,30 +5,33 @@ declare(strict_types=1);
 namespace Smuuf\Primi;
 
 use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Tasks\TaskQueue;
 use \Smuuf\Primi\Scope;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Code\AstProvider;
+use \Smuuf\Primi\Tasks\TaskQueue;
+use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Traits\StrictObject;
 use \Smuuf\Primi\Modules\Importer;
 
 class Context {
 
 	use StrictObject;
 
+	/** Runtime config bound to this context. */
+	private Config $config;
+
+	/** Main/root directory for this context or null if not defined. */
+	private ?string $mainDirectory;
+
 	//
 	// Call stack.
 	//
 
-	/**
-	 * Value of static property self::$callStackLimit fixed when
-	 * initializing new instance of Context (to ignore later modifications).
-	 */
+	/** Configured call stack limit. */
 	private int $maxCallStackSize;
 
-	/** @var CallFrame[] Call stack list. */
-	private array $callStack = [];
+	/** @var StackFrame[] Call stack list. */
+	private $callStack = [];
 
 	//
 	// Scope stack.
@@ -41,7 +44,7 @@ class Context {
 	private Scope $currentScope;
 
 	//
-	// Insides.
+	// Context services.
 	//
 
 	/** Task queue for this context. */
@@ -50,42 +53,55 @@ class Context {
 	/** Importer instance */
 	private Importer $importer;
 
-	/** ExtensionHub instance. */
-	private ExtensionHub $extensionHub;
+	/** AstProvider instance */
+	private AstProvider $astProvider;
+
+	//
+	// References to essential modules for fast and direct access.
+	//
+
+	/** Native 'std.__builtins__' module. */
+	private Scope $builtins;
+
+	/** Native 'std.types' module scope. */
+	private Scope $typesModule;
 
 	public function __construct(
-		?AbstractScope $globalScope = \null,
-		?ExtensionHub $extHub = \null
+		InterpreterServices $interpreterServices,
+		?string $mainDirectory = null
 	) {
 
-		$this->extensionHub = $extHub ?? new ExtensionHub;
+		$this->mainDirectory = $mainDirectory;
 
-		// Render the config value into instance property to ensure changing
-		// of the config doesn't change behavior of existing contexts.
-		$this->maxCallStackSize = Config::getCallStackLimit();
+		// Assign stuff to properties to avoid unnecessary indirections when
+		// accessing them (optimization).
+		$this->config = $interpreterServices->getConfig();
+		$this->astProvider = $interpreterServices->getAstProvider();
 
-		$this->taskQueue = new TaskQueue($this);
-		$this->importer = new Importer($this);
+		$services = new ContextServices(
+			$this,
+			$interpreterServices,
+			$mainDirectory
+		);
 
-		if ($globalScope) {
-			$this->extensionHub->apply($globalScope);
-		} else {
-			$globalScope = $this->buildNewGlobalScope();
-		}
+		$this->taskQueue = $services->getTaskQueue();
+		$this->importer = $services->getImporter();
+		$this->maxCallStackSize = $this->config->getCallStackLimit();
 
-		$this->pushScope($globalScope);
+
 
 	}
 
-	// "Global scope" factory.
+	// Access to runtime config.
 
-	public function buildNewGlobalScope(): AbstractScope {
+	public function getConfig(): Config {
+		return $this->config;
+	}
 
-		$scope = new Scope;
-		$this->extensionHub->apply($scope);
+	// Access to AST provider.
 
-		return $scope;
-
+	public function getAstProvider(): AstProvider {
+		return $this->astProvider;
 	}
 
 	// Task queue management.
@@ -94,14 +110,19 @@ class Context {
 		return $this->taskQueue;
 	}
 
-	// Importer management.
+	// Import management.
 
 	public function getImporter(): Importer {
 		return $this->importer;
 	}
 
-	public function getCurrentModule(): string {
-		return end($this->callStack)->getName();
+	public function getCurrentModule(): ?ModuleValue {
+
+		$currentFrame = end($this->callStack);
+		return $currentFrame
+			? $currentFrame->getModule()
+			: null;
+
 	}
 
 	// Call stack management.
@@ -114,16 +135,16 @@ class Context {
 		return $this->callStack;
 	}
 
-	public function pushCall(CallFrame $call): void {
+	public function pushCall(StackFrame $call): void {
 
 		$this->callStack[] = $call;
 
 		if (
 			$this->maxCallStackSize
-			&& count($this->callStack) === $this->maxCallStackSize
+			&& \count($this->callStack) === $this->maxCallStackSize
 		) {
 
-			throw new RuntimeError(sprintf(
+			throw new RuntimeError(\sprintf(
 				"Maximum call stack size (%d) reached",
 				$this->maxCallStackSize
 			));
@@ -137,6 +158,18 @@ class Context {
 		\array_pop($this->callStack);
 		$this->taskQueue->tick();
 
+	}
+
+	// Direct access to native 'builtins' module.
+
+	public function getBuiltins(): Scope {
+		return $this->builtins;
+	}
+
+	// Direct access to 'std.types' module.
+
+	public function getTypes(): Scope {
+		return $this->typesModule;
 	}
 
 	// Scope management.
@@ -154,7 +187,7 @@ class Context {
 
 		// At least one scope needs to be present at all times.
 		if (\count($this->scopeStack) === 1) {
-			throw new EngineInternalError("Cannot pop last scope");
+			return;
 		}
 
 		\array_pop($this->scopeStack);
@@ -163,7 +196,8 @@ class Context {
 	}
 
 	// Direct access to the current scope - which is the one on the top of the
-	// stack (compatibility with Primi <0.5).
+	// stack. Also fetches stuff from builtins module, if it's not found
+	// in current scope (and its parents).
 
 	public function getVariable(string $name): ?AbstractValue {
 		return $this->currentScope->getVariable($name);

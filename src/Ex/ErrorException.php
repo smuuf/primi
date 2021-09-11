@@ -35,17 +35,16 @@ class ErrorException extends BaseException {
 	) {
 
 		$loc = \sprintf(
-			"@ %s on line %d, position %d",
-			$location->getModule(),
-			$location->getLine(),
-			$location->getPosition(),
+			"@ %s on line %d",
+			$location->getName(),
+			$location->getLine()
 		);
 
 		$tb = $traceback
-			? Func::get_traceback_as_string($traceback)
+			? "\n" . Func::get_traceback_as_string($traceback)
 			: '';
 
-		parent::__construct("$msg $loc\n$tb");
+		parent::__construct("$msg {$loc}{$tb}");
 		$this->location = $location;
 		$this->traceback = $traceback;
 

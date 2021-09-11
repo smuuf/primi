@@ -10,45 +10,35 @@ class Location {
 
 	use StrictObject;
 
-	/** Name of the module (file). */
-	private string $module;
+	/** Name of the name (file). */
+	private string $name;
 
-	/** Line in the module file. */
+	/** Line in the name file. */
 	private int $line;
 
-	/** Position on the line in the module file. */
-	private int $position;
+	public function __construct(string $name, int $line) {
 
-	public function __construct(string $module, int $line, int $position) {
-
-		$this->module = $module;
+		$this->name = $name;
 		$this->line = $line;
-		$this->position = $position;
 
 	}
 
 	public function __toString(): string{
-		return "{$this->module} on line {$this->line}, position {$this->position}";
+		return "{$this->name} on line {$this->line}";
 	}
 
 	/**
-	 * Get name of the module (file).
+	 * Get human-friendly name of the location.
 	 */
-	public function getModule(): string {
-		return $this->module;
+	public function getName(): string {
+		return $this->name;
 	}
 
 	/**
-	 * Get line in the module file.
+	 * Get line in the source file.
 	 */
 	public function getLine(): int {
 		return $this->line;
 	}
 
-	/**
-	 * Get position on the line in the module file.
-	 */
-	public function getPosition(): int {
-		return $this->position;
-	}
 }
