@@ -145,18 +145,20 @@ class NumberValue extends AbstractNativeValue {
 		$l = $this->value;
 		$r = $right->value;
 
-		switch ($operator) {
-			case ">":
+		switch (\true) {
+			case $operator === ">":
 				return \bccomp($l, $r, self::PRECISION) === 1;
-			case "<":
+			case $operator === "<":
 				return \bccomp($l, $r, self::PRECISION) === -1;
-			case ">=":
-				return \bccomp($l, $r, self::PRECISION) === 1 || \bccomp($l, $r, self::PRECISION) === 0;
-			case "<=":
-				return \bccomp($l, $r, self::PRECISION) === -1 || \bccomp($l, $r, self::PRECISION) === 0;
+			case $operator === ">=":
+				$tmp = \bccomp($l, $r, self::PRECISION);
+				return $tmp === 1 || $tmp === 0;
+			case $operator === "<=":
+				$tmp = \bccomp($l, $r, self::PRECISION);
+				return $tmp === -1 || $tmp === 0;
 		}
 
-		return null;
+		return \null;
 
 	}
 

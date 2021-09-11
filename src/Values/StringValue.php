@@ -112,14 +112,14 @@ class StringValue extends AbstractNativeValue {
 		$l = $this->value;
 		$r = $right->value;
 
-		switch ($operator) {
-			case ">":
+		switch (\true) {
+			case $operator === ">":
 				return $l > $r;
-			case "<":
+			case $operator ===  "<":
 				return $l < $r;
-			case ">=":
+			case $operator ===  ">=":
 				return $l >= $r;
-			case "<=":
+			case $operator === "<=":
 				return $l <= $r;
 		}
 
