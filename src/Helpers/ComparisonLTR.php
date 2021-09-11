@@ -51,18 +51,18 @@ class ComparisonLTR {
 		AbstractValue $right
 	): bool {
 
-		switch ($op) {
-			case '==':
-			case '!=':
+		switch (\true) {
+			case $op === '==':
+			case $op === '!=':
 				return self::evaluateEquality($op, $left, $right);
-			case 'in':
+			case $op === 'in':
 				return self::evaluateIn($op, $left, $right);
-			case 'not in':
+			case $op === 'not in':
 				return !self::evaluateIn($op, $left, $right);
-			case '>':
-			case '<':
-			case '>=':
-			case '<=':
+			case $op === '>':
+			case $op === '<':
+			case $op === '>=':
+			case $op === '<=':
 				return self::evaluateRelation($op, $left, $right);
 			default:
 				throw new EngineInternalError("Unknown operator '$op'");

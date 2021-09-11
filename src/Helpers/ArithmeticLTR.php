@@ -74,7 +74,7 @@ class ArithmeticLTR {
 					break;
 				case $op === "**":
 					$result = $a->doPower($b);
-					break;
+					// No need for break here.
 			}
 
 			if ($result !== \null) {
