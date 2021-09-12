@@ -57,7 +57,7 @@ class NumberValue extends AbstractNativeValue {
 			return \null;
 		}
 
-		return new self(bcadd($this->value, $right->value, self::PRECISION));
+		return new self(\bcadd($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -67,7 +67,7 @@ class NumberValue extends AbstractNativeValue {
 			return \null;
 		}
 
-		return new self(bcsub($this->value, $right->value, self::PRECISION));
+		return new self(\bcsub($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -77,7 +77,7 @@ class NumberValue extends AbstractNativeValue {
 			return \null;
 		}
 
-		return new self(bcmul($this->value, $right->value, self::PRECISION));
+		return new self(\bcmul($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -92,7 +92,7 @@ class NumberValue extends AbstractNativeValue {
 			throw new RuntimeError("Division by zero");
 		}
 
-		return new self(bcdiv($this->value, $right->value, self::PRECISION));
+		return new self(\bcdiv($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -112,7 +112,7 @@ class NumberValue extends AbstractNativeValue {
 			throw new RuntimeError("Exponent must be integer");
 		}
 
-		return new self(bcpow($this->value, $right->value, self::PRECISION));
+		return new self(\bcpow($this->value, $right->value, self::PRECISION));
 
 	}
 
@@ -132,7 +132,7 @@ class NumberValue extends AbstractNativeValue {
 			return \bccomp($this->value, $right->value, self::PRECISION) === 0;
 		}
 
-		return null;
+		return \null;
 
 	}
 

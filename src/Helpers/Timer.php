@@ -24,7 +24,7 @@ class Timer {
 	}
 
 	/**
-	 * Get current duration from the timer start.
+	 * Get current duration from the timer start as float number.
 	 */
 	public function get(): float {
 

@@ -4,7 +4,6 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Values\{
-	AbstractValue,
 	StringValue,
 	NumberValue,
 	RegexValue,
@@ -79,7 +78,7 @@ Assert::same("hello there!", $scope->getVariable('var_f')->getInternalValue());
 Assert::type('array', $scope->getVariable('var_g')->getInternalValue());
 
 //
-// Functions
+// Functions.
 //
 
 $scope = new Scope;

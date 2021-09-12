@@ -22,7 +22,6 @@ class ListValue extends AbstractValue {
 
 		// Ensuring the list is indexed from 0. Keys will be ignored.
 		$this->value = \array_values($items);
-		Stats::add('values_list');
 
 	}
 

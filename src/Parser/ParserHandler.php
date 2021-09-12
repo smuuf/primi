@@ -41,7 +41,7 @@ class ParserHandler {
 
 		$t = (new Timer)->start();
 		$result = $this->parser->match_Program();
-		$this->stats['parsing'] = $t->get();
+		$this->stats['Parsing AST'] = $t->get();
 
 		if ($result['text'] !== $this->source) {
 
@@ -53,7 +53,7 @@ class ParserHandler {
 
 		$t = (new Timer)->start();
 		$processed = $this->processAST($result, $this->source);
-		$this->stats['ast_postprocess'] = $t->get();
+		$this->stats['AST postprocess total'] = $t->get();
 
 		return $processed;
 
@@ -92,15 +92,15 @@ class ParserHandler {
 
 		$t = (new Timer)->start();
 		self::preprocessNode($ast);
-		$this->stats['ast_postprocess_preprocess_nodes'] = $t->get();
+		$this->stats['AST nodes preprocessing'] = $t->get();
 
 		$t = (new Timer)->start();
 		self::reduceNode($ast);
-		$this->stats['ast_postprocess_reduce_nodes'] = $t->get();
+		$this->stats['AST nodes reducing'] = $t->get();
 
 		$t = (new Timer)->start();
 		self::addPositions($ast, $source);
-		$this->stats['ast_postprocess_add_position'] = $t->get();
+		$this->stats['AST nodes adding positions'] = $t->get();
 
 		return $ast;
 
