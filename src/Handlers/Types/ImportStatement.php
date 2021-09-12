@@ -3,38 +3,60 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\VariableImportError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\SimpleHandler;
-use Smuuf\Primi\Values\StringValue;
 
 class ImportStatement extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
-		$dotPath = $node['module'];
-		$symbol = $node['symbol'] ?? false;
+		$dotpath = $node['module'];
+		$symbols = $node['symbols'] ?? [];
 
 		$moduleValue = $context->getImporter()->getModule($dotpath);
+		$currentScope = $context->getCurrentScope();
 
 		// Import only a specific symbol (variable) from the module.
-		if ($symbol) {
-			$moduleValue = $moduleValue->attrGet(StringValue::build($symbol));
-			$name = $symbol;
-		} else {
+		if ($symbols) {
 
-			// Importing the whole module - save it into current scope as
-			// variable named after the last part of the module's dot path.
-			$parts = explode('.', $dotPath);
-			$name = end($parts);
+			foreach ($symbols as $symbol) {
+
+				$value = $moduleValue->attrGet($symbol);
+				if ($value === \null) {
+					throw new VariableImportError($symbol, $dotpath);
+				}
+
+				$currentScope->setVariable($symbol, $value);
+
+			}
 
 		}
 
-		$context->getCurrentScope()->setVariable($name, $moduleValue);
+		// Importing the whole module - save it into current scope as
+		// variable named after the last part of the module's dot path.
+		$parts = \explode('.', $dotpath);
+		$name = \end($parts);
+
+		$currentScope->setVariable($name, $moduleValue);
 
 	}
 
 	public static function reduce(array &$node): void {
+
 		$node['module'] = $node['module']['text'];
-		$node['symbol'] = $node['symbol']['text'] ?? false;
+
+		if (!empty($node['symbols'])) {
+
+			$symbols = [];
+			foreach (Func::ensure_indexed($node['symbols']) as $s) {
+				$symbols[] = $s['text'];
+			}
+
+			$node['symbols'] = $symbols;
+
+		}
+
 	}
 
 }
