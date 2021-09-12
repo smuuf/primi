@@ -110,17 +110,19 @@ class Repl {
 			$scope = $ctx->getCurrentScope();
 		}
 
-		// Print out level (position in call stack).
-		if (!self::$noExtras) {
-			$this->driver->output(self::getLevelInfo($ctx, true));
-			$this->printHelp();
-		}
-
 		$frame = new StackFrame($this->replName, $module);
 
 		$wrapper = new ContextPushPopWrapper($ctx, $frame, $scope);
 		$retval = $wrapper->wrap(function($ctx) {
+
+			// Print out level (current frame's index in call stack).
+			if (!self::$noExtras) {
+				$this->driver->output(self::getStackInfo($ctx, true));
+				$this->printHelp();
+			}
+
 			return $this->loop($ctx);
+
 		});
 
 		$this->saveHistory();
@@ -293,7 +295,7 @@ class Repl {
 
 		$gathering = false;
 		$lines = '';
-		$levelInfo = self::getLevelInfo($ctx);
+		$stackInfo = self::getStackInfo($ctx);
 
 		while (true) {
 
@@ -304,8 +306,8 @@ class Repl {
 			}
 
 			// Display level of nesting - number of items in current call stack.
-			if (!self::$noExtras && $levelInfo) {
-				$this->driver->output("{$levelInfo}\n");
+			if (!self::$noExtras && $stackInfo) {
+				$this->driver->output("{$stackInfo}\n");
 			}
 
 			$input = $this->driver->input($prompt);
@@ -377,7 +379,7 @@ class Repl {
 	 * Return string with human-friendly information about current level
 	 * of nested calls (that is the number of entries in the call stack).
 	 */
-	private static function getLevelInfo(
+	private static function getStackInfo(
 		Context $ctx,
 		bool $full = false
 	): string {
@@ -389,9 +391,9 @@ class Repl {
 			return '';
 		}
 
-		$out = "L +{$level}";
+		$out = "F {$level}";
 		if ($full) {
-			$out = "Entering level {$out}.\n";
+			$out = "REPL at frame {$level}.\n";
 		}
 
 		return Colors::get("{darkgrey}{$out}{_}");
