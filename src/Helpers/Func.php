@@ -404,15 +404,7 @@ abstract class Func {
 	 * Return best available time for measuring things - as seconds.
 	 */
 	public static function monotime(): float {
-
-		// hrtime() is available only from PHP 7.3
-		if (\PHP_VERSION_ID < 73000) {
-			return \microtime(\true);
-		}
-
-		// Nanoseconds to seconds.
-		return \hrtime(\true) / 1e9;
-
+		return \hrtime(\true) / 1e9; // Nanoseconds to seconds.
 	}
 
 	/**
