@@ -13,8 +13,10 @@ use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Code\SourceFile;
+use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Helpers\Colors;
+use \Smuuf\Primi\Helpers\Stats;
 
 class Entrypoint {
 
@@ -24,7 +26,7 @@ class Entrypoint {
 		// Print only parsed AST and then exit.
 		'only_tree' => false,
 		// Parse the input (build AST), print parser stats and exit.
-		'print_process_stats' => false,
+		'print_runtime_stats' => false,
 		// After the script finishes, print out contents of main global scope.
 		'print_scope' => false,
 		// After the script finishes, print out contents of main global scope.
@@ -79,9 +81,12 @@ class Entrypoint {
 		}
 
 		// Enable stats gathering, if requested.
-		if ($cfg['print_process_stats']) {
+		if ($cfg['print_runtime_stats']) {
+
 			Stats::enable();
+			// Try printing stats at the absolute end of runtime.
 			register_shutdown_function(fn() => Stats::print());
+
 		}
 
 		// Determine the source. Act as REPL if no source was specified.
@@ -90,7 +95,6 @@ class Entrypoint {
 			echo $this->getHeaderString('REPL');
 			$repl = new Repl;
 			$repl->start();
-
 			die;
 
 		}
@@ -131,7 +135,7 @@ class Entrypoint {
 			echo "Parser stats:\n";
 			foreach ($ph->getStats() as $name => $value) {
 				$value = round($value, 4);
-				echo "- {$name}: {$value}\n";
+				echo "- {$name}: {$value} s\n";
 			}
 			die;
 
@@ -189,9 +193,9 @@ class Entrypoint {
 				case "--print-scope":
 					$cfg['print_scope'] = true;
 				break;
-				case "-st":
-					case "--stats":
-						$cfg['print_process_stats'] = true;
+				case "-rst":
+					case "--runtime-stats":
+						$cfg['print_runtime_stats'] = true;
 					break;
 				case "-v":
 					case "--verbose":
@@ -212,20 +216,32 @@ class Entrypoint {
 		$header = self::getHeaderString('CLI');
 		$help = <<<HELP
 		$header
-		Usage: primi [<options>] [<input file>]
-		Options:
-		-t, --tree
-			Only print syntax tree and exit.
-		-s, --source
-			Treat <input file> as string instead of a source file path.
-		-ps, --print-scope
-			Print contents of global scope after execution.
-		-st, --stats
-			Print interpreter stats upon exit.
+		{green}Usage:{_}
+			primi [<options>] [<input file>]
+		{green}Examples:{_}
+			primi ./some_file.primi
+			primi -ps ./some_file.primi
+			primi -s 'something = 1; print(something + 1)'
+			primi -rst -s 'something = 1; print(something + 1)'
+		{green}Options:{_}
+			{yellow}-h, --help{_}
+				Print this help.
+			{yellow}-ps, --print-scope{_}
+				Print contents of global scope after execution.
+			{yellow}-pst, --parser-stats{_}
+				Print parser stats upon exit (code is not executed).
+			{yellow}-rst, --stats{_}
+				Print interpreter runtime stats upon exit.
+			{yellow}-s, --source{_}
+				Treat <input file> as string instead of a source file path.
+			{yellow}-t, --tree{_}
+				Only print syntax tree and exit.
+			{yellow}-v, --verbose{_}
+				Enable verbose debug logging.
 
 		HELP;
 
-		die($help);
+		die(Colors::get($help));
 
 	}
 
@@ -234,7 +250,7 @@ class Entrypoint {
 		$php = PHP_VERSION;
 
 		$string = "Primi {$env}, Copyright (c) Premysl Karbula\n"
-			. "{yellow}Running on PHP {$php}{_}\n";
+			. "{yellow}Running on PHP {$php}{_}";
 		return Colors::get($string);
 
 	}
