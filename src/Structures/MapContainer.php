@@ -68,7 +68,10 @@ class MapContainer implements
 		return $key::TYPE . ".{$key->hash()}";
 	}
 
-	public function setAll($pairs): void {
+	/**
+	 * @param iterable<AbstractValue, AbstractValue> $pairs
+	 */
+	public function setAll(iterable $pairs): void {
 
 		foreach ($pairs as [$key, $value]) {
 			$scalarKey = self::buildScalarKey($key);

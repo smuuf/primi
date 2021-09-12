@@ -6,7 +6,6 @@ namespace Smuuf\Primi\Tasks;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\StrictObject;
 
 class TaskQueue {
@@ -17,7 +16,7 @@ class TaskQueue {
 	 * Run queued tasks after this time interval passes (in seconds).
 	 * @var int|float
 	 */
-	public static $interval = 0.2;
+	public static $interval = 0.25;
 
 	/** @var Context */
 	private $context;
@@ -55,7 +54,6 @@ class TaskQueue {
 
 	public function tick(): void {
 
-		Stats::add('taskqueue_ticks_tried');
 		if (!$this->queue) {
 			return;
 		}
@@ -64,7 +62,6 @@ class TaskQueue {
 			return;
 		}
 
-		Stats::add('taskqueue_ticks_actual');
 		$this->timer = Func::monotime();
 		$this->executeQueued();
 

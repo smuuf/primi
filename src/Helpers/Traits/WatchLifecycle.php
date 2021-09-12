@@ -23,7 +23,7 @@ trait WatchLifecycle {
 	/** @var int Every unique instance of "watched" class's number. */
 	private static $instanceCounter;
 
-	public function __construct() {
+	public function watchLifecycle() {
 
 		// Assign a new, globally unique counter's number for this new object.
 		self::$instanceCounter = WatchLifecycleScope::$instanceCounter++;

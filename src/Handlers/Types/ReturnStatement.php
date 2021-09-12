@@ -3,9 +3,9 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Ex\ReturnException;
 use \Smuuf\Primi\Handlers\SimpleHandler;
+use \Smuuf\Primi\Handlers\HandlerFactory;
 
 class ReturnStatement extends SimpleHandler {
 

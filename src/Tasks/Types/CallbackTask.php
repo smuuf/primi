@@ -14,7 +14,7 @@ class CallbackTask implements TaskInterface {
 	use StrictObject;
 
 	/** @var FuncValue Callback function. */
-	private $fn = null;
+	private $fn = \null;
 
 	/** @var array Arguments passed to callback. */
 	private $args = [];

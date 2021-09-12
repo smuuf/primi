@@ -28,11 +28,14 @@ class NullValue extends AbstractNativeValue {
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 
+		// Null doesn't know or care about other types - the relationship
+		// is undefined from its point of view.
 		if (!$right instanceof self) {
 			return \null;
 		}
 
-		return $this->value === $right->value;
+		// Null is always equal to null.
+		return \true;
 
 	}
 

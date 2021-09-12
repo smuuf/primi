@@ -10,7 +10,7 @@ class Location {
 
 	use StrictObject;
 
-	/** Name of the name (file). */
+	/** Name of the location (e.g. module name or source ID). */
 	private string $name;
 
 	/** Line in the name file. */

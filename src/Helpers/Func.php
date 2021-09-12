@@ -21,7 +21,7 @@ abstract class Func {
 	 * @const string[][]
 	 */
 	private const DECIMAL_TRIMMING_REGEXES = [
-		['#^(-?)0+(\d)#', '#(\.0+$)|((\.\d+?[1-9]?)0+$)#'],
+		['#^(-?)0+(\d)#S', '#(\.0+$)|((\.\d+?[1-9]?)0+$)#S'],
 		['\1\2', '\3']
 	];
 
@@ -86,7 +86,7 @@ abstract class Func {
 	}
 
 	public static function is_decimal(string $input): bool {
-		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
+		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#S', $input);
 	}
 
 	/**
@@ -162,7 +162,7 @@ abstract class Func {
 	 * Converts a number represented with scientific notation to a decimal
 	 * number which is returned as a string.
 	 *
-	 * If there's not a decimal point, or there's no exponent present in the
+	 * If there's not a decimal point nor an exponent present in the
 	 * number, or even if the `$number` is not really a number, the original
 	 * value is returned.
 	 *
@@ -176,7 +176,7 @@ abstract class Func {
 	public static function scientific_to_decimal(string $number): string {
 
 		// If not even with decimal point, just return the original.
-		if (!\preg_match("#^([+-]?\d+\.\d+)(?:E([+-]\d+))?$#", $number, $matches)) {
+		if (!\preg_match("#^([+-]?\d+\.\d+)(?:E([+-]\d+))?$#S", $number, $matches)) {
 			return $number;
 		}
 
@@ -275,10 +275,10 @@ abstract class Func {
 		$types = [];
 		foreach ($rf->getParameters() as $rp) {
 
-			$invalid = false;
+			$invalid = \false;
 			$type = $rp->getType();
 
-			if ($type === null) {
+			if ($type === \null) {
 				$invalid = 'Type must be specified';
 			} else {
 
@@ -333,7 +333,7 @@ abstract class Func {
 	 * Helper function for easier left-to-right evaluation of various abstract
 	 * trees representing logical/mathematical operations.
 	 *
-	 * Return a generator yielding tuples of `[operator, operand]` with the
+	 * Returns a generator yielding tuples of `[operator, operand]` with the
 	 * exception of first iteration, where the tuple `[null, first operand]` is
 	 * returned.
 	 *
@@ -378,7 +378,7 @@ abstract class Func {
 	 */
 	public static function php_types_to_primi_types($types): string {
 
-		$types = is_string($types) ? [$types] : $types;
+		$types = \is_string($types) ? [$types] : $types;
 		$primiTypes = \array_map(function($class) {
 
 			// Resolve PHP nulls as Primi nulls.
@@ -386,7 +386,7 @@ abstract class Func {
 				return 'null';
 			}
 
-			if (!is_a($class, AbstractValue::class, true)) {
+			if (!\is_a($class, AbstractValue::class, \true)) {
 				throw new EngineInternalError(
 					"Cannot convert PHP class name '$class' to Primi type"
 				);
@@ -396,7 +396,7 @@ abstract class Func {
 
 		}, $types);
 
-		return implode('|', $primiTypes);
+		return \implode('|', $primiTypes);
 
 	}
 
@@ -423,24 +423,21 @@ abstract class Func {
 	}
 
 	/**
-	 * @param array<CallFrame> $callstack Callstack.
+	 * @param array<StackFrame> $callstack Callstack.
 	 */
 	public static function get_traceback_as_string(
 		array $callstack,
-		bool $colors = false
+		bool $withColors = false
 	): string {
 
-		$result = Colors::getMaybe(
-			$colors,
-			"{yellow}Traceback:{_}\n"
-		);
+		$result = Colors::get("{yellow}Traceback:{_}\n", true, $withColors);
 
 		foreach ($callstack as $level => $call)  {
 
-			$result .= Colors::getMaybe(
-				$colors,
-				"{yellow}[$level]{_} {$call}\n"
-				//." {green}in {$module}{_}\n"
+			$result .= Colors::get(
+				"{yellow}[$level]{_} {$call}\n",
+				true,
+				$withColors
 			);
 
 		}
@@ -460,7 +457,7 @@ abstract class Func {
 				throw new EngineError("Path '$path' is not a valid directory");
 			}
 
-			$result[] = $rp;
+			$result[] = rtrim($rp, '/');
 
 		}
 

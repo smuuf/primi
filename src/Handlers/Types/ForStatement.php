@@ -24,20 +24,20 @@ class ForStatement extends SimpleHandler {
 		$subject = $leftHandler::run($node['left'], $context);
 
 		$iter = $subject->getIterator();
-		if ($iter === null) {
+		if ($iter === \null) {
 			throw new RuntimeError(
 				\sprintf("Cannot iterate over '%s'", $subject::TYPE)
 			);
 		}
 
-		$keyVariableName = $node['key']['text'] ?? false;
+		$keyVariableName = $node['key']['text'] ?? \false;
 		$itemVariableName = $node['item']['text'];
 		$blockHandler = HandlerFactory::getFor($node['right']['name']);
 
 		// 1-bit value for ticking task queue once per two iterations.
 		$tickBit = 1;
 
-		if ($keyVariableName === false) {
+		if ($keyVariableName === \false) {
 
 			//
 			// Iteration without keys.

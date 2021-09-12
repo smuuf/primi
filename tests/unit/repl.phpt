@@ -25,19 +25,19 @@ $commands = [
 // This is expected output. This will be compared with actual output down below.
 // Asterisk * means that the line can be whatever.
 $expected = [
-	"ERR: Undefined variable 'a' @ <repl: cli> on line 1, position 0",
+	"ERR: Undefined variable 'a' @ <module: __main__> on line 1",
 	"Traceback:",
-	"[0] <repl: cli>",
+	"[0] <repl: cli> in <module: __main__>",
 	"1",
-	"ERR: Undefined variable 'b' @ <repl: cli> on line 1, position 0",
+	"ERR: Undefined variable 'b' @ <module: __main__> on line 1",
 	"Traceback:",
-	"[0] <repl: cli>",
+	"[0] <repl: cli> in <module: __main__>",
 	"1",
 	"a: 1",
 	"_: 1",
 	"<function: user>",
 	"Traceback:",
-	"[0] <repl: cli>",
+	"[0] <repl: cli> in <module: __main__>",
 	'...', // ... - skip checking the rest.
 ];
 
@@ -58,7 +58,7 @@ $driver = new class implements UserIoDriverInterface {
 
 	public function output(string $text): void {
 
-		// The mechanism down below ensures that any output will be correcly
+		// The mechanism down below ensures that any output will be correctly
 		// divided into separate lines.
 		$this->buffer .= $text;
 

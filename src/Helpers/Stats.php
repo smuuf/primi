@@ -86,7 +86,7 @@ abstract class Stats {
 
 		self::out("PHP: " . PHP_VERSION);
 
-		$mb = round(memory_get_peak_usage() / 1e6, 2);
+		$mb = round(memory_get_peak_usage(true) / 1e6, 2);
 		self::out("Memory peak: {$mb} MB");
 
 		$duration = round(Func::monotime() - self::$startTime, 2);
