@@ -24,12 +24,20 @@ class InternalSyntaxError extends EngineException {
 	private string $excerpt;
 
 	public function __construct(
-		int $line,
+		int $errorLine,
 		string $excerpt = ''
 	) {
 
-		$this->errorLine = $line;
+		$this->errorLine = $errorLine;
 		$this->excerpt = $excerpt;
+
+		$msg = \sprintf(
+			"Syntax error %s%s",
+			$excerpt ? \sprintf("near '%s' ", \trim($excerpt)) : '',
+			\sprintf("on line %d", $errorLine)
+		);
+
+		parent::__construct($msg);
 
 	}
 
