@@ -89,8 +89,29 @@ abstract class Func {
 		return (bool) \preg_match('#^[+-]?\d+(\.\d+)?$#', $input);
 	}
 
+	/**
+	 * Returns a 8 character long hash unique for any existing PHP object and
+	 * which is always the same for a specific PHP object instance.
+	 *
+	 * This is based on `spl_object_hash` but is visibly more "random" than what
+	 * `spl_object_hash`.
+	 *
+	 * As is the case with `spl_object_hash`, a hash can be reused by a new
+	 * object if the previous object with the same hash was destroyed during
+	 * the PHP runtime.
+	 */
 	public static function object_hash($o): string {
-		return \substr(\md5(\spl_object_hash($o)), 0, 6);
+		return \substr(\md5(\spl_object_hash($o)), 0, 8);
+	}
+
+	/**
+	 * Return a 8 character long hash for any string.
+	 *
+	 * This hash should be used for "information" purposes - for example
+	 * to help a quick by-human-eye comparison that two things are different.
+	 */
+	public static function string_hash(string $o): string {
+		return \substr(\md5($o), 0, 8);
 	}
 
 	/**

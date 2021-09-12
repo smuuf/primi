@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Code;
 
 use \Smuuf\StrictObject;
+use \Smuuf\Primi\Helpers\Func;
 
 /**
  * Helper class for representing Primi source code.
@@ -23,7 +24,7 @@ class Source {
 
 	public function __construct(string $code) {
 
-		$id = sprintf("<string %s>", md5($code));
+		$id = \sprintf("<string %s>", Func::string_hash($code));
 		$this->sourceId = $id;
 		$this->sourceCode = $code;
 
