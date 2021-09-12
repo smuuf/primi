@@ -53,7 +53,7 @@ abstract class DirectInterpreter {
 			try {
 
 				$tree = $ast->getTree();
-				return HandlerFactory::getFor($tree['name']);
+				return HandlerFactory::runNode($tree, $ctx);
 
 			} catch (ControlFlowException $e) {
 
