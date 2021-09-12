@@ -102,6 +102,12 @@ class Importer {
 			throw new ImportError("Relative import {$e->getMessage()} reached beyond top-level package");
 		}
 
+		$dotpathString = $dp->getAbsolute();
+		if (isset($this->loaded[$dotpathString])) {
+			Logger::debug("Returned '$dotpathString' from module cache");
+			return $this->loaded[$dotpathString];
+		}
+
 		// Determine which import path matches the first part of dotpath.
 		// For example if we're trying to import module 'a.b.c', this returns
 		// the first import path that contains the module 'a' (a package/dir 'a'
@@ -111,13 +117,6 @@ class Importer {
 		if ($base) {
 
 			Logger::debug("Determined base '$base' for module '{$dp->getAbsolute()}'");
-			$dotpathString = $dp->getAbsolute();
-
-			if (isset($this->loaded[$dotpathString])) {
-				Logger::debug("Returned '$dotpathString' from module cache");
-				return $this->loaded[$dotpathString];
-			}
-
 			if ($module = $this->tryWithBase($base, $dp)) {
 				return $module;
 			}
