@@ -56,19 +56,21 @@ abstract class Colors {
 
 	];
 
-	public static function getMaybe(
-		bool $apply,
-		string $string,
-		bool $reset = true
-	): string {
+	private static bool $noColor;
 
-		$handler = $apply ? [self::class, 'handler'] : fn() => '';
-		return self::apply($string, $handler, $reset);
-
+	public static function init(): void {
+		self::$noColor = (bool) \getenv('NO_COLOR');
 	}
 
-	public static function get(string $string, bool $reset = true): string {
-		return self::apply($string, [self::class, 'handler'], $reset);
+	public static function get(
+		string $string,
+		bool $reset = true,
+		bool $applyColors = true
+	): string {
+
+		$handler = $applyColors ? [self::class, 'handler'] : fn() => '';
+		return self::apply($string, $handler, $reset);
+
 	}
 
 	private static function apply(
@@ -92,7 +94,7 @@ abstract class Colors {
 
 	private static function handler(array $m): string {
 
-		if (\getenv('NO_COLOR') !== \false) {
+		if (self::$noColor !== \false) {
 			return '';
 		}
 
@@ -107,3 +109,5 @@ abstract class Colors {
 	}
 
 }
+
+Colors::init();
