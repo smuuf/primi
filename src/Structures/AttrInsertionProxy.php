@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\AbstractValue;
+
 use \Smuuf\StrictObject;
 
 /**
@@ -16,11 +17,11 @@ class AttrInsertionProxy implements InsertionProxyInterface {
 
 	use StrictObject;
 
-	protected $target;
-	protected $key;
+	protected string $key;
+	protected AbstractValue $target;
 
 	public function __construct(
-		?AbstractValue $key,
+		string $key,
 		AbstractValue $target
 	) {
 		$this->target = $target;

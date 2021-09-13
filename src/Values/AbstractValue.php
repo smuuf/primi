@@ -16,6 +16,9 @@ abstract class AbstractValue extends ValueFriends {
 	/** @const string Name of Primi (value) type. */
 	const TYPE = "any";
 
+	/** Attributes of Primi object. */
+	protected array $attrs = [];
+
 	/**
 	 * Take any PHP value and convert it into  a Primi value object of
 	 * appropriate type.
@@ -42,21 +45,6 @@ abstract class AbstractValue extends ValueFriends {
 				return Interned::string((string) $value);
 		}
 
-	}
-
-	/**
-	 * Return a new - or existing - instance of value object. Use this for
-	 * immutable values when it may make sense not to create many of separate
-	 * objects representing the same value (which saves memory).
-	 *
-	 * @param mixed $value Whatever is to be passed into the specific-type value
-	 * object constructor.
-	 */
-	public static function build($value = null) {
-		throw new EngineError(sprintf(
-			"%s does not implement factory method. Create new object directly",
-			get_called_class()
-		));
 	}
 
 	/**
@@ -183,7 +171,7 @@ abstract class AbstractValue extends ValueFriends {
 	/**
 	 * Assign a value under specified key into this value.
 	 *
-	 * Must return true on successful assignment, or `false` if assignment is
+	 * Must return `true` on successful assignment, or `false` if assignment is
 	 * not supported.
 	 */
 	public function itemSet(?AbstractValue $key, AbstractValue $value): bool {
@@ -206,19 +194,35 @@ abstract class AbstractValue extends ValueFriends {
 	 *
 	 * Must return true on successful assignment, or `false` if assignment is
 	 * not supported.
+	 *
+	 * NOTE: This attribute name can only be strings, so there's no need to
+	 * accept StringValue as $key.
 	 */
-	public function attrSet(StringValue $key, AbstractValue $value): bool {
+	public function attrSet(string $key, AbstractValue $value): bool {
 		return \false;
 	}
 
 	/**
 	 * Returns an attr from the value.
 	 *
-	 * Must return some value object, or `null` if such operation is not
-	 * supported.
+	 * This must return either a value object (which is an attribute of this
+	 * value object) or `null`, if not found.
+	 *
+	 * If this returns `null`, object hierarchy will be traversed upwards and
+	 * attr will be searched in the parent object.
+	 *
+	 * This API is differs from, for example, `self::itemGet()`, as `null` does
+	 * NOT represent an "unsupported" operation, but rather "it's not here, try
+	 * elsewhere".
+	 *
+	 * As the above is expected to be the most common thing to do, unsupported
+	 * attr access instead should throw a RuntimeError.
+	 *
+	 * NOTE: This attribute name can only be strings, so there's no need to
+	 * accept StringValue as $key.
 	 */
-	public function attrGet(StringValue $key): ?AbstractValue {
-		return \null;
+	public function attrGet(string $key): ?AbstractValue {
+		return $this->attrs[$key] ?? \null;
 	}
 
 	/**

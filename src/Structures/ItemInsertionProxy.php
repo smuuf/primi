@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\AbstractValue;
+
 use \Smuuf\StrictObject;
 
 /**
@@ -16,8 +17,8 @@ class ItemInsertionProxy implements InsertionProxyInterface {
 
 	use StrictObject;
 
-	protected $target;
-	protected $key;
+	protected AbstractValue $target;
+	protected ?AbstractValue $key;
 
 	public function __construct(
 		?AbstractValue $key,
