@@ -2,10 +2,5 @@
 
 cd $(dirname $0)
 
-# files=`find ../example/ -iname "*.primi"`
-
-# Enable AST cache for smoke tests when executed via this script.
-export X_PRIMI_TESTS_ASTCACHE=1
-
 php ../tests/smoke/smoke.phpt
 exit $?
