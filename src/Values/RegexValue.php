@@ -43,6 +43,14 @@ class RegexValue extends AbstractNativeValue {
 
 	}
 
+	public function getStringValue(): string {
+
+		// Cut off the first delim and the last delim + "u" modifier.
+		$string = $this->value;
+		return \mb_substr($string, 1, \mb_strlen($string) - 3);
+
+	}
+
 	public function isEqualTo(AbstractValue $right): ?bool {
 
 		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
