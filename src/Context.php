@@ -88,7 +88,15 @@ class Context {
 		$this->importer = $services->getImporter();
 		$this->maxCallStackSize = $this->config->getCallStackLimit();
 
+		// Import our builtins module.
+		$this->builtins = $this->importer
+			->getModule('std.__builtins__')
+			->getInternalValue();
 
+		// Import 'std.types' module for fast direct access.
+		$this->typesModule = $this->importer
+			->getModule('std.types')
+			->getInternalValue();
 
 	}
 
@@ -200,7 +208,8 @@ class Context {
 	// in current scope (and its parents).
 
 	public function getVariable(string $name): ?AbstractValue {
-		return $this->currentScope->getVariable($name);
+		return $this->currentScope->getVariable($name)
+			?? $this->builtins->getVariable($name);
 	}
 
 	public function getVariables(bool $includeParents = \false): array {
