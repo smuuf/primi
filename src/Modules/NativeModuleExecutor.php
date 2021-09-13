@@ -9,7 +9,7 @@ use \Smuuf\Docblox\DocParser;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Structures\FnContainer;
-use \Smuuf\Primi\Values\FunctionValue;
+use \Smuuf\Primi\Values\FuncValue;
 
 class NativeModuleExecutor {
 
@@ -64,7 +64,7 @@ class NativeModuleExecutor {
 					$fnFlags[] = FnContainer::FLAG_NO_STACK;
 				}
 
-				$result[$name] = new FunctionValue(
+				$result[$name] = new FuncValue(
 					FnContainer::buildFromClosure([$module, $name], $fnFlags)
 				);
 
