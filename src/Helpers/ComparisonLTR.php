@@ -53,8 +53,9 @@ class ComparisonLTR {
 
 		switch (\true) {
 			case $op === '==':
+				return self::evaluateEqual($left, $right);
 			case $op === '!=':
-				return self::evaluateEquality($op, $left, $right);
+				return self::evaluateNotEqual($left, $right);
 			case $op === 'in':
 				return self::evaluateIn($op, $left, $right);
 			case $op === 'not in':
@@ -70,27 +71,47 @@ class ComparisonLTR {
 
 	}
 
-	private static function evaluateEquality(
-		string $op,
+	private static function evaluateEqual(
 		AbstractValue $left,
 		AbstractValue $right
 	): bool {
 
-		$result = $left->isEqualTo($right);
-
-		// If the left side didn't know how to evaluate equality with the right
-		// side (the first call returned null), switch operands and try again.
-		if ($result === \null) {
-			$result = $right->isEqualTo($left);
+		// Compare identity first - if both operands are the same object, no
+		// need to compare them any further.
+		if ($left === $right) {
+			return true;
 		}
 
+		// If the left side doesn't know how to evaluate equality with the right
+		// side (the first call returned null), switch operands and try again.
 		// If both sides did not know how to evaluate equality with themselves,
 		// the equality is false.
-		$result = $result ?? \false;
+		return $left->isEqualTo($right)
+			?? $right->isEqualTo($left)
+			?? \false;
 
-		return $op === '=='
-			? $result
-			: !$result;
+	}
+
+	private static function evaluateNotEqual(
+		AbstractValue $left,
+		AbstractValue $right
+	): bool {
+
+		// Compare identity first - if both operands are the same object, no
+		// need to compare them any further.
+		if ($left === $right) {
+			return false;
+		}
+
+		// If the left side doesn't know how to evaluate equality with the right
+		// side (the first call returned null), switch operands and try again.
+		// If both sides did not know how to evaluate equality with themselves,
+		// the equality is false.
+		$result = $left->isEqualTo($right)
+			?? $right->isEqualTo($left)
+			?? \false;
+
+		return !$result;
 
 	}
 
