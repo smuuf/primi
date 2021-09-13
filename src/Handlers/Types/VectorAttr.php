@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\ChainedHandler;
 use \Smuuf\Primi\Structures\AttrInsertionProxy;
@@ -17,7 +16,7 @@ class VectorAttr extends ChainedHandler {
 		AbstractValue $subject
 	) {
 
-		$attrName = StringValue::build($node['attr']);
+		$attrName = $node['attr'];
 
 		// If this is a leaf node, return an insertion proxy instead of value.
 		if ($node['leaf']) {

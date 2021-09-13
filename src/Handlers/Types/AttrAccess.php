@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\ChainedHandler;
 
@@ -16,7 +15,7 @@ class AttrAccess extends ChainedHandler {
 		AbstractValue $subject
 	) {
 
-		$attrName = StringValue::build($node['attr']);
+		$attrName = $node['attr'];
 
 		//
 		// If the UFCS didn't match any typed call, try ordinary attr access.

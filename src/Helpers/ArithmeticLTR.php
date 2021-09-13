@@ -9,6 +9,7 @@ use \Smuuf\Primi\Ex\BinaryOperationError;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
+
 use \Smuuf\StrictObject;
 
 class ArithmeticLTR {
