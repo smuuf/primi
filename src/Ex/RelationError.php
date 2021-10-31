@@ -10,8 +10,8 @@ class RelationError extends RuntimeError {
 
 	public function __construct(string $op, AbstractValue $left, AbstractValue $right) {
 
-		$lType = $left::TYPE;
-		$rType = $right::TYPE;
+		$lType = $left->getTypeName();
+		$rType = $right->getTypeName();
 		$msg = "Undefined relation '$op' between '{$lType}' and '{$rType}'";
 
 		parent::__construct($msg);

@@ -3,7 +3,7 @@
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Code\Source;
-use Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Values\AbstractValue;
 use \Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';

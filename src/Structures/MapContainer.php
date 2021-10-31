@@ -65,7 +65,7 @@ class MapContainer implements
 	 * @throws UnhashableTypeException
 	 */
 	private static function buildScalarKey(AbstractValue $key): string {
-		return $key::TYPE . ".{$key->hash()}";
+		return $key->getTypeName() . ".{$key->hash()}";
 	}
 
 	/**

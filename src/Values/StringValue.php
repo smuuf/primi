@@ -7,6 +7,7 @@ namespace Smuuf\Primi\Values;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\StringEscaping;
@@ -21,6 +22,10 @@ class StringValue extends AbstractNativeValue {
 
 	public function __construct(string $str) {
 		$this->value = $str;
+	}
+
+	public function getType(): TypeValue {
+		return StaticTypes::getStringType();
 	}
 
 	public function getLength(): ?int {

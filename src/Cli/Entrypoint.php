@@ -13,7 +13,6 @@ use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Code\SourceFile;
-use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\Primi\Helpers\Stats;

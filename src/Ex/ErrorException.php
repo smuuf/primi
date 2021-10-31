@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Ex;
 
-use Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Location;
 
 /**

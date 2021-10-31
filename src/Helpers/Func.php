@@ -221,7 +221,7 @@ abstract class Func {
 		throw new TypeError(\sprintf(
 			"Expected '%s' but got '%s' as argument %d",
 			Func::php_types_to_primi_types($allowedTypes),
-			$arg::TYPE,
+			$arg->getTypeName(),
 			$index
 		));
 
@@ -392,7 +392,7 @@ abstract class Func {
 				);
 			}
 
-			return $class::TYPE;
+			return $class->getTypeName();
 
 		}, $types);
 

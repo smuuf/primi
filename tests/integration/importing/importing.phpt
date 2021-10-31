@@ -3,7 +3,7 @@
 use \Tester\Assert;
 
 use \Smuuf\Primi\Code\SourceFile;
-use Smuuf\Primi\Config;
+use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Logger;
 
 require __DIR__ . '/../../bootstrap.php';

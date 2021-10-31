@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\CircularDetector;
 
-class ListValue extends AbstractValue {
+class ListValue extends AbstractNativeValue {
 
-	const TYPE = "list";
+	protected const TYPE = "list";
 
 	public function reindex(): void {
 		$this->value = \array_values($this->value);
@@ -33,6 +34,10 @@ class ListValue extends AbstractValue {
 			$item = clone $item;
 		});
 
+	}
+
+	public function getType(): TypeValue {
+		return StaticTypes::getListType();
 	}
 
 	public function getLength(): ?int {

@@ -3,8 +3,9 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\ChainedHandler;
 
 class AttrAccess extends ChainedHandler {
@@ -16,34 +17,15 @@ class AttrAccess extends ChainedHandler {
 	) {
 
 		$attrName = $node['attr'];
-
-		//
-		// If the UFCS didn't match any typed call, try ordinary attr access.
-		//
-
-		//$value = $subject->type->attrGet($attrName);
-
-		//
-		// If the UFCS didn't match any typed call, try ordinary attr access.
-		//
-
 		$value = $subject->attrGet($attrName);
 
 		if ($value) {
 			return $value;
 		}
 
-		throw new RuntimeError(\sprintf(
-			"Type '%s' does not support attribute access", $subject::TYPE
-		));
+		$typeName = $subject->getTypeName();
+		throw new LookupError("Object of type '$typeName' has no attribute '$attrName'");
 
-	}
-
-	private static function inferTypedName(
-		string $name,
-		AbstractValue $v
-	): string {
-		return \sprintf("%s_%s", $v::TYPE, $name);
 	}
 
 	public static function reduce(array &$node): void {

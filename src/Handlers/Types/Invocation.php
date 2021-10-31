@@ -40,7 +40,7 @@ class Invocation extends ChainedHandler {
 
 		if ($result === \null) {
 			throw new RuntimeError(
-				\sprintf("Trying to invoke a non-function '%s'", $fn::TYPE)
+				\sprintf("Object of type '%s' is not callable", $fn->getTypeName())
 			);
 		}
 

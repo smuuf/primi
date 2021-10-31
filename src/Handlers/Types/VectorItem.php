@@ -29,7 +29,7 @@ class VectorItem extends ChainedHandler {
 		$value = $subject->itemGet($key);
 		if ($value === \null) {
 			throw new RuntimeError(\sprintf(
-				"Type '%s' does not support item access", $subject::TYPE
+				"Type '%s' does not support item access", $subject->getTypeName()
 			));
 		}
 

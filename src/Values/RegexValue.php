@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
@@ -27,6 +28,10 @@ class RegexValue extends AbstractNativeValue {
 		// we won't need to deal with any escaping of input.
 		$this->value = "\x07$regex\x07u";
 
+	}
+
+	public function getType(): TypeValue {
+		return StaticTypes::getRegexType();
 	}
 
 	public function isTruthy(): bool {

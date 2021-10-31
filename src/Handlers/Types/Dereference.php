@@ -22,7 +22,7 @@ class Dereference extends ChainedHandler {
 		if ($returned === \null) {
 			throw new RuntimeError(\sprintf(
 				"Type '%s' does not support item access",
-				$subject::TYPE
+				$subject->getTypeName()
 			));
 		}
 

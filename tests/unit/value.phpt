@@ -2,7 +2,6 @@
 
 use \Tester\Assert;
 
-use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Values\{
 	AbstractValue,
 	StringValue,
@@ -19,34 +18,30 @@ use \Smuuf\Primi\Helpers\Interned;
 
 require __DIR__ . '/../bootstrap.php';
 
-Assert::exception(function() {
-	AbstractValue::build('whatever');
-}, EngineError::class, '#does not implement factory method#');
+Assert::type(NullValue::class, AbstractValue::buildAuto(null));
 
-Assert::same(NullValue::TYPE, AbstractValue::buildAuto(null)::TYPE);
+Assert::type(NumberValue::class, AbstractValue::buildAuto(1));
+Assert::type(NumberValue::class, AbstractValue::buildAuto(-1));
+Assert::type(NumberValue::class, AbstractValue::buildAuto("0"));
+Assert::type(NumberValue::class, AbstractValue::buildAuto("+4"));
+Assert::type(NumberValue::class, AbstractValue::buildAuto(-123));
 
-Assert::same(NumberValue::TYPE, AbstractValue::buildAuto(1)::TYPE);
-Assert::same(NumberValue::TYPE, AbstractValue::buildAuto(-1)::TYPE);
-Assert::same(NumberValue::TYPE, AbstractValue::buildAuto("0")::TYPE);
-Assert::same(NumberValue::TYPE, AbstractValue::buildAuto("+4")::TYPE);
-Assert::same(NumberValue::TYPE, AbstractValue::buildAuto(-123)::TYPE);
+Assert::type(StringValue::class, AbstractValue::buildAuto("a"));
+Assert::type(StringValue::class, AbstractValue::buildAuto(""));
+Assert::type(StringValue::class, AbstractValue::buildAuto("word"));
+Assert::type(StringValue::class, AbstractValue::buildAuto("-1 squirrels"));
 
-Assert::same(StringValue::TYPE, AbstractValue::buildAuto("a")::TYPE);
-Assert::same(StringValue::TYPE, AbstractValue::buildAuto("")::TYPE);
-Assert::same(StringValue::TYPE, AbstractValue::buildAuto("word")::TYPE);
-Assert::same(StringValue::TYPE, AbstractValue::buildAuto("-1 squirrels")::TYPE);
+Assert::type(BoolValue::class, AbstractValue::buildAuto(true));
+Assert::type(BoolValue::class, AbstractValue::buildAuto(false));
 
-Assert::same(BoolValue::TYPE, AbstractValue::buildAuto(true)::TYPE);
-Assert::same(BoolValue::TYPE, AbstractValue::buildAuto(false)::TYPE);
+Assert::type(ListValue::class, AbstractValue::buildAuto([]));
+Assert::type(ListValue::class, AbstractValue::buildAuto([1]));
 
-Assert::same(ListValue::TYPE, AbstractValue::buildAuto([])::TYPE);
-Assert::same(ListValue::TYPE, AbstractValue::buildAuto([1])::TYPE);
+Assert::type(DictValue::class, AbstractValue::buildAuto([4 => 'a', 5 => 'b']));
+Assert::type(DictValue::class, AbstractValue::buildAuto(['a' => 'x', 'y' => 'z']));
 
-Assert::same(DictValue::TYPE, AbstractValue::buildAuto([4 => 'a', 5 => 'b'])::TYPE);
-Assert::same(DictValue::TYPE, AbstractValue::buildAuto(['a' => 'x', 'y' => 'z'])::TYPE);
-
-Assert::same(FuncValue::TYPE, AbstractValue::buildAuto(function() {})::TYPE);
-Assert::same(FuncValue::TYPE, AbstractValue::buildAuto(function(NumberValue $x, DictValue $y) { return 1; })::TYPE);
+Assert::type(FuncValue::class, AbstractValue::buildAuto(function() {}));
+Assert::type(FuncValue::class, AbstractValue::buildAuto(function(NumberValue $x, DictValue $y) { return 1; }));
 
 //
 // Getting string representation of values.

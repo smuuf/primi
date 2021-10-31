@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Values\NumberValue;
 
 /**
@@ -16,6 +17,10 @@ class BoolValue extends AbstractNativeValue {
 
 	public function __construct(bool $value) {
 		$this->value = $value;
+	}
+
+	public function getType(): TypeValue {
+		return StaticTypes::getBoolType();
 	}
 
 	public function getStringRepr(): string {

@@ -29,12 +29,12 @@ class ItemInsertionProxy implements InsertionProxyInterface {
 	}
 
 	public function commit(AbstractValue $value): void {
-		xdebug_break();
+
 		$success = $this->target->itemSet($this->key, $value);
 		if ($success === \false) {
 			throw new TypeError(sprintf(
 				"Type '%s' does not support item assignment",
-				($this->target)::TYPE
+				($this->target)->getTypeName()
 			));
 		}
 

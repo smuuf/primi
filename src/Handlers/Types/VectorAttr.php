@@ -3,8 +3,9 @@
 namespace Smuuf\Primi\Handlers\Types;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\ChainedHandler;
 use \Smuuf\Primi\Structures\AttrInsertionProxy;
 
@@ -25,9 +26,8 @@ class VectorAttr extends ChainedHandler {
 
 		$value = $subject->attrGet($attrName);
 		if ($value === \null) {
-			throw new RuntimeError(\sprintf(
-				"Type '%s' does not support attribute access", $subject::TYPE
-			));
+			$typeName = $subject->getTypeName();
+			throw new LookupError("Object of type '$typeName' has no attribute '$attrName'");
 		}
 
 		return $value;
