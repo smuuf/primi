@@ -8,6 +8,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Helpers\StringEscaping;
 
 class FStringLiteral extends StringLiteral {
 
@@ -31,7 +32,10 @@ class FStringLiteral extends StringLiteral {
 
 		}
 
-		return Interned::string($result);
+		// Unescape the whole result string - to expand escape sequences - which
+		// is expected (this for example allows "\n" to be used as newline char
+		// in f-strings).
+		return Interned::string(StringEscaping::unescapeString($result));
 
 	}
 

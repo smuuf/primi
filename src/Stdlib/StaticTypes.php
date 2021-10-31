@@ -36,17 +36,17 @@ abstract class StaticTypes {
 
 	public static function getObjectType(): TypeValue {
 		return self::$objectType
-			??= self::$objectType = new TypeValue('object', \null, ObjectTypeExtension::execute());
+			??= new TypeValue('object', \null, ObjectTypeExtension::execute());
 	}
 
 	public static function getTypeType(): TypeValue {
 		return self::$typeType
-			??= self::$typeType = new TypeValue('type', self::getObjectType(), TypeTypeExtension::execute());
+			??= new TypeValue('type', self::getObjectType(), TypeTypeExtension::execute());
 	}
 
 	public static function getNullType(): TypeValue {
 		return self::$nullType
-			??= self::$nullType = new TypeValue('Null', self::getObjectType(), NullTypeExtension::execute());
+			??= new TypeValue('Null', self::getObjectType(), NullTypeExtension::execute());
 	}
 
 	public static function getBoolType(): TypeValue {

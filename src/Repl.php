@@ -98,8 +98,7 @@ class Repl {
 	 */
 	public function start(?Context $ctx = null): ?AbstractValue {
 
-		// If context was not provided, create and use a new one (context
-		// will create a new scope if it also was not provided).
+		// If context was not provided, create and use a new one.
 		if (!$ctx) {
 			$scope = new Scope;
 			$services = new InterpreterServices(Config::buildDefault());

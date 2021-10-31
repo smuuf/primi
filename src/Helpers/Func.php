@@ -151,11 +151,13 @@ abstract class Func {
 	 * - `-0100` -> `-100`
 	 */
 	public static function normalize_decimal(string $decimal): string {
+
 		return \preg_replace(
 			self::DECIMAL_TRIMMING_REGEXES[0],
 			self::DECIMAL_TRIMMING_REGEXES[1],
 			\ltrim(\trim($decimal), '+')
 		);
+
 	}
 
 	/**
@@ -175,8 +177,14 @@ abstract class Func {
 	 */
 	public static function scientific_to_decimal(string $number): string {
 
-		// If not even with decimal point, just return the original.
-		if (!\preg_match("#^([+-]?\d+\.\d+)(?:E([+-]\d+))?$#S", $number, $matches)) {
+		// If not even in correct scientific form point, just return the
+		// original.
+		if (!\preg_match(
+				"#^([+-]?\d+\.\d+)(?:E([+-]\d+))?$#S",
+				$number,
+				$matches
+			)
+		) {
 			return $number;
 		}
 
@@ -438,12 +446,19 @@ abstract class Func {
 
 	}
 
+	/**
+	 * Takes an array list of strings and returns array list of strings that are
+	 * guaranteed to represent a "realpath" to a directory in filesystem.
+	 *
+	 * If any of the passed strings is NOT a directory, `EngineError` is thrown.
+	 */
 	public static function validate_dirs(array $paths): array {
 
-		// Check paths and normalize them to realpaths.
 		$result = [];
 		foreach ($paths as &$path) {
 
+			// Checked directory paths will be converted to "realpaths" -
+			// ie. absolute paths.
 			$rp = \realpath($path);
 			if ($rp === \false || !is_dir($rp)) {
 				throw new EngineError("Path '$path' is not a valid directory");
