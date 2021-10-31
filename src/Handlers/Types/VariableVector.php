@@ -5,7 +5,7 @@ namespace Smuuf\Primi\Handlers\Types;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Handlers\SimpleHandler;
-use Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Func;
 
 /**
  * This handler is used to access nested items or attributes and prepare it

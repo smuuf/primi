@@ -11,10 +11,13 @@ use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\ValueFriends;
 use \Smuuf\Primi\Structures\FnContainer;
 
+/**
+ * Primi value == Primi object in our case.
+ */
 abstract class AbstractValue extends ValueFriends {
 
 	/** @const string Name of Primi (value) type. */
-	const TYPE = "any";
+	protected const TYPE = '__undefined__';
 
 	/** Attributes of Primi object. */
 	protected array $attrs = [];
@@ -59,6 +62,18 @@ abstract class AbstractValue extends ValueFriends {
 	 */
 	public function getStringValue(): string {
 		return $this->getStringRepr();
+	}
+
+	/**
+	 * Return the Primi type object this Primi value is instance of.
+	 */
+	abstract public function getType(): TypeValue;
+
+	/**
+	 * Return the name of Primi type of this value as string.
+	 */
+	public function getTypeName(): string {
+		return $this->getType()->getName();
 	}
 
 	// Length.

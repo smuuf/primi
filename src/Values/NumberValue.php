@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 
 /**
@@ -27,6 +28,10 @@ class NumberValue extends AbstractNativeValue {
 	 */
 	public function __construct(string $number) {
 		$this->value = Func::normalize_decimal($number);
+	}
+
+	public function getType(): TypeValue {
+		return StaticTypes::getNumberType();
 	}
 
 	public function isTruthy(): bool {

@@ -26,7 +26,7 @@ class ForStatement extends SimpleHandler {
 		$iter = $subject->getIterator();
 		if ($iter === \null) {
 			throw new RuntimeError(
-				\sprintf("Cannot iterate over '%s'", $subject::TYPE)
+				\sprintf("Cannot iterate over '%s'", $subject->getTypeName())
 			);
 		}
 

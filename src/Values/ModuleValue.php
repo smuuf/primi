@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Scope;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 
 /**
  * @property Scope|null $value Global scope of the module or null, if
@@ -12,7 +13,7 @@ use \Smuuf\Primi\Scope;
  * wrap Primi functions that are wrappers for native PHP functions which might
  * not be placed in any module).
  */
-class ModuleValue extends AbstractValue {
+class ModuleValue extends AbstractNativeValue {
 
 	protected const TYPE = "Module";
 
@@ -32,6 +33,10 @@ class ModuleValue extends AbstractValue {
 		$this->package = $package;
 		$this->value = $scope;
 
+	}
+
+	public function getType(): TypeValue {
+		return StaticTypes::getModuleType();
 	}
 
 	public function getName(): string {

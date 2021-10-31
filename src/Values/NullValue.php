@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Values\AbstractValue;
 
 /**
@@ -13,6 +14,10 @@ use \Smuuf\Primi\Values\AbstractValue;
 class NullValue extends AbstractNativeValue {
 
 	protected const TYPE = "Null";
+
+	public function getType(): TypeValue {
+		return StaticTypes::getNullType();
+	}
 
 	public function getStringRepr(): string {
 		return "null";

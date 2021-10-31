@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Ex\KeyError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\CircularDetector;
 use \Smuuf\Primi\Structures\MapContainer;
@@ -14,21 +14,24 @@ use \Smuuf\Primi\Structures\MapContainer;
 /**
  * @property MapContainer $value Internal map container.
  */
-class DictValue extends AbstractValue {
+class DictValue extends AbstractNativeValue {
 
-	const TYPE = "dict";
+	protected const TYPE = "dict";
 
 	/**
 	 * Create new instance from iterable list containing `[key, value]` Primi
 	 * value tuples.
 	 */
-	public function __construct(iterable $tuples = []) {
-		$this->value = MapContainer::fromTuples($tuples);
-		Stats::add('values_dict');
+	public function __construct(iterable $items = []) {
+		$this->value = MapContainer::fromTuples($items);
 	}
 
 	public function __clone() {
 		$this->value = clone $this->value;
+	}
+
+	public function getType(): TypeValue {
+		return StaticTypes::getDictType();
 	}
 
 	public function getStringRepr(CircularDetector $cd = \null): string {
@@ -103,7 +106,6 @@ class DictValue extends AbstractValue {
 		return \true;
 
 	}
-
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 

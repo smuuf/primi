@@ -16,7 +16,7 @@ class BinaryOperationError extends RuntimeError {
 
 		$msg = \sprintf(
 			"Cannot use operator '%s' with '%s' and '%s'",
-			$op, ($left)::TYPE, ($right)::TYPE
+			$op, $left->getTypeName(), $right->getTypeName()
 		);
 
 		parent::__construct($msg);

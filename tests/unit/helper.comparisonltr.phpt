@@ -4,13 +4,22 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
+use \Smuuf\Primi\Values\TypeValue;
 
 require __DIR__ . '/../bootstrap.php';
 
-class TypeA extends AbstractValue {
+$customTypeA = new TypeValue("customA");
+$customTypeB = new TypeValue("customB");
+
+class CustomTypeValueA extends AbstractValue {
 
 	public function __construct($value) {
 		$this->value = $value;
+	}
+
+	public function getType(): TypeValue {
+		global $customTypeA;
+		return $customTypeA;
 	}
 
 	public function getStringRepr(): string {
@@ -26,10 +35,15 @@ class TypeA extends AbstractValue {
 
 }
 
-class TypeB extends AbstractValue {
+class TypeBValue extends AbstractValue {
 
 	public function __construct($value) {
 		$this->value = $value;
+	}
+
+	public function getType(): TypeValue {
+		global $customTypeB;
+		return $customTypeB;
 	}
 
 	public function getStringRepr(): string {
@@ -42,17 +56,17 @@ class TypeB extends AbstractValue {
 
 }
 
-// TypeA vs TypeA, which do not know how to compare.
-Assert::false(ComparisonLTR::evaluate('==', new TypeA(''), new TypeA('')));
-Assert::true(ComparisonLTR::evaluate('!=', new TypeA(''), new TypeA('')));
+// CustomTypeValueA vs CustomTypeValueA, which do not know how to compare.
+Assert::false(ComparisonLTR::evaluate('==', new CustomTypeValueA(''), new CustomTypeValueA('')));
+Assert::true(ComparisonLTR::evaluate('!=', new CustomTypeValueA(''), new CustomTypeValueA('')));
 
-// TypeA::compare() will be null, TypeB::compare() will be used instead.
-Assert::true(ComparisonLTR::evaluate('==', new TypeA('y'), new TypeB('y')));
-Assert::false(ComparisonLTR::evaluate('==', new TypeA('y'), new TypeB('x')));
-Assert::true(ComparisonLTR::evaluate('==', new TypeA('x'), new TypeB('x')));
-Assert::true(ComparisonLTR::evaluate('==', new TypeA('x'), new TypeB('x')));
+// CustomTypeValueA::compare() will be null, TypeBValue::compare() will be used instead.
+Assert::true(ComparisonLTR::evaluate('==', new CustomTypeValueA('y'), new TypeBValue('y')));
+Assert::false(ComparisonLTR::evaluate('==', new CustomTypeValueA('y'), new TypeBValue('x')));
+Assert::true(ComparisonLTR::evaluate('==', new CustomTypeValueA('x'), new TypeBValue('x')));
+Assert::true(ComparisonLTR::evaluate('==', new CustomTypeValueA('x'), new TypeBValue('x')));
 
-Assert::false(ComparisonLTR::evaluate('!=', new TypeA('y'), new TypeB('y')));
-Assert::true(ComparisonLTR::evaluate('!=', new TypeA('y'), new TypeB('x')));
-Assert::false(ComparisonLTR::evaluate('!=', new TypeA('x'), new TypeB('x')));
-Assert::false(ComparisonLTR::evaluate('!=', new TypeA('x'), new TypeB('x')));
+Assert::false(ComparisonLTR::evaluate('!=', new CustomTypeValueA('y'), new TypeBValue('y')));
+Assert::true(ComparisonLTR::evaluate('!=', new CustomTypeValueA('y'), new TypeBValue('x')));
+Assert::false(ComparisonLTR::evaluate('!=', new CustomTypeValueA('x'), new TypeBValue('x')));
+Assert::false(ComparisonLTR::evaluate('!=', new CustomTypeValueA('x'), new TypeBValue('x')));
