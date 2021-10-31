@@ -69,6 +69,21 @@ abstract class AbstractValue extends ValueFriends {
 	}
 
 	/**
+	 * Returns an unambiguous string representation of internal value.
+	 *
+	 * If possible, is should be in such form that it the result of this
+	 * method can be used as Primi source code to recreate that value.
+	 */
+	abstract public function getStringRepr(): string;
+
+	/**
+	 * Returns a string representation of value.
+	 */
+	public function getStringValue(): string {
+		return $this->getStringRepr();
+	}
+
+	/**
 	 * Returns dict array with this all attributes of this value.
 	 */
 	final public function getAttrs(): array {
@@ -96,14 +111,6 @@ abstract class AbstractValue extends ValueFriends {
 	public function getLength(): ?int {
 		return \null;
 	}
-
-	/**
-	 * Returns an unambiguous string representation of internal value.
-	 *
-	 * If possible, is should be in such form that it the result of this
-	 * method can be used as Primi source code to recreate that value.
-	 */
-	abstract public function getStringRepr(): string;
 
 	//
 	// Truthiness.
