@@ -4,8 +4,9 @@ namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
-use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
+use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\ValueFriends;
@@ -16,15 +17,19 @@ use \Smuuf\Primi\Structures\FnContainer;
  */
 abstract class AbstractValue extends ValueFriends {
 
-	/** @const string Name of Primi (value) type. */
+	/** @const string Name of Primi (object) type. */
 	protected const TYPE = '__undefined__';
 
 	/** Attributes of Primi object. */
 	protected array $attrs = [];
 
 	/**
-	 * Take any PHP value and convert it into  a Primi value object of
+	 * Take any PHP value and convert it into a Primi value object of an
 	 * appropriate type.
+	 *
+	 * NOTE: We're not checking \is_callable on bare $value, because for example
+	 * string 'time' would be determined to be the PHP's 'time' function and
+	 * we do not want that (and it would also be a security issue).
 	 */
 	public static function buildAuto($value) {
 
@@ -35,13 +40,19 @@ abstract class AbstractValue extends ValueFriends {
 				return Interned::bool($value);
 			case \is_int($value) || \is_float($value) || \is_numeric($value):
 				return Interned::number(Func::scientific_to_decimal((string) $value));
+			case $value instanceof \Closure;
+				return new FuncValue(FnContainer::buildFromClosure($value));
 			case \is_array($value):
+				if (\is_callable($value)) {
+					return new FuncValue(FnContainer::buildFromClosure($value));
+				}
+
 				$inner = \array_map(__METHOD__, $value);
 				if (Func::is_array_dict($value)) {
-					return new DictValue(Func::php_array_to_dict_pairs($inner));
-				} else {
-					return new ListValue($inner);
+					return new DictValue(Func::array_to_primi_value_tuples($inner));
 				}
+				return new ListValue($inner);
+
 			case $value instanceof AbstractValue:
 				return $value;
 			default:
@@ -58,10 +69,10 @@ abstract class AbstractValue extends ValueFriends {
 	}
 
 	/**
-	 * Returns a string representation of internal value.
+	 * Returns dict array with this all attributes of this value.
 	 */
-	public function getStringValue(): string {
-		return $this->getStringRepr();
+	final public function getAttrs(): array {
+		return $this->attrs;
 	}
 
 	/**
@@ -164,19 +175,26 @@ abstract class AbstractValue extends ValueFriends {
 	/**
 	 * Called when used as `some_value()`.
 	 *
-	 * If value supports invocation, it must return a AbstractValue. Otherwise return
-	 * null.
+	 * If the value is not callable, throws TypeError.
+	 *
+	 * This API differs from "return null when unsupported" used elsewhere,
+	 * because then someone would always have to check if the returned value
+	 * was a PHP null, to find out the value does not support invocation. Every
+	 * time, after each invocation (which doesn't even make much sense).
+	 *
+	 * This way the exception is just simply thrown once.
 	 *
 	 * @param Context $context Runtime context of the call-site.
 	 * @param array<AbstractValue> $args Array dictionary of call arguments.
 	 * @param Location $callsite Call site location (optional).
+	 * @throws TypeError
 	 */
 	public function invoke(
 		Context $context,
 		array $args = [],
-		?Location $callsite = null
+		?Location $callsite = \null
 	): ?AbstractValue {
-		return \null;
+		throw new TypeError("'{$this->getTypeName()}' object is not callable");
 	}
 
 	public function getIterator(): ?\Iterator {
@@ -213,7 +231,7 @@ abstract class AbstractValue extends ValueFriends {
 	 * NOTE: This attribute name can only be strings, so there's no need to
 	 * accept StringValue as $key.
 	 */
-	public function attrSet(string $key, AbstractValue $value): bool {
+	public function attrSet(string $name, AbstractValue $value): bool {
 		return \false;
 	}
 
@@ -247,7 +265,7 @@ abstract class AbstractValue extends ValueFriends {
 	 * @throws UnhashableTypeException
 	 */
 	public function hash(): string {
-		throw new UnhashableTypeException(static::TYPE);
+		throw new UnhashableTypeException($this->getTypeName());
 	}
 
 }

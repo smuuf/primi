@@ -36,15 +36,7 @@ class Invocation extends ChainedHandler {
 			$node['_p']
 		);
 
-		$result = $fn->invoke($context, $arguments, $callsite);
-
-		if ($result === \null) {
-			throw new RuntimeError(
-				\sprintf("Object of type '%s' is not callable", $fn->getTypeName())
-			);
-		}
-
-		return $result;
+		return $fn->invoke($context, $arguments, $callsite);
 
 	}
 

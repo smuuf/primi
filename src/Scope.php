@@ -83,7 +83,8 @@ class Scope {
 	 * @param array<string, AbstractValue> $pairs
 	 */
 	public function setVariables(array $pairs) {
-		$this->variables = $pairs + $this->variables;
+		// NOTE: array_merge() instead of '+' keeps original and expected order.
+		$this->variables = array_merge($this->variables, $pairs);
 	}
 
 }

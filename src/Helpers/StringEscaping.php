@@ -26,6 +26,7 @@ class StringEscaping {
 		'\\t' => "\t",
 		'\\"' => '"',
 		"\\'" => "'",
+		"\\e" => "\e",
 	];
 
 	private const QUOTE_CHARS = ['"', "'"];

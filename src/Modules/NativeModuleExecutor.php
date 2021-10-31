@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Modules;
 
 use \Smuuf\StrictObject;
-use \Smuuf\Docblox\DocParser;
+use \Smuuf\DocBlockParser\Parser as DocBlockParser;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Structures\FnContainer;
@@ -51,7 +51,7 @@ class NativeModuleExecutor {
 			}
 
 			$doc = $ref->getDocComment() ?: '';
-			$db = DocParser::parse($doc);
+			$db = DocBlockParser::parse($doc);
 
 			$fnFlags = [];
 			if ($fnTag = $db->getTag('primi.function')) {

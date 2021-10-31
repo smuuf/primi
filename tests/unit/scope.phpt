@@ -4,13 +4,13 @@ use \Tester\Assert;
 
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Values\{
-	StringValue,
+    AbstractValue,
+    StringValue,
 	NumberValue,
 	RegexValue,
 	DictValue,
 	ListValue,
 	FuncValue,
-	BoolValue
 };
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Structures\FnContainer;
@@ -50,7 +50,7 @@ $multi = [
 
 $scope->setVariables($multi);
 
-// Test that all variables are present (and in correct order).
+// Test that all variables are present.
 Assert::same([
 	'var_a' => $varA,
 	'var_b' => $varB,
@@ -63,10 +63,10 @@ Assert::null($scope->getVariable('some_undefined_variable'));
 
 // Test automatic value creation from scalars.
 $scope->setVariables([
-	'var_e' => 123,
-	'var_f' => "hello there!",
-	'var_g' => [1, 2, 3],
-	'var_h' => ['a' => 1, 'b' => 2, 'c' => 3],
+	'var_e' => AbstractValue::buildAuto(123),
+	'var_f' => AbstractValue::buildAuto("hello there!"),
+	'var_g' => AbstractValue::buildAuto([1, 2, 3]),
+	'var_h' => AbstractValue::buildAuto(['a' => 1, 'b' => 2, 'c' => 3]),
 ]);
 
 Assert::type(NumberValue::class, $scope->getVariable('var_e'));

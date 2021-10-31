@@ -42,7 +42,19 @@ abstract class PosixSignalTaskEmitter {
 			return;
 		}
 
-		\pcntl_signal($signum, [self::class, 'handle']);
+		// Let's make sure any already registered signal handler is also called.
+		$original = \pcntl_signal_get_handler($signum);
+		\pcntl_signal($signum, function(...$args) use ($original) {
+
+			// Do our signal handling.
+			self::handle(...$args);
+
+			// Call also the original signal handler (if it was a callable).
+			if (\is_callable($original)) {
+				$original(...$args);
+			}
+
+		});
 
 	}
 
