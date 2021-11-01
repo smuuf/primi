@@ -20,7 +20,7 @@ abstract class HandlerFactory {
 	/** @var array<string, string|null> Dict of handler classes we know exist. */
 	private static $handlersCache = [];
 
-	private const PREFIX = \Smuuf\Primi\Handlers\Types::class;
+	private const PREFIX = \Smuuf\Primi\Handlers\Kinds::class;
 
 	private static function getClassName(string $nodeName) {
 		return self::PREFIX . "\\$nodeName";
