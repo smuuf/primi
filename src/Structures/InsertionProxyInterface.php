@@ -15,9 +15,9 @@ use \Smuuf\Primi\Values\AbstractValue;
  * VALUE can be "commited" later.
  *
  * @internal
- * @see \Smuuf\Primi\Handlers\Types\VectorAttr
- * @see \Smuuf\Primi\Handlers\Types\VectorItem
- * @see \Smuuf\Primi\Handlers\Types\Assignment
+ * @see \Smuuf\Primi\Handlers\Kinds\VectorAttr
+ * @see \Smuuf\Primi\Handlers\Kinds\VectorItem
+ * @see \Smuuf\Primi\Handlers\Kinds\Assignment
  */
 interface InsertionProxyInterface {
 
