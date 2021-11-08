@@ -1,66 +1,68 @@
+import std.types
+
 //
 // Types of different values.
 //
 
 result = type(null)
-assert(result == "null")
+assert(result == types.null)
 
 result = type(true)
-assert(result == "bool")
+assert(result == bool)
 
 result = type(false)
-assert(result == "bool")
+assert(result == bool)
 
 result = type(1)
-assert(result == "number")
+assert(result == number)
 
 result = type(-1)
-assert(result == "number")
+assert(result == number)
 
 result = type(0.123)
-assert(result == "number")
+assert(result == number)
 
 result = type("")
-assert(result == "string")
+assert(result == string)
 
 result = type("ahoj")
-assert(result == "string")
+assert(result == string)
 
 result = type(rx"ahoj")
-assert(result == "regex")
+assert(result == regex)
 
 result = type(rx"a[ho]j")
-assert(result == "regex")
+assert(result == regex)
 
 result = type(rx"")
-assert(result == "regex")
+assert(result == regex)
 
 result = type(type)
-assert(result == "function")
+assert(result == type)
 
 result = type([])
-assert(result == "list")
+assert(result == list)
 
 result = type([1,2,'c'])
-assert(result == "list")
+assert(result == list)
 
 result = type({})
-assert(result == "dict")
+assert(result == dict)
 
 result = type({1: 'a', 2: 'b', 'c': 'd'})
-assert(result == "dict")
+assert(result == dict)
 
 //
 // Casting numbers.
 //
 
-result = 1.to_number()
+result = number(1)
 assert(result == 1)
 
-result = 1.to_string()
+result = string(1)
 assert(result == "1")
 
-result = 1.to_bool()
+result = bool(1)
 assert(result == true)
 
 //
@@ -69,19 +71,19 @@ assert(result == true)
 
 error = 0
 try {
-	result = "a".to_number()
+	result = number("a")
 } catch {
 	error = 1
 }
 assert(error == 1)
 
-result = "a".to_string()
+result = string("a")
 assert(result == "a")
 
-result = "a".to_bool()
+result = bool("a")
 assert(result == true)
 
-result = "a".to_regex()
+result = regex("a")
 assert(result == rx"a")
 
 //
@@ -90,47 +92,47 @@ assert(result == rx"a")
 
 // Casting true
 
-result = true.to_number()
+result = number(true)
 assert(result == 1)
 
-result = true.to_string()
+result = string(true)
 assert(result == "true")
 
-result = true.to_bool()
+result = bool(true)
 assert(result == true)
 
 // Casting false
 
-result = false.to_number()
+result = number(false)
 assert(result == 0)
 
-result = false.to_string()
+result = string(false)
 assert(result == "false")
 
-result = false.to_bool()
+result = bool(false)
 assert(result == false)
 
 //
 // Casting lists.
 //
 
-result = ["a"].to_bool()
+result = bool(["a"])
 assert(result == true)
 
-result = [].to_bool()
+result = bool([])
 assert(result == false)
 
-result = "ab c".to_list()
+result = list("ab c")
 assert(result == ["a", "b", " ", "c"])
 
 //
 // Casting regexes.
 //
 
-result = rx"a".to_string()
+result = string(rx"a")
 assert(result == "a")
 
-result = rx"a".to_regex()
+result = regex(rx"a")
 assert(result == rx"a")
 
 //
@@ -151,38 +153,38 @@ function true_if_error(fn) {
 }
 
 assert(true_if_error(() => {
-	x_number_to_list = 1.to_list()
+	x_number_to_list = list(1)
 }))
 
 assert(true_if_error(() => {
-	x_bool_true_to_list = true.to_list()
+	x_bool_true_to_list = list(true)
 }))
 
 assert(true_if_error(() => {
-	x_bool_true_to_regex = true.to_regex()
+	x_bool_true_to_regex = regex(true)
 }))
 
 assert(true_if_error(() => {
-	x_bool_false_to_list = false.to_list()
+	x_bool_false_to_list = list(false)
 }))
 
 assert(true_if_error(() => {
-	x_bool_false_to_regex = false.to_regex()
+	x_bool_false_to_regex = regex(false)
 }))
 
 assert(true_if_error(() => {
-	x_list_to_number = ["a"].to_number()
+	x_list_to_number = number(["a"])
 }))
 
 assert(true_if_error(() => {
-	x_list_to_regex = ["a"].to_regex()
+	x_list_to_regex = regex(["a"])
 }))
 
 assert(true_if_error(() => {
-	x_regex_to_number = rx"a".to_number()
+	x_regex_to_number = number(rx"a")
 }))
 
 assert(true_if_error(() => {
-	x_regex_to_list = rx"a".to_list()
+	x_regex_to_list = list(rx"a")
 }))
 

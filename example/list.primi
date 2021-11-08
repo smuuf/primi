@@ -38,7 +38,7 @@ assert(
 sentence = "You will be assimilated.\n   Resistance is futile."
 splat = sentence.split() // No argument splits by all whitespaces.
 
-assert(type(splat) == 'list')
+assert(type(splat) == list)
 assert(splat[0] == 'You')
 assert(splat[1] == 'will')
 assert(splat[3] == 'assimilated.')
@@ -53,8 +53,7 @@ assert(recreated == 'You,will,be,assimilated.,Resistance,is,futile.')
 
 some_list = ["first_item", 0, 1, "a", "b", ["inner_a", "inner_b"], true, "last_item"]
 
-assert(len(some_list) == 8) // Equivalent to the line below.
-assert(some_list.len() == 8) // Equivalent to the line above.
+assert(len(some_list) == 8)
 assert(some_list[0] == "first_item")
 assert(some_list[5] == ["inner_a", "inner_b"])
 assert(some_list[5][0] == "inner_a")
@@ -150,6 +149,6 @@ assert(
 
 // Iterating with both indexes and values.
 for (index: word in list_of_words) {
-	assert(type(index) == 'number')
-	assert(type(word) == 'string')
+	assert(type(index) == number)
+	assert(type(word) == string)
 }

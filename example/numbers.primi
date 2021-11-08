@@ -1,4 +1,8 @@
-from helpers import assert_not
+import std.math
+
+import ._helpers: assert_not
+//import .scopes
+
 
 // Long numbers can be separated using underscores for improved readability.
 
@@ -13,13 +17,13 @@ x = (789 * (2 + 3)) * 1
 assert(x == 3945)
 
 x = 123*456*789/2.3+111
-assert(x.round(6) == 19240733.608696)
+assert(math.round(x, 6) == 19240733.608696)
 
 x = 37 * 2 / 8
 assert(x == 9.25)
 
 x = (1 + (3 / (4 - 5)) + 2 / (37 * 2 / 8-42))
-assert(x.round(13) == -2.0610687022901)
+assert(math.round(x, 13) == -2.0610687022901)
 
 _ = 'Numeric string is never equal to the number itself'
 assert("0" != 0, _)
@@ -64,19 +68,19 @@ for (n in nums) {
 //
 
 _ = 'All numbers not equal to 0 are considered to be truthy (this is different from being equal to true)'
-assert(to_bool(1) == true, _)
-assert(to_bool(-1) == true, _)
-assert(to_bool(1.1) == true, _)
-assert(to_bool(-1.1) == true, _)
-assert(to_bool(0.1) == true, _)
-assert(to_bool(-0.1) == true, _)
-assert(to_bool(2) == true, _)
-assert(to_bool(-2) == true, _)
+assert(bool(1) == true, _)
+assert(bool(-1) == true, _)
+assert(bool(1.1) == true, _)
+assert(bool(-1.1) == true, _)
+assert(bool(0.1) == true, _)
+assert(bool(-0.1) == true, _)
+assert(bool(2) == true, _)
+assert(bool(-2) == true, _)
 
-assert(to_bool(0) == false, _)
-assert(to_bool(0.0) == false, _)
-assert(to_bool(0.000) == false, _)
-assert(to_bool(0.0001) == true, _)
+assert(bool(0) == false, _)
+assert(bool(0.0) == false, _)
+assert(bool(0.000) == false, _)
+assert(bool(0.0001) == true, _)
 
 //
 // Really large/small numbers.

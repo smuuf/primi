@@ -60,12 +60,12 @@ class MapContainer implements
 
 	/**
 	 * Returns a scalar key based on hash provided by the `key` value.
-	 * This scalar key can be then used as key for internal ordinady PHP array.
+	 * This scalar key can be then used as key for internal ordinary PHP array.
 	 *
 	 * @throws UnhashableTypeException
 	 */
 	private static function buildScalarKey(AbstractValue $key): string {
-		return $key->getTypeName() . ".{$key->hash()}";
+		return "{$key->getTypeName()}.{$key->hash()}";
 	}
 
 	/**

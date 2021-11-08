@@ -8,8 +8,8 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Interpreter;
-use \Smuuf\Primi\Scopes\Scope;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 
@@ -17,21 +17,21 @@ require __DIR__ . "/../bootstrap.php";
 
 $interpreter = new Interpreter;
 
-$scope = new Scope;
-$scope->setVariable('teste', AbstractValue::buildAuto(function() {
+$mainScope = new Scope;
+$mainScope->setVariable('teste', AbstractValue::buildAuto(function() {
         return 0.00000000001;
 }));
 
-$interpreter->run('a = teste(); b = 3 + a; c = b ** 3', $scope);
+$interpreter->run('a = teste(); b = 3 + a; c = b ** 3', $mainScope);
 
-$a = $scope->getVariable('a');
+$a = $mainScope->getVariable('a');
 Assert::type(NumberValue::class, $a);
 Assert::same('0.00000000001', $a->getStringValue());
 
-$b = $scope->getVariable('b');
+$b = $mainScope->getVariable('b');
 Assert::type(NumberValue::class, $b);
 Assert::same('3.00000000001', $b->getStringValue());
 
-$c = $scope->getVariable('c');
+$c = $mainScope->getVariable('c');
 Assert::type(NumberValue::class, $c);
 Assert::same('27.000000000270000000000900000000001', $c->getStringValue());

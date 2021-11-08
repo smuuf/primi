@@ -2,22 +2,39 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\Stdlib\Extensions;
+namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Extensions\Extension;
+use \Smuuf\Primi\Helpers\Interned;
+use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Values\TypeValue;
 
-class StringExtension extends Extension {
+class StringTypeExtension extends TypeExtension {
+
+	/**
+	 * @primi.function(no-stack)
+	 */
+	public static function __new__(
+		TypeValue $_,
+		?AbstractValue $value = null
+	): StringValue {
+
+		if ($value === null) {
+			return Interned::string('');
+		}
+
+		return Interned::string($value->getStringValue());
+
+	}
 
 	/**
 	 * Returns a new `string` from shuffled characters of the original `string`.
@@ -25,8 +42,10 @@ class StringExtension extends Extension {
 	 * ```js
 	 * "hello".shuffle() // "leohl" or something similar.
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_shuffle(StringValue $str): StringValue {
+	public static function shuffle(StringValue $str): StringValue {
 
 		// str_shuffle() doesn't work with unicode, so let's do this ourselves.
 		$original = $str->value;
@@ -39,7 +58,7 @@ class StringExtension extends Extension {
 			$result .= \mb_substr($original, $i, 1);
 		}
 
-		return StringValue::build($result);
+		return Interned::string($result);
 
 	}
 
@@ -55,8 +74,10 @@ class StringExtension extends Extension {
 	 * "x{}x, y{}y".format(1, 2) == "x1x, y2y"
 	 * "x{1}x, y{0}y".format(111, 222) == "x222x, y111y"
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_format(
+	public static function format(
 		StringValue $str,
 		AbstractValue ...$items
 	): StringValue {
@@ -133,7 +154,7 @@ class StringExtension extends Extension {
 			);
 		}
 
-		return StringValue::build(\sprintf($prepared, ...$items));
+		return Interned::string(\sprintf($prepared, ...$items));
 
 	}
 
@@ -149,8 +170,10 @@ class StringExtension extends Extension {
 	 * "abcdef".replace("c", "X") == "abXdef"
 	 * "abcdef".replace({"c": "X", "e": "Y"}) == "abXdYf"
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_replace(
+	public static function replace(
 		StringValue $string,
 		AbstractValue $search,
 		StringValue $replace = \null
@@ -165,12 +188,12 @@ class StringExtension extends Extension {
 			foreach ($search->getIterator() as $key => $value) {
 
 				if (!$key instanceof StringValue) {
-					$type = $key::TYPE;
+					$type = $key->getTypeName();
 					throw new RuntimeError("Replacement dict key must be a string, '$type' given.");
 				}
 
 				if (!$value instanceof StringValue) {
-					$type = $value::TYPE;
+					$type = $value->getTypeName();
 					throw new RuntimeError("Replacement dict value must be a string, '$type' given.");
 				}
 
@@ -179,7 +202,7 @@ class StringExtension extends Extension {
 
 			}
 
-			return StringValue::build(\str_replace($from, $to, $string->value));
+			return Interned::string(\str_replace($from, $to, $string->value));
 
 		}
 
@@ -189,20 +212,20 @@ class StringExtension extends Extension {
 
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
 			// Handle both string/number values the same way.
-			return StringValue::build(
+			return Interned::string(
 				\str_replace(
 					(string) $search->value, $replace->value, $string->value
 				)
 			);
 		} elseif ($search instanceof RegexValue) {
-			return StringValue::build(
+			return Interned::string(
 				\preg_replace(
 					$search->value, $replace->value, $string->value
 				)
 			);
 		} else {
 
-			$type = $search::TYPE;
+			$type = $search->getTypeName();
 			throw new RuntimeError("Cannot use '$type' as needle");
 
 		}
@@ -215,8 +238,10 @@ class StringExtension extends Extension {
 	 * ```js
 	 * "hello! tady čaj".reverse() == "jač ydat !olleh"
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_reverse(StringValue $string): StringValue {
+	public static function reverse(StringValue $string): StringValue {
 
 		// strrev() does not support multibyte.
 		// Let's do it ourselves then!
@@ -228,7 +253,7 @@ class StringExtension extends Extension {
 			$result .= \mb_substr($string->value, $i, 1);
 		}
 
-		return StringValue::build($result);
+		return Interned::string($result);
 
 	}
 
@@ -241,15 +266,17 @@ class StringExtension extends Extension {
 	 * "a b c\nd e f".split() == ['a', 'b', 'c', 'd', 'e', 'f']
 	 * "a,b,c,d".split(',') == ['a', 'b', 'c', 'd']
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_split(
+	public static function split(
 		StringValue $string,
 		?AbstractValue $delimiter = \null
 	): ListValue {
 
 		// Split by whitespaces by default.
 		if ($delimiter === \null) {
-			$delimiter = new RegexValue('\s+');
+			$delimiter = Interned::regex('\s+');
 		}
 
 		// Allow only some value types.
@@ -267,7 +294,7 @@ class StringExtension extends Extension {
 		}
 
 		return new ListValue(\array_map(function($part) {
-			return StringValue::build($part);
+			return Interned::string($part);
 		}, $splat ?? []));
 
 	}
@@ -280,12 +307,14 @@ class StringExtension extends Extension {
 	 * "this is a sentence".contains("sen") == true
 	 * "this is a sentence".contains("yay") == false
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_contains(
+	public static function contains(
 		StringValue $haystack,
 		AbstractValue $needle
 	): BoolValue {
-		return BoolValue::build($haystack->doesContain($needle));
+		return Interned::bool($haystack->doesContain($needle));
 	}
 
 	/**
@@ -295,8 +324,10 @@ class StringExtension extends Extension {
 	 * "this is a sentence".number_of("s") == 3
 	 * "this is a sentence".number_of("x") == 0
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_number_of(
+	public static function number_of(
 		StringValue $haystack,
 		AbstractValue $needle
 	): NumberValue {
@@ -309,7 +340,7 @@ class StringExtension extends Extension {
 			(string) $needle->value
 		);
 
-		return NumberValue::build($count);
+		return Interned::number($count);
 
 	}
 
@@ -322,17 +353,19 @@ class StringExtension extends Extension {
 	 * "this is a sentence".find_first("t") == 0
 	 * "this is a sentence".find_first("x") == null
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_find_first(StringValue $haystack, AbstractValue $needle): AbstractValue {
+	public static function find_first(StringValue $haystack, AbstractValue $needle): AbstractValue {
 
 		// Allow only some value types.
 		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return NumberValue::build((string) $pos);
+			return Interned::number((string) $pos);
 		} else {
-			return NullValue::build();
+			return Interned::null();
 		}
 
 	}
@@ -346,17 +379,19 @@ class StringExtension extends Extension {
 	 * "this is a sentence".find_first("t") == 0
 	 * "this is a sentence".find_first("x") == null
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_find_last(StringValue $haystack, AbstractValue $needle): AbstractValue {
+	public static function find_last(StringValue $haystack, AbstractValue $needle): AbstractValue {
 
 		// Allow only some value types.
 		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
 
 		$pos = \mb_strrpos($haystack->value, (string) $needle->value);
 		if ($pos !== \false) {
-			return NumberValue::build((string) $pos);
+			return Interned::number((string) $pos);
 		} else {
-			return NullValue::build();
+			return Interned::null();
 		}
 
 	}
@@ -370,15 +405,17 @@ class StringExtension extends Extension {
 	 * ':::'.join({'a': 1, 'b': 2, 'c': '3'}) == "1:::2:::3"
 	 * '-PADDING-'.join("abc") == "a-PADDING-b-PADDING-c" // String is also iterable.
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function string_join(
+	public static function join(
 		StringValue $string,
 		AbstractValue $iterable
 	): StringValue {
 
 		$iter = $iterable->getIterator();
-		if ($iter === null) {
-			$type = $iterable::TYPE;
+		if ($iter === \null) {
+			$type = $iterable->getTypeName();
 			throw new RuntimeError("Cannot join unsupported type '$type'");
 		}
 
@@ -387,10 +424,10 @@ class StringExtension extends Extension {
 		foreach ($iter as $item) {
 			switch (\true) {
 				case $item instanceof DictValue:
-					$prepared[] = self::string_join($string, $item)->value;
+					$prepared[] = self::join($string, $item)->value;
 					break;
 				case $item instanceof ListValue:
-						$prepared[] = self::string_join($string, $item)->value;
+						$prepared[] = self::join($string, $item)->value;
 					break;
 				default:
 					$prepared[] = $item->getStringValue();
@@ -398,7 +435,7 @@ class StringExtension extends Extension {
 			}
 		}
 
-		return StringValue::build(\implode($string->value, $prepared));
+		return Interned::string(\implode($string->value, $prepared));
 
 	}
 

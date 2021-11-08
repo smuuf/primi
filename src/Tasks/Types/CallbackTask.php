@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Tasks\Types;
 
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Tasks\TaskInterface;
 use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\StrictObject;
 
 class CallbackTask implements TaskInterface {
 

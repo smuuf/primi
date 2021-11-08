@@ -386,7 +386,7 @@ all_types = {
 
 for (type_a: value_a in all_types) {
 	for (type_b: value_b in all_types) {
-		assert(type(value_a == value_b) == 'bool')
-		assert(type(value_a != value_b) == 'bool')
+		assert(type(value_a == value_b) == bool)
+		assert(type(value_a != value_b) == bool)
 	}
 }

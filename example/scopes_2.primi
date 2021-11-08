@@ -1,0 +1,28 @@
+function fun_a() {
+	fun_b()
+}
+
+function fun_b() {
+	fun_c()
+}
+
+function fun_c() {
+	fun_d()
+}
+
+function fun_d() {
+	print("yay!")
+}
+
+function fun_first() {
+	return fun_a
+}
+
+function main() {
+	fn = fun_first()
+	fn()
+}
+
+for (_ in range(1, 3)) {
+	main()
+}

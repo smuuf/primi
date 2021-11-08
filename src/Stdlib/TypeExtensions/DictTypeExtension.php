@@ -1,20 +1,43 @@
 <?php
 
-namespace Smuuf\Primi\Stdlib\Extensions;
+namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\Extension;
 use \Smuuf\Primi\Ex\TypeError;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\ListValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
+use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Values\TypeValue;
 
-class DictExtension extends Extension {
+class DictTypeExtension extends TypeExtension {
+
+	/**
+	 * @primi.function(no-stack)
+	 */
+	public static function __new__(
+		TypeValue $_,
+		?AbstractValue $value = null
+	): DictValue {
+
+		// Default value for a new number is 0.
+		if ($value === null) {
+			return new DictValue([]);
+		}
+
+		$iter = $value->getIterator();
+		if ($iter === \null) {
+			throw new RuntimeError('dict() argument must be iterable');
+		}
+
+		return new DictValue(Func::iterator_as_tuples($iter));
+
+	}
 
 	/**
 	 * Returns value stored under `key`, if it in dict, otherwise returns the
@@ -28,15 +51,17 @@ class DictExtension extends Extension {
 	 * d.get('100') == null
 	 * d.get('100', ['one', 'hundred']) == ['one', 'hundred']
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function dict_get(
+	public static function get(
 		DictValue $dict,
 		AbstractValue $key,
 		?AbstractValue $default = \null
 	): AbstractValue {
 
 		try {
-			return $dict->value[$key] ?? $default ?? NullValue::build();
+			return $dict->value[$key] ?? $default ?? Interned::null();
 		} catch (UnhashableTypeException $e) {
 			throw new TypeError($e->getMessage());
 		}
@@ -53,12 +78,14 @@ class DictExtension extends Extension {
 	 * d.has_value(100) == false
 	 * d.has_value(false) == false
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function dict_has_value(
+	public static function has_value(
 		DictValue $dict,
 		AbstractValue $needle
 	): BoolValue {
-		return BoolValue::build($dict->value->findValue($needle) !== \null);
+		return Interned::bool($dict->value->findValue($needle) !== \null);
 	}
 
 	/**
@@ -71,14 +98,16 @@ class DictExtension extends Extension {
 	 * d.has_key('100') == false
 	 * d.has_key('yes') == false
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function dict_has_key(
+	public static function has_key(
 		DictValue $dict,
 		AbstractValue $key
 	): BoolValue {
 
 		try {
-			return BoolValue::build($dict->doesContain($key));
+			return Interned::bool($dict->doesContain($key));
 		} catch (UnhashableTypeException $e) {
 			throw new TypeError($e->getMessage());
 		}
@@ -91,8 +120,10 @@ class DictExtension extends Extension {
 	 * ```js
 	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function dict_values(DictValue $dict): ListValue {
+	public static function values(DictValue $dict): ListValue {
 
 		$list = [];
 		foreach ($dict->getIterator() as $_ => $value) {
@@ -109,8 +140,10 @@ class DictExtension extends Extension {
 	 * ```js
 	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function dict_keys(DictValue $dict): ListValue {
+	public static function keys(DictValue $dict): ListValue {
 
 		$list = [];
 		foreach ($dict->getIterator() as $key => $_) {
@@ -132,8 +165,10 @@ class DictExtension extends Extension {
 	 * a_dict == {'a': 1, 100: 'yes'}
 	 * b_dict == {'a': 1, 100: 'nope'}
 	 * ```
+	 *
+	 * @primi.function
 	 */
-	public static function dict_copy(DictValue $dict): DictValue {
+	public static function copy(DictValue $dict): DictValue {
 		return clone $dict;
 	}
 
@@ -143,9 +178,9 @@ class DictExtension extends Extension {
 	 * ```js
 	 * {'a': 1, 100: 'yes'}.reverse() == {100: 'yes', 'a': 1}
 	 * ```
+	 * @primi.function
 	 */
-
-	public static function dict_reverse(DictValue $dict): AbstractValue {
+	public static function reverse(DictValue $dict): AbstractValue {
 		return new DictValue(Func::iterator_as_tuples(
 			$dict->value->getReverseIterator()
 		));
@@ -163,17 +198,17 @@ class DictExtension extends Extension {
 	 * a_dict.map(fn) == {"key_a": "key_a|val_a", "key_b": "key_b|val_b"}
 	 * ```
 	 *
-	 * @injectContext
+	 * @primi.function(inject-context)
 	 */
-	public static function dict_map(
+	public static function map(
 		Context $ctx,
 		DictValue $dict,
-		FuncValue $fn
+		AbstractValue $callable
 	): DictValue {
 
 		$result = [];
 		foreach ($dict->value as $k => $v) {
-			$result[] = [$k, $fn->invoke($ctx, [$v, $k])];
+			$result[] = [$k, $callable->invoke($ctx, [$v, $k])];
 		}
 
 		return new DictValue($result);

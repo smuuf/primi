@@ -1,0 +1,29 @@
+import std.time: sleep
+import ._helpers: assert_not
+
+stack = []
+
+function count_interval(max, interval, callable) {
+
+	stack.push(true)
+
+	print(f"{(len(stack) - 1) * "  "}Counting to {max} in {interval} s intervals")
+	for (i in range(1, max)) {
+		print(f"{(len(stack) - 1) * "  "}{i}/{max}")
+		sleep(interval)
+		if (callable) {
+			callable()
+		}
+	}
+
+	stack.pop()
+
+}
+
+count_interval(2, 0.5, () => {
+	count_interval(2, 0.1, () => {
+		count_interval(2, 0.3, null)
+	})
+	debugger()
+})
+

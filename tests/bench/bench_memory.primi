@@ -1,0 +1,78 @@
+import std.runtime.memory: get_current, get_peak, gc_run
+
+
+function diff(desc, prev, next) {
+	d = next - prev
+	print(f' [{desc}] {'+' if (d > 0) else '-'} {d} bytes')
+}
+
+// Start.
+
+print(f"Start ({get_current()} bytes)")
+
+base = get_current()
+x = range(100_000)
+diff("Range 100_000 created", base, get_current())
+
+base = get_current()
+for (_ in x) {}
+diff("Range 100_000 iterated", base, get_current())
+
+x = null
+gc_run()
+
+//
+//
+//
+
+base = get_current()
+x = " " * 100_000
+diff("String 100_000 spaces", base, get_current())
+
+x = null
+gc_run()
+
+//
+//
+//
+
+base = get_current()
+y = "abc" * 100_000
+diff("String 100_000 * 'abc'", base, get_current())
+
+x = null
+gc_run()
+
+//
+//
+//
+
+base = get_current()
+x = []
+for (_ in range(100_000)) {
+	// Directly call function on list type object to avoid function bounding.
+	list.push(x, "abc")
+}
+diff("List of 100_000 abc's", base, get_current())
+
+x = null
+gc_run()
+
+//
+//
+//
+
+base = get_current()
+x = "some string"
+for (_ in range(100_000)) {
+	// Perform function bounding.
+	x.format
+}
+diff("Accessing method on string object 100_000 times", base, get_current())
+
+x = null
+gc_run()
+
+// End.
+
+print(f"End (peak {get_peak()} bytes)")

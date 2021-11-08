@@ -8,20 +8,25 @@ use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Extensions\Module;
+use \Smuuf\Primi\Helpers\Interned;
+use \Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Stdlib\TypeExtensions\DateTypeExtension;
+use Smuuf\Primi\Values\TypeValue;
 
 /**
- * Native 'time' module.
+ * Native 'std.time' module.
  */
-return new class extends Module {
+return new class extends NativeModule {
 
 	public function execute(Context $ctx): array {
 
 		return [
-			'monotonic' => [self::class, 'monotonic'],
-			'unix' => [self::class, 'unix'],
-			'sleep' => [self::class, 'sleep'],
-			'from_string' => [self::class, 'from_string'],
+			'Date' => new TypeValue(
+				'Date',
+				StaticTypes::getObjectType(),
+				DateTypeExtension::execute(),
+			),
 		];
 
 	}
@@ -29,6 +34,8 @@ return new class extends Module {
 	/**
 	 * Returns high-resolution monotonic time. It is an arbitrary number that
 	 * keeps increasing by 1 every second.
+	 *
+	 * @primi.function(no-stack)
 	 */
 	public static function monotonic(): NumberValue {
 		return new NumberValue((string) Func::monotime());
@@ -36,6 +43,8 @@ return new class extends Module {
 
 	/**
 	 * Returns high-resolution UNIX time.
+	 *
+	 * @primi.function(no-stack)
 	 */
 	public static function unix(): NumberValue {
 		return new NumberValue((string) \microtime(\true));
@@ -43,6 +52,8 @@ return new class extends Module {
 
 	/**
 	 * Sleep specified number of seconds.
+	 *
+	 * @primi.function(no-stack)
 	 */
 	public static function sleep(NumberValue $duration): NullValue {
 
@@ -53,7 +64,7 @@ return new class extends Module {
 			\usleep((int) ($duration->value * 1_000_000));
 		}
 
-		return NullValue::build();
+		return Interned::null();
 
 	}
 
@@ -61,6 +72,8 @@ return new class extends Module {
 	 * Return UNIX timestamp from human readable string.
 	 *
 	 * @see https://www.php.net/manual/en/function.strtotime.php
+	 *
+	 * @primi.function(no-stack)
 	 */
 	public static function from_string(StringValue $when): NumberValue {
 

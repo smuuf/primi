@@ -4,12 +4,12 @@ namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Extensions\Module;
+use \Smuuf\Primi\Modules\NativeModule;
 
 /**
  * Native '__engine__.importing' module.
  */
-return new class extends Module {
+return new class extends NativeModule {
 
 	/** Context instance. */
 	private Context $ctx;
@@ -37,7 +37,7 @@ return new class extends Module {
 		// We want to return only information about module objects and not paths
 		// they were loaded from, so strip that information (paths are keys) in
 		// the dict returned from importer instance. Get rid of them.
-		return AbstractValue::buildAuto(\array_values($loaded));
+		return AbstractValue::buildAuto($loaded);
 
 	}
 

@@ -121,6 +121,7 @@ abstract class Interned {
 		}
 
 		return new NumberValue($number);
+
 	}
 
 	/**
@@ -135,6 +136,7 @@ abstract class Interned {
 		}
 
 		return new StringValue($str);
+
 	}
 
 	/**

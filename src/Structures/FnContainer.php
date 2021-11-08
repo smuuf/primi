@@ -4,30 +4,32 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
-use \Smuuf\Primi\CallFrame;
+use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\ReturnException;
 use \Smuuf\Primi\Ex\ArgumentCountError;
-use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Helpers\Stats;
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
 use \Smuuf\BetterExceptions\BetterException;
 use \Smuuf\BetterExceptions\Types\ReturnTypeError;
 use \Smuuf\BetterExceptions\Types\ArgumentTypeError;
 
+use \Smuuf\Primi\Values\ModuleValue;
+
 /**
  * @internal
  */
 class FnContainer {
+
+	public const FLAG_INJECT_CONTEXT = 1;
+	public const FLAG_NO_STACK = 2;
 
 	use StrictObject;
 
@@ -50,68 +52,81 @@ class FnContainer {
 	public static function build(
 		array $entryNode,
 		string $definitionName,
-		string $definitionModule,
+		ModuleValue $definitionModule,
 		array $definitionArgs = [],
 		?Scope $definitionScope = \null
 	) {
 
 		$definitionArgsCount = \count($definitionArgs);
 
-		// Prepare call name (will always be the same for all calls).
-		$callName = "{$definitionName} in {$definitionModule}";
-
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
 		$closure = function(
 			Context $ctx,
 			array $args,
-			?Location $callsite = null
+			?Location $callsite = \null
 		) use (
 			$entryNode,
 			$definitionScope,
 			$definitionArgs,
 			$definitionArgsCount,
-			$callName
+			$definitionModule,
+			$definitionName
 		) {
 
-			// Check number of passed arguments.
-			$args = \array_splice($args, 0, $definitionArgsCount);
-			if ($definitionArgsCount > \count($args)) {
+			if (count($args) < $definitionArgsCount) {
 				throw new ArgumentCountError(
-					\count($args),
+					count($args),
 					$definitionArgsCount
 				);
 			}
 
-			// Create pairs of arguments <arg_name> => <arg_value> and
-			// inject them into the function's scope, too. (i.e. these are
-			// the arguments passed into it.)
-			$args = \array_combine($definitionArgs, $args);
+			// Create dict array with function arguments in form of
+			// [<arg_name> => <arg_value>].
+			$finalArgs = [];
+
+			if ($args) {
+				$argIdx = 0;
+				while ($argIdx < $definitionArgsCount) {
+					$finalArgs[$definitionArgs[$argIdx]] = $args[$argIdx];
+					$argIdx++;
+				}
+			}
 
 			$scope = new Scope;
-			$scope->setParent($definitionScope);
-			$scope->setVariables($args);
+			$scope->setVariables($finalArgs);
 
-			$frame = new CallFrame($callName, $callsite);
+			if ($definitionScope !== \null) {
+				$scope->setParent($definitionScope);
+			}
 
-			$wrapper = new ContextPushPopWrapper($ctx, $frame, $scope);
-			return $wrapper->wrap(function($ctx) use ($entryNode) {
+			$frame = new StackFrame(
+				$definitionName,
+				$definitionModule,
+				$callsite
+			);
 
-				// Run the function body and expect a ReturnException with the
-				// return value.
+			// For performance reasons (function calls are frequent) push and
+			// pop stack frame and scope manually, without the overhead
+			// of using ContextPushPopWrapper.
+			$ctx->pushCall($frame);
+			$ctx->pushScope($scope);
 
-				try {
-					$handler = HandlerFactory::getFor($entryNode['name']);
-					$handler::run($entryNode, $ctx);
-				} catch (ReturnException $e) {
-					return $e->getValue();
-				}
+			try {
+				HandlerFactory::runNode($entryNode, $ctx);
+			} catch (ReturnException $e) {
 
+				// This is the return value of the function call.
+				return $e->getValue();
+
+			} finally {
+				$ctx->popScope();
+				$ctx->popCall();
+			}
 
 			// Return null if no "return" was present (i.e. no
 			// ReturnException was thrown from inside the called function).
 			return Interned::null();
-			});
 
 		};
 
@@ -119,7 +134,7 @@ class FnContainer {
 
 	}
 
-	public static function buildFromClosure(callable $fn) {
+	public static function buildFromClosure(callable $fn, array $flags = []) {
 
 		$closure = \Closure::fromCallable($fn);
 
@@ -129,44 +144,47 @@ class FnContainer {
 		$callName = "{$rf->getName()} in <native>";
 		$requiredArgumentCount = $rf->getNumberOfRequiredParameters();
 
-		// Determine whether the runtime context object should be injected into
-		// the function args (as the first one).
-		$injectContext = false;
-		$addToStack = true;
-		if ($docComment = $rf->getDocComment()) {
-			$injectContext = \strpos($docComment, '@injectContext') !== \false;
-			$addToStack = \strpos($docComment, '@noStack') === \false;
-		}
+		$flagInjectContext = in_array(self::FLAG_INJECT_CONTEXT, $flags);
+		$flagToStack = !in_array(self::FLAG_NO_STACK, $flags);
 
 		$wrapper = function(
 			Context $ctx,
 			array $args,
-			?Location $callsite = null
+			?Location $callsite = \null
 		) use (
 			$closure,
 			$requiredArgumentCount,
-			$injectContext,
-			$addToStack,
-			$callName
+			$callName,
+			$flagInjectContext,
+			$flagToStack
 		) {
 
-			if ($injectContext) {
+			if ($flagInjectContext) {
 				\array_unshift($args, $ctx);
 			}
 
 			if ($requiredArgumentCount > \count($args)) {
+				// If context was supposed to be injected, that should be
+				// a transparent, behind-the-scene thing, and we should not
+				// count the "context" argument into the number of arguments.
 				throw new ArgumentCountError(
-					\count($args),
-					$requiredArgumentCount
+					\count($args) - ($flagInjectContext ? 1 : 0),
+					$requiredArgumentCount - ($flagInjectContext ? 1 : 0)
 				);
 			}
 
-			// Add this function call to the call stack.
-			// This is done manually without ContextPushPopWrapper for
-			// performance reasons.
-			if ($addToStack) {
-				$frame = new CallFrame($callName, $callsite);
+			// Add this function call to the call stack. This is done manually
+			// without ContextPushPopWrapper for performance reasons.
+			if ($flagToStack) {
+
+				$frame = new StackFrame(
+					$callName,
+					$ctx->getCurrentModule(),
+					$callsite
+				);
+
 				$ctx->pushCall($frame);
+
 			}
 
 			try {
@@ -184,11 +202,13 @@ class FnContainer {
 				}
 
 				/** @var ArgumentTypeError $better */
+
+				$argIndex = $better->getArgumentIndex();
 				throw new TypeError(\sprintf(
 					"Expected '%s' but got '%s' as argument %d",
-					Func::php_types_to_primi_types($better->getExpected()),
-					Func::php_types_to_primi_types($better->getActual()),
-					$better->getArgumentIndex()
+					implode('|', $better->getExpected()),
+					$args[$argIndex - 1]->getTypeName(),
+					$argIndex
 				));
 
 			} finally {
@@ -196,7 +216,7 @@ class FnContainer {
 				// Remove the latest entry from call stack.
 				// This is done manually without ContextPushPopWrapper for
 				// performance reasons.
-				if ($addToStack) {
+				if ($flagToStack) {
 					$ctx->popCall();
 				}
 
@@ -228,12 +248,9 @@ class FnContainer {
 	public function callClosure(
 		Context $ctx,
 		array $args,
-		?Location $callsite = null
+		?Location $callsite = \null
 	): ?AbstractValue {
-
-		Stats::add('func_calls');
 		return ($this->closure)($ctx, $args, $callsite);
-
 	}
 
 	public function isPhpFunction(): bool {

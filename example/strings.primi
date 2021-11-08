@@ -10,10 +10,10 @@ assert(result == 'abcxyz')
 result = "xyz" + "abc"
 assert(result == 'xyzabc')
 
-result = "xyz" + 5.to_string()
+result = "xyz" + string(5)
 assert(result == 'xyz5')
 
-result = "xyzZAQ:" + 5.123.to_string()
+result = "xyzZAQ:" + string(5.123)
 assert(result == 'xyzZAQ:5.123')
 
 //

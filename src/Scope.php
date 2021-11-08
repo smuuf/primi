@@ -16,17 +16,46 @@ class Scope {
 
 	use StrictObject;
 
+	/**
+	 * Flag for standard, ordinary scopes.
+	 */
+	public const TYPE_STANDARD = 0;
+
+	/**
+	 * Flag to distinguish scopes representing a class scope.
+	 *
+	 * This is used to tell function definitions that they should not set their
+	 * scopes' parent to this scope.
+	 *
+	 * @const int
+	 */
+	public const TYPE_CLASS = 1;
+
 	/** @var array<string, AbstractValue> Variable pool. */
 	private $variables = [];
 
 	/** Parent scope, if any. */
 	private ?Scope $parent = \null;
 
-	public function __construct(array $variables = []) {
+	/** Scope type. */
+	private int $type = self::TYPE_STANDARD;
+
+	public function __construct(
+		array $variables = [],
+		int $type = self::TYPE_STANDARD
+	) {
 		$this->setVariables($variables);
+		$this->type = $type;
 	}
 
-	final public function setParent(self $parent): void {
+	/**
+	 * Return type of the scope.
+	 */
+	public function getType(): int {
+		return $this->type;
+	}
+
+	public function setParent(self $parent): void {
 
 		if ($this === $parent) {
 			throw new EngineInternalError("Scope cannot have itself as parent");
@@ -42,7 +71,7 @@ class Scope {
 	 * If the variable is missing in current scope, look the variable up in the
 	 * parent scope, if there's any.
 	 */
-	final public function getVariable(string $name): ?AbstractValue {
+	public function getVariable(string $name): ?AbstractValue {
 
 		return $this->variables[$name]
 			// Recursively up, if there's a parent scope.
@@ -62,7 +91,7 @@ class Scope {
 	 * will be included too (variables in child scopes have priority over those
 	 * from parent scopes).
 	 */
-	final public function getVariables(bool $includeParents = \false): array {
+	public function getVariables(bool $includeParents = \false): array {
 
 		$fromParents = ($includeParents && $this->parent !== \null)
 			// Recursively up, if there's a parent scope.

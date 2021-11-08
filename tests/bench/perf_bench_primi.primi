@@ -1,4 +1,4 @@
-import __engine__.memory
+import std.runtime.memory
 
 max_iter = 50000
 tenth_iter = max_iter / 10

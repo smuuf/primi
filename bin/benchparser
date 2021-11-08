@@ -15,14 +15,11 @@ require __DIR__ . "/../vendor/autoload.php";
 
 error_reporting(E_ALL);
 
-// Interpreter without temp dir to avoid caching when benchmarking.
-$context = new \Smuuf\Primi\Context;
-$interpreter = new \Smuuf\Primi\Interpreter($context);
 $primiSource = file_get_contents(SOURCE_PATH);
 
 // Measure speed of PHP itself on current machine, so we can measure Primi's
-// parser speed against some "standard value". This is some pretty arbitrary
-// code, by the way.
+// parser speed against some "standard value". The measured PHP code is some
+// pretty arbitrary code, by the way.
 function machine_standard() {
 
 	global $primiSource;
@@ -30,6 +27,7 @@ function machine_standard() {
 	$bench = function() use ($primiSource) {
 
 		for ($x = 0; $x++ < 100;) { // Not MULTI_COUNT on purpose.
+
 			preg_match_all('#[a-z\s]+#u', $primiSource, $m, PREG_SET_ORDER);
 			$result = [];
 
@@ -68,8 +66,12 @@ function timer(string $name, callable $fn, int $count = 1) {
 }
 
 // Parser callable.
-$bench = function() use ($interpreter, $primiSource) {
-	return $interpreter->getSyntaxTree($primiSource);
+$bench = function() use ($primiSource) {
+
+	$parser = new \Smuuf\Primi\Code\AstProvider;
+	$source = new \Smuuf\Primi\Code\Source($primiSource);
+	return $parser->getAst($source);
+
 };
 
 $results = [

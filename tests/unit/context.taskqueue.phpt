@@ -13,19 +13,20 @@ require __DIR__ . '/../bootstrap.php';
 //
 
 $i = new Interpreter;
-$ctx = $i->getContext();
 
 $src = <<<SRC
 result = 0
 for (num in [10, 20, 30]) {
-	for (_ in range(1, num)) {
+	for (_ in range(num)) {
 		result = result + 1
 	}
 }
 SRC;
 
-$i->run($src);
-Assert::same('60', $ctx->getVariable('result')->getInternalValue());
+$mainScope = $i->run($src);
+$ctx = $i->getLastContext();
+
+Assert::same('60', $mainScope->getVariable('result')->getInternalValue());
 
 Assert::exception(function() use ($i, $ctx, $src) {
 	// Add SIGINT event to event queue.

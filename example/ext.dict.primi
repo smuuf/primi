@@ -1,4 +1,4 @@
-dict = {
+some_dict = {
 	'key_a': 'a',
 	'key_b': 'b',
 	'key_c': 1,
@@ -9,11 +9,11 @@ dict = {
 }
 
 _ = "Reversed dict equals to the original dict, regardless of their order"
-rev_dict = dict.reverse()
-assert(dict == rev_dict, _)
+rev_dict = some_dict.reverse()
+assert(some_dict == rev_dict, _)
 
 _ = "Reversed dict really is reversed"
-d_values = dict.values()
+d_values = some_dict.values()
 rev_d_values = rev_dict.values()
 assert(d_values[0] != rev_d_values[0])
 
@@ -22,34 +22,34 @@ assert(['a', 'b', 1, {'inner_key_a': 123, 'inner_key_b': 456}, ['a'], 'true_valu
 assert(['false_value', 'true_value', ['a'], {'inner_key_a': 123, 'inner_key_b': 456}, 1, 'b', 'a'] == rev_d_values, _)
 
 _ = "dict_keys function works"
-assert(['key_a', 'key_b', 'key_c', 'key_d', '10', true, false] == dict.keys(), _)
-assert([false, true, '10', 'key_d', 'key_c', 'key_b', 'key_a'] == dict.reverse().keys(), _)
+assert(['key_a', 'key_b', 'key_c', 'key_d', '10', true, false] == some_dict.keys(), _)
+assert([false, true, '10', 'key_d', 'key_c', 'key_b', 'key_a'] == some_dict.reverse().keys(), _)
 
 _ = "dict_has_key function works"
-assert(dict.has_key('xxx') == false, _)
-assert(dict.has_key(null) == false, _)
-assert(dict.has_key(true), _)
-assert(dict.has_key('key_a'), _)
+assert(some_dict.has_key('xxx') == false, _)
+assert(some_dict.has_key(null) == false, _)
+assert(some_dict.has_key(true), _)
+assert(some_dict.has_key('key_a'), _)
 
 _ = "dict key types are handled properly - numbers are not strings"
-assert(dict.has_key(10) == false, _)
-assert(dict.has_key('10'), _)
+assert(some_dict.has_key(10) == false, _)
+assert(some_dict.has_key('10'), _)
 
 _ = "dict_has_value function works"
-assert(dict.has_value('nope_not_there') == false, _)
-assert(dict.has_value('aa') == false, _)
-assert(dict.has_value([]) == false, _)
-assert(dict.has_value({}) == false, _)
-assert(dict.has_value({'inner_key_a': 123, 'inner_key_b': 456}), _)
-assert(dict.has_value(1), _)
-assert(dict.has_value('a'), _)
-assert(dict.has_value('b'), _)
+assert(some_dict.has_value('nope_not_there') == false, _)
+assert(some_dict.has_value('aa') == false, _)
+assert(some_dict.has_value([]) == false, _)
+assert(some_dict.has_value({}) == false, _)
+assert(some_dict.has_value({'inner_key_a': 123, 'inner_key_b': 456}), _)
+assert(some_dict.has_value(1), _)
+assert(some_dict.has_value('a'), _)
+assert(some_dict.has_value('b'), _)
 
 _ = "dict_map returns a new dict without modifying the original"
-result = dict.map((v, k) => {
+result = some_dict.map((v, k) => {
 	return "value:{}".format(v)
 })
-assert(type(result) == 'dict', _ + " #1")
+assert(type(result) == dict, _ + " #1")
 assert(result.values() == [
 	"value:a",
 	"value:b",
@@ -59,15 +59,15 @@ assert(result.values() == [
 	"value:true_value",
 	"value:false_value",
 ], _ + " #2")
-assert(result.keys() == dict.keys(), _ + " #3")
-assert(result['key_a'] != dict['key_a'], _ + " #4")
+assert(result.keys() == some_dict.keys(), _ + " #3")
+assert(result['key_a'] != some_dict['key_a'], _ + " #4")
 
 _ = "dict_map function works"
 result = []
-dict.map((val) => {
+some_dict.map((val) => {
 
 	// Keep only strings.
-	if (type(val) == 'string') {
+	if (type(val) == string) {
 		result[] = val
 	}
 
@@ -76,13 +76,13 @@ assert(result == ['a', 'b', 'true_value', 'false_value'])
 
 _ = "dict_map function works"
 result = []
-dict.map((_, key) => {
+some_dict.map((_, key) => {
 
 	// Note that the underscore variable name will not modify variable with
 	// the same name in the outer scope.
 
 	// Keep only string keys.
-	if (type(key) == 'string') {
+	if (type(key) == string) {
 		result[] = key
 	}
 

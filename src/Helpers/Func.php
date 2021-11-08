@@ -11,6 +11,8 @@ use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Values\FuncValue;
+use \Smuuf\Primi\Values\TypeValue;
 
 abstract class Func {
 
@@ -27,10 +29,10 @@ abstract class Func {
 
 	/**
 	 * Returns a generator yielding `[primi key, primi value]` tuples from some
-	 * PHP array. If the key or the value is not an instance of `AbstractValue` object,
-	 * it will be converted automatically to a `AbstractValue` object.
+	 * PHP array. If the key or the value is not an instance of `AbstractValue`
+	 * object, it will be converted automatically to a `AbstractValue` object.
 	 */
-	public static function php_array_to_dict_pairs(array $array): \Generator {
+	public static function array_to_primi_value_tuples(array $array): \Generator {
 
 		foreach (Func::iterator_as_tuples($array) as [$key, $value]) {
 			yield [
@@ -51,7 +53,31 @@ abstract class Func {
 	}
 
 	/**
-	 * Returns false if the passed array has contignuous numeric keys starting
+	 * Returns a generator yielding values from iterable.
+	 *
+	 * This works as `iterator_to_array`, but also supports generator iterables
+	 * which use objects as keys (which `iterator_to_array` hates and throws
+	 * the 'Illegal offset type' error).
+	 */
+	public static function get_map_values(iterable $iter): array {
+
+		$result = [];
+		foreach ($iter as $key => $value) {
+
+			if ($key instanceof AbstractValue) {
+				$key = $key->getStringValue();
+			}
+
+			$result[$key] = $value;
+
+		}
+
+		return $result;
+
+	}
+
+	/**
+	 * Returns false if the passed array has continuous numeric keys starting
 	 * from 0 (i.e. it is a "list"). Returns true otherwise (i.e. it is a
 	 * "dictionary).
 	 *
@@ -297,7 +323,6 @@ abstract class Func {
 
 					$typeName = $type->getName();
 
-
 					// a) Invalid if not hinting some AbstractValue class or its descendants.
 					// b) Invalid if not hinting the Context class.
 					if (\is_a($typeName, AbstractValue::class, \true)
@@ -469,6 +494,55 @@ abstract class Func {
 		}
 
 		return $result;
+
+	}
+
+	/**
+	 * Lookup and return attr from a type object - or its parents.
+	 *
+	 * If the `$bind` argument is specified and the attr is a function, this
+	 * returns a new `FuncValue` with partial arguments having the object
+	 * in the `$bind` argument (this is how Primi handles object methods -
+	 * the instance object is bound as the first argument of the function its
+	 * type object provides).
+	 *
+	 * @return AbstractValue|null
+	 */
+	public static function attr_lookup_type_hierarchy(
+		TypeValue $typeObject,
+		string $attrName,
+		?AbstractValue $bind = null
+	) {
+
+		//
+		// Try attr access on the type object itself.
+		//
+		// Example - Accessing `SomeClass.some_attr`:
+		// Try if there's `some_attr` attribute in the SomeClass type itself.
+		//
+
+		if ($value = $typeObject->rawAttrGet($attrName)) {
+			if ($bind && $value instanceof FuncValue) {
+				return new FuncValue($value->getInternalValue(), [$bind]);
+			}
+			return $value;
+		}
+
+		//
+		// If the type object itself doesn't have this attr, try inheritance -
+		// look for the attr in the parent type objects.
+		//
+
+		while ($typeObject = $typeObject->getParentType()) {
+			if ($value = $typeObject->rawAttrGet($attrName)) {
+				if ($bind && $value instanceof FuncValue) {
+					return new FuncValue($value->getInternalValue(), [$bind]);
+				}
+				return $value;
+			}
+		}
+
+		return null;
 
 	}
 
