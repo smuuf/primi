@@ -41,7 +41,7 @@ class Context {
 	private $scopeStack = [];
 
 	/** Direct reference to the scope on the top of the stack. */
-	private Scope $currentScope;
+	private ?Scope $currentScope;
 
 	//
 	// Context services.
@@ -176,7 +176,7 @@ class Context {
 
 	// Direct access to 'std.types' module.
 
-	public function getTypes(): Scope {
+	public function getTypesModule(): Scope {
 		return $this->typesModule;
 	}
 
@@ -193,13 +193,8 @@ class Context {
 
 	public function popScope(): void {
 
-		// At least one scope needs to be present at all times.
-		if (\count($this->scopeStack) === 1) {
-			return;
-		}
-
 		\array_pop($this->scopeStack);
-		$this->currentScope = \end($this->scopeStack);
+		$this->currentScope = \end($this->scopeStack) ?: null;
 
 	}
 

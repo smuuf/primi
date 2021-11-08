@@ -21,14 +21,14 @@ class StackFrame {
 	 * This is also used for resolving relative imports performed within the
 	 * stack frame.
 	 */
-	private ModuleValue $module;
+	private ?ModuleValue $module;
 
 	/** Callsite location. */
 	private ?Location $location;
 
 	public function __construct(
 		string $name,
-		ModuleValue $module,
+		?ModuleValue $module = null,
 		?Location $location = \null
 	) {
 		$this->name = $name;
@@ -38,7 +38,8 @@ class StackFrame {
 
 	public function __toString(): string {
 		$loc = $this->location ? " called from {$this->location}" : '';
-		return "{$this->name} in {$this->module->getStringRepr()}{$loc}";
+		$mod = $this->module ? $this->module->getStringRepr() : '<unknown>';
+		return "{$this->name} in {$mod}{$loc}";
 	}
 
 	/**

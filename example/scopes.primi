@@ -1,27 +1,44 @@
+import std.time: sleep
+import ._helpers: assert_not
+
 global_a = 1
 
 function fun_a(local_a, call) {
 
 	global_a = global_a + 1
 	local_a = local_a + 1
-	//print('fun_a: global = {}, local_a = {}'.format(global_a, local_a))
+	print('fun_a: global = {}, local_a = {}'.format(global_a, local_a))
 
 	fn_b = function(local_b) {
+
 		global_a = global_a + 1
 		local_a = local_a + 1
 		local_b = local_b + 1
-		//print('fun_inner: global = {}, local_a = {}, local_b = {}'.format(global_a, local_a, local_b))
+		print('fun_inner: global = {}, local_a = {}, local_b = {}'.format(global_a, local_a, local_b))
+		sleep(0.2)
+
+		// Uncomment to see how errors
+		// in nested function calls are displayed.
+		//1/0
+
+		// Uncomment to start debugger REPL at this place.
 		//debugger()
+
 	}
 
 	if (call) {
+
+		sleep(1)
 		fn_b(local_a)
+		1 / 100
+
 	}
 
 	return fn_b
 
 }
 
+print("start")
 assert(global_a == 1)
 
 inner_fn_b = fun_a(global_a, false)

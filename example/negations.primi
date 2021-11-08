@@ -29,6 +29,6 @@ assert(!x == true)
 empty_list = []
 negated_empty_list = !empty_list
 double_negated_empty_list = !!empty_list
-assert(empty_list.to_bool() == false) // Arrays currently need explicit to_bool cast to be able to be compared with bool.
+assert(bool(empty_list) == false) // Arrays currently need explicit to_bool cast to be able to be compared with bool.
 assert(negated_empty_list == true)
 assert(double_negated_empty_list == false)

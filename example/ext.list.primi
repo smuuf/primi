@@ -1,9 +1,11 @@
+import std.types
+
 //
 // List extension functions.
 //
 
 //
-// list_get()
+// list.get()
 //
 
 ['a', 'b', 'c'].get(0) == 'a'
@@ -12,16 +14,15 @@
 ['a', 'b', 'c'].get(3) == null
 ['a', 'b', 'c'].get(3, 'NOT FOUND') == 'NOT FOUND'
 
- // Using negative index.
+// Using negative index.
 ['a', 'b', 'c'].get(-1) == 'c'
 ['a', 'b', 'c'].get(-2) == 'b'
 ['a', 'b', 'c'].get(-3) == 'a'
 ['a', 'b', 'c'].get(-4) == null
 ['a', 'b', 'c'].get(-4, 'NOT FOUND') == 'NOT FOUND'
 
-
 //
-// list_push()
+// list.push()
 //
 
 a_list = ['a', 'b', 'c']
@@ -29,7 +30,7 @@ a_list.push({'some_key': 'some_value'})
 assert(a_list == ['a', 'b', 'c', {'some_key': 'some_value'}])
 
 //
-// list_prepend()
+// list.prepend()
 //
 
 a_list = ['a', 'b', 'c']
@@ -37,7 +38,7 @@ a_list.prepend({'some_key': 'some_value'})
 assert(a_list == [{'some_key': 'some_value'}, 'a', 'b', 'c'])
 
 //
-// list_pop()
+// list.pop()
 //
 
 a_list = [1, 2, 3, 4, 5]
@@ -46,7 +47,7 @@ assert(a_list.pop(1) == 2)
 assert(a_list.pop(-3) == 1)
 
 //
-// list_copy()
+// list.copy()
 //
 
 a = [1, "x", []]
@@ -60,20 +61,20 @@ c[0] = "cow"
 assert(a[0] != "cow")
 
 //
-// list_reverse()
+// list.reverse()
 //
 
 assert([1, 2, 3].reverse() == [3, 2, 1])
 
 //
-// list_random()
+// list.random()
 //
 
 r = [1, 2, 3].random()
 assert(r == 1 or r == 2 or r ==3)
 
 //
-// list_count()
+// list.count()
 //
 
 assert([1, 2, 3, 1].count(1) == 2)
@@ -110,7 +111,7 @@ assert(chaos_list.count(type) == 1)
 assert(chaos_list.count(len) == 0)
 
 //
-// list_shuffle()
+// list.shuffle()
 //
 
 shuffled = [1, 'a', true].shuffle()
@@ -119,14 +120,14 @@ for (item in shuffled) {
 }
 
 //
-// list_map()
+// list.map()
 //
 
-assert([-1, 0, 2].map(to_bool) == [true, false, true])
-assert([len, type, 1, true].map(type) == ['function', 'function', 'number', 'bool'])
+assert([-1, 0, 2].map(bool) == [true, false, true])
+assert([len, type, 1, true].map(type) == [types.Function, type, number, bool])
 
 //
-// list_contains()
+// list.contains()
 //
 
 assert([1, 2, 3, 1].contains(1) == true)

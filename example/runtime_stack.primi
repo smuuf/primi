@@ -1,0 +1,16 @@
+function fun_a() {
+	import std.runtime
+	print(runtime.get_stack())
+}
+
+fun_b = () => { fun_a(); }
+
+function decorator(fn) {
+	return () => {
+		print("called decorated function")
+		fn()
+	}
+}
+
+fun_c = decorator(fun_b)
+fun_c()

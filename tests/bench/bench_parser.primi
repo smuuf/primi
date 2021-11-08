@@ -42,8 +42,8 @@ some_dict = {
 	'null': null,
 }
 
-tmp_a = some_dict.get('number').to_string().replace('2', '0') if (some_list[0][1] >= 120) else 'none'
-tmp_b = some_dict.get('undefined', true).to_string().replace('2', '0') == '1'
+tmp_a = string(some_dict.get('number')).replace('2', '0') if (some_list[0][1] >= 120) else 'none'
+tmp_b = string(some_dict.get('undefined', true)).replace('2', '0') == '1'
 
 supernested = {
 	'x': {
@@ -97,7 +97,7 @@ function bench_regex_matches() {
 	result = 0
 	c = 0
 	while (c < max_iter) {
-		result = result + (haystack == rx"^.*(zač).*(,)?.*?(\.)").to_number()
+		result = result + number(haystack == rx"^.*(zač).*(,)?.*?(\.)")
 		c = c + 1
 	}
 
@@ -125,15 +125,15 @@ function fib(a, b, limit) {
 
 fib(1, 0, 20000000);
 gimme_number = (x, y) => {
-	return range(y, x)[5]
+	return list(range(y, x))[5]
 }
 
 fib(1, 0, 400 if (gimme_number(1000, 100) > 500) else 200);
 
 fib_func = fib
-fib_func(1, 0, 400 if (gimme_number(collected.len(), 100) > 500) else 200);
+fib_func(1, 0, 400 if (gimme_number(len(collected), 100) > 500) else 200);
 
-assert(type(collected.len()) == 'number', 'Some description bruh')
+assert(type(len(collected)) == number, 'Some description bruh')
 assert(collected[35] == 14930352, 'Correct 36th number in Fibonacci sequence')
 
 some_list = [
@@ -214,8 +214,8 @@ while (10 <= a < 20) {
 				}
 			}
 
-			tmp_a = some_dict.get('number').to_string().replace('2', '0') if (some_list[0][1] >= 120) else 'none'
-			tmp_b = some_dict.get('undefined', true).to_string().replace('2', '0') == '1'
+			tmp_a = string(some_dict.get('number')).replace('2', '0') if (some_list[0][1] >= 120) else 'none'
+			tmp_b = string(some_dict.get('undefined', true)).replace('2', '0') == '1'
 
 			supernested = {
 				'x': {

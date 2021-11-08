@@ -4,7 +4,7 @@ import std.types
 // Absolute import - top-level package cannot have any other.
 import module_a
 
-assert(type(module_a) == types.ModuleType)
+assert(type(module_a) == types.Module)
 assert(module_a.var == 'module_a')
 
 // Absolute import - top-level package cannot have any other.

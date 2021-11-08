@@ -1,3 +1,5 @@
+import std.types
+
 // No semicolons anywhere.
 
 global_variable = 'globál'
@@ -8,19 +10,19 @@ function add(x, y) {
 	assert(c == 100, 'Declaring variable inside function block overwrites the variable from outer scope')
 	return x + y
 }
-assert(type(add) == 'function', 'Declaring ordinary function')
+assert(type(add) == types.Function, 'Declaring ordinary function')
 
 function sub(x, y) {
 	return x - y
 }
-assert(type(sub) == 'function', 'Declaring ordinary function')
+assert(type(sub) == types.Function, 'Declaring ordinary function')
 
 a = 1 + add(sub(4, 3), 5)
 assert(a == 7, 'Passing result of function as argument into another function yields correct result')
 
 function nested(a) {
-	assert(type(add) == 'function', 'Function block inherits functions from outer scope')
-	assert(type(sub) == 'function', 'Function block inherits functions from outer scope')
+	assert(type(add) == types.Function, 'Function block inherits functions from outer scope')
+	assert(type(sub) == types.Function, 'Function block inherits functions from outer scope')
 	return add(a, sub(5, 2))
 }
 
@@ -40,7 +42,7 @@ double_nested = (input, fn) => {
 	return [a, counter]
 
 }
-assert(type(double_nested) == 'function')
+assert(type(double_nested) == types.Function)
 
 result = double_nested(4, nested)
 assert(result[0] == -5, "'a' variable")
@@ -52,7 +54,7 @@ decorator = (fn) => {
 		return "<prefix>" + fn(arg) + "<suffix>"
 	}
 }
-assert(type(decorator) == 'function')
+assert(type(decorator) == types.Function)
 
 function reverser(text) {
 	result = ""
@@ -61,7 +63,7 @@ function reverser(text) {
 	}
 	return result
 }
-assert(type(reverser) == 'function')
+assert(type(reverser) == types.Function)
 
 reversed = reverser('JELEN')
 assert(reversed == 'NELEJ')
@@ -89,8 +91,8 @@ anon = function(x, y, z) {
 	return x(1) + y + z
 }
 
-result = anon(function(number) {
-	return number * 3
+result = anon(function(num) {
+	return num * 3
 }, 4, 5)
 
 // Anonymous function, short syntax.
@@ -108,7 +110,7 @@ result_3 = anon(anon_short, 10, 100)
 censor = (words) => {
 	filtered = []
 	for (word in words) {
-		if (word.len() != 4) {
+		if (len(word) != 4) {
 			filtered.push(word)
 		}
 	}

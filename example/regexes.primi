@@ -80,18 +80,18 @@ assert(x == "xyzčaukomňauko")
 x = str_c - rx_l
 assert(x == "xyz456čako")
 
-x = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".string_replace(rx"ann?o", "FAIL")
+x = "xoxoxomilanobergamo,anno:domini. Anno, neštvi ma.".replace(rx"ann?o", "FAIL")
 assert(x == "xoxoxomilFAILbergamo,FAIL:domini. Anno, neštvi ma.")
 x = "\\ahoj\n\\vo\\le" - rx"\\ahoj\s"
 assert(x == "\\vo\\le")
 x = "a/b/c" - rx"/b" // Test proper handling of escaped regex delimiters.
 assert(x == "a/c")
 
-x = "[0-9]{5}".to_regex().match("abc00011234455")
+x = regex("[0-9]{5}").match("abc00011234455")
 assert(x == "00011")
-x = "[0-9]+".to_regex().match("abc00011234455")
+x = regex("[0-9]+").match("abc00011234455")
 assert(x == "00011234455")
-x = "[{}-{}]".format(0, 9).to_regex().match("abc123")
+x = regex("[{}-{}]".format(0, 9)).match("abc123")
 assert(x == "1")
-x = "{}-{}".format(0, 9).to_regex().match("abc")
+x = regex("{}-{}".format(0, 9)).match("abc")
 assert(x == false)

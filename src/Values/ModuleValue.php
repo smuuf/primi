@@ -39,10 +39,16 @@ class ModuleValue extends AbstractNativeValue {
 		return StaticTypes::getModuleType();
 	}
 
+	/**
+	 * Get full name of the module.
+	 */
 	public function getName(): string {
 		return $this->name;
 	}
 
+	/**
+	 * Get package name of the module.
+	 */
 	public function getPackage(): string {
 		return $this->package;
 	}
@@ -51,10 +57,16 @@ class ModuleValue extends AbstractNativeValue {
 		return "<module: {$this->name}>";
 	}
 
+	/**
+	 * Return number of variables in the module's scope.
+	 */
 	public function getLength(): ?int {
 		return count($this->value->getVariables());
 	}
 
+	/**
+	 * Returns true if there are any variables present in the module's scope.
+	 */
 	public function isTruthy(): bool {
 		return (bool) $this->value->getVariables();
 	}
@@ -64,11 +76,7 @@ class ModuleValue extends AbstractNativeValue {
 	 * scope.
 	 */
 	public function attrGet(string $key): ?AbstractValue {
-
-		// If the variable is not found, we'll return null instead of value
-		// and AttrAccess handler will throw "unknown attribute" error.
 		return $this->value->getVariable($key);
-
 	}
 
 	/**
@@ -85,6 +93,10 @@ class ModuleValue extends AbstractNativeValue {
 	 */
 	public function doesContain(AbstractValue $key): ?bool {
 		return (bool) $this->value->getVariable($key->getStringValue());
+	}
+
+	public function dirItems(): ?array {
+		return \array_keys($this->value->getVariables());
 	}
 
 }

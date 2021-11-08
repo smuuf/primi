@@ -1,0 +1,115 @@
+import std.types: Function
+
+//
+// Some sanity checks.
+//
+
+_ = "Type of type 'type' should be 'type'"
+assert(type(type) == type, _)
+_ = "Result of bool(0) should be false"
+assert(bool(0) == false, _)
+_ = "Result of bool(1) should be true"
+assert(bool(1) == true, _)
+
+//
+// Creating custom classes/types with "class" keyword.
+//
+
+// Create base class "Greeting" (will extend class "object" by default).
+
+class Greeting {
+
+	attr_a = 'Some attribute A from class Greeting'
+	attr_b = 'Some attribute B from class Greeting'
+	variants = {"a": "Hey", "b": "Hello"}
+
+	function get_greeting(self, name, variant) {
+		return f"{self.variants[variant]} {name}!"
+	}
+
+}
+
+//
+// Creating custom classes/types that extend an existing class/type.
+//
+
+// Create class "Ahojky" which extends class "Greeting".
+
+class Ahojky(Greeting) {
+
+	attr_b = 'Overridden attribute B by class Ahojky'
+	attr_c = 'Some attribute C from class Ahojky'
+
+	function get_greeting(self, name) {
+		return f"Ahojky {name}!"
+	}
+
+}
+
+//
+// Test behavior and properties of class "Greeting" and its instance.
+//
+
+_ = "Type of type 'Greeting' should be 'type'"
+assert(type(Greeting) == type, _)
+greeting = Greeting()
+assert(type(greeting) == Greeting)
+
+assert(Greeting.attr_a == 'Some attribute A from class Greeting')
+assert(Greeting.attr_b == 'Some attribute B from class Greeting')
+
+assert(greeting.attr_a == 'Some attribute A from class Greeting')
+assert(greeting.attr_b == 'Some attribute B from class Greeting')
+
+assert(greeting.variants.get('a') == 'Hey')
+assert(greeting.variants.get('b') == 'Hello')
+
+assert(greeting.get_greeting('Jeremiáš', 'a') == 'Hey Jeremiáš!')
+assert(greeting.get_greeting('Alžběta', 'b') == 'Hello Alžběta!')
+
+//
+// Test behavior and properties of class "Ahojky" and its instance.
+//
+
+_ = "Type of type 'Ahojky' should be 'type'"
+assert(type(Ahojky) == type, _)
+ahojky = Ahojky()
+assert(type(ahojky) == Ahojky)
+
+assert(Ahojky.attr_a == 'Some attribute A from class Greeting')
+assert(Ahojky.attr_b == 'Overridden attribute B by class Ahojky')
+assert(Ahojky.attr_c == 'Some attribute C from class Ahojky')
+
+assert(ahojky.attr_a == 'Some attribute A from class Greeting')
+assert(ahojky.attr_b == 'Overridden attribute B by class Ahojky')
+assert(ahojky.attr_c == 'Some attribute C from class Ahojky')
+
+assert(ahojky.variants.get('a') == 'Hey')
+assert(ahojky.variants.get('b') == 'Hello')
+
+assert(ahojky.get_greeting('Padishah Emperor') == 'Ahojky Padishah Emperor!')
+
+//
+// Using type() to create new classes/types.
+//
+
+custom_type = type('CustomType', object, {
+	'some_attr_x': 'no value',
+	'__init__': (self, arg) => {
+		print(f'self: {self}, arg: {arg}')
+		print(f'setting self.some_attr_x to "{arg}"')
+		self.some_attr_x = arg
+	},
+	'try_me': (self, what) => {
+		print(f'self: {self}, what: {what}, some_attr_x: {self.some_attr_x}')
+	},
+})
+
+assert(type(custom_type) == type)
+assert(custom_type.some_attr_x == 'no value')
+
+instance = custom_type('init arg')
+assert(type(instance) == custom_type)
+assert(custom_type.some_attr_x == 'no value')
+assert(instance.some_attr_x == 'init arg')
+instance.try_me('anything')

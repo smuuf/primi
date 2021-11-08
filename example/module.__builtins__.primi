@@ -1,0 +1,11 @@
+//
+// std.runtime.memory module functions.
+//
+
+import std.runtime.memory: get_peak, get_current
+
+// std.runtime.memory.get_peak() function.
+assert(type(get_current()) == number)
+
+// std.runtime.memory.get_current() function.
+assert(type(get_current()) == number)

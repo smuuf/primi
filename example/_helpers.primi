@@ -1,0 +1,12 @@
+// Assert that the first argument is false.
+function assert_not(truth, desc) {
+	assert(!truth, desc)
+}
+
+function false_on_error(fn) {
+	try {
+		return fn()
+	} catch {
+		return false
+	}
+}

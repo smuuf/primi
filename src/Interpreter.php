@@ -57,7 +57,7 @@ class Interpreter {
 	public function run(
 		$source,
 		?Scope $mainScope = null
-	): Context {
+	): Scope {
 
 		$mainDirectory = null;
 		if (\is_string($source)) {
@@ -89,7 +89,7 @@ class Interpreter {
 			return DirectInterpreter::execute($ast, $ctx);
 		});
 
-		return $context;
+		return $mainScope;
 
 	}
 

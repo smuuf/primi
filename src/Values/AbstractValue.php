@@ -228,7 +228,6 @@ abstract class AbstractValue extends ValueFriends {
 		return \null;
 	}
 
-
 	/**
 	 * Assign an attr to the value.
 	 *
@@ -261,8 +260,22 @@ abstract class AbstractValue extends ValueFriends {
 	 * NOTE: This attribute name can only be strings, so there's no need to
 	 * accept StringValue as $key.
 	 */
-	public function attrGet(string $key): ?AbstractValue {
-		return $this->attrs[$key] ?? \null;
+	public function attrGet(string $name): ?AbstractValue {
+		return $this->attrs[$name]
+			?? Func::attr_lookup_type_hierarchy($this->getType(), $name, $this);
+	}
+
+	/**
+	 * Return attribute from this Primi object - without any inheritance or
+	 * type shenanigans.
+	 *
+	 * For internal usage by Primi engine - keeping the $attr property of
+	 * PHP AbstractValue class protected.
+	 *
+	 * @internal
+	 */
+	public function rawAttrGet(string $name): ?AbstractValue {
+		return $this->attrs[$name] ?? null;
 	}
 
 	/**
@@ -273,6 +286,18 @@ abstract class AbstractValue extends ValueFriends {
 	 */
 	public function hash(): string {
 		throw new UnhashableTypeException($this->getTypeName());
+	}
+
+	/**
+	 * Return PHP array contain listing of items/attrs inside the object.
+	 *
+	 * This is mainly for the builtin dir() function Primi provides for
+	 * easy inspection of contents of an object.
+	 *
+	 * @throws UnhashableTypeException
+	 */
+	public function dirItems(): ?array {
+		return \array_keys($this->attrs);
 	}
 
 }

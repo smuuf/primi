@@ -31,14 +31,16 @@ class ImportStatement extends SimpleHandler {
 
 			}
 
+		} else {
+
+			// Importing the whole module - save it into current scope as
+			// variable named after the last part of the module's dot path.
+			$parts = \explode('.', $dotpath);
+			$name = \end($parts);
+
+			$currentScope->setVariable($name, $moduleValue);
+
 		}
-
-		// Importing the whole module - save it into current scope as
-		// variable named after the last part of the module's dot path.
-		$parts = \explode('.', $dotpath);
-		$name = \end($parts);
-
-		$currentScope->setVariable($name, $moduleValue);
 
 	}
 

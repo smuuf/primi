@@ -7,4 +7,4 @@ function random_number() {
 import std.types
 import std.math
 
-assert(type(math.sin) == types.FunctionType)
+assert(type(math.sin) == types.Function)

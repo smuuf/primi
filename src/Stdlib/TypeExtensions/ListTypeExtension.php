@@ -2,23 +2,48 @@
 
 declare(strict_types=1);
 
-namespace Smuuf\Primi\Stdlib\Extensions;
+namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\Extension;
-use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\NumberValue;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Interned;
+use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Values\TypeValue;
 
-class ListExtension extends Extension {
+class ListTypeExtension extends TypeExtension {
+
+	/**
+	 * @primi.function(no-stack)
+	 */
+	public static function __new__(
+		TypeValue $_,
+		?AbstractValue $value = null
+	): ListValue {
+
+		// No argument - create empty list.
+		if ($value === null) {
+			return new ListValue([]);
+		}
+
+		$iter = $value->getIterator();
+		if ($iter === \null) {
+			throw new RuntimeError('list() argument must be iterable');
+		}
+
+		return new ListValue(Func::get_map_values($iter));
+	}
 
 	/**
 	 * Returns a new copy of the `list`.
+	 * @primi.function
 	 */
-	public static function list_copy(ListValue $list): ListValue {
+	public static function copy(ListValue $list): ListValue {
 		return clone $list;
 	}
 
@@ -28,8 +53,9 @@ class ListExtension extends Extension {
 	 * ```js
 	 * [1, 2, 3].reverse() == [3, 2, 1]
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_reverse(ListValue $list): ListValue {
+	public static function reverse(ListValue $list): ListValue {
 		return new ListValue(\array_reverse($list->value));
 	}
 
@@ -39,8 +65,9 @@ class ListExtension extends Extension {
 	 * ```js
 	 * [1, 2, 3].random() // Either 1, 2, or 3.
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_random(ListValue $list): AbstractValue {
+	public static function random(ListValue $list): AbstractValue {
 		return $list->value[\array_rand($list->value)];
 	}
 
@@ -58,8 +85,9 @@ class ListExtension extends Extension {
 	 * // NOTE: Dicts with same items with different order are the same.
 	 * [{'a': 1, 'b': 2}, {'b': 2, 'a': 1}].count({'a': 1, 'b': 2}) == 2
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_count(
+	public static function count(
 		ListValue $list,
 		AbstractValue $needle
 	): NumberValue {
@@ -71,7 +99,7 @@ class ListExtension extends Extension {
 			}
 		}
 
-		return NumberValue::build((string) $counter);
+		return Interned::number((string) $counter);
 
 	}
 
@@ -81,8 +109,9 @@ class ListExtension extends Extension {
 	 * ```js
 	 * [1, 2].shuffle() // Either [1, 2] or [2, 1]
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_shuffle(ListValue $list): ListValue {
+	public static function shuffle(ListValue $list): ListValue {
 
 		// Do NOT modify the original array (as PHP would do).
 		$copy = clone $list;
@@ -102,17 +131,17 @@ class ListExtension extends Extension {
 	 * [-1, 0, 2].map(to_bool) == [true, false, true]
 	 * ```
 	 *
-	 * @injectContext
+	 * @primi.function(inject-context)
 	 */
-	public static function list_map(
+	public static function map(
 		Context $ctx,
 		ListValue $list,
-		FuncValue $fn
+		AbstractValue $callable
 	): ListValue {
 
 		$result = [];
 		foreach ($list->value as $k => $v) {
-			$result[$k] = $fn->invoke($ctx, [$v]);
+			$result[$k] = $callable->invoke($ctx, [$v]);
 		}
 
 		return new ListValue($result);
@@ -133,12 +162,13 @@ class ListExtension extends Extension {
 	 * // NOTE: Dicts with same items with different order are the same.
 	 * [{'b': 2, 'a': 1}, 'xxx'].contains({'a': 1, 'b': 2}) == true
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_contains(
+	public static function contains(
 		ListValue $list,
 		AbstractValue $needle
 	): BoolValue {
-		return BoolValue::build($list->doesContain($needle));
+		return Interned::bool($list->doesContain($needle));
 	}
 
 	/**
@@ -163,8 +193,9 @@ class ListExtension extends Extension {
 	 * ['a', 'b', 'c'].get(-4) == null
 	 * ['a', 'b', 'c'].get(-4, 'NOT FOUND') == 'NOT FOUND'
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_get(
+	public static function get(
 		ListValue $list,
 		NumberValue $index,
 		AbstractValue $default = \null
@@ -173,7 +204,7 @@ class ListExtension extends Extension {
 		// If the index is not found, this will return null.
 		$index = $list->protectedIndex((int) $index->value, \false);
 		if ($index === \null) {
-			return $default ?? NullValue::build();
+			return $default ?? Interned::null();
 		}
 
 		return $list->value[$index];
@@ -188,13 +219,14 @@ class ListExtension extends Extension {
 	 * a_list.push({'some_key': 'some_value'})
 	 * a_list == ['a', 'b', 'c', {'some_key': 'some_value'}]
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_push(
+	public static function push(
 		ListValue $list,
 		AbstractValue $value
 	): NullValue {
 		$list->value[] = $value;
-		return NullValue::build();
+		return Interned::null();
 	}
 
 	/**
@@ -205,15 +237,16 @@ class ListExtension extends Extension {
 	 * a_list.prepend({'some_key': 'some_value'})
 	 * a_list == [{'some_key': 'some_value'}, 'a', 'b', 'c']
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_prepend(
+	public static function prepend(
 		ListValue $list,
 		AbstractValue $value
 	): NullValue {
 
 		// array_unshift() will reindex internal array, which is what we want.
 		\array_unshift($list->value, $value);
-		return NullValue::build();
+		return Interned::null();
 
 	}
 
@@ -230,13 +263,14 @@ class ListExtension extends Extension {
 	 * a_list.pop(1) == 2 // a_list == [1, 3, 4], 2 is returned.
 	 * a_list.pop(-3) == 1 // a_list == [3, 4], 1 is returned
 	 * ```
+	 * @primi.function
 	 */
-	public static function list_pop(
+	public static function pop(
 		ListValue $list,
 		?NumberValue $index = \null
 	): AbstractValue {
 
-		if ($index === null) {
+		if ($index === \null) {
 
 			// If index was not specified, pop and return the last item.
 			return \array_pop($list->value);

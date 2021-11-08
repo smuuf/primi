@@ -67,8 +67,13 @@ BoolLiteral: / \b(true|false)\b /
 NullLiteral: "null" !VariableName
 RegexLiteral: "rx" quote:/['"]/ core:StringInside "$quote"
 
-Literal: &/["']/ skip:StringLiteral | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral )
-#Literal: skip:StringLiteral | skip:NumberLiteral | skip:BoolLiteral | skip:NullLiteral | skip:RegexLiteral
+#
+# Class
+#
+
+ClassLiteral: "class" ] cls:VariableName ( "(" parent:VariableName ")" )? ] def:Block
+
+Literal: ( &/["']/ skip:StringLiteral ) | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral ) | skip:ClassLiteral
 VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
 AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block

@@ -2,10 +2,11 @@
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
 
 class FunctionDefinition extends SimpleHandler {
@@ -17,12 +18,23 @@ class FunctionDefinition extends SimpleHandler {
 		$name = "{$node['fnName']}()";
 		$currentScope = $context->getCurrentScope();
 
+		// If a function is defined as a method inside a class (directly
+		// first-level function definition in the class definition), we do not
+		// want the function to have direct access to its class's scope.
+		// (All access to class' attributes should be done by accessing class
+		// reference inside the function).
+		// So, in that case, instead of current scope we'll pass null as
+		// the $currentScope as the definition scope.
+		$parentScope = $currentScope->getType() === Scope::TYPE_CLASS
+			? \null
+			: $currentScope;
+
 		$fnc = FnContainer::build(
 			$node['body'],
 			$name,
 			$context->getCurrentModule(),
 			$node['params'],
-			$currentScope,
+			$parentScope,
 		);
 
 		$currentScope->setVariable($node['fnName'], new FuncValue($fnc));

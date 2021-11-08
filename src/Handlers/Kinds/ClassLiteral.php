@@ -23,7 +23,11 @@ class ClassLiteral extends SimpleHandler {
 		}
 
 		// Create a new scope for this class.
-		$classScope = new Scope;
+		// Set scope's type to be 'class scope', so that functions defined as a
+		// method inside a class won't have direct access to its class's scope.
+		// (All access to class' attributes should be done by accessing class
+		// reference inside the function).
+		$classScope = new Scope([], Scope::TYPE_CLASS);
 		$classScope->setParent($context->getCurrentScope());
 
 		// Execute the class's insides with the class scope.
