@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
-use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\ChainedHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
@@ -17,7 +16,7 @@ class Invocation extends ChainedHandler {
 		AbstractValue $fn
 	) {
 
-		$arguments = [];
+		$arguments = null;
 		if (isset($node['args'])) {
 			$arguments = HandlerFactory::runNode($node['args'], $context);
 		}

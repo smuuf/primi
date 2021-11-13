@@ -2,10 +2,11 @@
 
 namespace Smuuf\Primi\Extensions;
 
-use \Smuuf\DocBlockParser\Parser as DocBlockParser;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Helpers\ValueFriends;
 use \Smuuf\Primi\Structures\FnContainer;
+
+use \Smuuf\DocBlockParser\Parser as DocBlockParser;
 
 abstract class TypeExtension extends ValueFriends {
 
@@ -15,12 +16,8 @@ abstract class TypeExtension extends ValueFriends {
 	 */
 	public static function execute(): array {
 
-		$ext = new static;
-
 		// Extract additional values via meta info.
-		$result = self::extract($ext);
-
-		return $result;
+		return self::extract(new static);
 
 	}
 
@@ -38,7 +35,7 @@ abstract class TypeExtension extends ValueFriends {
 
 			$name = $ref->getName();
 
-			// Skip PHP magic methods.
+			// Skip PHP magic "__methods", but allow Primi magic "__methods__".
 			if (\str_starts_with($name, '__') && !\str_ends_with($name, '__')) {
 				continue;
 			}

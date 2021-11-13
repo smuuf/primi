@@ -20,7 +20,7 @@ use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\BetterExceptions\BetterException;
 use \Smuuf\BetterExceptions\Types\ReturnTypeError;
 use \Smuuf\BetterExceptions\Types\ArgumentTypeError;
-
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\ModuleValue;
 
 /**
@@ -53,51 +53,31 @@ class FnContainer {
 		array $entryNode,
 		string $definitionName,
 		ModuleValue $definitionModule,
-		array $definitionArgs = [],
-		?Scope $definitionScope = \null
+		array $defArgs = [],
+		?Scope $defScope = \null
 	) {
-
-		$definitionArgsCount = \count($definitionArgs);
 
 		// Invoking this closure is equal to standard execution of the nodes
 		// that make up the body of the function.
 		$closure = function(
 			Context $ctx,
-			array $args,
+			?CallArgs $args = \null,
 			?Location $callsite = \null
 		) use (
 			$entryNode,
-			$definitionScope,
-			$definitionArgs,
-			$definitionArgsCount,
+			$defScope,
+			$defArgs,
 			$definitionModule,
 			$definitionName
 		) {
 
-			if (count($args) < $definitionArgsCount) {
-				throw new ArgumentCountError(
-					count($args),
-					$definitionArgsCount
-				);
+			$scope = new Scope;
+			if ($defScope !== \null) {
+				$scope->setParent($defScope);
 			}
-
-			// Create dict array with function arguments in form of
-			// [<arg_name> => <arg_value>].
-			$finalArgs = [];
 
 			if ($args) {
-				$argIdx = 0;
-				while ($argIdx < $definitionArgsCount) {
-					$finalArgs[$definitionArgs[$argIdx]] = $args[$argIdx];
-					$argIdx++;
-				}
-			}
-
-			$scope = new Scope;
-			$scope->setVariables($finalArgs);
-
-			if ($definitionScope !== \null) {
-				$scope->setParent($definitionScope);
+				self::prepareArgs($defArgs, $args, $scope);
 			}
 
 			$frame = new StackFrame(
@@ -149,7 +129,7 @@ class FnContainer {
 
 		$wrapper = function(
 			Context $ctx,
-			array $args,
+			?CallArgs $args,
 			?Location $callsite = \null
 		) use (
 			$closure,
@@ -159,16 +139,28 @@ class FnContainer {
 			$flagToStack
 		) {
 
-			if ($flagInjectContext) {
-				\array_unshift($args, $ctx);
+			if ($args) {
+
+				$finalArgs = $args->getArgs();
+				if ($args->getKwargs()) {
+					throw new RuntimeError(
+						"Calling native functions with kwargs is not allowed");
+				}
+
+			} else {
+				$finalArgs = [];
 			}
 
-			if ($requiredArgumentCount > \count($args)) {
+			if ($flagInjectContext) {
+				\array_unshift($finalArgs, $ctx);
+			}
+
+			if ($requiredArgumentCount > \count($finalArgs)) {
 				// If context was supposed to be injected, that should be
 				// a transparent, behind-the-scene thing, and we should not
 				// count the "context" argument into the number of arguments.
 				throw new ArgumentCountError(
-					\count($args) - ($flagInjectContext ? 1 : 0),
+					\count($finalArgs) - ($flagInjectContext ? 1 : 0),
 					$requiredArgumentCount - ($flagInjectContext ? 1 : 0)
 				);
 			}
@@ -188,7 +180,7 @@ class FnContainer {
 			}
 
 			try {
-				$result = $closure(...$args);
+				$result = $closure(...$finalArgs);
 			} catch (\TypeError $e) {
 
 				$better = BetterException::from($e);
@@ -207,7 +199,7 @@ class FnContainer {
 				throw new TypeError(\sprintf(
 					"Expected '%s' but got '%s' as argument %d",
 					implode('|', $better->getExpected()),
-					$args[$argIndex - 1]->getTypeName(),
+					$finalArgs[$argIndex - 1]->getTypeName(),
 					$argIndex
 				));
 
@@ -247,7 +239,7 @@ class FnContainer {
 
 	public function callClosure(
 		Context $ctx,
-		array $args,
+		?CallArgs $args = \null,
 		?Location $callsite = \null
 	): ?AbstractValue {
 		return ($this->closure)($ctx, $args, $callsite);
@@ -255,6 +247,78 @@ class FnContainer {
 
 	public function isPhpFunction(): bool {
 		return $this->isPhpFunction;
+	}
+
+	// Helpers.
+
+	/**
+	 * NOTE: Docblock type-hinting for performance reasons.
+	 *
+	 * @param array $defArgs
+	 * @param CallArgs $callArgs
+	 * @param Scope $scope
+	 * @return array $defArgs.
+	 */
+	private static function prepareArgs(
+		$defArgs,
+		$callArgs,
+		$scope
+	) {
+
+		// Final args dict will be based on the definition args dict,
+		// which has the form ['arg_a': null, 'arg_b': null, ...], to which
+		// we will add actual Primi objects to replace the nulls.
+		// If there are any nulls remaining after preparing the args, we know
+		// some were omitted by the caller.
+		$finalArgs = $defArgs;
+
+		// Process positional arguments first. array_slice() is used so - while
+		// iterating over definition args dict is easier for us here - we don't
+		// want to process more positional args than how many there actually
+		// were passed by the caller.
+		$i = -1;
+		$args = $callArgs->getArgs();
+		foreach (
+			\array_slice($defArgs, 0, \count($args)) as $defArgName => $_
+		) {
+
+			// For each definition arg that has a corresponding positional arg,
+			// replace the "null" in the final args list with the actual
+			// passed value from the positional args list.
+			$finalArgs[$defArgName] = $args[++$i];
+
+		}
+
+		// Now let's process keyword arguments. Now it's easier for us to
+		// iterate over passed kwargs (instead of determining what is still
+		// "left unprocessed" by the previous positional-args-processing).
+		foreach ($callArgs->getKwargs() as $key => $value) {
+
+			// If this kwarg key is not at all present in known definition
+			// args, we don't expect this kwarg, so we throw an error.
+			if (!\array_key_exists($key, $defArgs)) {
+				throw new TypeError("Unexpected keyword argument '$key'");
+			}
+
+			// If this kwarg overwrites already specified final arg (unspecified
+			// are null, so isset() works here), throw an error.
+			if (isset($finalArgs[$key])) {
+				throw new TypeError("Argument '$key' passed multiple times");
+			}
+
+			$finalArgs[$key] = $value;
+
+		}
+
+		// If there are any "null" values left in the final args dict,
+		// some arguments were left out and that is an error.
+		$missingKey = \array_search(\null, $finalArgs, \true);
+		if ($missingKey !== \false) {
+			throw new TypeError("Missing required argument '$missingKey'");
+		}
+
+		$scope->setVariables($finalArgs);
+
 	}
 
 }

@@ -3,9 +3,11 @@
 namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\InternalPostProcessSyntaxError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Node fields:
@@ -21,12 +23,19 @@ class ArgumentList extends SimpleHandler {
 			return [];
 		}
 
-		$list = [];
+		$args = [];
+		$kwargs = [];
+
 		foreach ($node['args'] as $arg) {
-			$list[] = HandlerFactory::runNode($arg, $context);
+			if (isset($arg['argKey'])) {
+				$key = HandlerFactory::runNode($arg['argKey'], $context);
+				$kwargs[$key] = HandlerFactory::runNode($arg['argVal'], $context);
+			} else {
+				$args[] = HandlerFactory::runNode($arg['argVal'], $context);
+			}
 		}
 
-		return $list;
+		return new CallArgs($args, $kwargs);
 
 	}
 
@@ -35,6 +44,39 @@ class ArgumentList extends SimpleHandler {
 		// Make sure this is always list, even with one item.
 		if (isset($node['args'])) {
 			$node['args'] = Func::ensure_indexed($node['args']);
+		}
+
+		// Handle positional and keyword arguments.
+		// If both types of arguments are used, keyword arguments MUST be
+		// places after positional arguments. So let's check it.
+		$foundKwargs = [];
+		foreach ($node['args'] as $arg) {
+
+			$isKwarg = isset($arg['argKey']);
+			if (!$isKwarg && $foundKwargs) {
+
+				// This is a positional argument, but we already encountered
+				// some keyword argument - that's a syntax error (easier to
+				// check and handle here and not via grammar).
+				throw new InternalPostProcessSyntaxError;
+
+			}
+
+			if ($isKwarg) {
+
+				$kwargKey = $arg['argKey']['text'];
+
+				// Specifying a single kwarg multiple times is a syntax error.
+				if (\array_key_exists($kwargKey, $foundKwargs)) {
+					throw new InternalPostProcessSyntaxError;
+				}
+
+				// Monitor kwargs as keys in an array for faster lookup
+				// via array_key_exists() above.
+				$foundKwargs[$kwargKey] = \null;
+
+			}
+
 		}
 
 	}

@@ -8,6 +8,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\AbstractNativeValue;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Instance of this PHP class represents a Primi object which acts as type/class
@@ -72,7 +73,7 @@ final class TypeValue extends AbstractNativeValue {
 
 	public function invoke(
 		Context $context,
-		array $args = [],
+		?CallArgs $args = null,
 		?Location $callsite = \null
 	): ?AbstractValue {
 

@@ -9,7 +9,7 @@ require __DIR__ . '/../bootstrap.php';
 //
 
 $code = "a = 1;";
-Assert::same(get_ast_array_simple($code), get_ast($code));
+Assert::equal(get_ast_array_simple($code), get_ast($code));
 
 //
 // Simple assignment with variations of comment.
@@ -17,15 +17,15 @@ Assert::same(get_ast_array_simple($code), get_ast($code));
 //
 
 $code = "a = 1; // hi there!";
-Assert::same(get_ast_array_simple($code), get_ast($code));
+Assert::equal(get_ast_array_simple($code), get_ast($code));
 $code = "a = 1;//hi there!";
-Assert::same(get_ast_array_simple($code), get_ast($code));
+Assert::equal(get_ast_array_simple($code), get_ast($code));
 $code = "a = 1;//hi there//man";
-Assert::same(get_ast_array_simple($code), get_ast($code));
+Assert::equal(get_ast_array_simple($code), get_ast($code));
 $code = "a = 1;//hi \"in quotes\"";
-Assert::same(get_ast_array_simple($code), get_ast($code));
+Assert::equal(get_ast_array_simple($code), get_ast($code));
 $code = "a = 1;//hi \"in quotes\"// with another comment";
-Assert::same(get_ast_array_simple($code), get_ast($code));
+Assert::equal(get_ast_array_simple($code), get_ast($code));
 
 //
 // Test that parser doesn't treat "//" inside strings as comments.

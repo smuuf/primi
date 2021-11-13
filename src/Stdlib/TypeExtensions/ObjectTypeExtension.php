@@ -7,6 +7,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\InstanceValue;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Structures\CallArgs;
 
 class ObjectTypeExtension extends TypeExtension {
 
@@ -21,7 +22,7 @@ class ObjectTypeExtension extends TypeExtension {
 
 		$object = new InstanceValue($type);
 		if ($init = $object->attrGet('__init__')) {
-			$init->invoke($ctx, $args);
+			$init->invoke($ctx, new CallArgs($args));
 		}
 
 		return $object;

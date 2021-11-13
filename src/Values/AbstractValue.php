@@ -10,6 +10,7 @@ use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\ValueFriends;
+use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Structures\FnContainer;
 
 /**
@@ -48,7 +49,7 @@ abstract class AbstractValue extends ValueFriends {
 				}
 
 				$inner = \array_map(__METHOD__, $value);
-				if (Func::is_array_dict($value)) {
+				if (!array_is_list($value)) {
 					return new DictValue(Func::array_to_primi_value_tuples($inner));
 				}
 				return new ListValue($inner);
@@ -198,7 +199,7 @@ abstract class AbstractValue extends ValueFriends {
 	 */
 	public function invoke(
 		Context $context,
-		array $args = [],
+		?CallArgs $args = null,
 		?Location $callsite = \null
 	): ?AbstractValue {
 		throw new TypeError("'{$this->getTypeName()}' object is not callable");

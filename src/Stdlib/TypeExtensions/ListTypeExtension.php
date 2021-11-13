@@ -14,6 +14,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TypeValue;
 
 class ListTypeExtension extends TypeExtension {
@@ -141,7 +142,7 @@ class ListTypeExtension extends TypeExtension {
 
 		$result = [];
 		foreach ($list->value as $k => $v) {
-			$result[$k] = $callable->invoke($ctx, [$v]);
+			$result[$k] = $callable->invoke($ctx, new CallArgs([$v]));
 		}
 
 		return new ListValue($result);

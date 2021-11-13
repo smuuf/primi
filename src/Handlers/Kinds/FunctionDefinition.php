@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\InternalPostProcessSyntaxError;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\SimpleHandler;
@@ -47,16 +48,40 @@ class FunctionDefinition extends SimpleHandler {
 		$node['fnName'] = $node['function']['text'];
 		unset($node['function']);
 
-		// Prepare list of parameters.
-		$params = [];
 		if (isset($node['params'])) {
-			// Make sure this is always list, even with one item.
-			$node['params'] = Func::ensure_indexed($node['params']);
-			foreach ($node['params'] as $a) {
-				$params[] = $a['text'];
-			}
+			$node['params'] = self::prepareParameters($node['params']);
+		} else {
+			$node['params'] = [];
 		}
-		$node['params'] = $params;
+
+	}
+
+	public static function prepareParameters(array $paramsNode): array {
+
+		// Prepare list of parameters.
+		// Parameters will be prepared as a dict array with names of parameters
+		// being the keys - with null as their values.
+		// This makes handling the "invoke" logic used later quite easier.
+		$params = [];
+		if (isset($paramsNode)) {
+
+			// Make sure this is always list, even with one item.
+			$paramsNodes = Func::ensure_indexed($paramsNode);
+			$paramNames = \array_column($paramsNodes, 'text');
+			foreach ($paramNames as $paramName) {
+
+				// Detect duplicate param names - they are forbidden.
+				if (isset($params[$paramName])) {
+					throw new InternalPostProcessSyntaxError;
+				}
+
+				$params[$paramName] = \true;
+
+			}
+
+		}
+
+		return $params;
 
 	}
 
