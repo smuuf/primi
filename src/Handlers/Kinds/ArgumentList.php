@@ -58,7 +58,9 @@ class ArgumentList extends SimpleHandler {
 				// This is a positional argument, but we already encountered
 				// some keyword argument - that's a syntax error (easier to
 				// check and handle here and not via grammar).
-				throw new InternalPostProcessSyntaxError;
+				throw new InternalPostProcessSyntaxError(
+					"Keyword arguments must be after positional arguments"
+				);
 
 			}
 
@@ -68,7 +70,9 @@ class ArgumentList extends SimpleHandler {
 
 				// Specifying a single kwarg multiple times is a syntax error.
 				if (\array_key_exists($kwargKey, $foundKwargs)) {
-					throw new InternalPostProcessSyntaxError;
+					throw new InternalPostProcessSyntaxError(
+						"Repeated keyword argument '$kwargKey'"
+					);
 				}
 
 				// Monitor kwargs as keys in an array for faster lookup

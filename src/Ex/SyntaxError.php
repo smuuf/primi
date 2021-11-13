@@ -10,13 +10,14 @@ class SyntaxError extends ErrorException {
 
 	public function __construct(
 		Location $location,
-		string $excerpt = ''
+		?string $excerpt = \null,
+		?string $reason = \null
 	) {
 
 		$msg = \sprintf(
-			"Syntax error %s%s",
-			$excerpt ? \sprintf("near '%s' ", \trim($excerpt)) : '',
-			\sprintf("in %s on line %d", $location->getName(), $location->getLine())
+			"Syntax error%s%s",
+			$reason ? \sprintf(" (%s)", \trim($reason)) : '',
+			$excerpt ? \sprintf(" near '%s'", \trim($excerpt)) : ''
 		);
 
 		parent::__construct($msg, $location);
