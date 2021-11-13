@@ -7,6 +7,7 @@ namespace Smuuf\Primi\Values;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Structures\FnContainer;
 
 /**
@@ -15,9 +16,12 @@ use \Smuuf\Primi\Structures\FnContainer;
 class FuncValue extends AbstractNativeValue {
 
 	protected const TYPE = "Function";
-	private array $partialArgs = [];
+	private ?CallArgs $partialArgs = null;
 
-	public function __construct(FnContainer $fn, array $partialArgs = []) {
+	public function __construct(
+		FnContainer $fn,
+		?CallArgs $partialArgs = null
+	) {
 		$this->value = $fn;
 		$this->partialArgs = $partialArgs;
 	}
@@ -42,16 +46,23 @@ class FuncValue extends AbstractNativeValue {
 
 	public function invoke(
 		Context $context,
-		array $args = [],
+		?CallArgs $args = null,
 		?Location $callsite = \null
 	): ?AbstractValue {
 
+		// If there are any partial args specified, create a new args object
+		// combining partial args (its kwargs have lower priority) combined
+		// with the currently passed args (its kwargs have higher priority).
+		if ($this->partialArgs) {
+			if ($args) {
+				$args = $this->partialArgs->withExtra($args);
+			} else {
+				$args = $this->partialArgs;
+			}
+		}
+
 		// Simply call the closure with passed arguments and other info.
-		return $this->value->callClosure(
-			$context,
-			[...$this->partialArgs, ...$args],
-			$callsite
-		);
+		return $this->value->callClosure($context, $args, $callsite);
 
 	}
 

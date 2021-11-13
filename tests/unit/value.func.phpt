@@ -6,6 +6,7 @@ use \Smuuf\Primi\Config;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\InterpreterServices;
 use \Smuuf\Primi\Ex\ArgumentCountError;
+use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Structures\FnContainer;
 use \Smuuf\Primi\Values\{
 	FuncValue,
@@ -41,8 +42,8 @@ $closure = function(NumberValue $a, NumberValue $b) {
 // This directly returns a Primi value. (Kind of optional low-levelness.)
 $fn = new FuncValue(FnContainer::buildFromClosure($closure));
 
-Assert::same("4", get_val($fn->invoke($ctx, [$one, $two])));
-Assert::same("45", get_val($fn->invoke($ctx, [$five, $three])));
+Assert::same("4", get_val($fn->invoke($ctx, new CallArgs([$one, $two]))));
+Assert::same("45", get_val($fn->invoke($ctx, new CallArgs([$five, $three]))));
 
 //
 // Bound native function error handling.
@@ -50,10 +51,10 @@ Assert::same("45", get_val($fn->invoke($ctx, [$five, $three])));
 
 // No arguments (but expected some).
 Assert::exception(function() use ($fn, $ctx) {
-	$fn->invoke($ctx, []);
+	$fn->invoke($ctx);
 }, ArgumentCountError::class);
 
 // Too many arguments (expected less) - valid. Allow it.
 Assert::noError(function() use ($fn, $ctx, $one, $two, $three) {
-	$fn->invoke($ctx, [$one, $two, $three]);
+	$fn->invoke($ctx, new CallArgs([$one, $two, $three]));
 });

@@ -21,9 +21,12 @@ function count_interval(max, interval, callable) {
 }
 
 count_interval(2, 0.5, () => {
+
 	count_interval(2, 0.1, () => {
 		count_interval(2, 0.3, null)
 	})
-	debugger()
+
+	debugger() if (false) else false
+
 })
 

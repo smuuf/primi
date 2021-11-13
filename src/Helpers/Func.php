@@ -11,6 +11,7 @@ use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Values\TypeValue;
 
@@ -73,31 +74,6 @@ abstract class Func {
 		}
 
 		return $result;
-
-	}
-
-	/**
-	 * Returns false if the passed array has continuous numeric keys starting
-	 * from 0 (i.e. it is a "list"). Returns true otherwise (i.e. it is a
-	 * "dictionary).
-	 *
-	 * The solution was chosen based on 'array_list_dict' phpcb benchmark.
-	 */
-	public static function is_array_dict(array $input): bool {
-
-		// Let's say that empty PHP array is not a dictionary.
-		if (!$input) {
-			return \false;
-		}
-
-		$c = 0;
-		foreach ($input as $i => $_) {
-			if ($c++ !== $i) {
-				return \true;
-			}
-		}
-
-		return \false;
 
 	}
 
@@ -523,7 +499,8 @@ abstract class Func {
 
 		if ($value = $typeObject->rawAttrGet($attrName)) {
 			if ($bind && $value instanceof FuncValue) {
-				return new FuncValue($value->getInternalValue(), [$bind]);
+				$args = new CallArgs([$bind]);
+				return new FuncValue($value->getInternalValue(), $args);
 			}
 			return $value;
 		}
@@ -536,7 +513,8 @@ abstract class Func {
 		while ($typeObject = $typeObject->getParentType()) {
 			if ($value = $typeObject->rawAttrGet($attrName)) {
 				if ($bind && $value instanceof FuncValue) {
-					return new FuncValue($value->getInternalValue(), [$bind]);
+					$args = new CallArgs([$bind]);
+					return new FuncValue($value->getInternalValue(), $args);
 				}
 				return $value;
 			}

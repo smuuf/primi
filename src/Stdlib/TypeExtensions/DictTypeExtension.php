@@ -13,6 +13,7 @@ use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TypeValue;
 
 class DictTypeExtension extends TypeExtension {
@@ -208,7 +209,13 @@ class DictTypeExtension extends TypeExtension {
 
 		$result = [];
 		foreach ($dict->value as $k => $v) {
-			$result[] = [$k, $callable->invoke($ctx, [$v, $k])];
+			$result[] = [
+				$k,
+				$callable->invoke(
+					$ctx,
+					new CallArgs([$v, $k])
+				)
+			];
 		}
 
 		return new DictValue($result);

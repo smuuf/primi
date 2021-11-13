@@ -130,7 +130,11 @@ Exponentiation: operands:Negation ( __ ops:PowerOperator __ operands:Negation )*
 Negation: ( nots:NegationOperator )* core:Operand
 Operand: ( ( "(" __ core:Expression __ ")" | core:AbstractValue ) chain:Chain? ) | skip:AbstractValue
 
-ArgumentList: args:Expression ( __ "," __ args:Expression )*
+# Allow argument lists
+# 1. Without named argument
+# 2. With named arguments, which must be placed after any non-named arguments.
+Argument: (argKey:VariableName __ ":" )? __ argVal:Expression
+ArgumentList: args:Argument ( __ "," __ args:Argument )*
 
 FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block
@@ -138,9 +142,6 @@ FunctionDefinition: "function" [ function:VariableName __ "(" __ params:Function
 # Import statement:
 # 'from a.b.c import d' (import specific symbol from module)
 # 'import a.b.c' (import module as a whole)
-#ImportStatement:
-#	( "from" ] ( module: ( VariableName ("." VariableName)* ) ) ] "import" ] ( symbol: VariableName ) )
-#	| ( "import" ] ( module: ( VariableName ("." VariableName)* ) ) )
 ImportStatement:
 	"import" ] ( module: ( "."* VariableName ("." VariableName)* ) ) > ( ":" > symbols: VariableName ( > "," > symbols: VariableName )* )?
 

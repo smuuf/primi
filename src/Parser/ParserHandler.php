@@ -3,8 +3,8 @@
 namespace Smuuf\Primi\Parser;
 
 use \hafriedlander\Peg\Parser\Basic as PegParser;
-
 use \Smuuf\Primi\Ex\InternalSyntaxError;
+use \Smuuf\Primi\Ex\InternalPostProcessSyntaxError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Timer;
 use \Smuuf\Primi\Handlers\HandlerFactory;
@@ -95,12 +95,12 @@ class ParserHandler {
 		$this->stats['AST nodes preprocessing'] = $t->get();
 
 		$t = (new Timer)->start();
-		self::reduceNode($ast);
-		$this->stats['AST nodes reducing'] = $t->get();
-
-		$t = (new Timer)->start();
 		self::addPositions($ast, $source);
 		$this->stats['AST nodes adding positions'] = $t->get();
+
+		$t = (new Timer)->start();
+		self::reduceNode($ast);
+		$this->stats['AST nodes reducing'] = $t->get();
 
 		return $ast;
 
@@ -155,7 +155,11 @@ class ParserHandler {
 		}
 
 		// If a handler knows how to reduce its node, let it.
-		$handler::reduce($node);
+		try {
+			$handler::reduce($node);
+		} catch (InternalPostProcessSyntaxError $e) {
+			throw new InternalSyntaxError($node['_l']);
+		}
 
 	}
 

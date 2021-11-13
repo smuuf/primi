@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Tasks\Types;
 
 use \Smuuf\StrictObject;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Tasks\TaskInterface;
 use \Smuuf\Primi\Values\FuncValue;
 
@@ -25,7 +26,7 @@ class CallbackTask implements TaskInterface {
 	}
 
 	public function execute(Context $ctx): void {
-		$this->fn->invoke($ctx, $this->args);
+		$this->fn->invoke($ctx, new CallArgs($this->args));
 	}
 
 }
