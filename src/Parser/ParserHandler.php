@@ -70,10 +70,7 @@ class ParserHandler {
 			);
 		}
 
-		// Show a bit of code where the syntax error occurred.
-		$excerpt = \mb_substr($source, $position, 20);
-
-		throw new InternalSyntaxError((int) $line, $excerpt);
+		throw new InternalSyntaxError((int) $line, (int) $position);
 
 	}
 
@@ -158,7 +155,8 @@ class ParserHandler {
 		try {
 			$handler::reduce($node);
 		} catch (InternalPostProcessSyntaxError $e) {
-			throw new InternalSyntaxError($node['_l']);
+			throw new InternalSyntaxError(
+				$node['_l'], $node['_p'], $e->getReason());
 		}
 
 	}

@@ -17,27 +17,24 @@ namespace Smuuf\Primi\Ex;
  */
 class InternalSyntaxError extends EngineException {
 
-	/** Line number of the syntax error. **/
+	/** Line number of the syntax error. */
 	private int $errorLine;
 
-	/** Excerpt string around where the error was. */
-	private string $excerpt;
+	/** Position of the syntax error on specified line. */
+	private int $errorPos;
+
+	/** Specific reason of the syntax error, if specified. */
+	private ?string $reason;
 
 	public function __construct(
 		int $errorLine,
-		string $excerpt = ''
+		int $errorPos,
+		?string $reason = null
 	) {
 
 		$this->errorLine = $errorLine;
-		$this->excerpt = $excerpt;
-
-		$msg = \sprintf(
-			"Syntax error %s%s",
-			$excerpt ? \sprintf("near '%s' ", \trim($excerpt)) : '',
-			\sprintf("on line %d", $errorLine)
-		);
-
-		parent::__construct($msg);
+		$this->errorPos = $errorPos;
+		$this->reason = $reason;
 
 	}
 
@@ -49,10 +46,17 @@ class InternalSyntaxError extends EngineException {
 	}
 
 	/**
-	 * Get excerpt from the location of the error.
+	 * Get position of the syntax error on specified line
 	 */
-	public function getExcerpt(): string {
-		return $this->excerpt;
+	public function getErrorPos(): int {
+		return $this->errorPos;
+	}
+
+	/**
+	 * Get specific reason of the syntax error, if specified.
+	 */
+	public function getReason(): ?string {
+		return $this->reason;
 	}
 
 }

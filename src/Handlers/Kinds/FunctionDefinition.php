@@ -72,7 +72,9 @@ class FunctionDefinition extends SimpleHandler {
 
 				// Detect duplicate param names - they are forbidden.
 				if (isset($params[$paramName])) {
-					throw new InternalPostProcessSyntaxError;
+					throw new InternalPostProcessSyntaxError(
+						"Duplicate parameter '$paramName' in function"
+					);
 				}
 
 				$params[$paramName] = \true;
