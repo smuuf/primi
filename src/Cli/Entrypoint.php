@@ -13,7 +13,7 @@ use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Code\SourceFile;
-use \Smuuf\Primi\Parser\ParserHandler;
+use \Smuuf\Primi\Code\AstProvider;
 use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\Primi\Helpers\Stats;
 
@@ -116,11 +116,11 @@ class Entrypoint {
 
 		if ($cfg['parser_stats'] || $cfg['only_tree']) {
 
-			$ph = new ParserHandler($source->getSourceCode());
+			$astProvider = new AstProvider;
 
 			// Run parser and catch any error that may have occurred.
 			try {
-				$tree = $ph->run();
+				$tree = $astProvider->getAst($source);
 			} catch (BaseException $e) {
 				self::errorExit("{$e->getMessage()}");
 			}
