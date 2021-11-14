@@ -6,7 +6,7 @@
 	"authors": [
 		{
 			"name": "Premysl Karbula",
-			"email": "premavansmuuf@gmail.com"
+			"email": "premavansmuuf+github@gmail.com"
 		}
 	],
 	"support": {
@@ -22,13 +22,17 @@
 		"php": ">=7.4",
 		"ext-bcmath" : "*",
 		"ext-mbstring" : "*",
+		"smuuf/strict-object": "^1.0",
 		"smuuf/php-peg": "^2",
+		"smuuf/php-docblock-parser": "^0.1",
 		"smuuf/better-php-exceptions": "^0",
-		"smuuf/strict-object": "^1.0"
+		"symfony/polyfill-php80": "^1.20",
+		"symfony/polyfill-php81": "^1.23"
 	},
 	"require-dev": {
-		"smuuf/phpcb": "dev-master",
 		"nette/tester": "^2.0",
-		"phpstan/phpstan": "^0.12"
+		"phpstan/phpstan": "^0.12",
+		"smuuf/phpcb": "^0.4.0",
+		"nikic/php-parser": "^4.13"
 	}
 }
