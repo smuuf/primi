@@ -10,9 +10,9 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
-use Smuuf\Primi\Stdlib\StaticTypes;
-use Smuuf\Primi\Stdlib\TypeExtensions\DateTypeExtension;
-use Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\TypeExtensions\DateTypeExtension;
+use \Smuuf\Primi\Values\TypeValue;
 
 /**
  * Native 'std.time' module.

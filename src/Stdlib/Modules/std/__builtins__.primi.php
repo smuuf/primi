@@ -81,9 +81,9 @@ class extends NativeModule {
 	 * Returns length of a value.
 	 *
 	 * ```js
-	 * "hello, Česká Třebová".len() == 20
+	 * len("hello, Česká Třebová") == 20
 	 * len(123456) == 6
-	 * [1, 2, 3].len() == 3
+	 * len([1, 2, 3]) == 3
 	 * len({'a': 1, 'b': 'c'}) == 2
 	 * ```
 	 *

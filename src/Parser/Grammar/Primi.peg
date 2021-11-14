@@ -76,7 +76,7 @@ ClassLiteral: "class" ] cls:VariableName ( "(" parent:VariableName ")" )? ] def:
 Literal: ( &/["']/ skip:StringLiteral ) | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral ) | skip:ClassLiteral
 VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
-AnonymousFunction: "function" __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block | "(" __ params:FunctionDefinitionArgumentList? __ ")" __ "=>" __ body:Block
+AnonymousFunction: "function" __ "(" __ params:ParameterList? __ ")" __ body:Block | "(" __ params:ParameterList? __ ")" __ "=>" __ body:Block
 
 DictItem: __ key:Expression __ ":" __ value:Expression __
 DictDefinition: "{" __ ( items:DictItem ( __ "," __ items:DictItem )* )? __ ( "," __ )? "}"
@@ -136,8 +136,11 @@ Operand: ( ( "(" __ core:Expression __ ")" | core:AbstractValue ) chain:Chain? )
 Argument: (argKey:VariableName __ ":" )? __ argVal:Expression
 ArgumentList: args:Argument ( __ "," __ args:Argument )*
 
-FunctionDefinitionArgumentList: skip:VariableName ( __ "," __ skip:VariableName )*
-FunctionDefinition: "function" [ function:VariableName __ "(" __ params:FunctionDefinitionArgumentList? __ ")" __ body:Block
+# Starred parameters: Either one or two asterisks.
+StarredParameter: "*" VariableName
+DoubleStarredParameter: "**" VariableName
+ParameterList: skip:VariableName ( __ "," __ skip:VariableName )* ( __ "," __ skip:StarredParameter )? ( __ "," __ skip:DoubleStarredParameter )?
+FunctionDefinition: "function" [ function:VariableName __ "(" __ params:ParameterList? __ ")" __ body:Block
 
 # Import statement:
 # 'from a.b.c import d' (import specific symbol from module)

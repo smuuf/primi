@@ -60,7 +60,7 @@ class FunctionDefinition extends SimpleHandler {
 
 		// Prepare list of parameters.
 		// Parameters will be prepared as a dict array with names of parameters
-		// being the keys - with null as their values.
+		// being the keys - with false as their values.
 		// This makes handling the "invoke" logic used later quite easier.
 		$params = [];
 		if (isset($paramsNode)) {
@@ -71,13 +71,17 @@ class FunctionDefinition extends SimpleHandler {
 			foreach ($paramNames as $paramName) {
 
 				// Detect duplicate param names - they are forbidden.
+				//
+				// This happens if defining function parameters like:
+				// > function f(a, b, b) { ... }
+
 				if (isset($params[$paramName])) {
 					throw new InternalPostProcessSyntaxError(
 						"Duplicate parameter '$paramName' in function"
 					);
 				}
 
-				$params[$paramName] = \true;
+				$params[$paramName] = \false;
 
 			}
 
