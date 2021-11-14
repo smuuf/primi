@@ -5,9 +5,9 @@ tenth_iter = max_iter / 10
 
 function decor(fn) {
 	return () => {
-		print("(", false)
+		print("(", end: '')
 		fn()
-		print(")", false)
+		print(")", end: '')
 	}
 }
 
@@ -21,7 +21,7 @@ function bench_function_calls() {
 		result = result + adder(c, 1)
 		c = c + 1
 		if (c.is_divisible_by(tenth_iter)) {
-			print(':', false)
+			print(':', end: '')
 		}
 	}
 
@@ -41,7 +41,7 @@ function bench_regex_matches() {
 		result = result + number(haystack == rx"^.*(zač).*(,)?.*?(\.)")
 		c = c + 1
 		if (c.is_divisible_by(tenth_iter)) {
-			print(':', false)
+			print(':', end: '')
 		}
 	}
 
@@ -70,7 +70,7 @@ function bench_dicts() {
 
 		c = c + 1
 		if (c.is_divisible_by(tenth_iter)) {
-			print(':', false)
+			print(':', end: '')
 		}
 
 	}

@@ -21,13 +21,6 @@ class Invocation extends ChainedHandler {
 			$arguments = HandlerFactory::runNode($node['args'], $context);
 		}
 
-		// If the node contains an argument to be prepended to the arg list,
-		// do exactly that. (This is used for chained functions.)
-		$prepend = $node['prepend_arg'] ?? \null;
-		if ($prepend) {
-			\array_unshift($arguments, $prepend);
-		}
-
 		// Gather info about call location - for some quality tracebacks.
 		$callsite = new Location(
 			$context->getCurrentModule()->getStringRepr(),

@@ -303,6 +303,7 @@ abstract class Func {
 					// b) Invalid if not hinting the Context class.
 					if (\is_a($typeName, AbstractValue::class, \true)
 						|| \is_a($typeName, Context::class, \true)
+						|| \is_a($typeName, CallArgs::class, \true)
 					) {
 						$types[] = $typeName;
 					} else {
