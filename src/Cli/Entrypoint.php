@@ -146,14 +146,13 @@ class Entrypoint {
 
 		// Run interpreter and catch any error that may have occurred.
 		try {
-			$context = $interpreter->run($source);
+			$mainScope = $interpreter->run($source);
 		} catch (BaseException $e) {
 			self::errorExit("{$e->getMessage()}");
 		}
 
 		if ($cfg['print_scope']) {
-			$scope = $context->getCurrentScope();
-			foreach ($scope->getVariables() as $name => $value) {
+			foreach ($mainScope->getVariables() as $name => $value) {
 				echo "$name: {$value->getStringRepr()}\n";
 			}
 			die;
