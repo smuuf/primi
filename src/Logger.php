@@ -10,7 +10,7 @@ abstract class Logger {
 
 	use StrictObject;
 
-	private static bool $enabled = false;
+	private static bool $enabled = \false;
 
 	public static function enable(bool $state = \true): void {
 		self::$enabled = $state;

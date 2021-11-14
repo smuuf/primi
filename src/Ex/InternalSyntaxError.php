@@ -29,7 +29,7 @@ class InternalSyntaxError extends EngineException {
 	public function __construct(
 		int $errorLine,
 		int $errorPos,
-		?string $reason = null
+		?string $reason = \null
 	) {
 
 		$this->errorLine = $errorLine;

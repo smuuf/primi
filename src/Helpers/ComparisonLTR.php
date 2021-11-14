@@ -79,7 +79,7 @@ class ComparisonLTR {
 		// Compare identity first - if both operands are the same object, no
 		// need to compare them any further.
 		if ($left === $right) {
-			return true;
+			return \true;
 		}
 
 		// If the left side doesn't know how to evaluate equality with the right
@@ -100,7 +100,7 @@ class ComparisonLTR {
 		// Compare identity first - if both operands are the same object, no
 		// need to compare them any further.
 		if ($left === $right) {
-			return false;
+			return \false;
 		}
 
 		// If the left side doesn't know how to evaluate equality with the right

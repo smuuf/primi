@@ -19,7 +19,7 @@ class RegexTypeExtension extends TypeExtension {
 	 */
 	public static function __new__(
 		TypeValue $_,
-		?AbstractValue $value = null
+		?AbstractValue $value = \null
 	): RegexValue {
 
 		if (!$value instanceof StringValue && !$value instanceof RegexValue) {

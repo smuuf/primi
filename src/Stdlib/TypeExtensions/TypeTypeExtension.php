@@ -19,12 +19,12 @@ class TypeTypeExtension extends TypeExtension {
 	 */
 	public static function __call__(
 		AbstractValue $value,
-		?TypeValue $parentType = null,
-		?DictValue $attrs = null
+		?TypeValue $parentType = \null,
+		?DictValue $attrs = \null
 	): TypeValue {
 
 		// If more than one argument was provided, let's create a new type!
-		if ($parentType === null) {
+		if ($parentType === \null) {
 			return $value->getType();
 		}
 

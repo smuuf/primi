@@ -16,11 +16,11 @@ use \Smuuf\Primi\Structures\FnContainer;
 class FuncValue extends AbstractNativeValue {
 
 	protected const TYPE = "Function";
-	private ?CallArgs $partialArgs = null;
+	private ?CallArgs $partialArgs = \null;
 
 	public function __construct(
 		FnContainer $fn,
-		?CallArgs $partialArgs = null
+		?CallArgs $partialArgs = \null
 	) {
 		$this->value = $fn;
 		$this->partialArgs = $partialArgs;
@@ -46,7 +46,7 @@ class FuncValue extends AbstractNativeValue {
 
 	public function invoke(
 		Context $context,
-		?CallArgs $args = null,
+		?CallArgs $args = \null,
 		?Location $callsite = \null
 	): ?AbstractValue {
 

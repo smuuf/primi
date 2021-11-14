@@ -28,7 +28,7 @@ class StackFrame {
 
 	public function __construct(
 		string $name,
-		?ModuleValue $module = null,
+		?ModuleValue $module = \null,
 		?Location $location = \null
 	) {
 		$this->name = $name;

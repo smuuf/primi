@@ -14,7 +14,7 @@ class InternalPostProcessSyntaxError extends EngineException {
 	/** Specific reason of the syntax error, if specified. */
 	private ?string $reason;
 
-	public function __construct(?string $reason = null) {
+	public function __construct(?string $reason = \null) {
 		$this->reason = $reason;
 	}
 
