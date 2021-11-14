@@ -53,7 +53,12 @@ class NumberValue extends AbstractNativeValue {
 	}
 
 	public function hash(): string {
-		return \md5($this->value);
+
+		// PHP interns all strings (which is how we internally represent
+		// numbers) by default, so use the string itself as the hash, as doing
+		// anything more would be more expensive.
+		return $this->value;
+
 	}
 
 	public function doAddition(AbstractValue $right): ?AbstractValue {
