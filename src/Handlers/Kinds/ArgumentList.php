@@ -58,8 +58,12 @@ class ArgumentList extends SimpleHandler {
 				// This is a positional argument, but we already encountered
 				// some keyword argument - that's a syntax error (easier to
 				// check and handle here and not via grammar).
+				//
+				// This happens if calling function like:
+				// > result = f(1, arg_b: 2, 3)
+
 				throw new InternalPostProcessSyntaxError(
-					"Keyword arguments must be after positional arguments"
+					"Keyword arguments must be placed after positional arguments"
 				);
 
 			}
@@ -69,6 +73,11 @@ class ArgumentList extends SimpleHandler {
 				$kwargKey = $arg['argKey']['text'];
 
 				// Specifying a single kwarg multiple times is a syntax error.
+				//
+				// This happens if calling function like:
+				// > f = (a, b, c) => {}
+				// > result = f(1, b: 2, b: 3, c: 4)
+
 				if (\array_key_exists($kwargKey, $foundKwargs)) {
 					throw new InternalPostProcessSyntaxError(
 						"Repeated keyword argument '$kwargKey'"

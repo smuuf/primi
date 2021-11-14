@@ -21,6 +21,8 @@ use \Smuuf\BetterExceptions\BetterException;
 use \Smuuf\BetterExceptions\Types\ReturnTypeError;
 use \Smuuf\BetterExceptions\Types\ArgumentTypeError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Values\DictValue;
+use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\ModuleValue;
 
 /**
@@ -53,7 +55,7 @@ class FnContainer {
 		array $entryNode,
 		string $definitionName,
 		ModuleValue $definitionModule,
-		array $defArgs = [],
+		array $defParams = [],
 		?Scope $defScope = \null
 	) {
 
@@ -66,7 +68,7 @@ class FnContainer {
 		) use (
 			$entryNode,
 			$defScope,
-			$defArgs,
+			$defParams,
 			$definitionModule,
 			$definitionName
 		) {
@@ -77,7 +79,7 @@ class FnContainer {
 			}
 
 			if ($args) {
-				self::prepareArgs($defArgs, $args, $scope);
+				self::prepareArgs($defParams, $args, $scope);
 			}
 
 			$frame = new StackFrame(
@@ -252,25 +254,59 @@ class FnContainer {
 	// Helpers.
 
 	/**
-	 * NOTE: Docblock type-hinting for performance reasons.
+	 * NOTE: Only docblock type-hinting for performance reasons.
 	 *
-	 * @param array $defArgs
+	 * @param array $defParams
 	 * @param CallArgs $callArgs
 	 * @param Scope $scope
-	 * @return array $defArgs.
+	 * @return array $defParams.
 	 */
 	private static function prepareArgs(
-		$defArgs,
+		$defParams,
 		$callArgs,
 		$scope
 	) {
+
+		// Determine - if there are such things specified:
+		// 1) Which argument will collect remaining positional arguments.
+		// Such argument's name is prefixed with "*".
+		// 2) Which argument will collect remaining keyword arguments.
+		// Such argument's name is prefixed with "**".
+		$posArgsCollector = \false;
+		$kwArgsCollector = \false;
+		foreach ($defParams as $defArgName => $_) {
+			if ($defArgName[0] === '*') {
+
+				if ($defArgName[1] === '*') {
+					$kwArgsCollector = \substr($defArgName, 2);
+				} else {
+					$posArgsCollector = \substr($defArgName, 1);
+				}
+
+				// Remove these asterisk-prefixed parameters from definition
+				// parameters, so they're not strictly expected.
+				// (We check if all strictly-expected parameters have assigned
+				// arguments at the end).
+				unset($defParams[$defArgName]);
+
+			}
+		}
 
 		// Final args dict will be based on the definition args dict,
 		// which has the form ['arg_a': null, 'arg_b': null, ...], to which
 		// we will add actual Primi objects to replace the nulls.
 		// If there are any nulls remaining after preparing the args, we know
 		// some were omitted by the caller.
-		$finalArgs = $defArgs;
+		$finalArgs = $defParams;
+
+		// If there is a keyword args collector, prepare a dict value for it and
+		// place it into the final args dict array.
+		// The called function still expects a dictionary, if "**kwargs" were
+		// defined in the function parameters, even if it will be empty.
+		if ($kwArgsCollector) {
+			$kwArgsCollectorDict = new DictValue;
+			$finalArgs[$kwArgsCollector] = $kwArgsCollectorDict;
+		}
 
 		// Process positional arguments first. array_slice() is used so - while
 		// iterating over definition args dict is easier for us here - we don't
@@ -279,7 +315,7 @@ class FnContainer {
 		$i = -1;
 		$args = $callArgs->getArgs();
 		foreach (
-			\array_slice($defArgs, 0, \count($args)) as $defArgName => $_
+			\array_slice($defParams, 0, \count($args)) as $defArgName => $_
 		) {
 
 			// For each definition arg that has a corresponding positional arg,
@@ -289,20 +325,45 @@ class FnContainer {
 
 		}
 
-		// Now let's process keyword arguments. Now it's easier for us to
-		// iterate over passed kwargs (instead of determining what is still
+		// Decide what to do with any remaining positional arguments.
+		$remainingPosArgs = \array_slice($args, $i + 1);
+		if ($remainingPosArgs) {
+			if ($posArgsCollector) {
+				$finalArgs[$posArgsCollector] = new ListValue($remainingPosArgs);
+			} else {
+				$count = \count($remainingPosArgs);
+				throw new TypeError(
+					"Passed $count unexpected positional arguments");
+			}
+		}
+
+		// If there is a positional args collector, but no positional arguments
+		// remained, the function still expects an empty list as the "*args".
+		if ($posArgsCollector && !isset($finalArgs[$posArgsCollector])) {
+			$finalArgs[$posArgsCollector] = new ListValue([]);
+		}
+
+		// Now let's process keyword arguments. At this point it's easier for us
+		// to iterate over passed kwargs (instead of determining what is still
 		// "left unprocessed" by the previous positional-args-processing).
-		foreach ($callArgs->getKwargs() as $key => $value) {
+		$callKwargs = $callArgs->getKwargs();
+		foreach ($callKwargs as $key => $value) {
 
 			// If this kwarg key is not at all present in known definition
 			// args, we don't expect this kwarg, so we throw an error.
-			if (!\array_key_exists($key, $defArgs)) {
-				throw new TypeError("Unexpected keyword argument '$key'");
+			if (!\array_key_exists($key, $defParams)) {
+				if ($kwArgsCollector) {
+					// If there was an unexpected kwarg, but there is a kwarg
+					// collector defined, add this unexpected kwarg to it.
+					$kwArgsCollectorDict->itemSet(Interned::string($key), $value);
+				} else {
+					throw new TypeError("Unexpected keyword argument '$key'");
+				}
 			}
 
 			// If this kwarg overwrites already specified final arg (unspecified
-			// are null, so isset() works here), throw an error.
-			if (isset($finalArgs[$key])) {
+			// are false, so isset() works here), throw an error.
+			if (!empty($finalArgs[$key])) {
 				throw new TypeError("Argument '$key' passed multiple times");
 			}
 
@@ -312,7 +373,7 @@ class FnContainer {
 
 		// If there are any "null" values left in the final args dict,
 		// some arguments were left out and that is an error.
-		$missingKey = \array_search(\null, $finalArgs, \true);
+		$missingKey = \array_search(\false, $finalArgs, \true);
 		if ($missingKey !== \false) {
 			throw new TypeError("Missing required argument '$missingKey'");
 		}

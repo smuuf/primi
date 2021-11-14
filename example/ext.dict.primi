@@ -64,7 +64,7 @@ assert(result['key_a'] != some_dict['key_a'], _ + " #4")
 
 _ = "dict_map function works"
 result = []
-some_dict.map((val) => {
+some_dict.map((val, key) => {
 
 	// Keep only strings.
 	if (type(val) == string) {
