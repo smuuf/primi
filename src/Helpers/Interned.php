@@ -6,8 +6,8 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\RegexValue;
+use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
 
 use \Smuuf\StrictObject;
@@ -114,8 +114,8 @@ abstract class Interned {
 	 */
 	public static function number(string $number) {
 
-		// Numbers up to 16 characters will be interned.
-		if (\strlen($number) <= 16) {
+		// Numbers up to 8 characters will be interned.
+		if (\strlen($number) <= 8) {
 			return self::$internedNumber[$number]
 				?? (self::$internedNumber[$number] = new NumberValue($number));
 		}
@@ -129,8 +129,8 @@ abstract class Interned {
 	 */
 	public static function string(string $str) {
 
-		// Strings up to 512 characters will be interned.
-		if (\strlen($str) <= 512) {
+		// Strings up to 64 characters will be interned.
+		if (\strlen($str) <= 64) {
 			return self::$internedString[$str]
 				?? (self::$internedString[$str] = new StringValue($str));
 		}
@@ -144,8 +144,8 @@ abstract class Interned {
 	 */
 	public static function regex(string $regex) {
 
-		// Regexes up to 512 characters will be interned.
-		if (\strlen($regex) <= 512) {
+		// Regexes up to 64 characters will be interned.
+		if (\strlen($regex) <= 64) {
 			return self::$internedRegex[$regex]
 				?? (self::$internedRegex[$regex] = new RegexValue($regex));
 		}
