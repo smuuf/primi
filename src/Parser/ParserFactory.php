@@ -30,7 +30,7 @@ abstract class ParserFactory {
 		$grammarVersion = \md5(\filemtime(self::GRAMMAR_FILE));
 		$parserVersion = \file_exists(self::VERSION_FILE)
 			? \file_get_contents(self::VERSION_FILE)
-			: false;
+			: \false;
 
 		if ($grammarVersion !== $parserVersion) {
 			self::recompileParser($grammarVersion);

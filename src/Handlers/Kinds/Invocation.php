@@ -16,7 +16,7 @@ class Invocation extends ChainedHandler {
 		AbstractValue $fn
 	) {
 
-		$arguments = null;
+		$arguments = \null;
 		if (isset($node['args'])) {
 			$arguments = HandlerFactory::runNode($node['args'], $context);
 		}

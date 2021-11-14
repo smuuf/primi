@@ -23,11 +23,11 @@ class DictTypeExtension extends TypeExtension {
 	 */
 	public static function __new__(
 		TypeValue $_,
-		?AbstractValue $value = null
+		?AbstractValue $value = \null
 	): DictValue {
 
 		// Default value for a new number is 0.
-		if ($value === null) {
+		if ($value === \null) {
 			return new DictValue([]);
 		}
 

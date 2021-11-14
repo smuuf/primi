@@ -16,7 +16,7 @@ class ClassLiteral extends SimpleHandler {
 		$className = $node['cls'];
 		$parentTypeName = $node['parent'];
 
-		if ($parentTypeName !== false) {
+		if ($parentTypeName !== \false) {
 			$parentType = $context->getVariable($parentTypeName);
 		} else {
 			$parentType = $context->getTypesModule()->getVariable('object');
@@ -33,7 +33,7 @@ class ClassLiteral extends SimpleHandler {
 		// Execute the class's insides with the class scope.
 		// Variables (and functions) declared inside the class will then
 		// be attributes
-		$wrapper = new ContextPushPopWrapper($context, null, $classScope);
+		$wrapper = new ContextPushPopWrapper($context, \null, $classScope);
 		$wrapper->wrap(fn($ctx) => HandlerFactory::runNode($node['def'], $ctx));
 
 		$result = new TypeValue($className, $parentType, $classScope->getVariables());
@@ -44,7 +44,7 @@ class ClassLiteral extends SimpleHandler {
 
 	public static function reduce(array &$node): void {
 		$node['cls'] = $node['cls']['text'];
-		$node['parent'] = $node['parent']['text'] ?? false;
+		$node['parent'] = $node['parent']['text'] ?? \false;
 	}
 
 }

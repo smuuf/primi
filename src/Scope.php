@@ -113,7 +113,7 @@ class Scope {
 	 */
 	public function setVariables(array $pairs) {
 		// NOTE: array_merge() instead of '+' keeps original and expected order.
-		$this->variables = array_merge($this->variables, $pairs);
+		$this->variables = \array_merge($this->variables, $pairs);
 	}
 
 }

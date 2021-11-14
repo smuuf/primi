@@ -126,10 +126,10 @@ class Context {
 
 	public function getCurrentModule(): ?ModuleValue {
 
-		$currentFrame = end($this->callStack);
+		$currentFrame = \end($this->callStack);
 		return $currentFrame
 			? $currentFrame->getModule()
-			: null;
+			: \null;
 
 	}
 
@@ -194,7 +194,7 @@ class Context {
 	public function popScope(): void {
 
 		\array_pop($this->scopeStack);
-		$this->currentScope = \end($this->scopeStack) ?: null;
+		$this->currentScope = \end($this->scopeStack) ?: \null;
 
 	}
 

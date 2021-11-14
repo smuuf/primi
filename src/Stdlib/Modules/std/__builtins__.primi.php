@@ -151,7 +151,7 @@ class extends NativeModule {
 		$gen = function(int $start, int $end, int $step) {
 
 			$c = $start;
-			while (true) {
+			while (\true) {
 
 				if ($start < $end && $c >= $end) {
 					break;

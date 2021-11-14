@@ -34,7 +34,7 @@ final class TypeValue extends AbstractNativeValue {
 
 	public function __construct(
 		string $name,
-		?TypeValue $parent = null,
+		?TypeValue $parent = \null,
 		array $attrs = []
 	) {
 
@@ -73,7 +73,7 @@ final class TypeValue extends AbstractNativeValue {
 
 	public function invoke(
 		Context $context,
-		?CallArgs $args = null,
+		?CallArgs $args = \null,
 		?Location $callsite = \null
 	): ?AbstractValue {
 
@@ -91,7 +91,7 @@ final class TypeValue extends AbstractNativeValue {
 			return $fn->invoke($context, $args, $callsite);
 		}
 
-		return null;
+		return \null;
 
 	}
 

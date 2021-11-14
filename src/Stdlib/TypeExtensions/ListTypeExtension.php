@@ -24,11 +24,11 @@ class ListTypeExtension extends TypeExtension {
 	 */
 	public static function __new__(
 		TypeValue $_,
-		?AbstractValue $value = null
+		?AbstractValue $value = \null
 	): ListValue {
 
 		// No argument - create empty list.
-		if ($value === null) {
+		if ($value === \null) {
 			return new ListValue([]);
 		}
 

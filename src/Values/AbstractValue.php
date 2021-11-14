@@ -199,7 +199,7 @@ abstract class AbstractValue extends ValueFriends {
 	 */
 	public function invoke(
 		Context $context,
-		?CallArgs $args = null,
+		?CallArgs $args = \null,
 		?Location $callsite = \null
 	): ?AbstractValue {
 		throw new TypeError("'{$this->getTypeName()}' object is not callable");
@@ -276,7 +276,7 @@ abstract class AbstractValue extends ValueFriends {
 	 * @internal
 	 */
 	public function rawAttrGet(string $name): ?AbstractValue {
-		return $this->attrs[$name] ?? null;
+		return $this->attrs[$name] ?? \null;
 	}
 
 	/**

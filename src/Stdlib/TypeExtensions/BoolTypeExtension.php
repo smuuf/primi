@@ -15,10 +15,10 @@ class BoolTypeExtension extends TypeExtension {
 	 */
 	public static function __new__(
 		TypeValue $_,
-		?AbstractValue $value = null
+		?AbstractValue $value = \null
 	): BoolValue {
 
-		return $value === null
+		return $value === \null
 			? Interned::bool(\false)
 			: Interned::bool($value->isTruthy());
 

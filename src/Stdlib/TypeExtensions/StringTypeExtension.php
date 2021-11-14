@@ -25,10 +25,10 @@ class StringTypeExtension extends TypeExtension {
 	 */
 	public static function __new__(
 		TypeValue $_,
-		?AbstractValue $value = null
+		?AbstractValue $value = \null
 	): StringValue {
 
-		if ($value === null) {
+		if ($value === \null) {
 			return Interned::string('');
 		}
 

@@ -370,7 +370,7 @@ abstract class Func {
 		foreach ($node['operands'] as $i => $operand) {
 
 			// First operator will be null and the last one too.
-			$operator = $node['ops'][$i - 1]['text'] ?? null;
+			$operator = $node['ops'][$i - 1]['text'] ?? \null;
 			$value = HandlerFactory::runNode($operand, $ctx);
 
 			yield [$operator, $value];
@@ -487,7 +487,7 @@ abstract class Func {
 	public static function attr_lookup_type_hierarchy(
 		TypeValue $typeObject,
 		string $attrName,
-		?AbstractValue $bind = null
+		?AbstractValue $bind = \null
 	) {
 
 		//
@@ -520,7 +520,7 @@ abstract class Func {
 			}
 		}
 
-		return null;
+		return \null;
 
 	}
 

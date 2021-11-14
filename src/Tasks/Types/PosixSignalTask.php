@@ -16,7 +16,7 @@ class PosixSignalTask implements TaskInterface {
 	use StrictObject;
 
 	/** @var int Posix signal number. */
-	private $signum = null;
+	private $signum = \null;
 
 	public function __construct(int $signum) {
 		$this->signum = $signum;

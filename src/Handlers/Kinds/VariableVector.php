@@ -48,10 +48,10 @@ class VariableVector extends SimpleHandler {
 
 		// Mark the last vector node as leaf, so it knows that we expect
 		// insertion proxy from it.
-		$first = true;
-		for ($i = count($node['vector']); $i !== 0; $i--) {
+		$first = \true;
+		for ($i = \count($node['vector']); $i !== 0; $i--) {
 			$node['vector'][$i - 1]['leaf'] = $first;
-			$first = false;
+			$first = \false;
 		}
 
 	}

@@ -16,7 +16,7 @@ class VectorItemNoIndex extends ChainedHandler {
 	) {
 
 		// This can only be a leaf node. Key is null, since it is not specified.
-		return new ItemInsertionProxy(null, $subject);
+		return new ItemInsertionProxy(\null, $subject);
 
 	}
 

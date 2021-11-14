@@ -73,7 +73,7 @@ class TaskQueue {
 	 * Tasks with ETA in the future are skipped and kept in the queue..
 	 */
 	public function deplete(): void {
-		$this->executeQueued(true);
+		$this->executeQueued(\true);
 	}
 
 	/**
@@ -81,7 +81,7 @@ class TaskQueue {
 	 * and placed into the queue again, unless `$force` parameter is `true`, in
 	 * which case all tasks, regardless on their ETA, will be executed.
 	 */
-	private function executeQueued(bool $force = false): void {
+	private function executeQueued(bool $force = \false): void {
 
 		// Because asynchronous events (e.g. signals) could modify (add tasks to)
 		// the $queue property while we're iterating through it, and
@@ -108,7 +108,7 @@ class TaskQueue {
 		// If there were any tasks skipped, add it to the end of the "cleared"
 		// queue (but which may now already have new tasks in it. See above.)
 		if ($skipped) {
-			$this->queue = array_merge($this->queue, $skipped);
+			$this->queue = \array_merge($this->queue, $skipped);
 		}
 
 	}
