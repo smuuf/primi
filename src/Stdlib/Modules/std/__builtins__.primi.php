@@ -14,6 +14,7 @@ use \Smuuf\Primi\Values\GeneratorValue;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
+use \Smuuf\Primi\Structures\CallArgs;
 
 return new
 /**
@@ -48,16 +49,27 @@ class extends NativeModule {
 	 *
 	 * Prints value to standard output.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.function(no-stack, call-convention: object)
 	 */
 	public static function print(
-		AbstractValue $value = \null,
-		BoolValue $nl = \null
+		CallArgs $callArgs
 	): NullValue {
 
-		$text = $value === \null ? '' : $value->getStringValue();
-		$nl = $nl !== \null ? $nl->isTruthy() : \true; // Newline by default.
-		echo $text . ($nl ? "\n" : '');
+		if ($callArgs->isEmpty()) {
+			echo "\n";
+			return Interned::null();
+		}
+
+		$end = $callArgs->safeGetKwarg('end', Interned::string("\n"));
+		$sep = $callArgs->safeGetKwarg('sep', Interned::string(", "));
+
+		$pieces = \array_map(
+			fn($v) => $v->getStringValue(),
+			$callArgs->getArgs()
+		);
+
+		echo \implode($sep->getStringValue(), $pieces);
+		echo $end->getStringValue();
 
 		return Interned::null();
 

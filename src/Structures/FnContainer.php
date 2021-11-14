@@ -11,19 +11,14 @@ use \Smuuf\Primi\Location;
 use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\ReturnException;
-use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-
-use \Smuuf\BetterExceptions\BetterException;
-use \Smuuf\BetterExceptions\Types\ReturnTypeError;
-use \Smuuf\BetterExceptions\Types\ArgumentTypeError;
-use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\ModuleValue;
+use \Smuuf\Primi\Helpers\Interned;
+use \Smuuf\Primi\Helpers\CallConventions\PhpCallConvention;
+use \Smuuf\Primi\Helpers\CallConventions\ArgsObjectCallConvention;
+use \Smuuf\Primi\Handlers\HandlerFactory;
 
 /**
  * @internal
@@ -32,6 +27,7 @@ class FnContainer {
 
 	public const FLAG_INJECT_CONTEXT = 1;
 	public const FLAG_NO_STACK = 2;
+	public const FLAG_CALLCONVENTION_ARGSOBJECT = 3;
 
 	use StrictObject;
 
@@ -121,51 +117,27 @@ class FnContainer {
 		$closure = \Closure::fromCallable($fn);
 
 		$rf = new \ReflectionFunction($closure);
-		Func::check_allowed_parameter_types_of_function($rf);
-
 		$callName = "{$rf->getName()} in <native>";
-		$requiredArgumentCount = $rf->getNumberOfRequiredParameters();
 
-		$flagInjectContext = in_array(self::FLAG_INJECT_CONTEXT, $flags);
-		$flagToStack = !in_array(self::FLAG_NO_STACK, $flags);
+		$flagInjectContext = in_array(self::FLAG_INJECT_CONTEXT, $flags, \true);
+		$flagToStack = !in_array(self::FLAG_NO_STACK, $flags, \true);
+		$flagCallConventionArgsObject =
+			in_array(self::FLAG_CALLCONVENTION_ARGSOBJECT, $flags, \true);
+
+		$callConvention = $flagCallConventionArgsObject
+			? new ArgsObjectCallConvention($closure, $rf)
+			: new PhpCallConvention($closure, $rf);
 
 		$wrapper = function(
 			Context $ctx,
 			?CallArgs $args,
 			?Location $callsite = \null
 		) use (
-			$closure,
-			$requiredArgumentCount,
+			$callConvention,
 			$callName,
 			$flagInjectContext,
 			$flagToStack
 		) {
-
-			if ($args) {
-
-				$finalArgs = $args->getArgs();
-				if ($args->getKwargs()) {
-					throw new RuntimeError(
-						"Calling native functions with kwargs is not allowed");
-				}
-
-			} else {
-				$finalArgs = [];
-			}
-
-			if ($flagInjectContext) {
-				\array_unshift($finalArgs, $ctx);
-			}
-
-			if ($requiredArgumentCount > \count($finalArgs)) {
-				// If context was supposed to be injected, that should be
-				// a transparent, behind-the-scene thing, and we should not
-				// count the "context" argument into the number of arguments.
-				throw new ArgumentCountError(
-					\count($finalArgs) - ($flagInjectContext ? 1 : 0),
-					$requiredArgumentCount - ($flagInjectContext ? 1 : 0)
-				);
-			}
 
 			// Add this function call to the call stack. This is done manually
 			// without ContextPushPopWrapper for performance reasons.
@@ -182,28 +154,11 @@ class FnContainer {
 			}
 
 			try {
-				$result = $closure(...$finalArgs);
-			} catch (\TypeError $e) {
 
-				$better = BetterException::from($e);
-
-				// We want to handle only argument type errors. Return type
-				// errors are a sign of badly used return type hint for PHP
-				// function and should bubble up (be rethrown) for the
-				// developer to see it.
-				if ($better instanceof ReturnTypeError) {
-					throw $e;
-				}
-
-				/** @var ArgumentTypeError $better */
-
-				$argIndex = $better->getArgumentIndex();
-				throw new TypeError(\sprintf(
-					"Expected '%s' but got '%s' as argument %d",
-					implode('|', $better->getExpected()),
-					$finalArgs[$argIndex - 1]->getTypeName(),
-					$argIndex
-				));
+				$result = $callConvention->call(
+					$args ?? CallArgs::getEmpty(),
+					$flagInjectContext ? $ctx : \null
+				);
 
 			} finally {
 
@@ -214,10 +169,6 @@ class FnContainer {
 					$ctx->popCall();
 				}
 
-			}
-
-			if (!$result instanceof AbstractValue) {
-				return AbstractValue::buildAuto($result);
 			}
 
 			return $result;
