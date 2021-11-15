@@ -55,12 +55,15 @@ class DictValue extends AbstractNativeValue {
 		return (bool) $this->value->count();
 	}
 
-	private static function convertToString($self, CircularDetector $cd): string {
+	private static function convertToString(
+		self $self,
+		CircularDetector $cd
+	): string {
 
 		// Track current value object with circular detector.
 		$cd->add(\spl_object_hash($self));
 
-		$return = "{";
+		$return = [];
 		foreach ($self->value as $key => $item) {
 
 			// This avoids infinite loops with self-nested structures by
@@ -71,11 +74,11 @@ class DictValue extends AbstractNativeValue {
 				? \sprintf("*recursion (%s)*", Func::object_hash($item))
 				: $item->getStringRepr($cd);
 
-			$return .= \sprintf("%s: %s, ", $key->getStringRepr(), $str);
+			$return[] = \sprintf("%s: %s", $key->getStringRepr(), $str);
 
 		}
 
-		return \rtrim($return, ', ') . "}";
+		return sprintf("{%s}", \implode(', ', $return));
 
 	}
 

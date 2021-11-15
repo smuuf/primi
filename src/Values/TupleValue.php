@@ -64,22 +64,20 @@ class TupleValue extends AbstractNativeValue {
 		// Track current value object with circular detector.
 		$cd->add(\spl_object_hash($self));
 
-		$return = '';
+		$return = [];
 		foreach ($self->value as $item) {
 
 			// This avoids infinite loops with self-nested structures by
 			// checking whether circular detector determined that we
 			// would end up going in (infinite) circles.
 			$hash = \spl_object_hash($item);
-			$str = $cd->has($hash)
+			$return[] = $cd->has($hash)
 				? \sprintf("*recursion (%s)*", Func::object_hash($item))
 				: $item->getStringRepr($cd);
 
-			$return .= \sprintf("%s, ", $str);
-
 		}
 
-		return sprintf("(%s)", \rtrim($return, ', '));
+		return sprintf("(%s)", \implode(', ', $return));
 
 	}
 
