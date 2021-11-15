@@ -81,16 +81,18 @@ AnonymousFunction: "function" __ "(" __ params:ParameterList? __ ")" __ body:Blo
 DictItem: __ key:Expression __ ":" __ value:Expression __
 DictDefinition: "{" __ ( items:DictItem ( __ "," __ items:DictItem )* )? __ ( "," __ )? "}"
 ListDefinition: "[" __ ( items:Expression ( __ "," __ items:Expression )* )? __ ( "," __ )? "]"
+# Tuple literals: "()" or "(1,)" or "(1, ...)" or "(1, ..., x,)"
+TupleDefinition: ( "(" __ ")" ) | ( "(" __ items:Expression __ "," __ ")" ) | ( "(" __ items:Expression ( __ "," __ items:Expression )* __ ( "," __ )? ")" )
 
-AbstractValue: skip:Literal | skip:Variable | skip:ListDefinition | skip:DictDefinition
+AbstractValue: skip:Literal | skip:Variable | skip:ListDefinition | skip:DictDefinition | skip:TupleDefinition
 
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
 PowerOperator: "**"
 AssignmentOperator: "="
-#  These comparison operators don't have to be surrounded by whitespace: Eg. '1+inside' is valid
+# These comparison operators don't have to be surrounded by whitespace: Eg. '1+inside' is valid
 ComparisonOperator: "==" | "!=" | ">=" | "<=" | ">" | "<"
-#  These comparison operators must be surrounded by whitespace: Eg. '1ininside' is not valid.
+# These comparison operators must be surrounded by whitespace: Eg. '1ininside' is not valid.
 ComparisonOperatorWithWhitespace: "in"  | "not in"
 AndOperator: "and"
 OrOperator: "or"

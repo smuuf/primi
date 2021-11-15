@@ -26,7 +26,7 @@ class DictDefinition extends SimpleHandler {
 
 		} catch (UnhashableTypeException $e) {
 			throw new RuntimeError(\sprintf(
-				"Cannot create dict with key of unhashable type '%s'",
+				"Cannot create dict with key containing unhashable type '%s'",
 				$e->getType()
 			));
 		}

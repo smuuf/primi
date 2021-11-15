@@ -142,10 +142,16 @@ class StringValue extends AbstractNativeValue {
 			throw new RuntimeError("String index must be integer");
 		}
 
-		$index = (int) $index->value;
+		// Even though in other "container" types (eg. list, tuple) we need
+		// to manually handle negative indices via helper
+		// function Indices::resolveIndexOrError(), PHP supports negative
+		// indixes for strings  out-of-the-box since PHP 7.1, so we don't need
+		// to do any magic here.
+		// See https://wiki.php.net/rfc/negative-string-offsets
 
+		$index = (int) $index->value;
 		if (!isset($this->value[$index])) {
-			throw new IndexError((string) $index);
+			throw new IndexError($index);
 		}
 
 		return new self($this->value[$index]);

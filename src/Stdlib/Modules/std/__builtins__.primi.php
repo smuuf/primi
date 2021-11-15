@@ -37,6 +37,7 @@ class extends NativeModule {
 			'bool' => $types->getVariable('bool'),
 			'dict' => $types->getVariable('dict'),
 			'list' => $types->getVariable('list'),
+			'tuple' => $types->getVariable('tuple'),
 			'number' => $types->getVariable('number'),
 			'regex' => $types->getVariable('regex'),
 			'string' => $types->getVariable('string'),
