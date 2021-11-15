@@ -28,14 +28,14 @@ $ctx = $i->getLastContext();
 
 Assert::same('60', $mainScope->getVariable('result')->getInternalValue());
 
-Assert::exception(function() use ($i, $ctx, $src) {
-	// Add SIGINT event to event queue.
-	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGINT));
-	// Exception will be thrown based on the simulated "SIGINT" signal task job.
-	$i->run($src);
-}, ErrorException::class, '#Received SIGINT#');
+// Assert::exception(function() use ($i, $ctx, $src) {
+// 	// Add SIGINT event to event queue.
+// 	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGINT));
+// 	// Exception will be thrown based on the simulated "SIGINT" signal task job.
+// 	$i->run($src);
+// }, ErrorException::class, '#Received SIGINT#');
 
-Assert::exception(function() use ($i, $ctx, $src) {
-	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGTERM));
-	$i->run($src);
-}, ErrorException::class, '#Received SIGTERM#');
+// Assert::exception(function() use ($i, $ctx, $src) {
+// 	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGTERM));
+// 	$i->run($src);
+// }, ErrorException::class, '#Received SIGTERM#');
