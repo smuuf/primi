@@ -8,12 +8,12 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Values\FuncValue;
+use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Values\TypeValue;
 
 abstract class Func {
 

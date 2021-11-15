@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Indices;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\CircularDetector;
 
@@ -99,14 +99,19 @@ class ListValue extends AbstractNativeValue {
 	public function itemGet(AbstractValue $index): AbstractValue {
 
 		if (
-			!Func::is_any_of_types($index, NumberValue::class)
+			!$index instanceof NumberValue
 			|| !Func::is_round_int($index->value)
 		) {
 			throw new RuntimeError("List index must be integer");
 		}
 
+		$actualIndex = Indices::resolveIndexOrError(
+			(int) $index->value,
+			$this->value
+		);
+
 		// Numbers are internally stored as strings, so get it as PHP integer.
-		return $this->value[$this->protectedIndex((int) $index->value)];
+		return $this->value[$actualIndex];
 
 	}
 
@@ -118,14 +123,18 @@ class ListValue extends AbstractNativeValue {
 		}
 
 		if (
-			!Func::is_any_of_types($index, NumberValue::class)
+			!$index instanceof NumberValue
 			|| !Func::is_round_int($index->value)
 		) {
 			throw new RuntimeError("List index must be integer");
 		}
 
-		// Numbers are internally stored as strings, so get it as PHP integer.
-		$this->value[$this->protectedIndex((int) $index->value)] = $value;
+		$actualIndex = Indices::resolveIndexOrError(
+			(int) $index->value,
+			$this->value
+		);
+
+		$this->value[$actualIndex] = $value;
 		return \true;
 
 	}
@@ -193,44 +202,6 @@ class ListValue extends AbstractNativeValue {
 		// Primi value objects). Non-strict search allows to match dictionaries
 		// with the same key-values but in different order.
 		return \in_array($right, $this->value);
-
-	}
-
-	/**
-	 * Translate negative indexes to positive index that's a valid index for
-	 * this value's internal list/array.
-	 *
-	 * Throw an exception when it's not possible to do so.
-	 * If optional second argument is false, this function returns null instead
-	 * of throwing exception.
-	 *
-	 * For example:
-	 * - index 1 for list with 2 items -> index=1
-	 * - index 2 for list with 2 items -> exception!
-	 * - index -1 for list with 2 items -> index=<max_index> - 1 (=1)
-	 * - index -2 for list with 2 items -> index=<max_index> - 2 (=0)
-	 * - index -3 for list with 2 items -> exception!
-	 */
-	public function protectedIndex(int $index, bool $throw = \true): ?int {
-
-		if (!Func::is_round_int((string) $index)) {
-			throw new RuntimeError("Index must be integer");
-		}
-
-		$max = \count($this->value) - 1;
-		$normalized = $index < 0
-			? $max + $index + 1
-			: $index;
-
-		if (!isset($this->value[$normalized])) {
-			if ($throw) {
-				// $index on purpose - show the value user originally used.
-				throw new IndexError((string) $index);
-			}
-			return \null;
-		}
-
-		return $normalized;
 
 	}
 

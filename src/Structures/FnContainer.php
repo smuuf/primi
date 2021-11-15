@@ -13,7 +13,7 @@ use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\ReturnException;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\ListValue;
+use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\CallConventions\PhpCallConvention;
@@ -280,7 +280,7 @@ class FnContainer {
 		$remainingPosArgs = \array_slice($args, $i + 1);
 		if ($remainingPosArgs) {
 			if ($posArgsCollector) {
-				$finalArgs[$posArgsCollector] = new ListValue($remainingPosArgs);
+				$finalArgs[$posArgsCollector] = new TupleValue($remainingPosArgs);
 			} else {
 				$count = \count($remainingPosArgs);
 				throw new TypeError(
@@ -291,7 +291,7 @@ class FnContainer {
 		// If there is a positional args collector, but no positional arguments
 		// remained, the function still expects an empty list as the "*args".
 		if ($posArgsCollector && !isset($finalArgs[$posArgsCollector])) {
-			$finalArgs[$posArgsCollector] = new ListValue([]);
+			$finalArgs[$posArgsCollector] = new TupleValue([]);
 		}
 
 		// Now let's process keyword arguments. At this point it's easier for us

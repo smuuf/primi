@@ -4,15 +4,16 @@ namespace Smuuf\Primi\Stdlib;
 
 use \Smuuf\StrictObject;
 use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Stdlib\TypeExtensions\DictTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\BoolTypeExtension;
+use \Smuuf\Primi\Stdlib\TypeExtensions\DictTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\ListTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\NullTypeExtension;
+use \Smuuf\Primi\Stdlib\TypeExtensions\TypeTypeExtension;
+use \Smuuf\Primi\Stdlib\TypeExtensions\RegexTypeExtension;
+use \Smuuf\Primi\Stdlib\TypeExtensions\TupleTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\NumberTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\ObjectTypeExtension;
-use \Smuuf\Primi\Stdlib\TypeExtensions\RegexTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\StringTypeExtension;
-use \Smuuf\Primi\Stdlib\TypeExtensions\TypeTypeExtension;
 
 /**
  * Global provider for static (immutable) native types.
@@ -30,6 +31,7 @@ abstract class StaticTypes {
 	private static TypeValue $regexType;
 	private static TypeValue $listType;
 	private static TypeValue $dictType;
+	private static TypeValue $tupleType;
 	private static TypeValue $functionType;
 	private static TypeValue $generatorType;
 	private static TypeValue $moduleType;
@@ -77,6 +79,11 @@ abstract class StaticTypes {
 	public static function getDictType(): TypeValue {
 		return self::$dictType
 			??= new TypeValue('dict', self::getObjectType(), DictTypeExtension::execute());
+	}
+
+	public static function getTupleType(): TypeValue {
+		return self::$tupleType
+			??= new TypeValue('tuple', self::getObjectType(), TupleTypeExtension::execute());
 	}
 
 	public static function getFunctionType(): TypeValue {

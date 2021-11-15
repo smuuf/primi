@@ -21,7 +21,7 @@ SRC;
 
 Assert::noError(function() use ($i, $src) {
 	$result = $i->run($src)->getVariable('result')->getStringValue();
-	Assert::same('1, 2, args: [3, 4], kwargs: {}', $result);
+	Assert::same('1, 2, args: (3, 4), kwargs: {}', $result);
 });
 
 $src = <<<SRC
@@ -31,7 +31,7 @@ SRC;
 
 Assert::noError(function() use ($i, $src) {
 	$result = $i->run($src)->getVariable('result')->getStringValue();
-	Assert::same('1, 2, args: [3, 4], kwargs: {"kw1": "hi", "kw2": "hello"}', $result);
+	Assert::same('1, 2, args: (3, 4), kwargs: {"kw1": "hi", "kw2": "hello"}', $result);
 });
 
 //

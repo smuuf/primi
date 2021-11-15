@@ -1,0 +1,111 @@
+//
+// Using tuples.
+//
+
+//
+// Tuple literals.
+//
+
+this_is_not_tuple = (1)
+
+_ = "Simple (x) literal is not a tuple, but 'x' as expected"
+assert(this_is_not_tuple == 1, _)
+
+some_tuple = (1,)
+_ = "A literal (x,) with comma is a valid tuple literal"
+assert(type(some_tuple) == tuple, _)
+
+another_tuple = (1, 2)
+_ = "A literal (x, y) without comma is also a valid tuple literal"
+assert(type(some_tuple) == tuple, _)
+
+another_tuple_alternative = (1, 2,)
+_ = "If there are more items in the tuple literal, the comma is still allowed"
+assert(type(another_tuple_alternative) == tuple, _)
+
+//
+// Tuple constructor - takes no argument or some iterable.
+//
+
+some_tuple = tuple()
+assert(len(some_tuple) == 0)
+
+iterable = [1, 2, 3, "x", "y", "z"]
+some_tuple = tuple(iterable)
+assert(len(some_tuple) == 6)
+assert(some_tuple[-1] == "z")
+
+// String are also iterable.
+iterable = "stuff!"
+some_tuple = tuple(iterable)
+assert(len(some_tuple) == 6)
+assert(some_tuple == ("s", "t", "u", "f", "f", "!"))
+
+
+//
+// Tuple comparisons.
+//
+
+tuple_a = (1,)
+tuple_b = (1, 2) // Same as tuple_c
+tuple_c = (1, 2) // Same as tuple_b
+tuple_d = (2, 1)
+
+assert(tuple_a != tuple_b)
+
+_ = "Two separate tuple literals with same items are equal"
+assert(tuple_b == tuple_c, _)
+
+_ = "When comparing tuples, order of items is important"
+assert(tuple_c != tuple_d, _)
+
+//
+// Tuple operations.
+//
+
+// Getting length.
+
+assert(len(tuple_a) == 1)
+assert(len(tuple_b) == 2)
+
+// Index access.
+
+large_tuple = (1, "something", 234, true, null, ["wow", "a", "list"], false)
+assert(len(large_tuple) == 7)
+
+assert(large_tuple[0] == 1)
+assert(large_tuple[1] == "something")
+assert(large_tuple[3] == true)
+assert(large_tuple[5] == ["wow", "a", "list"])
+
+// Index access - via negative index.
+
+assert(large_tuple[-1] == false)
+assert(large_tuple[-2] == ["wow", "a", "list"])
+
+// Iterating over tuples.
+
+collector = []
+for (item in large_tuple) {
+	collector.push(item)
+}
+
+assert(len(collector) == 7)
+assert(collector[0] == 1)
+assert(collector[1] == "something")
+assert(collector[3] == true)
+assert(collector[5] == ["wow", "a", "list"])
+
+// Tuples can be used as dict keys - because they are immutable and thus
+// are "hashable". But they must not contain "unhashable" items (eg. lists,
+// which are mutable and thus "unhashable") when used as dict keys.
+small_tuple = (1, "something", 234, true, null)
+
+some_dict = {
+	small_tuple: "YAY",
+	(1, 2, 3): "IMMUTABLES",
+}
+
+assert(some_dict[small_tuple] == "YAY")
+assert(some_dict[(1, "something", 234, true, null)] == "YAY")
+assert(some_dict[(1, 2, 3)] == "IMMUTABLES")

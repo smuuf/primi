@@ -14,6 +14,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Helpers\Indices;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TypeValue;
 
@@ -203,12 +204,16 @@ class ListTypeExtension extends TypeExtension {
 	): AbstractValue {
 
 		// If the index is not found, this will return null.
-		$index = $list->protectedIndex((int) $index->value, \false);
-		if ($index === \null) {
+		$actualIndex = Indices::resolveNegativeIndex(
+			(int) $index->value,
+			\count($list->value) - 1
+		);
+
+		if ($actualIndex === \null) {
 			return $default ?? Interned::null();
 		}
 
-		return $list->value[$index];
+		return $list->value[$actualIndex];
 
 	}
 
@@ -278,11 +283,16 @@ class ListTypeExtension extends TypeExtension {
 
 		} else {
 
-			$index = $list->protectedIndex((int) $index->value);
-			$popped = $list->value[$index];
+			// If the index is not found, this will throw IndexError.
+			$actualIndex = Indices::resolveIndexOrError(
+				(int) $index->value,
+				$list->value
+			);
+
+			$popped = $list->value[$actualIndex];
 
 			// Remove the item and reindex the list.
-			unset($list->value[$index]);
+			unset($list->value[$actualIndex]);
 			$list->reindex();
 
 			return $popped;

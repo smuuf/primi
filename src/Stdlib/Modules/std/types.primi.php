@@ -25,6 +25,7 @@ return new class extends NativeModule {
 			'regex' => StaticTypes::getRegexType(),
 			'dict' => StaticTypes::getDictType(),
 			'list' => StaticTypes::getListType(),
+			'tuple' => StaticTypes::getTupleType(),
 
 			// Other native types (native == they're implemented in PHP).
 			'Function' => StaticTypes::getFunctionType(),
