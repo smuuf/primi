@@ -14,9 +14,6 @@ class Dotpath {
 
 	private const VALID_REGEX = '#^(:?|(\.*))(?:[a-zA-Z_][a-zA-Z0-9_]*\.)*(?:[a-zA-Z_][a-zA-Z0-9_]*)$#';
 
-	/** The original dotpath. */
-	private string $original;
-
 	/** Final absolute dotpath (with relativity resolved). */
 	private string $absolute;
 
@@ -68,7 +65,7 @@ class Dotpath {
 
 		// Exploding relative import dotpath '.a.b' results in array list
 		// with three items - empty string being the first - so let's get
-		// rid of it. If's because the "while" algo below handles each one
+		// rid of it. It's because the "while" algo below handles each one
 		// of these empty strings as "go-one-level-up" from the origin
 		// package dotpath, but we want the first dot in relative path
 		// to mean "current level", not "one level up".

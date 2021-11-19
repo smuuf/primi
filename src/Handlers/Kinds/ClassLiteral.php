@@ -2,12 +2,13 @@
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
+use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Values\TypeValue;
 
 class ClassLiteral extends SimpleHandler {
 
@@ -20,6 +21,12 @@ class ClassLiteral extends SimpleHandler {
 			$parentType = $context->getVariable($parentTypeName);
 		} else {
 			$parentType = $context->getTypesModule()->getVariable('object');
+		}
+
+		if (!$parentType instanceof TypeValue) {
+			throw new RuntimeError(
+				"Specified parent class '$parentTypeName' is not a type object"
+			);
 		}
 
 		// Create a new scope for this class.

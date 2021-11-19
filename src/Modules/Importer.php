@@ -176,6 +176,8 @@ class Importer {
 
 	private function tryWithBase(string $basepath, Dotpath $dp): ?ModuleValue {
 
+		$module = \null;
+
 		// Go through each of the paths (originating from this basepath) leading
 		// to the target module - and try to import each one of them.
 		foreach ($dp->iterPaths($basepath) as [$dotpath, $package, $filepath]) {
@@ -226,16 +228,12 @@ class Importer {
 			// using the correct loader.
 			if ($filepath = \realpath($candidate)) {
 
-				$module = $this->loadModule(
+				return $this->loadModule(
 					$loader,
 					$filepath,
 					$dotpath,
 					$packageDotpath
 				);
-
-				if ($module) {
-					return $module;
-				}
 
 			}
 
@@ -250,7 +248,7 @@ class Importer {
 	private function importPackage(
 		string $filepath,
 		string $dotpath
-	): ?ModuleValue {
+	): ModuleValue {
 
 		// Try importing the package's init file.
 		$init = "$filepath/__init__";
@@ -261,7 +259,7 @@ class Importer {
 		Logger::debug("Creating implicit package '$dotpath' from '$filepath'");
 
 		// If the package has no init file, just create an empty module object.
-		$module = new ModuleValue($dotpath, $dotpath, new Scope, $filepath);
+		$module = new ModuleValue($dotpath, $dotpath, new Scope);
 		$this->loaded[$dotpath] = $module;
 
 		return $module;
@@ -290,8 +288,7 @@ class Importer {
 				$module = new ModuleValue(
 					$dotpath,
 					$packageDotpath,
-					$scope,
-					\dirname($filepath)
+					$scope
 				);
 
 				// Put the newly created module immediately in the "loaded

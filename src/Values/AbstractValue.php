@@ -193,8 +193,8 @@ abstract class AbstractValue extends ValueFriends {
 	 * This way the exception is just simply thrown once.
 	 *
 	 * @param Context $context Runtime context of the call-site.
-	 * @param array<AbstractValue> $args Array dictionary of call arguments.
-	 * @param Location $callsite Call site location (optional).
+	 * @param ?CallArgs $args Args object with call arguments (optional).
+	 * @param ?Location $callsite Call site location (optional).
 	 * @throws TypeError
 	 */
 	public function invoke(

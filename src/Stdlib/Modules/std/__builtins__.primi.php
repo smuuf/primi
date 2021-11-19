@@ -85,8 +85,12 @@ class extends NativeModule {
 	 * @primi.function(inject-context, no-stack)
 	 */
 	public static function debugger(Context $ctx): AbstractValue {
+
 		$repl = new Repl('debugger');
-		return $repl->start($ctx) ?? Interned::null();
+		$repl->start($ctx);
+
+		return Interned::null();
+
 	}
 
 

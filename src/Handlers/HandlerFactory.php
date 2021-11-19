@@ -20,7 +20,7 @@ abstract class HandlerFactory {
 	/** @var array<string, string|null> Dict of handler classes we know exist. */
 	private static $handlersCache = [];
 
-	private const PREFIX = \Smuuf\Primi\Handlers\Kinds::class;
+	private const PREFIX = '\Smuuf\Primi\Handlers\Kinds';
 
 	private static function getClassName(string $nodeName) {
 		return self::PREFIX . "\\$nodeName";
@@ -33,7 +33,7 @@ abstract class HandlerFactory {
 	 * NOTE: Return type is omitted for performance reasons, as this method will
 	 * be called VERY often.
 	 *
-	 * @return string
+	 * @return ?string
 	 */
 	public static function getFor(string $name, ?bool $strict = \true) {
 

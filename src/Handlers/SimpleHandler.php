@@ -27,8 +27,7 @@ abstract class SimpleHandler extends Handler {
 
 			$location = new Location(
 				$context->getCurrentModule()->getStringRepr(),
-				(int) $node['_l'],
-				(int) $node['_p']
+				(int) $node['_l']
 			);
 
 			throw new ErrorException(

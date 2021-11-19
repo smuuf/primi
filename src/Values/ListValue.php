@@ -71,6 +71,7 @@ class ListValue extends AbstractNativeValue {
 
 		$return = [];
 		foreach ($self->value as $item) {
+
 			// This avoids infinite loops with self-nested structures by
 			// checking whether circular detector determined that we
 			// would end up going in (infinite) circles.
@@ -81,7 +82,7 @@ class ListValue extends AbstractNativeValue {
 
 		}
 
-		return sprintf("[%s]", \implode(', ', $return));
+		return \sprintf("[%s]", \implode(', ', $return));
 
 	}
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Parser;
 
 use \hafriedlander\Peg\Compiler;
@@ -27,7 +29,7 @@ abstract class ParserFactory {
 			return self::PARSER_CLASS;
 		}
 
-		$grammarVersion = \md5(\filemtime(self::GRAMMAR_FILE));
+		$grammarVersion = \md5((string) \filemtime(self::GRAMMAR_FILE));
 		$parserVersion = \file_exists(self::VERSION_FILE)
 			? \file_get_contents(self::VERSION_FILE)
 			: \false;

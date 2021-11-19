@@ -254,8 +254,7 @@ class FnContainer {
 		// The called function still expects a dictionary, if "**kwargs" were
 		// defined in the function parameters, even if it will be empty.
 		if ($kwArgsCollector) {
-			$kwArgsCollectorDict = new DictValue;
-			$finalArgs[$kwArgsCollector] = $kwArgsCollectorDict;
+			$kwArgsCollector = $finalArgs[$kwArgsCollector] = new DictValue;
 		}
 
 		// Process positional arguments first. array_slice() is used so - while
@@ -296,29 +295,30 @@ class FnContainer {
 		// Now let's process keyword arguments. At this point it's easier for us
 		// to iterate over passed kwargs (instead of determining what is still
 		// "left unprocessed" by the previous positional-args-processing).
-		$callKwargs = $callArgs->getKwargs();
-		foreach ($callKwargs as $key => $value) {
+		foreach ($callArgs->getKwargs() as $key => $value) {
 
 			// If this kwarg key is not at all present in known definition
 			// args, we don't expect this kwarg, so we throw an error.
-			if (!\array_key_exists($key, $defParams)) {
-				if ($kwArgsCollector) {
-					// If there was an unexpected kwarg, but there is a kwarg
-					// collector defined, add this unexpected kwarg to it.
-					$kwArgsCollectorDict->itemSet(Interned::string($key), $value);
-					continue;
-				} else {
-					throw new TypeError("Unexpected keyword argument '$key'");
+			if (\array_key_exists($key, $defParams)) {
+
+				// If this kwarg overwrites already specified final arg
+				// (unspecified are false, so isset() works here), throw an
+				// error.
+				if (!empty($finalArgs[$key])) {
+					throw new TypeError("Argument '$key' passed multiple times");
 				}
-			}
 
-			// If this kwarg overwrites already specified final arg (unspecified
-			// are false, so isset() works here), throw an error.
-			if (!empty($finalArgs[$key])) {
-				throw new TypeError("Argument '$key' passed multiple times");
-			}
+				$finalArgs[$key] = $value;
 
-			$finalArgs[$key] = $value;
+			} elseif ($kwArgsCollector) {
+
+				// If there was an unexpected kwarg, but there is a kwarg
+				// collector defined, add this unexpected kwarg to it.
+				$kwArgsCollector->itemSet(Interned::string($key), $value);
+
+			} else {
+				throw new TypeError("Unexpected keyword argument '$key'");
+			}
 
 		}
 
