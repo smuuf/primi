@@ -31,10 +31,10 @@ $src = "function f(a, X, X, d) { }";
 
 Assert::exception(function() use ($i, $src) {
 	$i->run($src);
-}, SyntaxError::class, "#Duplicate parameter 'X' in function#i");
+}, SyntaxError::class, "#Duplicate parameter name 'X'#i");
 
 //
-// Error "Duplicate parameter '$paramName' in function" #2
+// Error "Duplicate parameter name '$paramName'" #2
 // Even though there are more duplicated parameters, X is found first.
 //
 
@@ -42,4 +42,4 @@ $src = "function f(a, X, c, X, Y, Y) { }";
 
 Assert::exception(function() use ($i, $src) {
 	$i->run($src);
-}, SyntaxError::class, "#Duplicate parameter 'X' in function#i");
+}, SyntaxError::class, "#Duplicate parameter name 'X'#i");

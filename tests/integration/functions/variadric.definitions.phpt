@@ -41,7 +41,7 @@ Assert::noError(function() use ($i, $src) {
 //
 // SyntaxError "Syntax error"
 // Variadic "*args" or "**kwargs" parameters must be placed after all other
-// non-Variadic parameters.
+// non-variadic parameters.
 //
 
 $src = "function f(a, *b, c) { }";

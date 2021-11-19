@@ -12,8 +12,6 @@ use \Smuuf\Primi\Structures\FnContainer;
 
 class FunctionDefinition extends SimpleHandler {
 
-	const NODE_NEEDS_TEXT = \true;
-
 	protected static function handle(array $node, Context $context) {
 
 		$name = "{$node['fnName']}()";
@@ -63,27 +61,61 @@ class FunctionDefinition extends SimpleHandler {
 		// being the keys - with false as their values.
 		// This makes handling the "invoke" logic used later quite easier.
 		$params = [];
-		if (isset($paramsNode)) {
 
-			// Make sure this is always list, even with one item.
-			$paramsNodes = Func::ensure_indexed($paramsNode);
-			$paramNames = \array_column($paramsNodes, 'text');
-			foreach ($paramNames as $paramName) {
+		// Make sure this is always list, even with one item.
+		$paramsNodes = Func::ensure_indexed($paramsNode);
 
-				// Detect duplicate param names - they are forbidden.
-				//
-				// This happens if defining function parameters like:
-				// > function f(a, b, b) { ... }
+		$foundStarred = \false;
+		$foundDoubleStarred = \false;
 
-				if (isset($params[$paramName])) {
-					throw new InternalPostProcessSyntaxError(
-						"Duplicate parameter '$paramName' in function"
-					);
-				}
+		foreach ($paramsNodes as $node) {
 
-				$params[$paramName] = \false;
+			$strippedParamName = $node['param']['text'];
 
+			// Detect duplicate param names - they are forbidden.
+			// For this we need to use parameter names stripped of any stars,
+			// because using "f(c, *c)" should still be a "duplicate parameter"
+			// error.
+			//
+			// This happens if defining function parameters like:
+			// > function f(a, b, b) { ... }
+
+			if (isset($strippedParamNames[$strippedParamName])) {
+				throw new InternalPostProcessSyntaxError(
+					"Duplicate parameter name '$strippedParamName'"
+				);
 			}
+
+			// We track stripped param names as array keys so we can just
+			// use isset().
+			$strippedParamNames[$strippedParamName] = \false;
+
+			// Detect wrongly positioned arguments. Non-variadics must be before
+			// variadics.
+			if (
+				$node['stars'] === StarredExpression::STARS_NONE
+				&& ($foundStarred || $foundDoubleStarred)
+			) {
+				throw new InternalPostProcessSyntaxError(
+					"Non-variadic parameter found after variadic parameters"
+				);
+			}
+
+			if (
+				$node['stars'] === StarredExpression::STARS_ONE
+				&& $foundDoubleStarred
+			) {
+				throw new InternalPostProcessSyntaxError(
+					"Non-variadic positional parameter found after variadic keyword parameters"
+				);
+			}
+
+			$foundStarred |= $node['stars'] === StarredExpression::STARS_ONE;
+			$foundDoubleStarred |= $node['stars'] === StarredExpression::STARS_TWO;
+
+			// FnContainer expects list of arguments WITH stars - so it can
+			// know which parameters actually are variadic.
+			$params[$node['text']] = \false;
 
 		}
 

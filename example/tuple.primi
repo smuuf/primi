@@ -41,7 +41,6 @@ some_tuple = tuple(iterable)
 assert(len(some_tuple) == 6)
 assert(some_tuple == ("s", "t", "u", "f", "f", "!"))
 
-
 //
 // Tuple comparisons.
 //
@@ -58,6 +57,18 @@ assert(tuple_b == tuple_c, _)
 
 _ = "When comparing tuples, order of items is important"
 assert(tuple_c != tuple_d, _)
+
+//
+// Tuple truthiness.
+//
+
+_ = "Only empty tuple is evaluated to false"
+assert(bool(tuple()) == false, _)
+assert(bool((true,)) == true)
+assert(bool((false,)) == true)
+assert(bool((false, true)) == true)
+assert(bool((0,)) == true)
+assert(bool((0, 1)) == true)
 
 //
 // Tuple operations.
@@ -109,3 +120,14 @@ some_dict = {
 assert(some_dict[small_tuple] == "YAY")
 assert(some_dict[(1, "something", 234, true, null)] == "YAY")
 assert(some_dict[(1, 2, 3)] == "IMMUTABLES")
+
+//
+// Tuple membership.
+//
+
+assert("something" in large_tuple)
+assert("not there" not in large_tuple)
+assert(true in large_tuple)
+assert(false in large_tuple)
+assert(["wow", "a", "list"] in large_tuple)
+assert(["wow", "a", "different", "list"] not in large_tuple)
