@@ -151,7 +151,7 @@ return new class extends NativeModule {
 	 * @primi.function(no-stack)
 	 */
 	public static function abs(NumberValue $n): NumberValue {
-		return Interned::number((string) \abs((float) $n->value));
+		return Interned::number(\ltrim($n->value, '-'));
 	}
 
 	/**
