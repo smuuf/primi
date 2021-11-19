@@ -49,7 +49,7 @@ abstract class Indices {
 	 * represent an existing index in the array passed as the second argument,
 	 * an IndexError exception is thrown.
 	 *
-	 * @param array|ArrayAccess $array
+	 * @param array|\ArrayAccess $array
 	 * @return mixed
 	 */
 	public static function resolveIndexOrError(int $index, $array) {

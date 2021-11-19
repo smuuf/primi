@@ -20,9 +20,6 @@ class Context {
 	/** Runtime config bound to this context. */
 	private Config $config;
 
-	/** Main/root directory for this context or null if not defined. */
-	private ?string $mainDirectory;
-
 	//
 	// Call stack.
 	//
@@ -70,8 +67,6 @@ class Context {
 		InterpreterServices $interpreterServices,
 		?string $mainDirectory = null
 	) {
-
-		$this->mainDirectory = $mainDirectory;
 
 		// Assign stuff to properties to avoid unnecessary indirections when
 		// accessing them (optimization).
@@ -135,6 +130,9 @@ class Context {
 
 	// Call stack management.
 
+	/**
+	 * @return array<StackFrame>
+	 */
 	public function getCallStack(): array {
 		return $this->callStack;
 	}

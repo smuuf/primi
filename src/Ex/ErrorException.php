@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Ex;
 
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Location;
+use \Smuuf\Primi\StackFrame;
+use \Smuuf\Primi\Helpers\Func;
 
 /**
  * All errors that Primi knows will extend this base error exception class.
@@ -14,19 +15,17 @@ use \Smuuf\Primi\Location;
  */
 class ErrorException extends BaseException {
 
-	/**
-	 * Location object representing location of the error.
-	 */
+	/** Location object representing location of the error. */
 	private Location $location;
 
 	/**
 	 * Traceback (which is really just the callstack).
-	 * @var array<array{string, Location}>
+	 * @var array<StackFrame>
 	 */
 	private ?array $traceback = \null;
 
 	/**
-	 * @param array<array{string, Location}> $traceback
+	 * @param array<StackFrame> $traceback
 	 */
 	public function __construct(
 		string $msg,
@@ -57,7 +56,7 @@ class ErrorException extends BaseException {
 
 	/**
 	 * Traceback, if available.
-	 * @var array<array{string, Location}>
+	 * @return array<string, StackFrame>
 	 */
 	public function getTraceback(): ?array {
 		return $this->traceback;

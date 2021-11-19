@@ -96,7 +96,7 @@ class Repl {
 	 * was specified as argument. Otherwise the interpreter creates its own
 	 * new context and REPL operates within that one.
 	 */
-	public function start(?Context $ctx = null): ?AbstractValue {
+	public function start(?Context $ctx = null): void {
 
 		// If context was not provided, create and use a new one.
 		if (!$ctx) {
@@ -112,7 +112,7 @@ class Repl {
 		$frame = new StackFrame($this->replName, $module);
 
 		$wrapper = new ContextPushPopWrapper($ctx, $frame, $scope);
-		$retval = $wrapper->wrap(function($ctx) {
+		$wrapper->wrap(function($ctx) {
 
 			// Print out level (current frame's index in call stack).
 			if (!self::$noExtras) {
@@ -120,7 +120,7 @@ class Repl {
 				$this->printHelp();
 			}
 
-			return $this->loop($ctx);
+			$this->loop($ctx);
 
 		});
 
@@ -130,16 +130,12 @@ class Repl {
 			$this->driver->output(Colors::get("{yellow}Exiting REPL...{_}\n"));
 		}
 
-		return $retval;
-
 	}
 
-	private function loop(Context $ctx): ?AbstractValue {
+	private function loop(Context $ctx): void {
 
 		$scope = $ctx->getCurrentScope();
-
 		$cellNumber = 1;
-		$retval = null;
 
 		readline_completion_function(function() use ($scope) {
 			return array_keys($scope->getVariables(true));
@@ -174,7 +170,7 @@ class Repl {
 				case 'exit':
 					// Catch a non-command 'exit'.
 					// Return the result of last expression executed, or null.
-					return $retval;
+					return;
 				case 'exit!':
 					// Catch a non-command 'exit!'.
 					// Just quit the whole thing.

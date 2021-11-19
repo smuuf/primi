@@ -34,7 +34,6 @@ class PhpCallConvention implements CallConventionInterface {
 	use StrictObject;
 
 	private \Closure $closure;
-	private \ReflectionFunction $rf;
 
 	public function __construct(
 		\Closure $closure,
@@ -42,8 +41,6 @@ class PhpCallConvention implements CallConventionInterface {
 	) {
 
 		$this->closure = $closure;
-		$this->rf = $rf;
-
 		Func::check_allowed_parameter_types_of_function($rf);
 
 	}
@@ -75,13 +72,10 @@ class PhpCallConvention implements CallConventionInterface {
 
 			$better = BetterException::from($e);
 
-			// We want to handle only argument type errors. Return type
-			// errors are a sign of badly used return type hint for PHP
-			// function and should bubble up (be rethrown) for the
-			// developer to see it.
-			if ($better instanceof ReturnTypeError) {
-				throw $e;
-			}
+			// We want to handle only argument type errors. Other errors
+			// (for example "return type errors") are a sign of badly used
+			// return type hint for PHP function and should bubble up (be
+			// rethrown) for the developer to see it.
 
 			if ($better instanceof ArgumentTypeError) {
 				$argIndex = $better->getArgumentIndex();
@@ -104,6 +98,8 @@ class PhpCallConvention implements CallConventionInterface {
 					$better->getExpected() - ($ctx ? 1 : 0));
 
 			}
+
+			throw $e;
 
 		}
 

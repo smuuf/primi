@@ -7,7 +7,7 @@ namespace Smuuf\Primi\Ex;
 class CircularImportError extends ImportError {
 
 	/**
-	 * @param array<string> $nextModule Name of the module causing circular
+	 * @param string $nextModule Name of the module causing circular
 	 * import.
 	 */
 	public function __construct(string $nextModule) {

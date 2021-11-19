@@ -17,7 +17,7 @@ class VectorItem extends ChainedHandler {
 		AbstractValue $subject
 	) {
 
-		$key = HandlerFactory::runNode($node['index'], $context, $subject);
+		$key = HandlerFactory::runNode($node['index'], $context);
 
 		// If this is a leaf node, return an insertion proxy.
 		if ($node['leaf']) {
@@ -29,7 +29,8 @@ class VectorItem extends ChainedHandler {
 		$value = $subject->itemGet($key);
 		if ($value === \null) {
 			throw new RuntimeError(\sprintf(
-				"Type '%s' does not support item access", $subject->getTypeName()
+				"Type '%s' does not support item access",
+				$subject->getTypeName()
 			));
 		}
 

@@ -85,7 +85,7 @@ class TupleValue extends AbstractNativeValue {
 
 		}
 
-		return sprintf("(%s)", \implode(', ', $return));
+		return \sprintf("(%s)", \implode(', ', $return));
 
 	}
 

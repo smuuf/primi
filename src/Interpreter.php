@@ -16,9 +16,6 @@ class Interpreter {
 
 	use StrictObject;
 
-	/** Runtime context the interpreter works with. */
-	private Context $context;
-
 	/** Runtime configuration. */
 	private Config $config;
 
@@ -28,9 +25,7 @@ class Interpreter {
 	/**
 	 * Create a new instance of interpreter.
 	 *
-	 * @param Context|null $context _(optional)_ Runtime context to be used
-	 * by the interpreter. If not provided, a new context is created
-	 * automatically.
+	 * @param Config|null $config _(optional)_ Config for the interpreter.
 	 */
 	public function __construct(?Config $config = null) {
 		$this->config = $config ?? Config::buildDefault();
@@ -49,9 +44,9 @@ class Interpreter {
 	/**
 	 * Main entrypoint for executing Primi source code.
 	 *
-	 * @param string|Source Source provided as string or instance of `Source`
-	 * object.
-	 * @param Scope|null $globalScope Optional scope object that is to
+	 * @param string|Source $source Source provided as string or instance of
+	 * `Source` object.
+	 * @param Scope|null $mainScope Optional scope object that is to
 	 * be used as global scope of the main module.
 	 */
 	public function run(

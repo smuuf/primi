@@ -74,11 +74,10 @@ class AstProvider {
 	 */
 	private static function parseSource(Source $source): array {
 
+		$sourceString = $source->getSourceCode();
+
 		try {
-
-			$sourceString = $source->getSourceCode();
 			return (new ParserHandler($sourceString))->run();
-
 		} catch (InternalSyntaxError $e) {
 
 			// Show a bit of code where the syntax error occurred.

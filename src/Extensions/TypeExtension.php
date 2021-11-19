@@ -2,14 +2,19 @@
 
 namespace Smuuf\Primi\Extensions;
 
+use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Helpers\ValueFriends;
 use \Smuuf\Primi\Helpers\MethodExtractor;
 
 abstract class TypeExtension extends ValueFriends {
 
+	final private function __construct() {
+		// Disallow instantiation.
+	}
+
 	/**
-	 * @return array<string, AbstractValue|mixed> Dict array that represents the
-	 * contents of the module.
+	 * @return array<string, FuncValue> Dict array containing Primi functions
+	 * which represent class methods.
 	 */
 	public static function execute(): array {
 		return MethodExtractor::extractMethods(new static);

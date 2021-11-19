@@ -78,6 +78,34 @@ class CallArgs {
 	}
 
 	/**
+	 * Returns Primi object stored as positional argument. If not found,
+	 * `EngineError` is thrown.
+	 */
+	public function getArg(int $index): AbstractValue {
+
+		if (isset($this->args[$index])) {
+			return$this->args[$index];
+		}
+
+		throw new EngineError("Positional argument $index not found");
+
+	}
+
+	/**
+	 * Returns Primi object stored as positional argument. If not found,
+	 * `EngineError` is thrown.
+	 */
+	public function getKwarg(string $name): AbstractValue {
+
+		if (isset($this->kwargs[$name])) {
+			return$this->kwargs[$name];
+		}
+
+		throw new EngineError("Keyword argument '$name' not found");
+
+	}
+
+	/**
 	 * Returns Primi object stored as positional argument. If not found, Primi
 	 * null object is returned.
 	 */
