@@ -28,8 +28,8 @@ class ListValue extends AbstractNativeValue {
 
 	public function __clone() {
 
-		// List is really a PHP array of other Primi value objects,
-		// so we need to do deep copy.
+		// Contents of a list is internally really just a PHP array of other
+		// Primi value objects, so we need to do deep copy.
 		\array_walk($this->value, function(&$item) {
 			$item = clone $item;
 		});

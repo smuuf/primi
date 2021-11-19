@@ -125,7 +125,7 @@ class FnContainer {
 			in_array(self::FLAG_CALLCONVENTION_ARGSOBJECT, $flags, \true);
 
 		$callConvention = $flagCallConventionArgsObject
-			? new ArgsObjectCallConvention($closure, $rf)
+			? new ArgsObjectCallConvention($closure)
 			: new PhpCallConvention($closure, $rf);
 
 		$wrapper = function(
@@ -210,13 +210,12 @@ class FnContainer {
 	 * @param array $defParams
 	 * @param CallArgs $callArgs
 	 * @param Scope $scope
-	 * @return array $defParams.
 	 */
 	private static function prepareArgs(
 		$defParams,
 		$callArgs,
 		$scope
-	) {
+	): void {
 
 		// Determine - if there are such things specified:
 		// 1) Which argument will collect remaining positional arguments.
@@ -307,6 +306,7 @@ class FnContainer {
 					// If there was an unexpected kwarg, but there is a kwarg
 					// collector defined, add this unexpected kwarg to it.
 					$kwArgsCollectorDict->itemSet(Interned::string($key), $value);
+					continue;
 				} else {
 					throw new TypeError("Unexpected keyword argument '$key'");
 				}

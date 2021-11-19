@@ -31,7 +31,18 @@ class ArgumentList extends SimpleHandler {
 				$key = HandlerFactory::runNode($arg['argKey'], $context);
 				$kwargs[$key] = HandlerFactory::runNode($arg['argVal'], $context);
 			} else {
-				$args[] = HandlerFactory::runNode($arg['argVal'], $context);
+
+				$result = HandlerFactory::runNode($arg['argVal'], $context);
+				if ($result instanceof CallArgs) {
+					if ($posArgs = $result->getArgs()) {
+						$args = [...$args, ...$posArgs];
+					} else {
+						$kwargs = \array_replace($kwargs, $result->getKwargs());
+					}
+				} else {
+					$args[] = $result;
+				}
+
 			}
 		}
 
@@ -50,10 +61,20 @@ class ArgumentList extends SimpleHandler {
 		// If both types of arguments are used, keyword arguments MUST be
 		// places after positional arguments. So let's check it.
 		$foundKwargs = [];
+		$foundAnyKwargs = \false;
+
 		foreach ($node['args'] as $arg) {
 
-			$isKwarg = isset($arg['argKey']);
-			if (!$isKwarg && $foundKwargs) {
+			// Detect:
+			// 1. literal keyword arguments, or
+			// 2. Keyword arguments used as starred "**kwargs" argument.
+			$isLiteralKwarg = isset($arg['argKey']);
+			$areStarredKwargs =	$arg['argVal']['name'] === 'StarredExpression'
+				&& $arg['argVal']['stars'] === StarredExpression::STARS_TWO;
+
+			$isAnyKwarg = $isLiteralKwarg || $areStarredKwargs;
+
+			if (!$isAnyKwarg && $foundAnyKwargs) {
 
 				// This is a positional argument, but we already encountered
 				// some keyword argument - that's a syntax error (easier to
@@ -68,7 +89,7 @@ class ArgumentList extends SimpleHandler {
 
 			}
 
-			if ($isKwarg) {
+			if ($isLiteralKwarg) {
 
 				$kwargKey = $arg['argKey']['text'];
 
@@ -89,6 +110,8 @@ class ArgumentList extends SimpleHandler {
 				$foundKwargs[$kwargKey] = \null;
 
 			}
+
+			$foundAnyKwargs |= $isAnyKwarg;
 
 		}
 

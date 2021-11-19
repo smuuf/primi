@@ -2,12 +2,13 @@
 
 namespace Smuuf\Primi\Parser;
 
-use \hafriedlander\Peg\Parser\Basic as PegParser;
 use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Ex\InternalPostProcessSyntaxError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Timer;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+
+use \hafriedlander\Peg\Parser\Basic as PegParser;
 
 class ParserHandler {
 
@@ -17,7 +18,7 @@ class ParserHandler {
 	/** @var array<string, scalar> Parser statistics. */
 	private array $stats = [];
 
-	/** @var object Compiled parser object. */
+	/** Compiled parser object. */
 	private PegParser $parser;
 
 	public function __construct(string $source) {

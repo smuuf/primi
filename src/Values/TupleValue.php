@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Indices;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\CircularDetector;
-use Smuuf\Primi\Helpers\Indices;
 
 /**
  * @property array<AbstractValue> $value Internal tuple container.
@@ -29,14 +28,23 @@ class TupleValue extends AbstractNativeValue {
 	 * Create new instance from iterable list containing `[key, value]` Primi
 	 * value tuples.
 	 *
-	 * @param iterable<AbstractValue> $items
+	 * @param array<AbstractValue> $items
 	 */
 	public function __construct(array $items = []) {
-		$this->value = $items;
+
+		// Let's make sure the internal array is indexed from zero.
+		$this->value = \array_values($items);
+
 	}
 
 	public function __clone() {
-		$this->value = clone $this->value;
+
+		// Contents of a tuple is internally really just a PHP array of other
+		// Primi value objects, so we need to do deep copy.
+		\array_walk($this->value, function(&$item) {
+			$item = clone $item;
+		});
+
 	}
 
 	public function getType(): TypeValue {

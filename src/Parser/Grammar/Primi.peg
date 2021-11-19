@@ -2,6 +2,8 @@
 
 namespace Smuuf\Primi\Parser\Compiled;
 
+use \Smuuf\Primi\Handlers\Kinds\StarredExpression;
+
 use \hafriedlander\Peg\Parser;
 
 class PrimiParser extends Parser\Packrat {
@@ -30,6 +32,48 @@ class PrimiParser extends Parser\Packrat {
 		if (\in_array($result['text'], self::RESERVED_WORDS, \true)) {
 			$result = \false;
 		}
+	}
+
+	/**
+	 * Add number of stars present at a starred expression.
+	 */
+	protected function StarredExpression__finalise(&$result) {
+
+		$starCount = \strlen($result['stars']['text'] ?? '');
+		switch ($starCount) {
+			case 1:
+				$stars = StarredExpression::STARS_ONE;
+				break;
+			case 2:
+				$stars = StarredExpression::STARS_TWO;
+				break;
+			default:
+				$stars = StarredExpression::STARS_NONE;
+		}
+
+		$result['stars'] = $stars;
+
+	}
+
+	/**
+	 * Add number of stars present at a starred expression.
+	 */
+	protected function MaybeStarredVariableName__finalise(&$result) {
+
+		$starCount = \strlen($result['stars']['text'] ?? '');
+		switch ($starCount) {
+			case 1:
+				$stars = StarredExpression::STARS_ONE;
+				break;
+			case 2:
+				$stars = StarredExpression::STARS_TWO;
+				break;
+			default:
+				$stars = StarredExpression::STARS_NONE;
+		}
+
+		$result['stars'] = $stars;
+
 	}
 
 /*!* Primi
@@ -134,14 +178,14 @@ Operand: ( ( "(" __ core:Expression __ ")" | core:AbstractValue ) chain:Chain? )
 
 # Allow argument lists
 # 1. Without named argument
-# 2. With named arguments, which must be placed after any non-named arguments.
-Argument: (argKey:VariableName __ ":" )? __ argVal:Expression
+# 2. With named arguments, which must be placed after any non-named arguments (this one is handled in ArgumentList node postprocessing).
+StarredExpression: stars:/\*{1,2}/ expr:Expression
+Argument: ( (argKey:VariableName __ ":" )? __ argVal:Expression ) | ( argVal:StarredExpression )
 ArgumentList: args:Argument ( __ "," __ args:Argument )*
 
 # Starred parameters: Either one or two asterisks.
-StarredParameter: "*" VariableName
-DoubleStarredParameter: "**" VariableName
-ParameterList: skip:VariableName ( __ "," __ skip:VariableName )* ( __ "," __ skip:StarredParameter )? ( __ "," __ skip:DoubleStarredParameter )?
+MaybeStarredVariableName: stars:/\*{0,2}/ param:VariableName
+ParameterList: skip:MaybeStarredVariableName ( __ "," __ skip:MaybeStarredVariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:ParameterList? __ ")" __ body:Block
 
 # Import statement:
