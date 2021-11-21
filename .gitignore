@@ -1,7 +1,15 @@
-last_*.out
+# Composer's vendor dir.
 vendor/**
 .vscode/**
-temp/**
-!temp/.gitkeep
+
+# Output from Nette Tester for debugging tests.
 /tests/**/output/*.actual
 /tests/**/output/*.expected
+
+# Main temporary dir.
+/temp/**
+!/temp/.gitkeep
+
+# Main build dir.
+/build/**
+!/build/.gitkeep

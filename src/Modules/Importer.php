@@ -226,16 +226,16 @@ class Importer {
 
 			// If this file with this extension does in fact exist, load it
 			// using the correct loader.
-			if ($filepath = \realpath($candidate)) {
-
-				return $this->loadModule(
-					$loader,
-					$filepath,
-					$dotpath,
-					$packageDotpath
-				);
-
+			if (!\is_file($candidate)) {
+				continue;
 			}
+
+			return $this->loadModule(
+				$loader,
+				$candidate,
+				$dotpath,
+				$packageDotpath
+			);
 
 		}
 
@@ -345,7 +345,7 @@ class Importer {
 		// matches the filesystem contents.
 		$candidates = self::withSupportedExtensions($filepath);
 		foreach ($candidates as $candidate) {
-			if (\realpath($candidate)) {
+			if (\is_file($candidate)) {
 				Logger::debug("  YES (module)");
 				return \true;
 			}

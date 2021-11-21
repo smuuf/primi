@@ -199,7 +199,7 @@ class Repl {
 
 			} catch (EngineException|\Throwable $e) {
 
-				// All exceptions other than ErrorException are like to be a
+				// All exceptions other than ErrorException are likely to be a
 				// problem with Primi or PHP - print the whole PHP exception.
 				$this->printPhpTraceback($e);
 

@@ -248,7 +248,7 @@ class Entrypoint {
 		$php = PHP_VERSION;
 
 		$string = "Primi {$env}, Copyright (c) Premysl Karbula\n"
-			. "{yellow}Running on PHP {$php}{_}";
+			. "{yellow}Running on PHP {$php}{_}\n";
 		return Colors::get($string);
 
 	}
