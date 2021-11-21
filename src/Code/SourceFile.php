@@ -25,18 +25,17 @@ class SourceFile extends Source {
 
 	public function __construct(string $path) {
 
-		$real = \realpath($path);
-		if (!$real || !\is_file($real)) {
+		if (!\file_exists($path) || !\is_file($path)) {
 			throw new EngineError("File '$path' not found");
 		}
 
-		$code = \file_get_contents($real);
-		$id = \sprintf("<file '%s'>", $real);
+		$code = \file_get_contents($path);
+		$id = \sprintf("<file '%s'>", $path);
 
 		$this->sourceId = $id;
 		$this->sourceCode = $code;
 
-		$this->directory = \dirname($real);
+		$this->directory = \dirname($path);
 
 	}
 

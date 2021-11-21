@@ -8,4 +8,3 @@ array_shift($argv);
 
 $cli = new \Smuuf\Primi\Cli\Entrypoint($argv, __DIR__);
 $cli->execute();
-

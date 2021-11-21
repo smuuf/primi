@@ -195,8 +195,8 @@ class Config {
 	// Internal helpers.
 	//
 
-	private static function getDefaultTempDir(): string {
-		return __DIR__ . '/../temp';
+	private static function getDefaultTempDir(): ?string {
+		return EnvInfo::getBestTempDir();
 	}
 
 }

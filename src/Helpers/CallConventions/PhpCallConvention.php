@@ -14,9 +14,8 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\CallArgs;
 
 use \Smuuf\BetterExceptions\BetterException;
-use \Smuuf\BetterExceptions\Types\ArgumentCountError as BetterArgumentCountError;
 use \Smuuf\BetterExceptions\Types\ArgumentTypeError;
-use \Smuuf\BetterExceptions\Types\ReturnTypeError;
+use \Smuuf\BetterExceptions\Types\ArgumentCountError as BetterArgumentCountError;
 
 /**
  * Call convention for invoking PHP callables from within Primi code/engine.
