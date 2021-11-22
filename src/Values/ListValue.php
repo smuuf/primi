@@ -9,7 +9,6 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Indices;
 use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Helpers\CircularDetector;
 
 class ListValue extends AbstractNativeValue {
 
@@ -48,26 +47,13 @@ class ListValue extends AbstractNativeValue {
 		return (bool) $this->value;
 	}
 
-	public function getStringRepr(CircularDetector $cd = \null): string {
-
-		// If this is a root method of getting a string value, create instance
-		// of circular references detector, which we will from now on pass
-		// to all deeper methods.
-		if (!$cd) {
-			$cd = new CircularDetector;
-		}
-
-		return self::convertToString($this, $cd);
-
+	public function getStringRepr(): string {
+		return self::convertToString($this);
 	}
 
 	private static function convertToString(
-		self $self,
-		CircularDetector $cd
+		self $self
 	): string {
-
-		// Track current value object with circular detector.
-		$cd->add(\spl_object_hash($self));
 
 		$return = [];
 		foreach ($self->value as $item) {
@@ -75,10 +61,9 @@ class ListValue extends AbstractNativeValue {
 			// This avoids infinite loops with self-nested structures by
 			// checking whether circular detector determined that we
 			// would end up going in (infinite) circles.
-			$hash = \spl_object_hash($item);
-			$return[] = $cd->has($hash)
-				? \sprintf("*recursion (%s)*", Func::object_hash($item))
-				: $item->getStringRepr($cd);
+			$return[] = $item === $self
+				? \sprintf("[ *recursion (%s)* ]", Func::object_hash($item))
+				: $item->getStringRepr();
 
 		}
 
