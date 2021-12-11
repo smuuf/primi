@@ -52,12 +52,12 @@ info("Done.");
 function get_stub() {
 
 	$date = new \DateTime('now', new \DateTimeZone('UTC'));
-	$datetime = $date->format('r');
+	$buildId = $date->format('y.m.d.Hi');
 
 	return <<<STUB
 #!/usr/bin/env php
 <?php
-const COMPILED_AT = "$datetime";
+const BUILD_ID = "$buildId";
 if (extension_loaded('phar')) {
 	set_include_path('phar://' . __FILE__ . '/' . get_include_path());
 	Phar::mapPhar(basename(__FILE__));

@@ -244,10 +244,13 @@ class Entrypoint {
 	}
 
 	private static function getHeaderString(string $env = null): string {
+
 		$env = $env ? "($env)" : null;
 		$php = PHP_VERSION;
+		$buildInfo = EnvInfo::getPrimiBuild();
 
-		$string = "Primi {$env}, Copyright (c) Premysl Karbula\n"
+		$string = "Primi {$env}, Copyright (c) Premysl Karbula "
+			. "{darkgrey}(build {$buildInfo}){_}\n"
 			. "{yellow}Running on PHP {$php}{_}\n";
 		return Colors::get($string);
 

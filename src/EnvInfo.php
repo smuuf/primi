@@ -15,6 +15,17 @@ abstract class EnvInfo {
 	private static ?string $bestTempDir = \null;
 
 	/**
+	 * Get Primi build ID (if executed within compiled Phar, else 'dev').
+	 */
+	public static function getPrimiBuild(): string {
+
+		return self::isRunningInPhar()
+			? \constant('BUILD_ID')
+			: 'dev';
+
+	}
+
+	/**
 	 * Is current runtime being executed within Phar?
 	 */
 	public static function isRunningInPhar(): bool {
@@ -70,7 +81,7 @@ abstract class EnvInfo {
 		if (!EnvInfo::isRunningInPhar()) {
 
 			$tempDir = __DIR__ . '/../temp';
-			Logger::debug("Using temp directory '$tempDir'");
+			Logger::debug("Using library temp directory '$tempDir'");
 			return $tempDir;
 
 		}
