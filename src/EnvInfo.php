@@ -68,7 +68,7 @@ abstract class EnvInfo {
 	 * inside Phar.
 	 */
 	private static function determineIsRunningInPhar(): bool {
-		return !\extension_loaded('phar') || !\Phar::running();
+		return \extension_loaded('phar') && \Phar::running();
 	}
 
 	/**
