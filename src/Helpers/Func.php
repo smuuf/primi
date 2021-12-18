@@ -9,12 +9,15 @@ use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Parser\GrammarHelpers;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Structures\CallArgs;
+use \Smuuf\Primi\Structures\MapContainer;
 
 abstract class Func {
 
@@ -31,12 +34,12 @@ abstract class Func {
 
 	/**
 	 * Returns a generator yielding `[primi key, primi value]` tuples from some
-	 * PHP array. If the key or the value is not an instance of `AbstractValue`
+	 * PHP array. If the value is not an instance of `AbstractValue`
 	 * object, it will be converted automatically to a `AbstractValue` object.
 	 */
-	public static function array_to_primi_value_tuples(array $array): \Generator {
+	public static function array_to_couples(array $array): \Generator {
 
-		foreach (Func::iterator_as_tuples($array) as [$key, $value]) {
+		foreach ($array as $key => $value) {
 			yield [
 				AbstractValue::buildAuto($key),
 				AbstractValue::buildAuto($value)
@@ -46,35 +49,119 @@ abstract class Func {
 	}
 
 	/**
-	 * Returns a generator yielding `[key, value]` tuples from some iterator.
+	 * Convert iterable of couples _(PHP 2-tuple arrays with two items
+	 * containing Primi objects, where first item must a string object
+	 * representing a valid Primi variable name)_ to PHP dict array mapping
+	 * pairs of `['variable_name' => Some Primi object]`.
+	 *
+	 * @param array<array{AbstractValue, AbstractValue}> $couples
+	 * @return array<string, AbstractValue> PHP dict array mapping of variables.
+	 * @throws TypeError
 	 */
-	public static function iterator_as_tuples(iterable $iter): \Generator {
-		foreach ($iter as $key => $value) {
-			yield [$key, $value];
+	public static function couples_to_variables_array(
+		iterable $couples,
+		string $intendedTarget
+	) {
+
+		$attrs = [];
+		foreach ($couples as [$k, $v]) {
+
+			if (!$k instanceof StringValue) {
+				throw new TypeError(
+					"$intendedTarget is not a string but '{$k->getTypeName()}'");
+			}
+
+			$varName = $k->getStringValue();
+			if (!GrammarHelpers::isValidName($varName)) {
+				throw new TypeError(
+					"$intendedTarget '$varName' is not a valid name");
+			}
+
+			$attrs[$varName] = $v;
+
 		}
+
+		return $attrs;
+
 	}
 
 	/**
-	 * Returns a generator yielding values from iterable.
+	 * Returns PHP iterable returning couples (2-tuples) of `[key, value]` from
+	 * a iterable Primi object that can be interpreted as a mapping.
+	 * Best-effort-style.
 	 *
-	 * This works as `iterator_to_array`, but also supports generator iterables
-	 * which use objects as keys (which `iterator_to_array` hates and throws
-	 * the 'Illegal offset type' error).
+	 * @return iterable<array{AbstractValue, AbstractValue}>
+	 * @throws TypeError
 	 */
-	public static function get_map_values(iterable $iter): array {
+	public static function mapping_to_couples(AbstractValue $value) {
 
-		$result = [];
-		foreach ($iter as $key => $value) {
+		$internalValue = $value->getInternalValue();
+		if ($internalValue instanceof MapContainer) {
 
-			if ($key instanceof AbstractValue) {
-				$key = $key->getStringValue();
+			// If the internal value already is a mapping represented by
+			// MapContainer, just return its items-iterator.
+			return $internalValue->getItemsIterator();
+
+		} else {
+
+			// We can also try to extract mapping from Primi iterable objects.
+			// If the Primi object provides an iterator, we're going to iterate
+			// over its items AND if each of these items is an iterable with
+			// two items in it, we can extract mapping from it - and convert
+			// it into Primi object couples.
+
+			// First, we try if the passed Primi object supports iteration.
+			$items = $value->getIterator();
+			if ($items === \null) {
+				throw new TypeError("Unable to create mapping from non-iterable");
 			}
 
-			$result[$key] = $value;
+			// We prepare the result container for couples, which will be
+			// discarded if we encounter any errors when putting results in it.
+			$couples = [];
+			$i = -1;
+
+			foreach ($items as $item) {
+
+				$couple = [];
+				$i++;
+				$j = -1;
+
+				// Second, for each of the item of the top-iterator we check
+				// if the item also supports iteration.
+				$subitems = $item->getIterator();
+				if ($subitems === \null) {
+					throw new TypeError(
+						"Unable to create mapping from iterable: "
+						. "item #$i is not iterable"
+					);
+				}
+
+				foreach ($subitems as $subitem) {
+
+					// Third, since we want to build and return iterable
+					// containing couples, the item needs to contain
+					// exactly two sub-items.
+					if (++$j > 2) {
+						throw new TypeError(
+							"Unable to create mapping from iterable: "
+							. "item #$i has more than two items ($j) in it"
+						);
+					}
+
+					$couple[] = $subitem;
+
+				}
+
+				$couples[] = $couple;
+
+			}
+
+			// All went well, return iterable (list array) with all gathered
+			// couples.
+			return $couples;
 
 		}
-
-		return $result;
 
 	}
 

@@ -29,14 +29,13 @@ class TypeTypeExtension extends TypeExtension {
 		}
 
 		$attrs = $attrs
-			? $attrs->getInternalValue()
+			? Func::couples_to_variables_array(
+				Func::mapping_to_couples($attrs),
+				'Attribute name'
+			)
 			: [];
 
-		return new TypeValue(
-			$value->getStringValue(),
-			$parentType,
-			Func::get_map_values($attrs)
-		);
+		return new TypeValue($value->getStringValue(), $parentType, $attrs);
 
 	}
 

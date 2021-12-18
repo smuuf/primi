@@ -14,15 +14,15 @@ class DictDefinition extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
-		if (empty($node['items'])) {
+		if (!$node['items']) {
 			return new DictValue;
 		}
 
 		try {
 
-			return new DictValue(Func::iterator_as_tuples(
-				self::buildMap($node['items'], $context)
-			));
+			return new DictValue(
+				self::buildPairs($node['items'], $context)
+			);
 
 		} catch (UnhashableTypeException $e) {
 			throw new RuntimeError(\sprintf(
@@ -33,16 +33,18 @@ class DictDefinition extends SimpleHandler {
 
 	}
 
-	protected static function buildMap(
-		array $itemNodes,
+	private static function buildPairs(
+		array $nodes,
 		Context $context
-	): \Generator {
+	): array {
 
 		$result = [];
-		foreach ($itemNodes as $itemNode) {
+		foreach ($nodes as $node) {
 
-			yield HandlerFactory::runNode($itemNode['key'], $context)
-				=> HandlerFactory::runNode($itemNode['value'], $context);
+			$result[] = [
+				HandlerFactory::runNode($node['key'], $context),
+				HandlerFactory::runNode($node['value'], $context),
+			];
 
 		}
 
@@ -55,6 +57,8 @@ class DictDefinition extends SimpleHandler {
 		// Make sure this is always list, even with one item.
 		if (isset($node['items'])) {
 			$node['items'] = Func::ensure_indexed($node['items']);
+		} else {
+			$node['items'] = [];
 		}
 
 	}

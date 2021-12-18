@@ -8,6 +8,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Structures\CallArgs;
@@ -25,14 +26,14 @@ class StarredExpression extends SimpleHandler {
 		/** @var AbstractValue */
 		$value = HandlerFactory::runNode($node['expr'], $context);
 
-		$iter = $value->getIterator();
-		if ($iter === \null) {
-			throw new RuntimeError("Cannot unpack non-iterable");
-		}
-
 		$values = [];
 		switch (\true) {
 			case $node['stars'] === self::STARS_ONE:
+
+				$iter = $value->getIterator();
+				if ($iter === \null) {
+					throw new RuntimeError("Cannot unpack non-iterable");
+				}
 
 				foreach ($iter as $v) {
 					$values[] = $v;
@@ -41,12 +42,13 @@ class StarredExpression extends SimpleHandler {
 				return new CallArgs($values);
 
 			case $node['stars'] === self::STARS_TWO:
-
-				foreach ($iter as $k => $v) {
-					$values[$k->getStringValue()] = $v;
-				}
-
-				return new CallArgs([], $values);
+				return new CallArgs(
+					[],
+					Func::couples_to_variables_array(
+						Func::mapping_to_couples($value),
+						'Variable or argument name'
+					)
+				);
 
 		}
 

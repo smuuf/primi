@@ -173,5 +173,5 @@ Assert::false($copy->itemSet(new NumberValue(0), new StringValue("x")));
 $sourceString = "abc\ndef";
 $iterable = new StringValue($sourceString);
 foreach ($iterable->getIterator() as $index => $x) {
-	Assert::same($sourceString[get_val($index)], get_val($x));
+	Assert::same($sourceString[$index], get_val($x));
 }
