@@ -22,7 +22,6 @@ use \Smuuf\StrictObject;
  */
 class MapContainer implements
 	\ArrayAccess,
-	\IteratorAggregate,
 	\Countable
 {
 
@@ -33,16 +32,6 @@ class MapContainer implements
 
 	/** @var AbstractValue[] Storage for key values. */
 	private $keys = [];
-
-	/**
-	 * Create new instance from iterable that already returns Primi values as
-	 * both keys and values.
-	 *
-	 * @internal
-	 */
-	public static function fromMap(iterable $map) {
-		return new self(Func::iterator_as_tuples($map));
-	}
 
 	/**
 	 * Create new instance from iterable list containing `[key, value]` Primi
@@ -69,7 +58,7 @@ class MapContainer implements
 	}
 
 	/**
-	 * @param iterable<AbstractValue, AbstractValue> $pairs
+	 * @param iterable<array{0: AbstractValue, 1: AbstractValue}> $pairs
 	 */
 	public function setAll(iterable $pairs): void {
 
@@ -149,27 +138,45 @@ class MapContainer implements
 	 * Returns a generator yielding keys and items from this container (as
 	 * expected).
 	 *
-	 * @returns \Generator<string, AbstractValue, null, null>
+	 * @returns \Generator<int, array{AbstractValue, AbstractValue}, null, null>
 	 */
-	public function getIterator(): \Generator {
+	public function getItemsIterator(): \Generator {
 
 		foreach ($this->values as $scalarKey => $value) {
-			yield $this->keys[$scalarKey] => $value;
+			yield [$this->keys[$scalarKey], $value];
 		}
 
+	}
+
+	/**
+	 * Returns a generator yielding keys and items from this container (as
+	 * expected).
+	 *
+	 * @returns \Generator<int, AbstractValue, null, null>
+	 */
+	public function getKeysIterator(): \Generator {
+		yield from $this->keys;
+	}
+
+	/**
+	 * Returns a generator yielding values from this container.
+	 * @returns \Generator<int, AbstractValue, null, null>
+	 */
+	public function getValuesIterator(): \Generator {
+		yield from $this->values;
 	}
 
 	/**
 	 * Returns a generator yielding keys and items from this container in
 	 * reversed order.
 	 *
-	 * @returns \Generator<string, AbstractValue, null, null>
+	 * @returns \Generator<int, array{AbstractValue, AbstractValue}, null, null>
 	 */
 	public function getReverseIterator(): \Generator {
 
 		$reversed = \array_reverse($this->values, \true);
 		foreach ($reversed as $scalarKey => $value) {
-			yield $this->keys[$scalarKey] => $value;
+			yield [$this->keys[$scalarKey], $value];
 		}
 
 	}

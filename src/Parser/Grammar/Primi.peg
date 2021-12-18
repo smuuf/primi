@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Parser\Compiled;
 
+use \Smuuf\Primi\Parser\GrammarHelpers;
 use \Smuuf\Primi\Handlers\Kinds\StarredExpression;
 
 use \hafriedlander\Peg\Parser;
@@ -24,12 +27,11 @@ class PrimiParser extends Parser\Packrat {
 
 	/**
 	 * Prevent parsing variable name which has the same name as some reserved
-	 * word.
-	 * Setting result to false will tell the parser that is should try other
-	 * parser rules.
+	 * word. Setting result to false will tell the parser that is should try
+	 * other parser rules.
 	 */
 	protected function Mutable__finalise(&$result) {
-		if (\in_array($result['text'], self::RESERVED_WORDS, \true)) {
+		if (GrammarHelpers::isReservedWord($result['text'])) {
 			$result = \false;
 		}
 	}
@@ -188,6 +190,9 @@ MaybeStarredVariableName: stars:/\*{0,2}/ param:VariableName
 ParameterList: skip:MaybeStarredVariableName ( __ "," __ skip:MaybeStarredVariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:ParameterList? __ ")" __ body:Block
 
+# Starred Target
+Targets: t:VariableName ( __ "," __ t:VariableName )*
+
 # Import statement:
 # 'from a.b.c import d' (import specific symbol from module)
 # 'import a.b.c' (import module as a whole)
@@ -195,7 +200,7 @@ ImportStatement:
 	"import" ] ( module: ( "."* VariableName ("." VariableName)* ) ) > ( ":" > symbols: VariableName ( > "," > symbols: VariableName )* )?
 
 IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
-ForStatement: "for" __ "(" __ ( key:VariableName __ ":" __ )? item:VariableName __ "in" __ left:Expression __ ")" __ ( right:Block )
+ForStatement: "for" __ "(" __ targets:Targets __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 TryStatement: "try" __ main:Block __ "catch" __ onerror:Block
 # &/[rbc]/ - Don't even try any of the subrules if this doesn't start with expected letters.

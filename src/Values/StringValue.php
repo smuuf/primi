@@ -186,10 +186,7 @@ class StringValue extends AbstractNativeValue {
 
 		$strlen = \mb_strlen($string);
 		for ($i = 0; $i < $strlen; $i++) {
-
-			yield Interned::number((string) $i)
-				=> new self(\mb_substr($string, $i, 1));
-
+			yield new self(\mb_substr($string, $i, 1));
 		}
 
 	}

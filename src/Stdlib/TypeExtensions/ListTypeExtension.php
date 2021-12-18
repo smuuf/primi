@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\NullValue;
@@ -14,7 +15,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
-use Smuuf\Primi\Helpers\Indices;
+use \Smuuf\Primi\Helpers\Indices;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TypeValue;
 
@@ -38,7 +39,7 @@ class ListTypeExtension extends TypeExtension {
 			throw new RuntimeError('list() argument must be iterable');
 		}
 
-		return new ListValue(Func::get_map_values($iter));
+		return new ListValue(\iterator_to_array($iter));
 	}
 
 	/**
@@ -278,6 +279,10 @@ class ListTypeExtension extends TypeExtension {
 
 		if ($index === \null) {
 
+			if (!$list->value) {
+				throw new IndexError(-1);
+			}
+
 			// If index was not specified, pop and return the last item.
 			return \array_pop($list->value);
 
@@ -291,9 +296,13 @@ class ListTypeExtension extends TypeExtension {
 
 			$popped = $list->value[$actualIndex];
 
-			// Remove the item and reindex the list.
-			unset($list->value[$actualIndex]);
-			$list->reindex();
+			// Take the part of the array before the item we've just popped
+			// and after it - and merge it using the spread operator, which
+			// will reindex the array, which we probably want.
+			$list->value = [
+				...\array_slice($list->value, 0, $actualIndex),
+				...\array_slice($list->value, $actualIndex + 1)
+			];
 
 			return $popped;
 

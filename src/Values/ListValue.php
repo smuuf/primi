@@ -14,10 +14,6 @@ class ListValue extends AbstractNativeValue {
 
 	protected const TYPE = "list";
 
-	public function reindex(): void {
-		$this->value = \array_values($this->value);
-	}
-
 	public function __construct(array $items) {
 
 		// Ensuring the list is indexed from 0. Keys will be ignored.
@@ -72,12 +68,7 @@ class ListValue extends AbstractNativeValue {
 	}
 
 	public function getIterator(): \Iterator {
-
-		$index = 0; // Always index from zero with incrementing by 1.
-		foreach ($this->value as $value) {
-			yield Interned::number((string) ($index++)) => $value;
-		}
-
+		yield from $this->value;
 	}
 
 	public function itemGet(AbstractValue $index): AbstractValue {

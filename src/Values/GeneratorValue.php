@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Stdlib\StaticTypes;
-use \Smuuf\Primi\Helpers\Interned;
 
 class GeneratorValue extends AbstractNativeValue {
 
@@ -24,11 +23,9 @@ class GeneratorValue extends AbstractNativeValue {
 	}
 
 	public function getIterator(): \Iterator {
-
-		foreach ($this->value as $index => $item) {
-			yield Interned::number((string) $index) => $item;
+		if ($this->value->valid()) {
+			yield from $this->value;
 		}
-
 	}
 
 }

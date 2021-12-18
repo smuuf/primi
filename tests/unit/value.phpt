@@ -90,7 +90,7 @@ $v = new ListValue([
 Assert::same('[1, "xxx", false, rx"abc", rx"/abc/"]', $v->getStringRepr());
 
 // Dict.
-$v = new DictValue(Func::array_to_primi_value_tuples([
+$v = new DictValue(Func::array_to_couples([
 	'aaa' => 1, // Will be converted to AbstractValue behind the scenes.
 	'bbb' => AbstractValue::buildAuto("xxx"),
 	'ccc' => AbstractValue::buildAuto(false),

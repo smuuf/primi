@@ -50,7 +50,7 @@ abstract class AbstractValue extends ValueFriends {
 
 				$inner = \array_map(__METHOD__, $value);
 				if (!array_is_list($value)) {
-					return new DictValue(Func::array_to_primi_value_tuples($inner));
+					return new DictValue(Func::array_to_couples($inner));
 				}
 				return new ListValue($inner);
 

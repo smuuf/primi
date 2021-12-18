@@ -6,7 +6,6 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Extensions\TypeExtension;
 
 class TupleTypeExtension extends TypeExtension {
@@ -29,7 +28,7 @@ class TupleTypeExtension extends TypeExtension {
 			throw new RuntimeError('tuple() argument must be iterable');
 		}
 
-		return new TupleValue(Func::get_map_values($iter));
+		return new TupleValue(\iterator_to_array($iter));
 
 	}
 

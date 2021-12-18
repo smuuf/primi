@@ -363,8 +363,8 @@ assert('c' in a_dict)
 assert(123 in a_dict)
 assert('123' not in a_dict)
 // This is not true - and is currently considered a bug.
-// _ = "Operator 'in' should do strict comparison. Number 123 is different from string '123'."
-// assert('123' not in a_dict, _)
+_ = "Operator 'in' should do strict comparison. Number 123 is different from string '123'."
+assert('123' not in a_dict, _)
 
 assert(2 not in a_dict)
 assert('č' not in a_dict)
@@ -384,8 +384,8 @@ all_types = {
 	"null": null,
 }
 
-for (type_a: value_a in all_types) {
-	for (type_b: value_b in all_types) {
+for (type_a, value_a in all_types.items()) {
+	for (type_b, value_b in all_types.items()) {
 		assert(type(value_a == value_b) == bool)
 		assert(type(value_a != value_b) == bool)
 	}

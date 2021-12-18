@@ -50,16 +50,16 @@ class DictValue extends AbstractNativeValue {
 	): string {
 
 		$return = [];
-		foreach ($self->value as $key => $item) {
+		foreach ($self->value->getItemsIterator() as [$k, $v]) {
 
 			// This avoids infinite loops with self-nested structures by
 			// checking whether circular detector determined that we
 			// would end up going in (infinite) circles.
-			$str = $item === $self
-				? \sprintf("{ *recursion (%s)* }", Func::object_hash($item))
-				: $item->getStringRepr();
+			$str = $v === $self
+				? \sprintf("{ *recursion (%s)* }", Func::object_hash($v))
+				: $v->getStringRepr();
 
-			$return[] = \sprintf("%s: %s", $key->getStringRepr(), $str);
+			$return[] = \sprintf("%s: %s", $k->getStringRepr(), $str);
 
 		}
 
@@ -71,7 +71,7 @@ class DictValue extends AbstractNativeValue {
 	 * @returns \Iterator<string, AbstractValue>
 	 */
 	public function getIterator(): \Iterator {
-		return $this->value->getIterator();
+		yield from $this->value->getKeysIterator();
 	}
 
 	public function itemGet(AbstractValue $key): AbstractValue {

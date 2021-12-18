@@ -8,7 +8,6 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Indices;
-use \Smuuf\Primi\Helpers\Interned;
 
 /**
  * @property array<AbstractValue> $value Internal tuple container.
@@ -99,12 +98,7 @@ class TupleValue extends AbstractNativeValue {
 	 * @returns \Iterator<NumberValue, AbstractValue>
 	 */
 	public function getIterator(): \Iterator {
-
-		$index = 0; // Always index from zero with incrementing by 1.
-		foreach ($this->value as $value) {
-			yield Interned::number((string) ($index++)) => $value;
-		}
-
+		yield from $this->value;
 	}
 
 	public function itemGet(AbstractValue $index): AbstractValue {

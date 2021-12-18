@@ -14,6 +14,7 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
 use \Smuuf\Primi\Structures\CallArgs;
+use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\TypeValue;
 
 class DictTypeExtension extends TypeExtension {
@@ -36,7 +37,7 @@ class DictTypeExtension extends TypeExtension {
 			throw new RuntimeError('dict() argument must be iterable');
 		}
 
-		return new DictValue(Func::iterator_as_tuples($iter));
+		return new DictValue(Func::mapping_to_couples($value));
 
 	}
 
@@ -116,6 +117,27 @@ class DictTypeExtension extends TypeExtension {
 	}
 
 	/**
+	 * Returns a new `list` of `tuples` of **key and value pairs** from this
+	 * `dict`.
+	 *
+	 * ```js
+	 * {'a': 1, 100: 'yes'}.items() == [('a', 1), (100: 'yes')]
+	 * ```
+	 *
+	 * @primi.function
+	 */
+	public static function items(DictValue $dict): ListValue {
+
+		$list = [];
+		foreach ($dict->value->getItemsIterator() as $arrayTuple) {
+			$list[] = new TupleValue($arrayTuple);
+		}
+
+		return new ListValue($list);
+
+	}
+
+	/**
 	 * Returns a new `list` containing **values** from this `dict`.
 	 *
 	 * ```js
@@ -125,14 +147,9 @@ class DictTypeExtension extends TypeExtension {
 	 * @primi.function
 	 */
 	public static function values(DictValue $dict): ListValue {
-
-		$list = [];
-		foreach ($dict->getIterator() as $_ => $value) {
-			$list[] = $value;
-		}
-
-		return new ListValue($list);
-
+		return new ListValue(
+			\iterator_to_array($dict->value->getValuesIterator())
+		);
 	}
 
 	/**
@@ -145,14 +162,9 @@ class DictTypeExtension extends TypeExtension {
 	 * @primi.function
 	 */
 	public static function keys(DictValue $dict): ListValue {
-
-		$list = [];
-		foreach ($dict->getIterator() as $key => $_) {
-			$list[] = $key;
-		}
-
-		return new ListValue($list);
-
+		return new ListValue(
+			\iterator_to_array($dict->value->getKeysIterator())
+		);
 	}
 
 	/**
@@ -171,20 +183,6 @@ class DictTypeExtension extends TypeExtension {
 	 */
 	public static function copy(DictValue $dict): DictValue {
 		return clone $dict;
-	}
-
-	/**
-	 * Returns a new `dict` with original `dict`'s items in reversed order.
-	 *
-	 * ```js
-	 * {'a': 1, 100: 'yes'}.reverse() == {100: 'yes', 'a': 1}
-	 * ```
-	 * @primi.function
-	 */
-	public static function reverse(DictValue $dict): AbstractValue {
-		return new DictValue(Func::iterator_as_tuples(
-			$dict->value->getReverseIterator()
-		));
 	}
 
 	/**
@@ -208,13 +206,10 @@ class DictTypeExtension extends TypeExtension {
 	): DictValue {
 
 		$result = [];
-		foreach ($dict->value as $k => $v) {
+		foreach ($dict->value->getItemsIterator() as [$k, $v]) {
 			$result[] = [
 				$k,
-				$callable->invoke(
-					$ctx,
-					new CallArgs([$v, $k])
-				)
+				$callable->invoke($ctx, new CallArgs([$v, $k]))
 			];
 		}
 
