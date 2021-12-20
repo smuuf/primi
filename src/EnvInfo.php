@@ -38,7 +38,7 @@ abstract class EnvInfo {
 	 */
 	public static function getHomeDir(): ?string {
 		return self::$homeDir
-			?? (self::$homeDir = \getenv('HOME'));
+			?? (self::$homeDir = (\getenv('HOME') ?: \null));
 	}
 
 	/**
@@ -92,7 +92,7 @@ abstract class EnvInfo {
 
 		// Determine if we can get home directory for current user.
 		$homeDir = EnvInfo::getHomeDir();
-		if ($homeDir === \false) {
+		if ($homeDir === \null) {
 
 			$currentUser = EnvInfo::getCurrentUser();
 			Logger::debug("Current user '$currentUser' has no home directory. Temp directory disabled");

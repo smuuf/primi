@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Repl;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\BoolValue;
+use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
@@ -145,27 +149,47 @@ class extends NativeModule {
 	 * and throws error if it's `false`. Optional `string` description can be
 	 * provided, which will be visible in the eventual error message.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.function(no-stack, call-convention: object)
 	 */
-	public static function range(
-		NumberValue $start,
-		?NumberValue $end = \null,
-		?NumberValue $step = \null
-	) {
+	public static function range(CallArgs $callArgs) {
 
-		$start = (int) $start->getInternalValue();
-		$end = $end ? (int) $end->getInternalValue() : \null;
+		$arg1 = $callArgs->safeGetArg(0);
+		$arg2 = $callArgs->safeGetArg(1);
+		$arg3 = $callArgs->safeGetArg(2);
 
-		// Single argument? Then it represents the end (and start is 0).
-		if ($end === \null) {
-			$end = $start;
-			$start = 0;
+		// No explicit 'end' argument? That means 'start' actually means 'end'.
+		if ($arg2 === \null) {
+			$end = $arg1->getInternalValue();
+			$start = '0';
+		} else {
+			$start = $arg1->getInternalValue();
+			$end = $arg2->getInternalValue();
+		}
+
+		$step = $arg3 ? $arg3->getInternalValue() : '1';
+
+		if (
+			!Func::is_round_int($start)
+			|| !Func::is_round_int($end)
+			|| !Func::is_round_int($step)
+		) {
+			throw new RuntimeError(
+				"All numbers passed to range() must be integers");
+		}
+
+		if ($step <= 0) {
+			throw new RuntimeError(
+				"Range must have a non-negative non-zero step");
 		}
 
 		$direction = $end >= $start ? 1 : -1;
-		$step = ($step ? (int) $step->getInternalValue() : 1) * $direction;
+		$step *= $direction;
 
 		$gen = function(int $start, int $end, int $step) {
+
+			if ($start === $end) {
+				return;
+			}
 
 			$c = $start;
 			while (\true) {
@@ -183,9 +207,11 @@ class extends NativeModule {
 
 			}
 
+			return;
+
 		};
 
-		return new GeneratorValue($gen($start, $end, $step));
+		return new GeneratorValue($gen((int) $start, (int) $end, (int) $step));
 
 	}
 
@@ -201,6 +227,58 @@ class extends NativeModule {
 				$value->dirItems() ?? []
 			)
 		);
+	}
+
+	/**
+	 * Returns iterator yielding tuples of index and items from an iterator.
+	 *
+	 * ```js
+	 * a_list = ['a', 'b', 123, false]
+	 * list(enumerate(a_list)) == [(0, 'a'), (1, 'b'), (2, 123), (3, false)]
+	 *
+	 * b_list = ['a', 'b', 123, false]
+	 * list(enumerate(b_list, start: -5)) == [(-5, 'a'), (-4, 'b'), (-3, 123), (-2, false)]
+	 * ```
+	 *
+	 * @primi.function(no-stack, call-convention: object)
+	 * @primi.function.arg(name: iterable, type: iterable)
+	 * @primi.function.arg(name: start, type: number, default: 0)
+	 */
+	public static function enumerate(CallArgs $callArgs): GeneratorValue {
+
+		if ($callArgs->getTotalCount() > 2) {
+			throw new RuntimeError("enumerate() takes max 2 arguments");
+		}
+
+		$iterable = $callArgs->safeGetArg(0)
+			?? $callArgs->getKwarg('iterable');
+
+		$start = $callArgs->safeGetArg(1)
+			?? $callArgs->safeGetKwarg('start', Interned::number('0'));
+
+		if (!$start instanceof NumberValue) {
+			throw new RuntimeError("Argument 'start' is not a number");
+		}
+
+		$iter = $iterable->getIterator();
+
+		if ($iter === \null) {
+			throw new RuntimeError("Argument 'iterable' is not iterable");
+		}
+
+		$counter = $start->getStringValue();
+		$it = function() use ($iter, $counter) {
+			foreach ($iter as $item) {
+				yield new TupleValue([
+					Interned::number((string) $counter),
+					$item
+				]);
+				$counter++;
+			}
+		};
+
+		return new GeneratorValue($it());
+
 	}
 
 };
