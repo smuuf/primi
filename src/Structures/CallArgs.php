@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\StrictObject;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Interned;
 
 /**
  * Container for passing arguments - positional and keyword arguments - to the
@@ -33,6 +33,9 @@ class CallArgs {
 
 	/** True if there are no args and no kwargs specified. */
 	private bool $isEmpty = \false;
+
+	/** Total number of args and kwargs combined. */
+	private ?int $totalCount = \null;
 
 	public function __construct(array $args = [], array $kwargs = []) {
 
@@ -63,6 +66,11 @@ class CallArgs {
 			?? ($this->isEmpty = !($this->args || $this->kwargs));
 	}
 
+	public function getTotalCount(): int {
+		return $this->totalCount
+			?? ($this->totalCount = \count($this->args) + \count($this->kwargs));
+	}
+
 	/**
 	 * @return AbstractValue[]
 	 */
@@ -79,29 +87,29 @@ class CallArgs {
 
 	/**
 	 * Returns Primi object stored as positional argument. If not found,
-	 * `EngineError` is thrown.
+	 * `TypeError` is thrown.
 	 */
 	public function getArg(int $index): AbstractValue {
 
 		if (isset($this->args[$index])) {
-			return$this->args[$index];
+			return $this->args[$index];
 		}
 
-		throw new EngineError("Positional argument $index not found");
+		throw new TypeError("Positional argument $index not found");
 
 	}
 
 	/**
 	 * Returns Primi object stored as positional argument. If not found,
-	 * `EngineError` is thrown.
+	 * `TypeError` is thrown.
 	 */
 	public function getKwarg(string $name): AbstractValue {
 
 		if (isset($this->kwargs[$name])) {
-			return$this->kwargs[$name];
+			return $this->kwargs[$name];
 		}
 
-		throw new EngineError("Keyword argument '$name' not found");
+		throw new TypeError("Keyword argument '$name' not found");
 
 	}
 
@@ -112,11 +120,10 @@ class CallArgs {
 	public function safeGetArg(
 		int $index,
 		?AbstractValue $default = null
-	): AbstractValue {
+	): ?AbstractValue {
 
 		return $this->args[$index]
-			?? $default
-			?? Interned::null();
+			?? $default;
 
 	}
 
@@ -127,11 +134,10 @@ class CallArgs {
 	public function safeGetKwarg(
 		string $name,
 		?AbstractValue $default = null
-	): AbstractValue {
+	): ?AbstractValue {
 
 		return $this->kwargs[$name]
-			?? $default
-			?? Interned::null();
+			?? $default;
 
 	}
 

@@ -7,7 +7,8 @@ use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
 
 use \Smuuf\DocBlockParser\Parser as DocBlockParser;
-use Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\MagicStrings;
+use \Smuuf\Primi\Ex\EngineError;
 
 abstract class MethodExtractor {
 
@@ -40,21 +41,24 @@ abstract class MethodExtractor {
 			$db = DocBlockParser::parse($doc);
 
 			$fnFlags = [];
-			if ($fnTag = $db->getTag('primi.function')) {
+			if ($fnTag = $db->getTags(MagicStrings::NATFUN_TAG_FUNCTION)->getFirst()) {
 
-				if ($fnTag->hasArg('inject-context')) {
+				if ($fnTag->hasArg(MagicStrings::NATFUN_INJECT_CTX)) {
 					$fnFlags[] = FnContainer::FLAG_INJECT_CONTEXT;
 				}
 
-				if ($fnTag->hasArg('no-stack')) {
+				if ($fnTag->hasArg(MagicStrings::NATFUN_NOSTACK)) {
 					$fnFlags[] = FnContainer::FLAG_NO_STACK;
 				}
 
-				if ($arg = $fnTag->getArg('call-convention')) {
+				if ($arg = $fnTag->getArg(MagicStrings::NATFUN_CALLCONV)) {
 					if ($arg->getValue() === 'object') {
 						$fnFlags[] = FnContainer::FLAG_CALLCONVENTION_ARGSOBJECT;
 					} else {
-						throw new EngineError("Invalid value for argument 'call-convention'");
+						throw new EngineError(sprintf(
+							"Invalid value for argument '%s'",
+							MagicStrings::NATFUN_CALLCONV
+						));
 					}
 				}
 

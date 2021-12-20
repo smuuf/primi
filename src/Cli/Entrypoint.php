@@ -8,6 +8,7 @@ use \Smuuf\StrictObject;
 use \Smuuf\Primi\Repl;
 use \Smuuf\Primi\Logger;
 use \Smuuf\Primi\Config;
+use \Smuuf\Primi\EnvInfo;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BaseException;
@@ -39,23 +40,18 @@ class Entrypoint {
 		'input_is_code' => false,
 	];
 
-	/** Root dir path where entrypoint operates. */
-	private string $rootDir;
-
 	/**
 	 * @param array $args Arguments to the CLI script (without the first $0
 	 * argument).
 	 */
 	public function __construct(array $args, string $rootDir) {
 
-		self::init();
-
+		self::globalInit();
 		$this->config = $this->parseArguments($this->config, $args);
-		$this->rootDir = $rootDir;
 
 	}
 
-	private static function init() {
+	private static function globalInit() {
 
 		error_reporting(E_ALL);
 		set_error_handler(function($severity, $message, $file, $line) {

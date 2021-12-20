@@ -52,16 +52,16 @@
         },
         {
             "name": "smuuf/php-docblock-parser",
-            "version": "0.1",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smuuf/php-docblock-parser.git",
-                "reference": "ddecb8933a988ed8fb55af3dee0a11d7b2293c64"
+                "reference": "055c9866c1ee395a7ce6580657dbde8c04a9b81b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smuuf/php-docblock-parser/zipball/ddecb8933a988ed8fb55af3dee0a11d7b2293c64",
-                "reference": "ddecb8933a988ed8fb55af3dee0a11d7b2293c64",
+                "url": "https://api.github.com/repos/smuuf/php-docblock-parser/zipball/055c9866c1ee395a7ce6580657dbde8c04a9b81b",
+                "reference": "055c9866c1ee395a7ce6580657dbde8c04a9b81b",
                 "shasum": ""
             },
             "require": {
@@ -92,9 +92,9 @@
             "description": "Just a simple PHP docblock parser.",
             "support": {
                 "issues": "https://github.com/smuuf/php-docblock-parser/issues",
-                "source": "https://github.com/smuuf/php-docblock-parser/tree/0.1"
+                "source": "https://github.com/smuuf/php-docblock-parser/tree/0.1.1"
             },
-            "time": "2021-10-25T00:16:57+00:00"
+            "time": "2021-12-11T01:30:32+00:00"
         },
         {
             "name": "smuuf/php-peg",
