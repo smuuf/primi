@@ -22,6 +22,8 @@ class RegexTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): RegexValue {
 
+		$value ??= Interned::string('');
+
 		if (!$value instanceof StringValue && !$value instanceof RegexValue) {
 			throw new RuntimeError("Invalid argument passed to regex()");
 		}

@@ -10,10 +10,11 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
 
+return new
 /**
- * Native 'std.math' module.
+ * Functions and tools for common mathematical operations.
  */
-return new class extends NativeModule {
+class extends NativeModule {
 
 	public function execute(Context $ctx): array {
 
