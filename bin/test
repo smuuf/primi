@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 cd $(dirname $0)
 declare -i RESULT=0
@@ -9,11 +9,6 @@ function info() {
 
 info "Smoke tests"
 ./test_smoke
-RESULT+=$?
 
 info "Unit tests"
 ./test_unit $@
-RESULT+=$?
-
-info "Exit code: $RESULT"
-exit $RESULT
