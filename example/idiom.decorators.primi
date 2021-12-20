@@ -1,0 +1,56 @@
+//
+// Example of implementation of trivial decorators.
+//
+
+//
+// Return value of original function will be wrapped inside the strings
+// returned from the decorator's inner wrapper function.
+//
+// Using the "*args, **kwargs" idiom will ensure all arguments passed to the
+// resulting decorated function will be passed further to the original function.
+//
+
+function some_decorator(fn) {
+	return (*args, **kwargs) => {
+		return f"BEGIN-{fn(*args, **kwargs)}-END"
+	}
+}
+
+function some_function(a, b, *args, **kwargs) {
+	return f"a = {a}, b = {b}, args = {args}, kwargs = {kwargs}"
+}
+
+decorated = some_decorator(some_function)
+
+result = decorated(111, 222, 333, 444, kw1: 555, kw2: 666)
+assert(result == 'BEGIN-a = 111, b = 222, args = (333, 444), kwargs = {"kw1": 555, "kw2": 666}-END')
+
+//
+// Decorator will print execution time of the original function.
+//
+// Using the "*args, **kwargs" idiom will ensure all arguments passed to the
+// resulting decorated function will be passed further to the original function.
+//
+
+import std.time
+
+function timer(fn) {
+    return (*args, **kwargs) => {
+        start_time = time.monotonic()
+        result = fn(*args, **kwargs)
+        print(f"Call took {time.monotonic() - start_time} s")
+
+        return result
+    }
+}
+
+function some_expensive_function(wait_time) {
+    time.sleep(wait_time)
+    return wait_time
+}
+
+decorated = timer(some_expensive_function)
+return_value = decorated(0.8)
+
+_ = "We get correct return value of the original function"
+assert(return_value == 0.8, _)

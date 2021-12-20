@@ -1,0 +1,28 @@
+//
+// Module "std.time"
+//
+
+//
+// Functions.
+//
+
+import std.math
+import std.time
+import _helpers: assert_error
+
+_ = "Monotonic time only ever increases"
+mono = time.monotonic()
+time.sleep(0.2)
+new_mono = time.monotonic()
+assert(new_mono > mono, _)
+
+_ = "And test that we have actually slept via time.sleep() while we're at it"
+assert(math.abs(new_mono - mono) >= 0.2,_)
+
+assert(type(time.from_string('now')) == number)
+assert(type(time.from_string('last sunday')) == number)
+
+assert_error(() => { time.from_string([]); })
+assert_error(() => { time.from_string(); })
+assert_error(() => { time.from_string('wtf'); })
+assert_error(() => { time.from_string(''); })

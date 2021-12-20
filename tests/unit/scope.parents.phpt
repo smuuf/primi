@@ -1,5 +1,6 @@
 <?php
 
+use Smuuf\Primi\Ex\EngineInternalError;
 use \Tester\Assert;
 
 use \Smuuf\Primi\Scope;
@@ -57,3 +58,23 @@ $scopeB->setVariable('some_val', $valB);
 Assert::same($valB, $scopeA->getVariable('some_val'), 'Scope A: AbstractValue assigned to scope B overrides value from scope C');
 Assert::same($valB, $scopeB->getVariable('some_val'), 'Scope B: AbstractValue assigned to scope B overrides value from scope C');
 Assert::same($valA, $scopeC->getVariable('some_val'), 'Scope C: Still has the original value');
+
+// Getting all variables from a scope - without parent scopes.
+// Scope A is the bottom one (its parents are B and C).
+$scopeA->setVariable('scope_a_var1', new NumberValue('1'));
+$scopeA->setVariable('scope_a_var2', new NumberValue('2'));
+$scopeB->setVariable('scope_b_var1', new NumberValue('3'));
+$scopeB->setVariable('scope_b_var2', new NumberValue('4'));
+$scopeC->setVariable('scope_c_var1', new NumberValue('5'));
+$scopeC->setVariable('scope_c_var2', new NumberValue('6'));
+Assert::count(2, $scopeA->getVariables(), 'Getting all variables from a scope - without parent scopes.');
+Assert::count(7, $scopeA->getVariables(true), 'Getting all variables from a scope - with parent scopes.');
+
+//
+// Scope cannot have itself as parent.
+//
+Assert::exception(
+	fn() => $scopeA->setParent($scopeA),
+	EngineInternalError::class,
+	'#Scope.*itself.*parent#'
+);

@@ -1,0 +1,286 @@
+import std.types
+import ._helpers: assert_error
+
+_ = "Default value for list is []"
+default = list()
+assert(default == [], _)
+
+list_of_words = [
+	"abc", // Can have a comment here.
+	"xyz", "a", "ohh yeah", // Or a comment here.
+	"bbb", "xyz",
+	"ohh yesh"
+	// Or here.
+] // Or here.
+
+text = ""
+for (word in list_of_words) {
+	text = text + word + "..."
+}
+
+assert(
+	text == "abc...xyz...a...ohh yeah...bbb...xyz...ohh yesh...",
+	'String collected using array iteration.'
+)
+
+//
+// Splitting string into list and back into string.
+//
+
+sentence = "You will be assimilated.\n   Resistance is futile."
+splat = sentence.split() // No argument splits by all whitespaces.
+
+assert(type(splat) == list)
+assert(splat[0] == 'You')
+assert(splat[1] == 'will')
+assert(splat[3] == 'assimilated.')
+assert(splat[4] == 'Resistance')
+
+recreated = ','.join(splat)
+assert(recreated == 'You,will,be,assimilated.,Resistance,is,futile.')
+
+//
+// List value access via square brackets notation.
+//
+
+some_list = ["first_item", 0, 1, "a", "b", ["inner_a", "inner_b"], true, "last_item"]
+
+assert(len(some_list) == 8)
+assert(some_list[0] == "first_item")
+assert(some_list[5] == ["inner_a", "inner_b"])
+assert(some_list[5][0] == "inner_a")
+assert(some_list[5][-1] == "inner_b")
+
+// Index higher than the list length-1 throws error.
+assert_error(() => {
+	tmp = some_list[9]
+}, 'Correct error on accessing out-of-bounds index.')
+
+// Negative indexes can be used to access items from the end.
+assert(some_list[-1] == "last_item", "Using index -1 to access last item using a negative index.")
+assert(some_list[-8] == "first_item", "Using index -8 to access first item using a negative index.")
+
+// Only a single "layer" of negative indexes can be used, not more.
+assert_error(() => {
+	tmp = some_list[-9]
+}, 'Correct error on accessing negative out-of-bounds index.')
+
+//
+// List mutation via square notation.
+//
+
+some_list[0] = "new_first_item"
+assert(some_list[0] == "new_first_item")
+
+some_list[-1] = "new_last_item"
+assert(some_list[7] == "new_last_item")
+
+// Inner values can also be mutated.
+some_list[5][-1] = "new_inner_b"
+assert(some_list[5] == ["inner_a", "new_inner_b"])
+
+//
+// Comparison of lists.
+//
+
+assert(['a', 'b'] == ['a', 'b'])
+assert([['a'], ['b', 'c']] == [['a'], ['b', 'c']])
+assert(
+	['a', 123] != [123, 'b'],
+	'List order matters when comparing.'
+)
+assert(
+	[['a'], ['b', 'c']] != [['a'], ['c', 'b']],
+	'Inner list order matters when comparing outer lists.'
+)
+
+//
+// Adding (joining) lists.
+//
+
+list_a = [1, 2, 3]
+list_b = ['x', 'y', 'z']
+assert(
+	list_a + list_b == [1, 2, 3, 'x', 'y', 'z'],
+	'Lists can be joined and the order is preserved.'
+)
+
+assert(
+	list_b + list_a == ['x', 'y', 'z', 1, 2, 3],
+	'Lists can be joined and the order is preserved.'
+)
+
+//
+// Subtracting lists is not permitted.
+//
+
+assert_error(() => {
+	result = list_a - list_b
+}, 'Subtracting lists is not permitted.')
+
+//
+// Multiplying lists.
+//
+
+// Multiplying by a positive integer.
+list_a = [1, 2, 3]
+multiplier = 4
+result = list_a * multiplier
+assert(
+	result == [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3],
+	'List can be multiplied by integer number.'
+)
+
+// Multiplication by a negative integer.
+multiplier = -3
+result = list_a * multiplier
+assert(
+	result == [],
+	'List multiplied by a negative number results in an empty list.'
+)
+
+// Iterating with both indexes and values.
+for (index, word in enumerate(list_of_words)) {
+	assert(type(index) == number)
+	assert(type(word) == string)
+}
+
+//
+// List methods.
+//
+
+//
+// list.get()
+//
+
+['a', 'b', 'c'].get(0) == 'a'
+['a', 'b', 'c'].get(1) == 'b'
+['a', 'b', 'c'].get(2) == 'c'
+['a', 'b', 'c'].get(3) == null
+['a', 'b', 'c'].get(3, 'NOT FOUND') == 'NOT FOUND'
+
+// Using negative index.
+['a', 'b', 'c'].get(-1) == 'c'
+['a', 'b', 'c'].get(-2) == 'b'
+['a', 'b', 'c'].get(-3) == 'a'
+['a', 'b', 'c'].get(-4) == null
+['a', 'b', 'c'].get(-4, 'NOT FOUND') == 'NOT FOUND'
+
+//
+// list.push()
+//
+
+a_list = ['a', 'b', 'c']
+a_list.push({'some_key': 'some_value'})
+assert(a_list == ['a', 'b', 'c', {'some_key': 'some_value'}])
+
+//
+// list.prepend()
+//
+
+a_list = ['a', 'b', 'c']
+a_list.prepend({'some_key': 'some_value'})
+assert(a_list == [{'some_key': 'some_value'}, 'a', 'b', 'c'])
+
+//
+// list.pop()
+//
+
+a_list = [1, 2, 3, 4, 5]
+assert(a_list.pop() == 5)
+assert(a_list.pop(1) == 2)
+assert(a_list.pop(-3) == 1)
+
+//
+// list.copy()
+//
+
+a = [1, "x", []]
+
+b = a
+b[0] = "bee"
+assert(a[0] == "bee")
+
+c = a.copy()
+c[0] = "cow"
+assert(a[0] != "cow")
+
+//
+// list.reverse()
+//
+
+assert([1, 2, 3].reverse() == [3, 2, 1])
+
+//
+// list.random()
+//
+
+r = [1, 2, 3].random()
+assert(r == 1 or r == 2 or r ==3)
+
+//
+// list.count()
+//
+
+assert([1, 2, 3, 1].count(1) == 2)
+assert([1, 2, 3, 1].count(2) == 1)
+assert([1, 2, 3, 1].count(666) == 0)
+
+_ = 'Lists with same items with different order are different.'
+assert([[1, 2], [2, 1]].count([1, 2]) == 1, _)
+
+_ = 'Dicts with same items with different order are the same.'
+assert([{'a': 1, 'b': 2}, {'b': 2, 'a': 1}].count({'a': 1, 'b': 2}) == 2)
+
+chaos_list = [
+	1,
+	type, // Function
+	false,
+	[8, 9],
+	true,
+	true,
+	{'a': 1},
+	{'b': 2, 'a': 1},
+	{'a': 1, 'b': 2}, // Switched order but same data -> dicts equal.
+]
+assert(chaos_list.count(1) == 3) // 1 equals to true, too.
+assert(chaos_list.count(2) == 0)
+assert(chaos_list.count(false) == 1)
+assert(chaos_list.count(true) == 3) // true equals to 1, too.
+assert(chaos_list.count(null) == 0)
+assert(chaos_list.count({'a': 1}) == 1)
+assert(chaos_list.count({'b': 2, 'a': 1}) == 2)
+assert(chaos_list.count({'a': 2, 'b': 1}) == 0)
+assert(chaos_list.count({'a': 2, 'b': 1, 'c': 3}) == 0)
+assert(chaos_list.count(type) == 1)
+assert(chaos_list.count(len) == 0)
+
+//
+// list.shuffle()
+//
+
+shuffled = [1, 'a', true].shuffle()
+for (item in shuffled) {
+	assert(item == 1 or item == 'a' or item == true)
+}
+
+//
+// list.map()
+//
+
+assert([-1, 0, 2].map(bool) == [true, false, true])
+assert([len, type, 1, true].map(type) == [types.Function, type, number, bool])
+
+//
+// list.contains()
+//
+
+assert([1, 2, 3, 1].contains(1) == true)
+assert([1, 2, 3, 1].contains(666) == false)
+
+// NOTE: Lists with same items with different order are different.
+assert([[1, 2], 'xxx'].contains([1, 2]) == true)
+assert([[1, 2], 'xxx'].contains([2, 1]) == false)
+
+// NOTE: Dicts with same items with different order are the same.
+assert([{'b': 2, 'a': 1}, 'xxx'].contains({'a': 1, 'b': 2}) == true)

@@ -1,3 +1,7 @@
+_ = "Default value for bool is false"
+default = bool()
+assert(default == false, _)
+
 assert(true.and(false) == false)
 assert(true.not() == false)
 assert(false.or(false) == false)

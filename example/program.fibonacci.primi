@@ -14,6 +14,6 @@ function fib(a, b, limit) {
 	fib(b, result, limit);
 }
 
-fib(1, 0, 20000000);
+fib(1, 0, 20_000_000);
 assert(len(collected) == 36, 'Total of 36 numbers in Fibonacci sequence that are under 20 million')
-assert(collected[35] == 14930352, 'Correct 36th number in Fibonacci sequence')
+assert(collected[35] == 14_930_352, 'Correct 36th number in Fibonacci sequence')

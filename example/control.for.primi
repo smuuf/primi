@@ -1,0 +1,90 @@
+//
+// Simple for loop over some iterable: List.
+//
+
+result = []
+a = [5, 6, 7, 8, 9]
+for (x in a) {
+    result.push(x)
+}
+
+assert(result == [5, 6, 7, 8, 9])
+
+//
+// Simple for loop over some iterable: Tuple.
+//
+
+result = []
+a = (5, 6, 7, 8, 9)
+for (x in a) {
+    result.push(x)
+}
+
+assert(result == [5, 6, 7, 8, 9])
+
+//
+// Simple for loop over some iterable: Dict.
+// Iterating over dict itself will yield just keys from it.
+//
+
+result = []
+a = {'a': 1, 'b': 2, 'c': 3}
+for (x in a) {
+    result.push(x)
+}
+
+assert(result == ['a', 'b', 'c'])
+
+//
+// Iterating over iterable with 2-tuples and storing those tuples into
+// an single variable "x".
+//
+
+result = []
+a = [(5, 1), (6, 2), (7, 3), (8, 4), (9, 5)]
+for (x in a) {
+    result.push(x)
+}
+
+assert(result == [(5, 1), (6, 2), (7, 3), (8, 4), (9, 5)])
+
+//
+// Iterating over iterable with 2-tuples and unpacking those tuples into
+// pair of variables "x, y".
+//
+
+result = []
+a = [(5, 1), (6, 2), (7, 3), (8, 4), (9, 5)]
+for (x, y in a) {
+    result.push(x)
+    result.push(y)
+}
+
+assert(result == [5, 1, 6, 2, 7, 3, 8, 4, 9, 5])
+
+//
+// Iterating over dict.items() - same result.
+//
+
+result = []
+a = {5: 1, 6: 2, 7: 3, 8: 4, 9: 5}
+for (key, value in a.items()) {
+    result.push(key)
+    result.push(value)
+}
+
+assert(result == [5, 1, 6, 2, 7, 3, 8, 4, 9, 5])
+
+//
+// Iterating over iterable with tuples with multiple elements.
+//
+
+result = []
+a = [(5, 1, 'a'), (6, 2, 'b'), (7, 3, 'c'), (8, 4, 'd'), (9, 5, 'e')]
+for (x, y, z in a) {
+    result.push(x)
+    result.push(y)
+    result.push(z)
+}
+
+assert(result == [5, 1, 'a', 6, 2, 'b', 7, 3, 'c', 8, 4, 'd', 9, 5, 'e'])

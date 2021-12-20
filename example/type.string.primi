@@ -1,5 +1,9 @@
 // No unnecessary semicolons anywhere!
 
+_ = "Default value for string is empty string"
+default = string()
+assert(default == '', _)
+
 //
 // String concatenation.
 //

@@ -1,5 +1,5 @@
 //
-// Invoking non-functions raises an error.
+// Calling non-functions raises an error.
 //
 
 try {

@@ -1,3 +1,7 @@
+_ = "Default value for regex is empty regex"
+default = regex()
+assert(default == rx'', _)
+
 a = rx"[a-z]/[a-z]"
 b = "ahojkymňauky"
 c0 = 0
