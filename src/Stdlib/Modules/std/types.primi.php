@@ -6,10 +6,11 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Modules\NativeModule;
 
+return new
 /**
- * Native 'std.types' module.
+ * Module housing Primi's basic data types.
  */
-return new class extends NativeModule {
+class extends NativeModule {
 
 	public function execute(Context $ctx): array {
 

@@ -14,10 +14,11 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Stdlib\TypeExtensions\DateTypeExtension;
 use \Smuuf\Primi\Values\TypeValue;
 
+return new
 /**
- * Native 'std.time' module.
+ * Functions and tools for time-related operations.
  */
-return new class extends NativeModule {
+class extends NativeModule {
 
 	public function execute(Context $ctx): array {
 

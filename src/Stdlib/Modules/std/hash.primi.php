@@ -9,8 +9,6 @@ use \Smuuf\Primi\Modules\NativeModule;
 return new
 /**
  * Hashing functions.
- *
- * @primi.module(name: std.hash)
  */
 class extends NativeModule {
 
@@ -25,8 +23,8 @@ class extends NativeModule {
 	 *
 	 * @primi.function(no-stack)
 	 */
-	public static function crc32(StringValue $val): NumberValue {
-		return Interned::number((string) \crc32($val->value));
+	public static function crc32(StringValue $data): NumberValue {
+		return Interned::number((string) \crc32($data->value));
 	}
 
 	/**
@@ -40,8 +38,8 @@ class extends NativeModule {
 	 *
 	 * @primi.function(no-stack)
 	 */
-	public static function md5(StringValue $val): StringValue {
-		return Interned::string(\md5($val->value));
+	public static function md5(StringValue $data): StringValue {
+		return Interned::string(\md5($data->value));
 	}
 
 	/**
@@ -55,8 +53,8 @@ class extends NativeModule {
 	 *
 	 * @primi.function(no-stack)
 	 */
-	public static function sha256(StringValue $val): StringValue {
-		return Interned::string(\hash('sha256', $val->value));
+	public static function sha256(StringValue $data): StringValue {
+		return Interned::string(\hash('sha256', $data->value));
 	}
 
 };
