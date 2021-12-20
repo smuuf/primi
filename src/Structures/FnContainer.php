@@ -74,7 +74,7 @@ class FnContainer {
 				$scope->setParent($defScope);
 			}
 
-			if ($args) {
+			if ($defParams) {
 				self::prepareArgs($defParams, $args, $scope);
 			}
 

@@ -1,4 +1,5 @@
 import std.types
+import ._helpers: assert_error
 
 // No semicolons anywhere.
 
@@ -11,6 +12,11 @@ function add(x, y) {
 	return x + y
 }
 assert(type(add) == types.Function, 'Declaring ordinary function')
+
+_ = "Function with parameters cannot be called without parameters"
+assert_error(() => {
+    add()
+}, _)
 
 function sub(x, y) {
 	return x - y
