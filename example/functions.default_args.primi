@@ -1,0 +1,63 @@
+//
+// Defining and calling functions that have arguments with default values.
+//
+
+function fun_1(a, b = 1) {
+    return (a, b)
+}
+
+assert(fun_1('a') == ('a', 1))
+assert(fun_1('a', 'b') == ('a', 'b'))
+assert(fun_1('a', tuple()) == ('a', tuple()))
+
+function fun_2(a, b = 1, c = 2) {
+    return (a, b, c)
+}
+
+assert(fun_2('a') == ('a', 1, 2))
+assert(fun_2('a', 'b', 'c') == ('a', 'b', 'c'))
+assert(fun_2('a', [], {}) == ('a', [], {}))
+
+// Default values are initialized for each function call (like, for example, in
+// PHP and _unlike_, for example, in Python).
+function fun_3(a, b = [], c = 2) {
+    b.push(a)
+    return (a, b, c)
+}
+
+// Repeated calls of fun_3() won't mutate the list defined as default value
+// of the 'b' parameter (Python would mutate it, PHP would not).
+assert(fun_3('aa') == ('aa', ['aa'], 2))
+assert(fun_3('ab') == ('ab', ['ab'], 2))
+assert(fun_3('ac') == ('ac', ['ac'], 2))
+
+assert(fun_3('a', ['x']) == ('a', ['x', 'a'], 2))
+assert(fun_3('a', c: 3) == ('a', ['a'], 3))
+assert(fun_3('a', c: fun_3) == ('a', ['a'], fun_3))
+
+//
+// Default argument values can reference variables/constants from function's
+// parent scopes.
+//
+
+some_var = 123
+some_list = []
+
+function fun_4(a, b = some_var, c = some_list) {
+    c.push(a)
+    return (a, b, c)
+}
+
+// Repeated calls of fun_3() _will_ mutate the list specified as the default
+// value of the 'c' parameter, because every time the outside list is used as
+// a default value, it's still a reference to the same list.
+assert(fun_4('aa') == ('aa', 123, ['aa']))
+assert(fun_4('ab') == ('ab', 123, ['aa', 'ab']))
+assert(fun_4('ac') == ('ac', 123, ['aa', 'ab', 'ac']))
+
+_ = "The list used as a function's default value from function's parent scope has mutated"
+assert(some_list == ['aa', 'ab', 'ac'])
+
+assert(fun_4('aa', c: []) == ('aa', 123, ['aa']))
+assert(fun_4('ab', c: []) == ('ab', 123, ['ab']))
+assert(fun_4('ac', c: [], b: 456) == ('ac', 456, ['ac']))

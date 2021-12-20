@@ -56,11 +56,15 @@ class FunctionDefinition extends SimpleHandler {
 
 	public static function prepareParameters(array $paramsNode): array {
 
-		// Prepare list of parameters.
+		// Prepare dict array for passing specifics about parameters expected
+		// by the function.
 		// Parameters will be prepared as a dict array with names of parameters
 		// being the keys - with false as their values.
 		// This makes handling the "invoke" logic used later quite easier.
-		$params = [];
+		$params = [
+			'names' => [],
+			'defaults' => [],
+		];
 
 		// Make sure this is always list, even with one item.
 		$paramsNodes = Func::ensure_indexed($paramsNode);
@@ -70,7 +74,7 @@ class FunctionDefinition extends SimpleHandler {
 
 		foreach ($paramsNodes as $node) {
 
-			$strippedParamName = $node['param']['text'];
+			$paramName = $node['param']['text'];
 
 			// Detect duplicate param names - they are forbidden.
 			// For this we need to use parameter names stripped of any stars,
@@ -80,15 +84,15 @@ class FunctionDefinition extends SimpleHandler {
 			// This happens if defining function parameters like:
 			// > function f(a, b, b) { ... }
 
-			if (isset($strippedParamNames[$strippedParamName])) {
+			if (isset($paramNames[$paramName])) {
 				throw new InternalPostProcessSyntaxError(
-					"Duplicate parameter name '$strippedParamName'"
+					"Duplicate parameter name '$paramName'"
 				);
 			}
 
 			// We track stripped param names as array keys so we can just
 			// use isset().
-			$strippedParamNames[$strippedParamName] = \false;
+			$paramNames[$paramName] = \false;
 
 			// Detect wrongly positioned arguments. Non-variadics must be before
 			// variadics.
@@ -115,7 +119,22 @@ class FunctionDefinition extends SimpleHandler {
 
 			// FnContainer expects list of arguments WITH stars - so it can
 			// know which parameters actually are variadic.
-			$params[$node['text']] = \false;
+			$withStars = str_repeat('*', $node['stars']) . $paramName;
+			$params['names'][$withStars] = \false;
+
+			// If this parameter has a specified default value (internally
+			// an AST node), place its AST node in the storage for defaults -
+			// for later use when invoking the function.
+			if (!empty($node['default'])) {
+				$params['defaults'][$paramName] = $node['default'];
+			} elseif ($params['defaults']) {
+				// Current parameter has no default value, but we already
+				// encountered some parameter with default value.
+				// This will not stand! Throw a syntax error.
+				throw new InternalPostProcessSyntaxError(
+					"Non-default parameter is after default parameter"
+				);
+			}
 
 		}
 
