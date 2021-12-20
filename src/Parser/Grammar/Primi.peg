@@ -186,7 +186,7 @@ Argument: ( (argKey:VariableName __ ":" )? __ argVal:Expression ) | ( argVal:Sta
 ArgumentList: args:Argument ( __ "," __ args:Argument )*
 
 # Starred parameters: Either one or two asterisks.
-MaybeStarredVariableName: stars:/\*{0,2}/ param:VariableName
+MaybeStarredVariableName: stars:/\*{0,2}/ param:VariableName ( __ "=" __ default:AbstractValue )?
 ParameterList: skip:MaybeStarredVariableName ( __ "," __ skip:MaybeStarredVariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:ParameterList? __ ")" __ body:Block
 

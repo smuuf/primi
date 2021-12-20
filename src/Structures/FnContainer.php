@@ -75,7 +75,12 @@ class FnContainer {
 			}
 
 			if ($defParams) {
-				self::prepareArgs($defParams, $args, $scope);
+				self::prepareArgs(
+					$ctx,
+					$defParams,
+					$args ?? CallArgs::getEmpty(),
+					$scope
+				);
 			}
 
 			$frame = new StackFrame(
@@ -207,15 +212,20 @@ class FnContainer {
 	/**
 	 * NOTE: Only docblock type-hinting for performance reasons.
 	 *
+	 * @param Context $ctx
 	 * @param array $defParams
 	 * @param CallArgs $callArgs
 	 * @param Scope $scope
 	 */
 	private static function prepareArgs(
+		$ctx,
 		$defParams,
 		$callArgs,
 		$scope
 	): void {
+
+		$defParamNames = $defParams['names'];
+		$defParamDefaults = $defParams['defaults'];
 
 		// Determine - if there are such things specified:
 		// 1) Which argument will collect remaining positional arguments.
@@ -224,7 +234,7 @@ class FnContainer {
 		// Such argument's name is prefixed with "**".
 		$posArgsCollector = \false;
 		$kwArgsCollector = \false;
-		foreach ($defParams as $defArgName => $_) {
+		foreach ($defParamNames as $defArgName => $_) {
 			if ($defArgName[0] === '*') {
 
 				if ($defArgName[1] === '*') {
@@ -237,7 +247,7 @@ class FnContainer {
 				// parameters, so they're not strictly expected.
 				// (We check if all strictly-expected parameters have assigned
 				// arguments at the end).
-				unset($defParams[$defArgName]);
+				unset($defParamNames[$defArgName]);
 
 			}
 		}
@@ -247,7 +257,7 @@ class FnContainer {
 		// we will add actual Primi objects to replace the nulls.
 		// If there are any nulls remaining after preparing the args, we know
 		// some were omitted by the caller.
-		$finalArgs = $defParams;
+		$finalArgs = $defParamNames;
 
 		// If there is a keyword args collector, prepare a dict value for it and
 		// place it into the final args dict array.
@@ -264,7 +274,7 @@ class FnContainer {
 		$i = -1;
 		$args = $callArgs->getArgs();
 		foreach (
-			\array_slice($defParams, 0, \count($args)) as $defArgName => $_
+			\array_slice($defParamNames, 0, \count($args)) as $defArgName => $_
 		) {
 
 			// For each definition arg that has a corresponding positional arg,
@@ -299,7 +309,7 @@ class FnContainer {
 
 			// If this kwarg key is not at all present in known definition
 			// args, we don't expect this kwarg, so we throw an error.
-			if (\array_key_exists($key, $defParams)) {
+			if (\array_key_exists($key, $defParamNames)) {
 
 				// If this kwarg overwrites already specified final arg
 				// (unspecified are false, so isset() works here), throw an
@@ -320,6 +330,16 @@ class FnContainer {
 				throw new TypeError("Unexpected keyword argument '$key'");
 			}
 
+		}
+
+		// Go through each of the known "defaults" for parameters and if its
+		// corresponding argument is not yet defined, use that default's value
+		// definition (here presented as a AST node which we can execute - which
+		// is done at call-time) to fetch the argument's value.
+		foreach ($defParamDefaults as $paramName => $defaultNode) {
+			if (empty($finalArgs[$paramName])) {
+				$finalArgs[$paramName] = HandlerFactory::runNode($defaultNode, $ctx);
+			}
 		}
 
 		// If there are any "null" values left in the final args dict,
