@@ -2,6 +2,10 @@
 // Using tuples.
 //
 
+_ = "Default value for tuple is ()"
+default = tuple()
+assert(default == (), _)
+
 //
 // Tuple literals.
 //

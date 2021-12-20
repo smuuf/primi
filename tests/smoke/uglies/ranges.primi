@@ -1,0 +1,65 @@
+import _helpers: assert_error
+
+// Some basic checks.
+
+x = list(range(5))
+assert(x == [0, 1, 2, 3, 4])
+
+x = list(range(-10))
+assert(x == [0, -1, -2, -3, -4, -5, -6, -7, -8, -9])
+
+x = list(range(5, 1, 1))
+assert(x == [5, 4, 3, 2])
+
+x = list(range(3, -3, 1))
+assert(x == [3, 2, 1, 0, -1, -2])
+
+x = list(range(-3, -3, 1))
+assert(x == [])
+
+x = list(range(-3, -7, 1))
+assert(x == [-3, -4, -5, -6])
+
+// Negative step is always an error.
+
+assert_error(() => { list(range(0, 0, -1)); })
+assert_error(() => { list(range(10, 10, -1)); })
+assert_error(() => { list(range(-10, -10, -1)); })
+assert_error(() => { list(range(0, 10, -1)); })
+assert_error(() => { list(range(0, -10, -1)); })
+assert_error(() => { list(range(10, 0, -1)); })
+assert_error(() => { list(range(-10, 0, -1)); })
+
+// Zero step is always an error.
+
+assert_error(() => { list(range(0, 0, 0)); })
+assert_error(() => { list(range(0, 0, -1)); })
+assert_error(() => { list(range(10, 10, -1)); })
+assert_error(() => { list(range(-10, -10, -1)); })
+assert_error(() => { list(range(0, 10, -1)); })
+assert_error(() => { list(range(0, -10, -1)); })
+assert_error(() => { list(range(10, 0, -1)); })
+assert_error(() => { list(range(-10, 0, -1)); })
+
+// Arguments must be integer numbers.
+assert_error(() => { list(range(1.1)); })
+assert_error(() => { list(range(1, 4.2)); })
+assert_error(() => { list(range(1, 10, 2.3)); })
+
+assert_error(() => {
+	list(range(1.000000000000001))
+})
+
+// This is false negative and passes without error (which is wrong).
+// Number is too small for ordinary numeric operations within PHP.
+// But using bcmath for implementation of range() should fix this.
+list(range(1.0000000000000000000000000000001))
+
+// This is false negative and passes without error (which is wrong).
+// Number is too small for ordinary numeric operations within PHP and even for
+// bcmath's precision we use.
+list(range(1.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001))
+
+_ = 'Integers with decimal point are a-okay'
+x = list(range(1.0, -3.0, 2.0))
+assert(x == [1, -1], _)

@@ -1,8 +1,9 @@
 import std.math
-
 import ._helpers: assert_not
-//import .scopes
 
+_ = "Default value for number is 0"
+default = number()
+assert(default == 0, _)
 
 // Long numbers can be separated using underscores for improved readability.
 

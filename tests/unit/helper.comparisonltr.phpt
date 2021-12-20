@@ -2,9 +2,11 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Ex\RelationError;
+use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\ComparisonLTR;
-use \Smuuf\Primi\Values\TypeValue;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -70,3 +72,13 @@ Assert::false(ComparisonLTR::evaluate('!=', new CustomTypeValueA('y'), new TypeB
 Assert::true(ComparisonLTR::evaluate('!=', new CustomTypeValueA('y'), new TypeBValue('x')));
 Assert::false(ComparisonLTR::evaluate('!=', new CustomTypeValueA('x'), new TypeBValue('x')));
 Assert::false(ComparisonLTR::evaluate('!=', new CustomTypeValueA('x'), new TypeBValue('x')));
+
+Assert::exception(
+	fn() => ComparisonLTR::evaluate('!WTF!', new CustomTypeValueA('x'), new TypeBValue('x')),
+	EngineInternalError::class, '#Unknown operator.*WTF#'
+);
+
+Assert::exception(
+	fn() => ComparisonLTR::evaluate('>=', new CustomTypeValueA('x'), new TypeBValue('x')),
+	RelationError::class, '#Undefined relation.*>=#'
+);

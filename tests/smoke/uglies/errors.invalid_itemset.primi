@@ -83,13 +83,8 @@ expected = {
 	},
 }
 
-for (target_tuple in variables) {
-	target_type = target_tuple[0]
-	target_value = target_tuple[1]
-
-	for (inject_tuple in variables) {
-		inject_type = inject_tuple[0]
-		inject_value = inject_tuple[1]
+for (target_type, target_value in variables) {
+	for (inject_type, inject_value in variables) {
 
 		try {
 			was_valid = true
@@ -105,5 +100,6 @@ for (target_tuple in variables) {
 			"Unexpected result when inserting '{}' into '{}': {}".format(
 				inject_type, target_type, state)
 		)
+
 	}
 }

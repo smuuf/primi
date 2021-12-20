@@ -1,4 +1,5 @@
 import std.types
+import ._helpers: assert_error
 
 //
 // Types of different values.
@@ -139,52 +140,39 @@ assert(result == rx"a")
 // Examples of invalid casts.
 //
 
-function true_if_error(fn) {
-
-	try {
-		fn()
-		success = true
-	} catch {
-		success = false
-	}
-
-	return !success
-
-}
-
-assert(true_if_error(() => {
+assert_error(() => {
 	x_number_to_list = list(1)
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_bool_true_to_list = list(true)
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_bool_true_to_regex = regex(true)
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_bool_false_to_list = list(false)
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_bool_false_to_regex = regex(false)
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_list_to_number = number(["a"])
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_list_to_regex = regex(["a"])
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_regex_to_number = number(rx"a")
-}))
+})
 
-assert(true_if_error(() => {
+assert_error(() => {
 	x_regex_to_list = list(rx"a")
-}))
+})
 

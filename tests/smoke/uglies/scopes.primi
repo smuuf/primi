@@ -28,7 +28,7 @@ function fun_a(local_a, call) {
 
 	if (call) {
 
-		sleep(1)
+		sleep(0.5)
 		fn_b(local_a)
 		1 / 100
 
@@ -42,10 +42,13 @@ print("start")
 assert(global_a == 1)
 
 inner_fn_b = fun_a(global_a, false)
-assert(global_a == 1, 'Added global_a + 1 inside function fun_a, but global_a remained unchanged in global scope')
+_ = "Added global_a + 1 inside function fun_a, but global_a remained unchanged in global scope"
+assert(global_a == 1, _)
 
 inner_fn_b(global_a)
-assert(global_a == 1, 'Added global_a + 1 inside function fn_b/inner_fn_b, but global_a remained unchanged in global scope')
+_ = "Added global_a + 1 inside function fn_b/inner_fn_b, but global_a remained unchanged in global scope"
+assert(global_a == 1, _)
 
 fun_a(0, true)
-assert(global_a == 1, 'global_a remained unchanged in global scope')
+_ = "global_a remained unchanged in global scope"
+assert(global_a == 1, _)

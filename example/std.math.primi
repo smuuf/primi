@@ -1,14 +1,18 @@
 //
-// Number functions.
+// Module "std.math"
+//
+
+//
+// Functions.
 //
 
 import std.math
 
-a = (789 * (2 + 3)) * 1
-b = 123 * 456 * 789 / 2.3 + 111
-
 x = (456 * 789 * 123 / 2.3 ) + 111
 assert(math.round(x, 6) == 19240733.608696)
+
+a = (789 * (2 + 3)) * 1
+b = 123 * 456 * 789 / 2.3 + 111
 
 x = a + b
 assert(math.round(x, 6) == 19244678.608696)
@@ -57,3 +61,10 @@ assert(x == 2)
 
 x = math.round(1.49)
 assert(x == 1)
+
+//
+// Some mathematical constants.
+//
+
+assert(math.PI == 3.14159265358979323846, 'Good old number π')
+assert(math.E == 2.718281828459045, 'Euler number')

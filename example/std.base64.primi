@@ -1,0 +1,50 @@
+//
+// Module "std.base64"
+//
+
+import std.base64
+import _helpers: assert_error
+
+//
+// Sanity checks.
+//
+
+sample_string = 'this is <a href="javascript:void(0)">piece of HTML!</a>'
+encoded = base64.encode(sample_string)
+assert(encoded == 'dGhpcyBpcyA8YSBocmVmPSJqYXZhc2NyaXB0OnZvaWQoMCkiPnBpZWNlIG9mIEhUTUwhPC9hPg==')
+
+decoded = base64.decode('ZG9zdGFuZcWhIGZsw6FrYW5lYyDwn6SUIGxvbA==')
+assert(decoded == 'dostaneš flákanec 🤔 lol')
+
+//
+// Try the beginning of "Karel Hynek Mácha - Máj" ...
+//
+
+may = "Byl pozdní večer – první máj –
+večerní máj – byl lásky čas.
+Hrdliččin zval ku lásce hlas,
+kde borový zaváněl háj.
+O lásce šeptal tichý mech;
+květoucí strom lhal lásky žel,
+svou lásku slavík růži pěl,
+růžinu jevil vonný vzdech.
+Jezero hladké v křovích stinných
+zvučelo temně tajný bol,
+břeh je objímal kol a kol;
+a slunce jasná světů jiných
+bloudila blankytnými pásky,
+planoucí tam co slzy lásky."
+
+encoded = base64.encode(may)
+decoded = base64.decode(encoded)
+
+assert(decoded == may)
+
+//
+// Errors.
+//
+
+_ = 'Decoding invalid base64 string should throw error'
+assert_error(() => {
+	tmp = some_list[9]
+}, _)

@@ -1,4 +1,5 @@
 import std.types: Function
+import ._helpers: assert_error
 
 //
 // Some sanity checks.
@@ -113,3 +114,26 @@ assert(type(instance) == custom_type)
 assert(custom_type.some_attr_x == 'no value')
 assert(instance.some_attr_x == 'init arg')
 instance.try_me('anything')
+
+//
+// Dict specifying attrs of the new type must have valid variable names
+// as keys.
+//
+
+assert_error(() => {
+	custom_type = type('CustomType', object, {
+		'123': 'this is invalid variable name'
+	})
+})
+
+assert_error(() => {
+	custom_type = type('CustomType', object, {
+		123: 'this also is invalid variable name'
+	})
+})
+
+assert_error(() => {
+	custom_type = type('CustomType', object, {
+		('lol', 'a', 'tuple'): 'this is completely invalid variable name'
+	})
+})
