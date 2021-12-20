@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -e
 
 cd $(dirname $0)
 
-php ../tests/smoke/smoke.phpt
-exit $?
+php ../tests/smoke/examples.phpt
+php ../tests/smoke/uglies.phpt
