@@ -29,8 +29,10 @@ jobs:
     - name: Run benchmarks
       run: ./bin/bench
     - name: Run static analysis
-      run: ./bin/phpstan || true # Ignore phpstan error exit code.
+      continue-on-error: true
+      run: ./bin/phpstan
     - name: Gather test results
+      continue-on-error: true
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       run: |
