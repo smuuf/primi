@@ -113,13 +113,7 @@ BoolLiteral: / \b(true|false)\b /
 NullLiteral: "null" !VariableName
 RegexLiteral: "rx" quote:/['"]/ core:StringInside "$quote"
 
-#
-# Class
-#
-
-ClassLiteral: "class" ] cls:VariableName ( "(" parent:VariableName ")" )? ] def:Block
-
-Literal: ( &/["']/ skip:StringLiteral ) | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral ) | skip:ClassLiteral
+Literal: ( &/["']/ skip:StringLiteral ) | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral )
 VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
 AnonymousFunction: "function" __ "(" __ params:ParameterList? __ ")" __ body:Block | "(" __ params:ParameterList? __ ")" __ "=>" __ body:Block
@@ -130,7 +124,8 @@ ListDefinition: "[" __ ( items:Expression ( __ "," __ items:Expression )* )? __ 
 # Tuple literals: "()" or "(1,)" or "(1, ...)" or "(1, ..., x,)"
 TupleDefinition: ( "(" __ ")" ) | ( "(" __ items:Expression __ "," __ ")" ) | ( "(" __ items:Expression ( __ "," __ items:Expression )* __ ( "," __ )? ")" )
 
-AbstractValue: skip:Literal | skip:Variable | skip:ListDefinition | skip:DictDefinition | skip:TupleDefinition
+AbstractLiteral: skip:Literal | skip:ListDefinition | skip:DictDefinition | skip:TupleDefinition
+AbstractValue: skip:AbstractLiteral | skip:Variable
 
 AddOperator: "+" | "-"
 MultiplyOperator: "*" | "/"
@@ -189,8 +184,9 @@ ArgumentList: args:Argument ( __ "," __ args:Argument )*
 MaybeStarredVariableName: stars:/\*{0,2}/ param:VariableName ( __ "=" __ default:AbstractValue )?
 ParameterList: skip:MaybeStarredVariableName ( __ "," __ skip:MaybeStarredVariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:ParameterList? __ ")" __ body:Block
+ClassDefinition: "class" ] cls:VariableName ( "(" parent:VariableName ")" )? ] def:Block
 
-# Starred Target
+# Starred target
 Targets: t:VariableName ( __ "," __ t:VariableName )*
 
 # Import statement:
@@ -212,7 +208,16 @@ BreakStatement: "break"
 ContinueStatement: "continue"
 
 # &/[iwft]/ - No sub-rules will be even tried if the string does not start with a expected letter.
-BlockStatements: &/[iwft]/ ( skip:IfStatement | skip:WhileStatement | skip:FunctionDefinition | skip:ForStatement | skip:TryStatement | skip:ImportStatement)
+BlockStatements:
+	&/[iwftc]/ (
+		skip:IfStatement
+		| skip:WhileStatement
+		| skip:ForStatement
+		| skip:TryStatement
+		| skip:FunctionDefinition
+		| skip:ClassDefinition
+		| skip:ImportStatement
+	)
 
 # !/[\s\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
 Statement: !/[\s\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )
