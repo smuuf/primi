@@ -10,7 +10,7 @@ use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 
-class ClassLiteral extends SimpleHandler {
+class ClassDefinition extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
