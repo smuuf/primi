@@ -14,6 +14,13 @@ function header {
 
 INTERPRETER=$([[ ! -z "$2" ]] && echo "$2" || echo "php")
 
+# If the interpreter is phpdbg, we need to add "-qrr" arguments to actually
+# run the files.
+# https://www.php.net/manual/en/intro.phpdbg.php
+if [[ "$INTERPRETER" =~ 'phpdbg' ]]; then
+	INTERPRETER="$INTERPRETER -qrrb"
+fi
+
 header "Primi language-based smoke tests"
 info "Using interpreter: "$(which $INTERPRETER)
 
