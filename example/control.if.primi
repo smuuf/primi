@@ -170,3 +170,31 @@ if (null) {
 }
 assert(else_result_A == '', 'if (null): First block was not executed')
 assert(else_result_B == 'block_B', 'if (null): Second block was executed')
+
+//
+// Elifs (else-ifs)
+//
+
+elif_tester = (a, b, c) => {
+    result = []
+
+    if (a) {
+        result.push('if a')
+    } elif (b) {
+        result.push('elif b')
+    } elif (c) {
+        result.push('elif c')
+    } else {
+        result.push('else')
+    }
+
+    return result
+}
+
+assert(elif_tester(0, 0, 0) == ['else'])
+assert(elif_tester(0, 0, 1) == ['elif c'])
+assert(elif_tester(0, 1, 1) == ['elif b'])
+assert(elif_tester(1, 1, 1) == ['if a'])
+assert(elif_tester(1, 1, 0) == ['if a'])
+assert(elif_tester(1, 0, 0) == ['if a'])
+assert(elif_tester(0, 1, 0) == ['elif b'])
