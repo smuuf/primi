@@ -63,7 +63,7 @@ class DictTypeExtension extends TypeExtension {
 	): AbstractValue {
 
 		try {
-			return $dict->value[$key] ?? $default ?? Interned::null();
+			return $dict->value->get($key) ?? $default ?? Interned::null();
 		} catch (UnhashableTypeException $e) {
 			throw new TypeError($e->getMessage());
 		}

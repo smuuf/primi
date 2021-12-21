@@ -80,7 +80,7 @@ class DictValue extends AbstractNativeValue {
 			throw new KeyError($key->getStringRepr());
 		}
 
-		return $this->value[$key];
+		return $this->value->get($key);
 
 	}
 
@@ -90,7 +90,7 @@ class DictValue extends AbstractNativeValue {
 			throw new RuntimeError("Must specify key when inserting into dict");
 		}
 
-		$this->value[$key] = $value;
+		$this->value->set($key, $value);
 		return \true;
 
 	}
