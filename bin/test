@@ -8,7 +8,7 @@ function info() {
 }
 
 info "Smoke tests"
-./test_smoke
+./test_smoke $@
 
 info "Unit tests"
 ./test_unit $@

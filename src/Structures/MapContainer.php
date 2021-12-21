@@ -6,7 +6,6 @@ namespace Smuuf\Primi\Structures;
 
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\StrictObject;
 
 /**
@@ -21,7 +20,6 @@ use \Smuuf\StrictObject;
  * @internal
  */
 class MapContainer implements
-	\ArrayAccess,
 	\Countable
 {
 
@@ -179,24 +177,6 @@ class MapContainer implements
 			yield [$this->keys[$scalarKey], $value];
 		}
 
-	}
-
-	// ArrayAccess implementation.
-
-	public function offsetExists($key): bool {
-		return $this->hasKey($key);
-	}
-
-	public function offsetGet($key) {
-		return $this->get($key);
-	}
-
-	public function offsetSet($key, $value): void {
-		$this->set($key, $value);
-	}
-
-	public function offsetUnset($key) {
-		$this->remove($key);
 	}
 
 }

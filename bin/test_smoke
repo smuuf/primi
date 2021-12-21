@@ -2,5 +2,20 @@
 
 cd $(dirname $0)
 
-php ../tests/smoke/examples.phpt
-php ../tests/smoke/uglies.phpt
+function info {
+	echo "█ "$1
+}
+
+function header {
+	echo -e "${CLR_GREEN}▄${CLR_RESET}"
+	echo -e "${CLR_GREEN}█${CLR_RESET} $1"
+	echo -e "${CLR_GREEN}▀${CLR_RESET}"
+}
+
+INTERPRETER=$([[ ! -z "$2" ]] && echo "$2" || echo "php")
+
+header "Primi language-based smoke tests"
+info "Using interpreter: "$(which $INTERPRETER)
+
+$INTERPRETER ../tests/smoke/examples.phpt
+$INTERPRETER ../tests/smoke/uglies.phpt

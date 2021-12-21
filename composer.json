@@ -15,7 +15,8 @@
 	},
 	"autoload":{
 		"psr-4": {
-			"Smuuf\\Primi\\": "src/"
+			"Smuuf\\Primi\\": "src/",
+			"Smuuf\\Primi\\Tools\\BuildDocs\\": "tools/build-docs/src"
 		}
 	},
 	"require": {
@@ -32,7 +33,7 @@
 	"require-dev": {
 		"nette/tester": "^2.0",
 		"phpstan/phpstan": "^1.1",
-		"smuuf/phpcb": "^0.4.0",
+		"smuuf/phpcb": "^0.5",
 		"nikic/php-parser": "^4.13"
 	}
 }
