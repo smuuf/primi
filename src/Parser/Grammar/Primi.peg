@@ -195,7 +195,11 @@ Targets: t:VariableName ( __ "," __ t:VariableName )*
 ImportStatement:
 	"import" ] ( module: ( "."* VariableName ("." VariableName)* ) ) > ( ":" > symbols: VariableName ( > "," > symbols: VariableName )* )?
 
-IfStatement: "if" __ "(" __ left:Expression __ ")" __ ( right:Block ) ( __ "else" __ ( else:Block ) )?
+IfStatement:
+	"if" __ "(" __ cond:Expression __ ")" __ block:Block
+	( __ "elif" __ "(" __ elifCond:Expression __ ")" __ elifBlock:Block )*
+	( __ "else" __ elseBlock:Block )?
+
 ForStatement: "for" __ "(" __ targets:Targets __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 TryStatement: "try" __ main:Block __ "catch" __ onerror:Block
