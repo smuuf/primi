@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 source $(dirname $0)/_helpers.sh
 cd $(dirname $0)/..

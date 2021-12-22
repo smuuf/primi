@@ -15,8 +15,8 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
-        extensions: mbstring, bcmath, xdebug
-        coverage: none
+        extensions: mbstring, bcmath
+        coverage: xdebug
     - name: Install dependencies
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $HOME/cc-test-reporter
@@ -27,7 +27,7 @@ jobs:
     - name: Run tests
       run: chmod +x ./primi ./bin/* && ./bin/tests.sh --php php --coverage xml
     - name: Run benchmarks
-      run: ./bin/bench.sh
+      run: export XDEBUG_MODE=off && ./bin/bench.sh
     - name: Run static analysis
       continue-on-error: true
       run: ./bin/phpstan.sh
