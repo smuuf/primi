@@ -1,17 +1,9 @@
 #!/bin/bash -e
 
+source $(dirname $0)/_helpers.sh
 cd $(dirname $0)
 
-function info {
-	echo "█ "$1
-}
-
-function header {
-	echo -e "${CLR_GREEN}▄${CLR_RESET}"
-	echo -e "${CLR_GREEN}█${CLR_RESET} $1"
-	echo -e "${CLR_GREEN}▀${CLR_RESET}"
-}
-
+# Default interpreter is "php" (whatever version is primary).
 INTERPRETER='php'
 
 POSITIONAL=()
@@ -39,7 +31,7 @@ if [[ "$INTERPRETER" =~ 'phpdbg' ]]; then
 	INTERPRETER="$INTERPRETER -qrrb"
 fi
 
-header "Primi language-based smoke tests"
+header "Primi: Smoke tests"
 info "Using interpreter: "$(which $INTERPRETER)
 
 $INTERPRETER ../tests/smoke/examples.phpt

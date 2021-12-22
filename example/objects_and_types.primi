@@ -137,3 +137,17 @@ assert_error(() => {
 		('lol', 'a', 'tuple'): 'this is completely invalid variable name'
 	})
 })
+
+//
+// Attr access.
+//
+
+_ = "Getting non-existent attr from object throws error"
+assert_error(() => {
+    print(instance.bogus_attr)
+}, _)
+
+_ = "Setting some attr under a non-existent attr throws error"
+assert_error(() => {
+    instance.bogus_attr_a.bogus_attr_b = 1
+}, _)

@@ -25,7 +25,7 @@ jobs:
     - name: Prepare
       run: $HOME/cc-test-reporter before-build
     - name: Run tests
-      run: chmod +x ./primi ./bin/* && ./bin/test --php phpdbg --coverage xml
+      run: chmod +x ./primi ./bin/* && ./bin/tests.sh --php phpdbg --coverage xml
     - name: Run benchmarks
       run: ./bin/bench
     - name: Run static analysis

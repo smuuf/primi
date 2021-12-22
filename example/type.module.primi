@@ -1,0 +1,21 @@
+import std.math
+import std.types
+import ._helpers: assert_not
+
+assert(type(types) == types.Module)
+
+_ = "Getting length of module (number of variables in its global scope) doesn't throw error"
+len(types, _)
+
+_ = "Module containing any global variables is considered truthy"
+assert(bool(types))
+
+_ = "Assigning and getting back attrs to/from a module object"
+types.my_own_attr = 123
+assert(types.my_own_attr == 123)
+
+_ = "Operator 'in' for testing attr presence in module"
+assert('my_own_attr' in types)
+
+_ = "Casting to string"
+assert(string(types) == '<module: std.types>')

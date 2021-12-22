@@ -1,4 +1,4 @@
-// No unnecessary semicolons anywhere!
+import ._helpers: assert_error
 
 _ = "Default value for string is empty string"
 default = string()
