@@ -27,10 +27,10 @@ jobs:
     - name: Run tests
       run: chmod +x ./primi ./bin/* && ./bin/tests.sh --php phpdbg --coverage xml
     - name: Run benchmarks
-      run: ./bin/bench
+      run: ./bin/bench.sh
     - name: Run static analysis
       continue-on-error: true
-      run: ./bin/phpstan
+      run: ./bin/phpstan.sh
     - name: Gather test results
       continue-on-error: true
       env:
