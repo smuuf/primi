@@ -1,3 +1,5 @@
+import ._helpers: assert_error
+
 _ = "Default value for dict is {}"
 default = dict()
 assert(default == {}, _)
@@ -120,6 +122,20 @@ assert(false == empty_dict.get('_', false))
 assert([] == empty_dict.get('_', []))
 assert({} == empty_dict.get('_', {}))
 assert({'x': 123, 'y': 456} == empty_dict.get('_', {'y': 456, 'x': 123}))
+
+//
+// Errors.
+//
+
+_ = "Getting nonexistent key directly from dict results in an error"
+assert_error(() => {
+    print(empty_dict['doesn\'t exist'])
+}, _)
+
+_ = "Inserting value into dict without specified key results in an error"
+assert_error(() => {
+    empty_dict[] = 'OH NO!'
+}, _)
 
 // Testing a large dict with 500_000 items.
 // May be a bit slow for common tests, so uncomment this if needed.

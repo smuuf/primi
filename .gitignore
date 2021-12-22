@@ -13,3 +13,6 @@ vendor/**
 # Main build dir.
 /build/**
 !/build/.gitkeep
+
+# Code coverage reports.
+/coverage.*

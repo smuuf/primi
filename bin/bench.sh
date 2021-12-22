@@ -1,25 +1,11 @@
-#!/bin/bash
+#!/bin/bash -e
 
+source $(dirname $0)/_helpers.sh
 cd $(dirname $0)/..
 
-CLR_RESET="\e[0m"
-CLR_GREEN="\e[0;32m"
-CLR_YELLOW="\e[0;33m"
-
-function info {
-	echo "█ "$1
-}
-
-function header {
-	echo -e "${CLR_GREEN}▄${CLR_RESET}"
-	echo -e "${CLR_GREEN}█${CLR_RESET} $1"
-	echo -e "${CLR_GREEN}▀${CLR_RESET}"
-}
-
-header "Primi performance benchmark"
+header "Primi performance benchmarks"
 
 INTERPRETER=$([[ ! -z "$1" ]] && echo "$1" || echo "php")
-XDEBUG_DISABLED=`$INTERPRETER --rf xdebug_break 2>&1 >/dev/null; echo $?`
 
 # Time format for 'time' command.
 TIMEFORMAT=%R
@@ -94,6 +80,8 @@ printf \
 
 TODAY=`date +"%d.%m.%Y %H:%M"`
 echo "$TODAY, ${AVG_TIME//,/.}, perf ${AVG_SCORE//,/.}x slower vs ${PERF_STD_TIME//,/.}" >> "bench_progress.csv"
+
+exit
 
 header "Running other benchmarks (Primi code) ..."
 for i in $(seq $ITERS)
