@@ -33,11 +33,16 @@ class ParserHandler {
 
 	/**
 	 * Return parser stats.
+	 *
+	 * @return array<string, scalar>
 	 */
 	public function getStats(): array {
 		return $this->stats;
 	}
 
+	/**
+	 * @return TypeDef_AstNode
+	 */
 	public function run(): array {
 
 		$t = (new Timer)->start();
@@ -48,7 +53,7 @@ class ParserHandler {
 
 			// $this->pos is an internal PEG Parser position counter and
 			// we will use it to determine the line and position in the source.
-			$this->syntaxError($this->parser->pos, $this->source);
+			$this->syntaxError($this->parser->pos);
 
 		}
 
@@ -60,7 +65,10 @@ class ParserHandler {
 
 	}
 
-	private function syntaxError(int $position, string $source) {
+	/**
+	 * @return never
+	 */
+	private function syntaxError(int $position) {
 
 		$line = \false;
 
@@ -75,7 +83,7 @@ class ParserHandler {
 
 	}
 
-	private static function sanitizeSource(string $s) {
+	private static function sanitizeSource(string $s): string {
 
 		// Unify new-lines.
 		$s = \str_replace("\r\n", "\n", $s);
@@ -86,6 +94,10 @@ class ParserHandler {
 
 	}
 
+	/**
+	 * @param TypeDef_AstNode $ast
+	 * @return TypeDef_AstNode $ast
+	 */
 	private function processAST(array $ast, string $source): array {
 
 		$t = (new Timer)->start();
@@ -107,6 +119,8 @@ class ParserHandler {
 	/**
 	 * Go recursively through each of the nodes and strip unnecessary data
 	 * in the abstract syntax tree.
+	 *
+	 * @param TypeDef_AstNode $node
 	 */
 	private static function preprocessNode(array &$node): void {
 
@@ -130,6 +144,8 @@ class ParserHandler {
 	/**
 	 * Go recursively through each of the nodes and strip unnecessary data
 	 * in the abstract syntax tree.
+	 *
+	 * @param TypeDef_AstNode $node
 	 */
 	private static function reduceNode(array &$node): void {
 
@@ -165,6 +181,8 @@ class ParserHandler {
 	/**
 	 * Recursively iterate the node and its children and add information about
 	 * the node's offset (line & position) for later (e.g. error messages).
+	 *
+	 * @param TypeDef_AstNode $node
 	 */
 	private static function addPositions(array &$node, string $source): void {
 

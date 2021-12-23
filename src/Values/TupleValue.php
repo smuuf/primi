@@ -95,7 +95,7 @@ class TupleValue extends AbstractNativeValue {
 	}
 
 	/**
-	 * @returns \Iterator<NumberValue, AbstractValue>
+	 * @return \Iterator<int, AbstractValue>
 	 */
 	public function getIterator(): \Iterator {
 		yield from $this->value;

@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\StrictObject;
+use \Smuuf\Primi\Values\AbstractValue;
 
 /**
  * Emulate friend visibility - extending classes can access internal `$value`
@@ -21,7 +22,11 @@ abstract class ValueFriends {
 	/** @var mixed Value itself. */
 	protected $value = \null;
 
-	/** Value object attributes. */
+	/**
+	 * Value object attributes.
+	 *
+	 * @var array<string, AbstractValue>
+	 */
 	protected array $attrs = [];
 
 }

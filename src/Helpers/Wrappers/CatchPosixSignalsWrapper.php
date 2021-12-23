@@ -25,17 +25,20 @@ class CatchPosixSignalsWrapper extends AbstractWrapper {
 	 */
 	private static $level = [];
 
-	/** @var TaskQueue Send Posix signal tasks to this queue. */
-	private $tq;
+	/** Send Posix signal tasks to this queue. */
+	private TaskQueue $tq;
 
-	/** @var string Unique ID for each TaskQueue instance. */
-	private $tqId;
+	/** Unique ID for each TaskQueue instance. */
+	private string $tqId;
 
 	public function __construct(TaskQueue $tq) {
 		$this->tq = $tq;
 		$this->tqId = $tq->getId();
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function executeBefore() {
 
 		// If this is the first (outermost) context that uses this task queue,
@@ -49,7 +52,7 @@ class CatchPosixSignalsWrapper extends AbstractWrapper {
 
 	}
 
-	public function executeAfter() {
+	public function executeAfter(): void {
 
 		self::$level[$this->tqId]--;
 

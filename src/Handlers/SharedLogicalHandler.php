@@ -60,6 +60,9 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 
 	}
 
+	/**
+	 * @param TypeDef_AstNode $node
+	 */
 	private static function handleAnd(
 		array $node,
 		Context $context
@@ -80,6 +83,9 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 
 	}
 
+	/**
+	 * @param TypeDef_AstNode $node
+	 */
 	private static function handleOr(
 		array $node,
 		Context $context

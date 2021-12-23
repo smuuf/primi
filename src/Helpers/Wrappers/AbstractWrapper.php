@@ -33,6 +33,9 @@ namespace Smuuf\Primi\Helpers\Wrappers;
  */
 abstract class AbstractWrapper {
 
+	/**
+	 * @return mixed
+	 */
 	public function wrap(callable $fn) {
 
 		$enterRetval = $this->executeBefore();
@@ -46,7 +49,11 @@ abstract class AbstractWrapper {
 
 	}
 
+	/**
+	 * @return mixed
+	 */
 	abstract public function executeBefore();
-	abstract public function executeAfter();
+
+	abstract public function executeAfter(): void;
 
 }

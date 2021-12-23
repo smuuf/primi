@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Values\TupleValue;
+use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
@@ -20,6 +21,10 @@ class TupleDefinition extends SimpleHandler {
 
 	}
 
+	/**
+	 * @param array<TypeDef_AstNode> $itemNodes
+	 * @return array<AbstractValue>
+	 */
 	protected static function buildValues(
 		array $itemNodes,
 		Context $context

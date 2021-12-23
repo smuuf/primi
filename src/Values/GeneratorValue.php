@@ -10,6 +10,9 @@ class GeneratorValue extends AbstractNativeValue {
 
 	protected const TYPE = "Generator";
 
+	/**
+	 * @param iterable<AbstractValue> $it
+	 */
 	public function __construct(iterable $it) {
 		$this->value = $it;
 	}
@@ -22,6 +25,9 @@ class GeneratorValue extends AbstractNativeValue {
 		return "<generator>";
 	}
 
+	/**
+	 * @return \Iterator<int, AbstractValue>
+	 */
 	public function getIterator(): \Iterator {
 		if ($this->value->valid()) {
 			yield from $this->value;

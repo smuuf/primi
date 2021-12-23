@@ -16,6 +16,9 @@ class ComparisonLTR {
 
 	use StrictObject;
 
+	/**
+	 * @param TypeDef_AstNode $node
+	 */
 	public static function handle(
 		array $node,
 		Context $context

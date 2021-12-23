@@ -33,13 +33,17 @@ class DictDefinition extends SimpleHandler {
 
 	}
 
+	/**
+	 * @param array<TypeDef_AstNode> $itemNodes
+	 * @return TypeDef_PrimiObjectCouples
+	 */
 	private static function buildPairs(
-		array $nodes,
+		array $itemNodes,
 		Context $context
-	): array {
+	): iterable {
 
 		$result = [];
-		foreach ($nodes as $node) {
+		foreach ($itemNodes as $node) {
 
 			$result[] = [
 				HandlerFactory::runNode($node['key'], $context),

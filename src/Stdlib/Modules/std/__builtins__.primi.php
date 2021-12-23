@@ -151,7 +151,7 @@ class extends NativeModule {
 	 *
 	 * @primi.function(no-stack, call-convention: object)
 	 */
-	public static function range(CallArgs $callArgs) {
+	public static function range(CallArgs $callArgs): GeneratorValue {
 
 		$arg1 = $callArgs->safeGetArg(0);
 		$arg2 = $callArgs->safeGetArg(1);
@@ -220,7 +220,7 @@ class extends NativeModule {
 	 *
 	 * @primi.function(no-stack)
 	 */
-	public static function dir(AbstractValue $value) {
+	public static function dir(AbstractValue $value): ListValue {
 		return new ListValue(
 			array_map(
 				[Interned::class, 'string'],

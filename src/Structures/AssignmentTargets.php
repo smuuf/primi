@@ -29,6 +29,9 @@ class AssignmentTargets {
 	/** Total number of targets. */
 	private int $targetsCount;
 
+	/**
+	 * @param array<int, string> $targets
+	 */
 	public function __construct(array $targets = []) {
 
 		if (!\array_is_list($targets)) {

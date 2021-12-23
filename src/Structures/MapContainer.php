@@ -35,14 +35,19 @@ class MapContainer implements
 	 * Create new instance from iterable list containing `[key, value]` Primi
 	 * value tuples.
 	 *
+	 * @param TypeDef_PrimiObjectCouples $couples
+	 * @return self
 	 * @internal
 	 */
-	public static function fromTuples(iterable $pairs) {
-		return new self($pairs);
+	public static function fromCouples(iterable $couples) {
+		return new self($couples);
 	}
 
-	private function __construct(iterable $pairs = []) {
-		$this->setAll($pairs);
+	/**
+	 * @param TypeDef_PrimiObjectCouples $couples
+	 */
+	private function __construct(iterable $couples = []) {
+		$this->setAll($couples);
 	}
 
 	/**
@@ -56,11 +61,11 @@ class MapContainer implements
 	}
 
 	/**
-	 * @param iterable<array{0: AbstractValue, 1: AbstractValue}> $pairs
+	 * @param TypeDef_PrimiObjectCouples $couples
 	 */
-	public function setAll(iterable $pairs): void {
+	public function setAll(iterable $couples): void {
 
-		foreach ($pairs as [$key, $value]) {
+		foreach ($couples as [$key, $value]) {
 			$scalarKey = self::buildScalarKey($key);
 			$this->values[$scalarKey] = $value;
 			$this->keys[$scalarKey] = $key;
@@ -136,7 +141,7 @@ class MapContainer implements
 	 * Returns a generator yielding keys and items from this container (as
 	 * expected).
 	 *
-	 * @returns \Generator<int, array{AbstractValue, AbstractValue}, null, null>
+	 * @return \Generator<int, TypeDef_PrimiObjectCouple, null, void>
 	 */
 	public function getItemsIterator(): \Generator {
 
@@ -150,7 +155,7 @@ class MapContainer implements
 	 * Returns a generator yielding keys and items from this container (as
 	 * expected).
 	 *
-	 * @returns \Generator<int, AbstractValue, null, null>
+	 * @return \Generator<int, AbstractValue, null, void>
 	 */
 	public function getKeysIterator(): \Generator {
 		yield from $this->keys;
@@ -158,7 +163,7 @@ class MapContainer implements
 
 	/**
 	 * Returns a generator yielding values from this container.
-	 * @returns \Generator<int, AbstractValue, null, null>
+	 * @return \Generator<int, AbstractValue, null, void>
 	 */
 	public function getValuesIterator(): \Generator {
 		yield from $this->values;
@@ -168,7 +173,7 @@ class MapContainer implements
 	 * Returns a generator yielding keys and items from this container in
 	 * reversed order.
 	 *
-	 * @returns \Generator<int, array{AbstractValue, AbstractValue}, null, null>
+	 * @return \Generator<int, TypeDef_PrimiObjectCouple, null, void>
 	 */
 	public function getReverseIterator(): \Generator {
 

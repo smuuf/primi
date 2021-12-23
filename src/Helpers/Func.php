@@ -36,8 +36,11 @@ abstract class Func {
 	 * Returns a generator yielding `[primi key, primi value]` tuples from some
 	 * PHP array. If the value is not an instance of `AbstractValue`
 	 * object, it will be converted automatically to a `AbstractValue` object.
+	 *
+	 * @param array<mixed, mixed> $array
+	 * @return TypeDef_PrimiObjectCouples
 	 */
-	public static function array_to_couples(array $array): \Generator {
+	public static function array_to_couples(array $array): iterable {
 
 		foreach ($array as $key => $value) {
 			yield [
@@ -54,14 +57,14 @@ abstract class Func {
 	 * representing a valid Primi variable name)_ to PHP dict array mapping
 	 * pairs of `['variable_name' => Some Primi object]`.
 	 *
-	 * @param array<array{AbstractValue, AbstractValue}> $couples
+	 * @param TypeDef_PrimiObjectCouples $couples
 	 * @return array<string, AbstractValue> PHP dict array mapping of variables.
 	 * @throws TypeError
 	 */
 	public static function couples_to_variables_array(
 		iterable $couples,
 		string $intendedTarget
-	) {
+	): array {
 
 		$attrs = [];
 		foreach ($couples as [$k, $v]) {
@@ -90,7 +93,7 @@ abstract class Func {
 	 * a iterable Primi object that can be interpreted as a mapping.
 	 * Best-effort-style.
 	 *
-	 * @return iterable<array{AbstractValue, AbstractValue}>
+	 * @return TypeDef_PrimiObjectCouples
 	 * @throws TypeError
 	 */
 	public static function mapping_to_couples(AbstractValue $value) {
@@ -190,7 +193,7 @@ abstract class Func {
 	 * object if the previous object with the same hash was destroyed during
 	 * the PHP runtime.
 	 */
-	public static function object_hash($o): string {
+	public static function object_hash(object $o): string {
 		return \substr(\md5(\spl_object_hash($o)), 0, 8);
 	}
 
@@ -301,12 +304,14 @@ abstract class Func {
 	 * names) as the rest of the arguments, this function either throws a
 	 * TypeError exception with a user-friendly message or doesn't do
 	 * anything.
+	 *
+	 * @throws TypeError
 	 */
 	public static function allow_argument_types(
 		int $index,
 		AbstractValue $arg,
 		string ...$allowedTypes
-	) {
+	): void {
 
 		// If any of the "instanceof" checks is true,
 		// the type is allowed - return without throwing exception.
@@ -326,17 +331,23 @@ abstract class Func {
 	}
 
 	/**
-	 * Takes array as reference and ensures its contents are represented in a form
-	 * of indexed sub-arrays. This comes handy if we want to be sure that multiple
-	 * AST sub-nodes (which PHP-PEG parser returns) are universally iterable.
+	 * Takes array representing AST node and makes sure that its contents are
+	 * represented in a form of indexed sub-arrays. This comes handy if we want
+	 * to be sure that multiple AST sub-nodes (which PHP-PEG parser returns) are
+	 * universally iterable.
+	 *
+	 * @param TypeDef_AstNode $node
+	 * @return TypeDef_AstNode
 	 */
-	public static function ensure_indexed(array $array): array {
-		return !isset($array[0]) ? [$array] : $array;
+	public static function ensure_indexed(array $node): array {
+		return !isset($node[0]) ? [$node] : $node;
 	}
 
 	/**
 	 * Return a `[line, pos]` tuple for given (probably multiline) string and
 	 * some offset.
+	 *
+	 * @return array{int, int}
 	 */
 	public static function get_position_estimate(string $string, int $offset): array {
 
@@ -365,6 +376,9 @@ abstract class Func {
 	 *
 	 * In another words: This function returns which Primi types a PHP function
 	 * expects.
+	 *
+	 * @return array<string>
+	 * @throws EngineError
 	 */
 	public static function check_allowed_parameter_types_of_function(
 		\ReflectionFunction $rf
@@ -453,6 +467,9 @@ abstract class Func {
 	 * This way client code can, for example, implement short-circuiting by
 	 * using the result so-far and not processing the rest of what the generator
 	 * would yield.
+	 *
+	 * @param TypeDef_AstNode $node
+	 * @return iterable<array{string|null, AbstractValue}>
 	 */
 	public static function yield_left_to_right(array $node, Context $ctx) {
 
@@ -473,10 +490,11 @@ abstract class Func {
 	 * Types can be passed as a single class name or array of PHP class names.
 	 *
 	 * Throws an exception if any PHP class name doesn't represent a Primi type.
+	 *
+	 * @param array<string> $types
 	 */
-	public static function php_types_to_primi_types($types): string {
+	public static function php_types_to_primi_types(array $types): string {
 
-		$types = \is_string($types) ? [$types] : $types;
 		$primiTypes = \array_map(function($class) {
 
 			// Resolve PHP nulls as Primi nulls.
@@ -490,7 +508,7 @@ abstract class Func {
 				);
 			}
 
-			return $class->getTypeName();
+			return $class;
 
 		}, $types);
 
@@ -541,6 +559,9 @@ abstract class Func {
 	 * guaranteed to represent a "realpath" to a directory in filesystem.
 	 *
 	 * If any of the passed strings is NOT a directory, `EngineError` is thrown.
+	 *
+	 * @param array<string> $paths
+	 * @return array<string>
 	 */
 	public static function validate_dirs(array $paths): array {
 

@@ -15,14 +15,15 @@ use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Code\SourceFile;
 use \Smuuf\Primi\Code\AstProvider;
-use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\Primi\Helpers\Stats;
+use \Smuuf\Primi\Helpers\Colors;
 
 class Entrypoint {
 
 	use StrictObject;
 
-	private $config = [
+	/** @var array<string, mixed> */
+	private array $config = [
 		// Print only parsed AST and then exit.
 		'only_tree' => false,
 		// Parse the input (build AST), print parser stats and exit.
@@ -41,17 +42,17 @@ class Entrypoint {
 	];
 
 	/**
-	 * @param array $args Arguments to the CLI script (without the first $0
-	 * argument).
+	 * @param array<string> $args Arguments to the CLI script (without the
+	 * first $0 argument).
 	 */
-	public function __construct(array $args, string $rootDir) {
+	public function __construct(array $args) {
 
 		self::globalInit();
 		$this->config = $this->parseArguments($this->config, $args);
 
 	}
 
-	private static function globalInit() {
+	private static function globalInit(): void {
 
 		error_reporting(E_ALL);
 		set_error_handler(function($severity, $message, $file, $line) {
@@ -161,6 +162,11 @@ class Entrypoint {
 		die(1);
 	}
 
+	/**
+	 * @param array<string, mixed> $defaults
+	 * @param array<string, mixed> $args
+	 * @return array<string, mixed>
+	 */
 	private function parseArguments(array $defaults, array $args): array {
 
 		$cfg = $defaults;

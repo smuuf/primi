@@ -81,7 +81,7 @@ abstract class Interned {
 	 * This saves us one null-check when building objects for these
 	 * super-primitive values.
 	 */
-	public static function init() {
+	public static function init(): void {
 
 		self::$internedNull = new NullValue;
 		self::$internedBoolFalse = new BoolValue(\false);

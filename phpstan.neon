@@ -1,3 +1,7 @@
 parameters:
 	excludePaths:
 		- **/Parser/Compiled/PrimiParser.php
+	typeAliases:
+		TypeDef_AstNode: 'array<mixed, mixed>'
+		TypeDef_PrimiObjectCouples: 'iterable<int, TypeDef_PrimiObjectCouple>'
+		TypeDef_PrimiObjectCouple: 'array{\Smuuf\Primi\Values\AbstractValue, \Smuuf\Primi\Values\AbstractValue}'

@@ -17,7 +17,11 @@ class Dotpath {
 	/** Final absolute dotpath (with relativity resolved). */
 	private string $absolute;
 
-	/** Parts of the resolved dotpath. */
+	/**
+	 * Parts of the resolved dotpath.
+	 *
+	 * @var array<string>
+	 */
 	private array $parts;
 
 	public function __construct(
@@ -43,6 +47,8 @@ class Dotpath {
 	/**
 	 * Resolve the original, possibly relative, dotpath into an absolute
 	 * dotpath using origin as the origin dotpath.
+	 *
+	 * @return array{string, array<string>}
 	 */
 	private static function resolve(
 		string $dotpath,
@@ -113,7 +119,10 @@ class Dotpath {
 		return \reset($this->parts);
 	}
 
-	public function iterPaths(string $basepath = ''): \Generator {
+	/**
+	 * @return iterable<array{string, string, string}>
+	 */
+	public function iterPaths(string $basepath = ''): iterable {
 
 		$dotpath = '';
 		$package = '';
