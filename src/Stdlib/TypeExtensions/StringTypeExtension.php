@@ -161,14 +161,10 @@ class StringTypeExtension extends TypeExtension {
 	/**
 	 * Perform search and replace and return the results as new `string`.
 	 *
-	 * Two separate modes of operation:
-	 * 1. The needle `search` is a `string` and haystack `replace` is a string.
-	 * 2. The needle `search` is a `dict` defining search-and-replace pairs
-	 * _(and `replace` argument is omitted)_.
-	 *
 	 * ```js
 	 * "abcdef".replace("c", "X") == "abXdef"
-	 * "abcdef".replace({"c": "X", "e": "Y"}) == "abXdYf"
+	 * "přítmí ve městě za dvě stě".replace("stě", "šci") == "přítmí ve měšci za dvě šci"
+	 * "přítmí ve městě za dvě stě".replace(rx"\wt\w", "lol") == "přlolí ve mělol za dvě lol"
 	 * ```
 	 *
 	 * @primi.function
@@ -176,51 +172,26 @@ class StringTypeExtension extends TypeExtension {
 	public static function replace(
 		StringValue $string,
 		AbstractValue $search,
-		StringValue $replace = \null
+		StringValue $replace
 	): StringValue {
 
-		// Replacing using array of search-replace pairs.
-		if ($search instanceof DictValue) {
-
-			// Extract <from: to> pairs from the dict.
-			$from = [];
-			$to = [];
-			foreach ($search->getIterator() as $key => $value) {
-
-				if (!$key instanceof StringValue) {
-					$type = $key->getTypeName();
-					throw new RuntimeError("Replacement dict key must be a string, '$type' given.");
-				}
-
-				if (!$value instanceof StringValue) {
-					$type = $value->getTypeName();
-					throw new RuntimeError("Replacement dict value must be a string, '$type' given.");
-				}
-
-				$from[] = $key->value;
-				$to[] = $value->value;
-
-			}
-
-			return Interned::string(\str_replace($from, $to, $string->value));
-
-		}
-
-		if ($replace === \null) {
-			throw new ArgumentCountError(2, 3);
-		}
-
 		if ($search instanceof StringValue || $search instanceof NumberValue) {
+
 			// Handle both string/number values the same way.
 			return Interned::string(
 				\str_replace(
-					(string) $search->value, $replace->value, $string->value
+					(string) $search->value,
+					$replace->value,
+					$string->value
 				)
 			);
+
 		} elseif ($search instanceof RegexValue) {
 			return Interned::string(
 				\preg_replace(
-					$search->value, $replace->value, $string->value
+					$search->value,
+					$replace->value,
+					$string->value
 				)
 			);
 		} else {
@@ -229,6 +200,51 @@ class StringTypeExtension extends TypeExtension {
 			throw new RuntimeError("Cannot use '$type' as needle");
 
 		}
+
+	}
+
+	/**
+	 * Search and replace strings within a string and return the new resulting
+	 * string. The from-to pairs are to be provided as a `dict`.
+	 *
+	 * ```js
+	 * "abcdef".replace({'c': 'X', 'e': 'Y'}) == "abXdYf"
+	 * "abcdef".replace({'b': 'X', 'ab': 'Y'}) == "Ycdef"
+	 * ```
+	 *
+	 * The longest keys will be tried first. Once a substring has been replaced,
+	 * its new value will not be searched again. This behavior is identical
+	 * to PHP function [`strtr()`](https://www.php.net/manual/en/function.strtr.php).
+	 *
+	 * @primi.function
+	 */
+	public static function translate(
+		StringValue $string,
+		DictValue $pairs
+	): StringValue {
+
+		$mapping = [];
+		$c = 0;
+
+		// Extract <from: to> pairs from the dict.
+		foreach ($pairs->value->getItemsIterator() as [$key, $value]) {
+
+			if (!$key instanceof StringValue) {
+				$type = $key->getTypeName();
+				throw new RuntimeError("Replacement dict key must be a string, '$type' given.");
+			}
+
+			if (!$value instanceof StringValue) {
+				$type = $value->getTypeName();
+				throw new RuntimeError("Replacement dict value must be a string, '$type' given.");
+			}
+
+			$mapping[$key->value] = $value->value;
+			$c++;
+
+		}
+
+		return Interned::string(\strtr($string->value, $mapping));
 
 	}
 
