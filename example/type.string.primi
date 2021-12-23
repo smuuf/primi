@@ -162,3 +162,34 @@ assert('aa' > 'a', _)
 assert('ab' > 'aa', _)
 assert('a' < 'aa', _)
 assert('aa' < 'ab', _)
+
+//
+// String methods.
+//
+
+//
+// string.replace()
+//
+
+_ = "Basic string.replace() functionality"
+x = "abcdef".replace("c", "X")
+assert(x == "abXdef", _)
+
+_ = "All occurrences of the needle are replaced"
+x = "přítmí ve městě za dvě stě".replace("stě", "šci")
+assert(x == "přítmí ve měšci za dvě šci", _)
+
+_ = "string.replace() alsoaccepts regex object as the needle"
+x = "přítmí ve městě za dvě stě".replace(rx"\wt\w", "lol")
+assert(x == "přlolí ve mělol za dvě lol", _)
+
+text = "Ahojky, jak see máš?"
+pairs = {
+    'A': 'XXX',
+    'k': 'kkk',
+    'ee': 'eee',
+    'š': 'š?!',
+    'š?': 'QUESTIONMARK', // Longer than the key "š" - "š?" will have priority.
+}
+
+assert(text.translate(pairs) == 'XXXhojkkky, jakkk seee máQUESTIONMARK')
