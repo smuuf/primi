@@ -92,13 +92,16 @@ abstract class Colors {
 
 	}
 
-	private static function handler(array $m): string {
+	/**
+	 * @param array<int, string> $matches
+	 */
+	private static function handler(array $matches): string {
 
 		if (self::$noColor !== \false) {
 			return '';
 		}
 
-		$color = $m[1];
+		$color = $matches[1];
 
 		if (isset(self::COLORS[$color])) {
 			return \sprintf(self::COLOR_FORMAT, self::COLORS[$color]);

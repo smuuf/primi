@@ -3,10 +3,11 @@
 namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Values\ListValue;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Handlers\SimpleHandler;
+use \Smuuf\Primi\Handlers\HandlerFactory;
 
 class ListDefinition extends SimpleHandler {
 
@@ -20,6 +21,10 @@ class ListDefinition extends SimpleHandler {
 
 	}
 
+	/**
+	 * @param array<TypeDef_AstNode> $itemNodes
+	 * @return array<AbstractValue>
+	 */
 	protected static function buildValues(
 		array $itemNodes,
 		Context $context

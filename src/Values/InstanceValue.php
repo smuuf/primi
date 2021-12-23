@@ -7,8 +7,7 @@ namespace Smuuf\Primi\Values;
 use \Smuuf\Primi\Values\TypeValue;
 
 /**
- * NOTE: You should not instantiate this PHP class directly - use the helper
- * `Interned::bool()` factory to get these.
+ * Class for representing instances of userland classes/types.
  */
 class InstanceValue extends AbstractValue {
 

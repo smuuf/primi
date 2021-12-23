@@ -17,10 +17,10 @@ abstract class Stats {
 	private static $enabled = \false;
 
 	/** @var float Point in time when stats gathering was enabled. */
-	private static $startTime = 0;
+	private static float $startTime = 0;
 
-	/** @var array Dictionary for gathered statistics. */
-	private static $stats = [];
+	/** @var array<string, int> Dictionary for gathered statistics. */
+	private static array $stats = [];
 
 	/**
 	 * Enable global stats gathering.

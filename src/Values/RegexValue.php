@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Helpers\Func;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper

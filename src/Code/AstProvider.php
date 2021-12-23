@@ -43,6 +43,9 @@ class AstProvider {
 
 	}
 
+	/**
+	 * @return TypeDef_AstNode|null
+	 */
 	private function loadFromCache(string $key): ?array {
 
 		if ($this->tempDir === \null) {
@@ -58,6 +61,9 @@ class AstProvider {
 
 	}
 
+	/**
+	 * @param TypeDef_AstNode $ast
+	 */
 	private function storeIntoCache(string $key, array $ast): void {
 
 		if ($this->tempDir === \null) {
@@ -70,6 +76,7 @@ class AstProvider {
 	}
 
 	/**
+	 * @return TypeDef_AstNode
 	 * @throws SyntaxError
 	 */
 	private static function parseSource(Source $source): array {

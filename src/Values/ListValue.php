@@ -8,12 +8,14 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Indices;
-use \Smuuf\Primi\Helpers\Interned;
 
 class ListValue extends AbstractNativeValue {
 
 	protected const TYPE = "list";
 
+	/**
+	 * @param array<AbstractValue> $items
+	 */
 	public function __construct(array $items) {
 
 		// Ensuring the list is indexed from 0. Keys will be ignored.
@@ -67,6 +69,9 @@ class ListValue extends AbstractNativeValue {
 
 	}
 
+	/**
+	 * @return \Iterator<int, AbstractValue>
+	 */
 	public function getIterator(): \Iterator {
 		yield from $this->value;
 	}

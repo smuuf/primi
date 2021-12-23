@@ -25,7 +25,9 @@ class Scope {
 	 * Flag to distinguish scopes representing a class scope.
 	 *
 	 * This is used to tell function definitions that they should not set their
-	 * scopes' parent to this scope.
+	 * scopes' parent to this scope. In another words: Methods of a class
+	 * should _not_ have direct access to the scope of the class. Those
+	 * should be accessed only via the "self" special variable.
 	 *
 	 * @const int
 	 */
@@ -40,6 +42,9 @@ class Scope {
 	/** Scope type. */
 	private int $type = self::TYPE_STANDARD;
 
+	/**
+	 * @param array<string, AbstractValue> $variables
+	 */
 	public function __construct(
 		array $variables = [],
 		int $type = self::TYPE_STANDARD
@@ -90,6 +95,8 @@ class Scope {
 	 * If the `$includeParents` argument is `true`, variables from parent scopes
 	 * will be included too (variables in child scopes have priority over those
 	 * from parent scopes).
+	 *
+	 * @return array<string, AbstractValue>
 	 */
 	public function getVariables(bool $includeParents = \false): array {
 
@@ -102,6 +109,9 @@ class Scope {
 
 	}
 
+	/**
+	 * @return void
+	 */
 	public function setVariable(string $name, AbstractValue $value) {
 		$this->variables[$name] = $value;
 	}
@@ -110,6 +120,7 @@ class Scope {
 	 * Set multiple variables to the scope.
 	 *
 	 * @param array<string, AbstractValue> $pairs
+	 * @return void
 	 */
 	public function setVariables(array $pairs) {
 		// NOTE: array_merge() instead of '+' keeps original and expected order.

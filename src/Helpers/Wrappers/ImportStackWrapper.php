@@ -31,6 +31,9 @@ class ImportStackWrapper extends AbstractWrapper {
 		$this->dotpath = $dotpath;
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function executeBefore() {
 
 		// Detect circular imports.
@@ -40,7 +43,7 @@ class ImportStackWrapper extends AbstractWrapper {
 
 	}
 
-	public function executeAfter() {
+	public function executeAfter(): void {
 		$this->importer->popImport();
 	}
 

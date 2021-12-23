@@ -1,17 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Helpers\Traits;
 
+use \Smuuf\Primi\Helpers\Func;
+
 /**
- * Use external scope for watching lifecycles, as different classes that
- * use the WatchLifecycle triat don't share the one trait's static properties.
+ * Use external scope for watching life-cycles, as different classes that
+ * use the WatchLifecycle trait don't share the one trait's static properties.
  */
 abstract class WatchLifecycleScope {
 
-	public static $instanceCounter = 0;
-	public static $stackCounter = 0;
-	public static $alreadyVisualized = [];
-	public static $stack = [];
+	public static int $instanceCounter = 0;
+	public static int $stackCounter = 0;
+
+	/** @var array<int, bool> */
+	public static array $alreadyVisualized = [];
+
+	/** @var array<int, string> */
+	public static array $stack = [];
 
 }
 
@@ -60,18 +68,22 @@ trait WatchLifecycle {
 	/**
 	 * Add this currently watched instance to global stack.
 	 */
-	private function add($hash) {
+	private function add(string $hash): void {
 		WatchLifecycleScope::$stack[++WatchLifecycleScope::$stackCounter] = $hash;
 	}
 
 	/**
 	 * Remove this currently watched instance from global stack.
 	 */
-	private function remove($hash) {
-		unset(WatchLifecycleScope::$stack[array_search($hash, WatchLifecycleScope::$stack, true)]);
+	private function remove(string $hash): void {
+		unset(
+			WatchLifecycleScope::$stack[
+				array_search($hash, WatchLifecycleScope::$stack, true)
+			]
+		);
 	}
 
-	private function visualize() {
+	private function visualize(): string {
 
 		if (!WatchLifecycleScope::$stack) return "x";
 
@@ -99,11 +111,17 @@ trait WatchLifecycle {
 	 *
 	 * Now that I'm thinking about it, the "1)" should be enough, but, well...
 	 */
-	private static function getHash($object): string {
-		return substr(md5(self::$instanceCounter . get_class($object) . spl_object_hash($object)), 0, 8);
+	private static function getHash(object $object): string {
+
+		return Func::string_hash(
+			self::$instanceCounter
+			. get_class($object)
+			. spl_object_hash($object)
+		);
+
 	}
 
-	private static function truecolor(string $hex, string $content) {
+	private static function truecolor(string $hex, string $content): string {
 
 		$r = self::numpad(hexdec(substr($hex, 0, 2)) + 32);
 		$g = self::numpad(hexdec(substr($hex, 2, 2)) + 32);
@@ -118,8 +136,8 @@ trait WatchLifecycle {
 	/**
 	 * Return int number as hex and ensure it's of length of 3, padded with zeroes.
 	 */
-	private static function numpad(int $n) {
-		return str_pad($n, 3, "0", STR_PAD_LEFT);
+	private static function numpad(int $n): string {
+		return str_pad((string) $n, 3, "0", STR_PAD_LEFT);
 	}
 
 }

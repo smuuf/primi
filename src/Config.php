@@ -57,6 +57,7 @@ class Config {
 	// Paths for finding modules.
 	//
 
+	/** @var array<string> */
 	private array $importPaths = [
 		__DIR__ . '/Stdlib/Modules',
 	];
@@ -65,6 +66,9 @@ class Config {
 		$this->importPaths[] = Func::validate_dirs([$path])[0];
 	}
 
+	/**
+	 * @return array<string>
+	 */
 	public function getImportPaths(): array {
 		return $this->importPaths;
 	}

@@ -16,13 +16,23 @@ class Ast {
 
 	use StrictObject;
 
-	/** Abstract syntax tree as (nested) array. */
+	/**
+	 * Abstract syntax tree as (nested) array.
+	 *
+	 * @var TypeDef_AstNode
+	 */
 	private array $tree;
 
+	/**
+	 * @param TypeDef_AstNode $ast
+	 */
 	public function __construct(array $ast) {
 		$this->tree = $ast;
 	}
 
+	/**
+	 * @return TypeDef_AstNode
+	 */
 	public function getTree(): array {
 		return $this->tree;
 	}

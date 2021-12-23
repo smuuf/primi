@@ -33,6 +33,8 @@ class ContextPushPopWrapper extends AbstractWrapper {
 
 	/**
 	 * Push the call ID and scope (if present) onto call stack and scope stack.
+	 *
+	 * @return mixed
 	 */
 	public function executeBefore() {
 
@@ -51,7 +53,7 @@ class ContextPushPopWrapper extends AbstractWrapper {
 	/**
 	 * Pop the items from call stack and scope stack.
 	 */
-	public function executeAfter() {
+	public function executeAfter(): void {
 
 		if ($this->call) {
 			$this->ctx->popCall();

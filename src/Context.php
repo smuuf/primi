@@ -137,10 +137,6 @@ class Context {
 		return $this->callStack;
 	}
 
-	public function getTraceback(): array {
-		return $this->callStack;
-	}
-
 	public function pushCall(StackFrame $call): void {
 
 		$this->callStack[] = $call;
@@ -205,14 +201,24 @@ class Context {
 			?? $this->builtins->getVariable($name);
 	}
 
+	/**
+	 * @return array<string, AbstractValue>
+	 */
 	public function getVariables(bool $includeParents = \false): array {
 		return $this->currentScope->getVariables($includeParents);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function setVariable(string $name, AbstractValue $value) {
 		$this->currentScope->setVariable($name, $value);
 	}
 
+	/**
+	 * @param array<string, AbstractValue> $pairs
+	 * @return void
+	 */
 	public function setVariables(array $pairs) {
 		$this->currentScope->setVariables($pairs);
 	}

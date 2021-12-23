@@ -14,19 +14,19 @@ class CallbackTask implements TaskInterface {
 
 	use StrictObject;
 
-	/** @var FuncValue Callback function. */
-	private $fn = \null;
+	/** The callback function. */
+	private FuncValue $fn;
 
-	/** @var array Arguments passed to callback. */
-	private $args = [];
+	/** Arguments passed to callback. */
+	private CallArgs $args;
 
-	public function __construct(FuncValue $fn, array $args = []) {
+	public function __construct(FuncValue $fn, ?CallArgs $args = null) {
 		$this->fn = $fn;
-		$this->args = $args;
+		$this->args = $args ?? CallArgs::getEmpty();
 	}
 
 	public function execute(Context $ctx): void {
-		$this->fn->invoke($ctx, new CallArgs($this->args));
+		$this->fn->invoke($ctx, $this->args);
 	}
 
 }

@@ -9,7 +9,6 @@ use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\StringEscaping;
 
 /**
@@ -158,6 +157,9 @@ class StringValue extends AbstractNativeValue {
 
 	}
 
+	/**
+	 * @return \Iterator<int, AbstractValue>
+	 */
 	public function getIterator(): \Iterator {
 		return self::utfSplit($this->value);
 	}
@@ -181,6 +183,8 @@ class StringValue extends AbstractNativeValue {
 	/**
 	 * Return a generator yielding each of this string's characters as
 	 * new one-character StringValue objects.
+	 *
+	 * @return \Generator<int, self, null, void>
 	 */
 	private static function utfSplit(string $string): \Generator {
 

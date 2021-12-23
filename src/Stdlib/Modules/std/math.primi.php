@@ -27,6 +27,9 @@ class extends NativeModule {
 
 	}
 
+	/**
+	 * @param array<AbstractValue> $items
+	 */
 	private static function minmax(string $op, array $items): AbstractValue {
 
 		$minmax = $items[0];

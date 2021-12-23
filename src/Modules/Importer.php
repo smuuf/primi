@@ -50,6 +50,9 @@ class Importer {
 	 */
 	private array $baseCache = [];
 
+	/**
+	 * @param array<string> $importPaths
+	 */
 	public function __construct(
 		Context $ctx,
 		array $importPaths = []
@@ -58,6 +61,9 @@ class Importer {
 		$this->importPaths = $importPaths;
 	}
 
+	/**
+	 * @return array<string, ModuleValue>
+	 */
 	public function getLoaded(): array {
 		return $this->loaded;
 	}
@@ -152,6 +158,8 @@ class Importer {
 	 * where 'c' directory is present - the resulting base is determined as
 	 * '/yyy/', ignoring the '/zzz/', because '/yyy/' was before it and thus
 	 * had a higher priority.
+	 *
+	 * @param array<string> $possiblePaths
 	 */
 	private function determineBase(
 		Dotpath $dp,
@@ -356,6 +364,9 @@ class Importer {
 
 	}
 
+	/**
+	 * @return array<string>
+	 */
 	private static function withSupportedExtensions(string $filepath): array {
 
 		$result = [];

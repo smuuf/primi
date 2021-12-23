@@ -42,6 +42,8 @@ abstract class PosixSignalTaskEmitter {
 			return;
 		}
 
+		$signalsToCatch[] = $signum;
+
 		// Let's make sure any already registered signal handler is also called.
 		$original = \pcntl_signal_get_handler($signum);
 		\pcntl_signal($signum, function(...$args) use ($original) {
@@ -58,7 +60,7 @@ abstract class PosixSignalTaskEmitter {
 
 	}
 
-	public static function registerTaskQueue(TaskQueue $queue) {
+	public static function registerTaskQueue(TaskQueue $queue): void {
 
 		// A specific receiver instance can be added only once.
 		if (\in_array($queue, self::$queues, \true)) {
@@ -76,7 +78,7 @@ abstract class PosixSignalTaskEmitter {
 	 * avoid keeping unnecessary reference to the receiver object - to avoid
 	 * leaks caused by blocking proper garbage collection.
 	 */
-	public static function unregisterTaskQueue(TaskQueue $queue) {
+	public static function unregisterTaskQueue(TaskQueue $queue): void {
 
 		$index = \array_search($queue, self::$queues, \true);
 		if ($index === \false) {

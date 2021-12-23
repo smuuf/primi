@@ -22,6 +22,9 @@ abstract class HandlerFactory {
 
 	private const PREFIX = '\Smuuf\Primi\Handlers\Kinds';
 
+	/**
+	 * @return class-string|string
+	 */
 	private static function getClassName(string $nodeName) {
 		return self::PREFIX . "\\$nodeName";
 	}
@@ -59,6 +62,9 @@ abstract class HandlerFactory {
 
 	/**
 	 * Shorthand function for running a AST node passed as array.
+	 *
+	 * @param TypeDef_AstNode $node
+	 * @return mixed
 	 */
 	public static function runNode(array $node, Context $ctx) {
 		return self::getFor($node['name'])::run($node, $ctx);

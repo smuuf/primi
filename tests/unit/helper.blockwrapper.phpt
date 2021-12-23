@@ -24,7 +24,7 @@ class YayWrapper extends AbstractWrapper {
 		$gatherer[] = "enter {$this->arg}";
 	}
 
-	public function executeAfter() {
+	public function executeAfter(): void {
 		global $gatherer;
 		$gatherer[] = "exit {$this->arg}";
 	}

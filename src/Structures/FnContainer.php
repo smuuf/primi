@@ -46,12 +46,16 @@ class FnContainer {
 	 * by its node tree).
 	 *
 	 * The closure returns some Primi value object as a result.
+	 *
+	 * @param TypeDef_AstNode $entryNode
+	 * @param ?array{names: array<string, string>, defaults: array<string, TypeDef_AstNode>} $defParams
+	 * @return self
 	 */
 	public static function build(
 		array $entryNode,
 		string $definitionName,
 		ModuleValue $definitionModule,
-		array $defParams = [],
+		?array $defParams = \null,
 		?Scope $defScope = \null
 	) {
 
@@ -117,6 +121,10 @@ class FnContainer {
 
 	}
 
+	/**
+	 * @param array<int> $flags
+	 * @return self
+	 */
 	public static function buildFromClosure(callable $fn, array $flags = []) {
 
 		$closure = \Closure::fromCallable($fn);
@@ -213,7 +221,7 @@ class FnContainer {
 	 * NOTE: Only docblock type-hinting for performance reasons.
 	 *
 	 * @param Context $ctx
-	 * @param array $defParams
+	 * @param array{names: array<string, string>, defaults: array<string, TypeDef_AstNode>} $defParams
 	 * @param CallArgs $callArgs
 	 * @param Scope $scope
 	 */

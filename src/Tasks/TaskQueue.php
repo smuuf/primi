@@ -12,28 +12,26 @@ class TaskQueue {
 
 	use StrictObject;
 
+	private Context $context;
+
+	/** Run queued tasks after this time interval passes (in seconds). */
+	public static float $interval = 0.25;
+
+	/** For measuring time. */
+	private float $timer;
+
 	/**
-	 * Run queued tasks after this time interval passes (in seconds).
-	 * @var int|float
+	 * FIFO queue for scheduling tasks.
+	 *
+	 * @var array<array{TaskInterface, float}>
 	 */
-	public static $interval = 0.25;
-
-	/** @var Context */
-	private $context;
-
-	/** @var float Measuring time. */
-	private $timer;
-
-	/** @var array FIFO queue for scheduling tasks. */
-	private $queue = [];
+	private array $queue = [];
 
 	/**
 	 * Random ID for this queue instance (safer than spl_object_id() or similar
 	 * for checking uniqueness).
-	 *
-	 * @var string
 	 */
-	private $id;
+	private string $id;
 
 	public function __construct(Context $ctx) {
 		$this->id = Func::unique_id();
@@ -113,7 +111,7 @@ class TaskQueue {
 
 	}
 
-	private function executeTask(TaskInterface $task) {
+	private function executeTask(TaskInterface $task): void {
 		$task->execute($this->context);
 	}
 

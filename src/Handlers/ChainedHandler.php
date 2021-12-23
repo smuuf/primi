@@ -13,6 +13,10 @@ use \Smuuf\Primi\Values\AbstractValue;
  */
 abstract class ChainedHandler extends Handler {
 
+	/**
+	 * @param TypeDef_AstNode $node
+	 * @return mixed
+	 */
 	abstract public static function chain(
 		array $node,
 		Context $context,

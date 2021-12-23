@@ -4,7 +4,7 @@ namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
 
@@ -58,7 +58,7 @@ return new class extends NativeModule {
 	 * @primi.function(no-stack)
 	 */
 	public static function gc_status(): DictValue {
-		return AbstractValue::buildAuto(\gc_status());
+		return new DictValue(Func::array_to_couples(\gc_status()));
 	}
 
 };

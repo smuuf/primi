@@ -16,6 +16,10 @@ use \Smuuf\Primi\Ex\SystemException;
  */
 abstract class SimpleHandler extends Handler {
 
+	/**
+	 * @param TypeDef_AstNode $node
+	 * @return mixed
+	 */
 	final public static function run(
 		array $node,
 		Context $context
@@ -40,6 +44,10 @@ abstract class SimpleHandler extends Handler {
 
 	}
 
+	/**
+	 * @param TypeDef_AstNode $node
+	 * @return mixed
+	 */
 	abstract protected static function handle(array $node, Context $context);
 
 }

@@ -37,6 +37,10 @@ class CallArgs {
 	/** Total number of args and kwargs combined. */
 	private ?int $totalCount = \null;
 
+	/**
+	 * @param array<int, AbstractValue> $args
+	 * @param array<string, AbstractValue> $kwargs
+	 */
 	public function __construct(array $args = [], array $kwargs = []) {
 
 		if (!\array_is_list($args)) {

@@ -6,8 +6,8 @@ namespace Smuuf\Primi\Ex;
 
 class ArgumentCountError extends RuntimeError {
 
-	protected $passed = \null;
-	protected $expected = \null;
+	protected int $passed;
+	protected int $expected;
 
 	public function __construct(
 		int $passed,

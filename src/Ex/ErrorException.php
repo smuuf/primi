@@ -20,12 +20,13 @@ class ErrorException extends BaseException {
 
 	/**
 	 * Traceback (which is really just the callstack).
-	 * @var array<StackFrame>
+	 *
+	 * @var ?array<StackFrame>
 	 */
 	private ?array $traceback = \null;
 
 	/**
-	 * @param array<StackFrame> $traceback
+	 * @param ?array<StackFrame> $traceback
 	 */
 	public function __construct(
 		string $msg,
@@ -55,8 +56,9 @@ class ErrorException extends BaseException {
 	}
 
 	/**
-	 * Traceback, if available.
-	 * @return array<string, StackFrame>
+	 * Traceback, if there's any.
+	 *
+	 * @return ?array<StackFrame>
 	 */
 	public function getTraceback(): ?array {
 		return $this->traceback;

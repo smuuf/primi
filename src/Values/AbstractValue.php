@@ -21,7 +21,11 @@ abstract class AbstractValue extends ValueFriends {
 	/** @const string Name of Primi (object) type. */
 	protected const TYPE = '__undefined__';
 
-	/** Attributes of Primi object. */
+	/**
+	 * Attributes of Primi object.
+	 *
+	 * @var array<string, AbstractValue>
+	 */
 	protected array $attrs = [];
 
 	/**
@@ -31,6 +35,9 @@ abstract class AbstractValue extends ValueFriends {
 	 * NOTE: We're not checking \is_callable on bare $value, because for example
 	 * string 'time' would be determined to be the PHP's 'time' function and
 	 * we do not want that (and it would also be a security issue).
+	 *
+	 * @param mixed $value
+	 * @return AbstractValue
 	 */
 	public static function buildAuto($value) {
 
@@ -64,6 +71,8 @@ abstract class AbstractValue extends ValueFriends {
 
 	/**
 	 * Returns the core PHP value of this Primi value object.
+	 *
+	 * @return mixed
 	 */
 	final public function getInternalValue() {
 		return $this->value;
@@ -86,6 +95,8 @@ abstract class AbstractValue extends ValueFriends {
 
 	/**
 	 * Returns dict array with this all attributes of this value.
+	 *
+	 * @return array<string, AbstractValue>
 	 */
 	final public function getAttrs(): array {
 		return $this->attrs;
@@ -205,6 +216,9 @@ abstract class AbstractValue extends ValueFriends {
 		throw new TypeError("'{$this->getTypeName()}' object is not callable");
 	}
 
+	/**
+	 * @return ?\Iterator<int, AbstractValue>
+	 */
 	public function getIterator(): ?\Iterator {
 		return \null;
 	}
@@ -295,6 +309,7 @@ abstract class AbstractValue extends ValueFriends {
 	 * This is mainly for the builtin dir() function Primi provides for
 	 * easy inspection of contents of an object.
 	 *
+	 * @return array<string>
 	 * @throws UnhashableTypeException
 	 */
 	public function dirItems(): ?array {

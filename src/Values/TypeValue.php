@@ -32,6 +32,9 @@ final class TypeValue extends AbstractNativeValue {
 	/** A parent Primi type of this type. */
 	protected ?TypeValue $parent;
 
+	/**
+	 * @param array<string, AbstractValue> $attrs
+	 */
 	public function __construct(
 		string $name,
 		?TypeValue $parent = \null,

@@ -20,9 +20,11 @@ class DictValue extends AbstractNativeValue {
 	/**
 	 * Create new instance from iterable list containing `[key, value]` Primi
 	 * value tuples.
+	 *
+	 * @param TypeDef_PrimiObjectCouples $items
 	 */
 	public function __construct(iterable $items = []) {
-		$this->value = MapContainer::fromTuples($items);
+		$this->value = MapContainer::fromCouples($items);
 	}
 
 	public function __clone() {
@@ -68,7 +70,7 @@ class DictValue extends AbstractNativeValue {
 	}
 
 	/**
-	 * @returns \Iterator<string, AbstractValue>
+	 * @return \Iterator<int, AbstractValue>
 	 */
 	public function getIterator(): \Iterator {
 		yield from $this->value->getKeysIterator();

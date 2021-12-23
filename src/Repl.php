@@ -76,7 +76,7 @@ class Repl {
 
 	}
 
-	protected function printHelp() {
+	protected function printHelp(): void {
 
 		$this->driver->output(Colors::get("\n".
 			"{green}Use '{_}exit{green}' to exit REPL or '{_}exit!{green}' " .
@@ -265,7 +265,7 @@ class Repl {
 	/**
 	 * Pretty-prints out traceback from a PHP exception.
 	 */
-	private function printPhpTraceback(\Throwable $e) {
+	private function printPhpTraceback(\Throwable $e): void {
 
 		$type = get_class($e);
 		$msg = Colors::get(sprintf("\n{white}{-red}%s", self::PHP_ERROR_HEADER));
@@ -330,11 +330,10 @@ class Repl {
 
 	}
 
-	private static function isIncompleteInput(string $input) {
-
-		if (empty(trim($input))) {
-			return [false, 0];
-		}
+	/**
+	 * @return array{bool, int}
+	 */
+	private static function isIncompleteInput(string $input): array {
 
 		// Lines ending with opening curly brackets are considered incomplete.
 		if ($input[-1] === "{") {
@@ -352,9 +351,11 @@ class Repl {
 			return [true, 0];
 		}
 
+		return [false, 0];
+
 	}
 
-	private function loadHistory() {
+	private function loadHistory(): void {
 
 		if (is_readable(self::$historyFilePath)) {
 			$this->driver->loadHistory(self::$historyFilePath);
@@ -362,7 +363,7 @@ class Repl {
 
 	}
 
-	private function saveHistory() {
+	private function saveHistory(): void {
 
 		if (is_writable(dirname(self::$historyFilePath))) {
 			$this->driver->storeHistory(self::$historyFilePath);
@@ -395,7 +396,7 @@ class Repl {
 
 	}
 
-	private static function formatType(AbstractValue $value) {
+	private static function formatType(AbstractValue $value): string {
 
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",
