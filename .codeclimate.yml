@@ -1,8 +1,7 @@
 version: "2"
 exclude_patterns:
-  - "src/parser/"
+  - "tools/"
   - "res/"
-  - "!src/parser/ParserHandler.php"
 checks:
   method-complexity:
     config:
