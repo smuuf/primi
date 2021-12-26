@@ -1,11 +1,32 @@
-//
-// std.runtime.memory module functions.
-//
-
 import std.runtime.memory: get_peak, get_current
+import ._helpers: assert_error
 
 // std.runtime.memory.get_peak() function.
 assert(type(get_current()) == number)
 
 // std.runtime.memory.get_current() function.
 assert(type(get_current()) == number)
+
+//
+// Using hasattr() and getattr() builtin functions on object.
+//
+
+class SomeUserClass {
+    // Empty class, whatever.
+}
+
+some_string = "Something!"
+assert(!hasattr(some_string, 'nonsense'))
+assert('default!' == getattr(some_string, 'nonsense', 'default!'))
+
+_ = "Builtin primitive types don't support setting attributes directly"
+assert_error(() => {
+    some_string.nonsense = 123
+}, _)
+
+_ = "User types/classes do support setting attributes directly"
+suc = SomeUserClass()
+suc.nonsense = 123
+assert(hasattr(suc, 'nonsense'), _)
+assert(123 == getattr(suc, 'nonsense'), _)
+assert('default!' == getattr(suc, 'more_nonsense', 'default!'), _)

@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Repl;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\NullValue;
@@ -286,8 +287,43 @@ class extends NativeModule {
 	 *
 	 * @primi.function(no-stack)
 	 */
-	public static function hasattr(AbstractValue $obj, StringValue $name): BoolValue {
+	public static function hasattr(
+		AbstractValue $obj,
+		StringValue $name
+	): BoolValue {
 		return Interned::bool(isset($obj->attrs[$name->getStringValue()]));
+	}
+
+	/**
+	 * Returns value of object's attribute with specified name. If the object
+	 * has no attribute of that name, error is thrown.
+	 *
+	 * If the optional `default` argument is specified its value is returned
+	 * instead of throwing an error.
+	 *
+	 * @primi.function(no-stack, call-convention: object)
+	 */
+	public static function getattr(
+		CallArgs $args
+	): AbstractValue {
+
+		$obj = $args->getArg(0);
+		$name = $args->safeGetArg(1) ?? $args->getKwarg('name');
+
+		$attrName = $name->getStringValue();
+		if (isset($obj->attrs[$attrName])) {
+			return $obj->attrs[$attrName];
+		}
+
+		$default = $args->safeGetArg(2) ?? $args->safeGetKwarg('default');
+		if ($default !== \null) {
+			return $default;
+		}
+
+		$typeName = $obj->getTypeName();
+		throw new LookupError(
+			"Object of type '$typeName' has no attribute '$attrName'");
+
 	}
 
 };
