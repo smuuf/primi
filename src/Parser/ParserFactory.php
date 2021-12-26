@@ -55,7 +55,7 @@ abstract class ParserFactory {
 		$code = Compiler::compile($grammar);
 
 		\file_put_contents(self::TARGET_PARSER_FILE, $code, \LOCK_EX);
-		\file_put_contents(self::VERSION_FILE, $newVersion);
+		\file_put_contents(self::VERSION_FILE, $newVersion, \LOCK_EX);
 
 	}
 
