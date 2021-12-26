@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
+use Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\TypeValue;
 
 /**
@@ -18,7 +19,8 @@ class InstanceValue extends AbstractValue {
 	}
 
 	public function getStringRepr(): string {
-		return "<instance '{$this->type->getName()}'>";
+		$id = Func::object_hash($this);
+		return "<instance '{$this->type->getName()}' {$id}>";
 	}
 
 	public function getType(): TypeValue {

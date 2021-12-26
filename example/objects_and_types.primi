@@ -151,3 +151,43 @@ _ = "Setting some attr under a non-existent attr throws error"
 assert_error(() => {
     instance.bogus_attr_a.bogus_attr_b = 1
 }, _)
+
+//
+// Deeply nested objects.
+//
+
+class Struct {
+
+    function __init__(self, a, b = null) {
+        print(f"Initing with a:{a} and b:{b}")
+        self.substruct = b
+    }
+
+    function get_tree(self, message = "NOTHING") {
+
+        tree = [self]
+        new = self
+
+        print(f"Getting tree with message: '{message}'")
+
+        while (hasattr(new, 'substruct')) {
+            tree.push(new.substruct)
+            new = new.substruct
+        }
+
+        return tree
+
+    }
+
+}
+
+o1 = Struct('aaa')
+o2 = Struct('bbb', o1)
+o3 = Struct('ccc', o2)
+o4 = Struct('ddd', o3)
+
+print(o4.get_tree())
+print(o4.get_tree("SOMETHING"))
+
+o4.substruct.substruct.substruct = "hey!"
+print(o4.get_tree("SOMETHING"))

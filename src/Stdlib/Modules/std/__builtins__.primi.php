@@ -281,4 +281,13 @@ class extends NativeModule {
 
 	}
 
+	/**
+	 * Returns `true` if object has an attribute with specified name.
+	 *
+	 * @primi.function(no-stack)
+	 */
+	public static function hasattr(AbstractValue $obj, StringValue $name): BoolValue {
+		return Interned::bool(isset($obj->attrs[$name->getStringValue()]));
+	}
+
 };

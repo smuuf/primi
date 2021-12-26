@@ -23,7 +23,7 @@ abstract class ValueFriends {
 	protected $value = \null;
 
 	/**
-	 * Value object attributes.
+	 * Attributes of Primi object.
 	 *
 	 * @var array<string, AbstractValue>
 	 */
