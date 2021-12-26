@@ -22,13 +22,6 @@ abstract class AbstractValue extends ValueFriends {
 	protected const TYPE = '__undefined__';
 
 	/**
-	 * Attributes of Primi object.
-	 *
-	 * @var array<string, AbstractValue>
-	 */
-	protected array $attrs = [];
-
-	/**
 	 * Take any PHP value and convert it into a Primi value object of an
 	 * appropriate type.
 	 *
