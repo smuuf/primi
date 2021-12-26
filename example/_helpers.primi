@@ -2,7 +2,7 @@ function assert_not(truth, *args) {
 	// Assert that the first argument is false.
 	// Using *args workaround to make second argument (desc) optional,
 	// because Primi doesn't currently support having argument defaults.
-	desc  = args[0] if (args) else ''
+	desc = args[0] if (args) else ''
 	assert(!truth, desc)
 }
 
