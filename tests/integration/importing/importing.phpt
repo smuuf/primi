@@ -14,8 +14,6 @@ const TEST_LIST = [
 	__DIR__ . '/project_3/start.primi',
 ];
 
-Logger::enable();
-
 $config = Config::buildDefault();
 $config->addImportPath(__DIR__ . '/libs');
 
