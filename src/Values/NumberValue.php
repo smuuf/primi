@@ -117,7 +117,7 @@ class NumberValue extends AbstractNativeValue {
 				\bcmod($right->value, '1', NumberValue::PRECISION),
 				'0',
 				self::PRECISION
-			) === -1
+			) !== 0
 		) {
 			throw new RuntimeError("Exponent must be integer");
 		}
