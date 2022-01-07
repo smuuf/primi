@@ -2,6 +2,7 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\{
 	AbstractValue,
 	StringValue,
@@ -163,6 +164,34 @@ Assert::null($negFloat->doMultiplication(new StringValue(" b")));
 Assert::null($integer->doMultiplication(new DictValue([])));
 Assert::null($integer->doMultiplication(Interned::bool(false)));
 Assert::null($integer->doMultiplication(new RegexValue("/[abc]/")));
+
+//
+// Power.
+//
+
+Assert::same('1', get_val($biggerInteger->doPower(new NumberValue('0'))));
+Assert::same('20', get_val($biggerInteger->doPower(new NumberValue('1'))));
+Assert::same('400', get_val($biggerInteger->doPower(new NumberValue('2'))));
+Assert::same('0.0025', get_val($biggerInteger->doPower(new NumberValue('-2'))));
+Assert::same('104857600000000000000000000', get_val($biggerInteger->doPower($biggerInteger)));
+
+Assert::same('1', get_val($posFloat->doPower(new NumberValue('0'))));
+Assert::same('2.3', get_val($posFloat->doPower(new NumberValue('1'))));
+Assert::same('5.29', get_val($posFloat->doPower(new NumberValue('2'))));
+Assert::same(
+	'0.18903591682419659735349716446124763705103969754253308128544423440453686200378071833648393194706994328922495274102079395085066162',
+	get_val($posFloat->doPower(new NumberValue('-2')))
+);
+Assert::exception(
+	fn() => $posFloat->doPower(new NumberValue('4.1')),
+	RuntimeError::class,
+	'#Exponent must be integer#'
+);
+Assert::exception(
+	fn() => $posFloat->doPower(new NumberValue('-4.1')),
+	RuntimeError::class,
+	'#Exponent must be integer#'
+);
 
 //
 // Test division.
