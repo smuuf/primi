@@ -26,7 +26,8 @@ class StringEscaping {
 		'\\t' => "\t",
 		'\\"' => '"',
 		"\\'" => "'",
-		"\\e" => "\e",
+		"\\e" => "\e", // C-style octal code for an escape character.
+		"\\b" => "\x08", // Backspace character.
 	];
 
 	private const QUOTE_CHARS = ['"', "'"];
