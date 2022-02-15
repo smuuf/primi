@@ -335,6 +335,10 @@ class Repl {
 	 */
 	private static function isIncompleteInput(string $input): array {
 
+		if ($input === '') {
+			return [false, 0];
+		}
+
 		// Lines ending with opening curly brackets are considered incomplete.
 		if ($input[-1] === "{") {
 			return [true, 0];
