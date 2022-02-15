@@ -59,7 +59,17 @@ abstract class Colors {
 	private static bool $noColor;
 
 	public static function init(): void {
-		self::$noColor = (bool) \getenv('NO_COLOR');
+
+		// Disable colors if either of these is true ...
+
+		// 1) Env var "NO_COLOR" contains a truthy value.
+		// 2) Current STDOUT is _not_ a terminal (for example when output is
+		// being piped elsewhere - for example into a file).
+		self::$noColor = (
+			(bool) \getenv('NO_COLOR')
+			|| !posix_isatty(STDOUT)
+		);
+
 	}
 
 	public static function get(
