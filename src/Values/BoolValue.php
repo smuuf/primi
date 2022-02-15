@@ -13,7 +13,7 @@ use \Smuuf\Primi\Values\NumberValue;
  */
 class BoolValue extends AbstractNativeValue {
 
-	protected const TYPE = "bool";
+	public const TYPE = "bool";
 
 	public function __construct(bool $value) {
 		$this->value = $value;

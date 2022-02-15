@@ -18,7 +18,10 @@ return new class extends NativeModule {
 	 * @primi.function(no-stack, inject-context)
 	 */
 	public static function get_stack(Context $ctx): AbstractValue {
-		return AbstractValue::buildAuto($ctx->getCallStack());
+		return AbstractValue::buildAuto(\array_map(
+			fn($f) => (string) $f,
+			$ctx->getCallStack()
+		));
 	}
 
 };

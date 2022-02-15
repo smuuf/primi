@@ -8,7 +8,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
 
 class GeneratorValue extends AbstractNativeValue {
 
-	protected const TYPE = "Generator";
+	public const TYPE = "Generator";
 
 	/**
 	 * @param iterable<AbstractValue> $it

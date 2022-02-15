@@ -7,7 +7,7 @@ use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\AbstractNativeValue;
-use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Structures\CallArgs;
 
 /**
@@ -24,7 +24,7 @@ use \Smuuf\Primi\Structures\CallArgs;
  */
 final class TypeValue extends AbstractNativeValue {
 
-	protected const TYPE = "type";
+	public const TYPE = "type";
 
 	/** Name of the type. */
 	protected string $name;
@@ -52,7 +52,7 @@ final class TypeValue extends AbstractNativeValue {
 	}
 
 	public function attrGet(string $name): ?AbstractValue {
-		return Func::attr_lookup_type_hierarchy($this, $name);
+		return Types::attr_lookup($this, $name);
 	}
 
 	/**
@@ -82,7 +82,7 @@ final class TypeValue extends AbstractNativeValue {
 
 		// Special case: If this type object is _the_ "type" type object.
 		if ($this->name === self::TYPE) {
-			if ($fn = Func::attr_lookup_type_hierarchy($this, '__call__')) {
+			if ($fn = Types::attr_lookup($this, '__call__')) {
 				return $fn->invoke($context, $args, $callsite);
 			}
 		}
@@ -90,7 +90,7 @@ final class TypeValue extends AbstractNativeValue {
 		// The other possibility: This type object represents other type
 		// than the "type" type itself - and calling this object should
 		// represent instantiation of new object that will have this type.
-		if ($fn = Func::attr_lookup_type_hierarchy($this, '__new__', $this)) {
+		if ($fn = Types::attr_lookup($this, '__new__', $this)) {
 			return $fn->invoke($context, $args, $callsite);
 		}
 

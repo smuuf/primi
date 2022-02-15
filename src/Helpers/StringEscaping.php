@@ -64,7 +64,7 @@ class StringEscaping {
 	 * example a literal new-line will be replaced by `\n`.
 	 *
 	 * This is useful for converting a internal string value of StringValue to
-	 * a source code representaton of it - that is how a string literal would
+	 * a source code representation of it - that is how a string literal would
 	 * have to be written by hand for it to be - as a result - interpreted as
 	 * that original string).
 	 *

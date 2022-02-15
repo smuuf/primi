@@ -20,7 +20,7 @@ class NumberValue extends AbstractNativeValue {
 	/** @const int Floating point precision for bcmath operations. */
 	const PRECISION = 128;
 
-	protected const TYPE = "number";
+	public const TYPE = "number";
 
 	/**
 	 * NOTE: Protected because you should use the Interned factory for building

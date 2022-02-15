@@ -10,7 +10,7 @@ use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Structures\CallArgs;
 
 use \Smuuf\BetterExceptions\BetterException;
@@ -40,7 +40,7 @@ class PhpCallConvention implements CallConventionInterface {
 	) {
 
 		$this->closure = $closure;
-		Func::check_allowed_parameter_types_of_function($rf);
+		Types::check_allowed_parameter_types_of_function($rf);
 
 	}
 
@@ -80,7 +80,7 @@ class PhpCallConvention implements CallConventionInterface {
 				$argIndex = $better->getArgumentIndex();
 				throw new TypeError(\sprintf(
 					"Expected '%s' but got '%s' as argument %d",
-					implode('|', $better->getExpected()),
+					Types::php_classes_to_primi_types($better->getExpected()),
 					$finalArgs[$argIndex - 1]->getTypeName(),
 					$argIndex
 				));

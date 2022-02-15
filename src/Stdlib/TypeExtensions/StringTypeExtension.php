@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Ex\ArgumentCountError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\RegexValue;
+use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Values\TypeValue;
 
 class StringTypeExtension extends TypeExtension {
 
@@ -110,7 +109,7 @@ class StringTypeExtension extends TypeExtension {
 				}
 
 				$indexedMode = \true;
-				$index = $m[1];
+				$index = (int) $m[1];
 
 				if ($index < 0) {
 					throw new RuntimeError("Position ($index) cannot be less than 0.");
