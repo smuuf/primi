@@ -9,7 +9,6 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Timer;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 
-
 class ParserHandler {
 
 	/** Primi source code as string that is to be parsed and executed. */

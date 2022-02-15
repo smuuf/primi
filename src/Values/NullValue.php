@@ -13,7 +13,7 @@ use \Smuuf\Primi\Values\AbstractValue;
  */
 class NullValue extends AbstractNativeValue {
 
-	protected const TYPE = "Null";
+	public const TYPE = "null";
 
 	public function getType(): TypeValue {
 		return StaticTypes::getNullType();

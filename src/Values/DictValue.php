@@ -15,7 +15,7 @@ use \Smuuf\Primi\Structures\MapContainer;
  */
 class DictValue extends AbstractNativeValue {
 
-	protected const TYPE = "dict";
+	public const TYPE = "dict";
 
 	/**
 	 * Create new instance from iterable list containing `[key, value]` Primi

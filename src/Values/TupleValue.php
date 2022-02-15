@@ -14,7 +14,7 @@ use \Smuuf\Primi\Helpers\Indices;
  */
 class TupleValue extends AbstractNativeValue {
 
-	protected const TYPE = "tuple";
+	public const TYPE = "tuple";
 
 	/**
 	 * Computing hash can be expensive, so for this immutable type, let's

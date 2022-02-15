@@ -3,8 +3,22 @@
 namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Modules\NativeModule;
+use \Smuuf\Primi\Tools\BuildDocs\Entities\Module;
+use \Smuuf\Primi\Values\BoolValue;
+use \Smuuf\Primi\Values\DictValue;
+use \Smuuf\Primi\Values\FuncValue;
+use \Smuuf\Primi\Values\GeneratorValue;
+use \Smuuf\Primi\Values\ListValue;
+use \Smuuf\Primi\Values\ModuleValue;
+use \Smuuf\Primi\Values\NullValue;
+use \Smuuf\Primi\Values\NumberValue;
+use \Smuuf\Primi\Values\RegexValue;
+use \Smuuf\Primi\Values\StringValue;
+use \Smuuf\Primi\Values\TupleValue;
+use \Smuuf\Primi\Values\TypeValue;
 
 return new
 /**
@@ -17,21 +31,21 @@ class extends NativeModule {
 		return [
 
 			// Super-basic types.
-			'object' => StaticTypes::getObjectType(),
-			'type' => StaticTypes::getTypeType(),
-			'null' => StaticTypes::getNullType(),
-			'bool' => StaticTypes::getBoolType(),
-			'number' => StaticTypes::getNumberType(),
-			'string' => StaticTypes::getStringType(),
-			'regex' => StaticTypes::getRegexType(),
-			'dict' => StaticTypes::getDictType(),
-			'list' => StaticTypes::getListType(),
-			'tuple' => StaticTypes::getTupleType(),
+			MagicStrings::TYPE_OBJECT => StaticTypes::getObjectType(),
+			TypeValue::TYPE => StaticTypes::getTypeType(),
+			NullValue::TYPE => StaticTypes::getNullType(),
+			BoolValue::TYPE => StaticTypes::getBoolType(),
+			NumberValue::TYPE => StaticTypes::getNumberType(),
+			StringValue::TYPE => StaticTypes::getStringType(),
+			RegexValue::TYPE => StaticTypes::getRegexType(),
+			DictValue::TYPE => StaticTypes::getDictType(),
+			ListValue::TYPE => StaticTypes::getListType(),
+			TupleValue::TYPE => StaticTypes::getTupleType(),
 
-			// Other native types (native == they're implemented in PHP).
-			'Function' => StaticTypes::getFunctionType(),
-			'Generator' => StaticTypes::getGeneratorType(),
-			'Module' => StaticTypes::getModuleType(),
+			// Other basic types (basic == they're implemented in PHP).
+			FuncValue::TYPE => StaticTypes::getFunctionType(),
+			GeneratorValue::TYPE => StaticTypes::getGeneratorType(),
+			ModuleValue::TYPE => StaticTypes::getModuleType(),
 
 		];
 

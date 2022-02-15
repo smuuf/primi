@@ -9,6 +9,7 @@ use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Helpers\StringEscaping;
 
 /**
@@ -17,7 +18,7 @@ use \Smuuf\Primi\Helpers\StringEscaping;
  */
 class StringValue extends AbstractNativeValue {
 
-	protected const TYPE = "string";
+	public const TYPE = "string";
 
 	public function __construct(string $str) {
 		$this->value = $str;
@@ -68,7 +69,7 @@ class StringValue extends AbstractNativeValue {
 
 	public function doSubtraction(AbstractValue $right): ?AbstractValue {
 
-		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
+		if (!Types::is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			return \null;
 		}
 
@@ -99,7 +100,7 @@ class StringValue extends AbstractNativeValue {
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 
-		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
+		if (!Types::is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			return \null;
 		}
 
@@ -113,7 +114,7 @@ class StringValue extends AbstractNativeValue {
 
 	public function hasRelationTo(string $operator, AbstractValue $right): ?bool {
 
-		if (!Func::is_any_of_types($right, StringValue::class)) {
+		if (!Types::is_any_of_types($right, StringValue::class)) {
 			return \null;
 		}
 
@@ -166,7 +167,7 @@ class StringValue extends AbstractNativeValue {
 
 	public function doesContain(AbstractValue $right): ?bool {
 
-		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
+		if (!Types::is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			throw new TypeError("'in' for string requires 'string|regex' as left operand");
 		}
 

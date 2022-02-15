@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Stdlib\StaticTypes;
-use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Types;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
@@ -13,7 +13,7 @@ use \Smuuf\Primi\Helpers\Func;
  */
 class RegexValue extends AbstractNativeValue {
 
-	protected const TYPE = "regex";
+	public const TYPE = "regex";
 
 	/**
 	 * Prepared string for 'truthiness' evaluation.
@@ -58,7 +58,7 @@ class RegexValue extends AbstractNativeValue {
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 
-		if (!Func::is_any_of_types($right, StringValue::class, RegexValue::class)) {
+		if (!Types::is_any_of_types($right, StringValue::class, RegexValue::class)) {
 			return \null;
 		}
 

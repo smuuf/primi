@@ -11,7 +11,7 @@ use \Smuuf\Primi\Helpers\Indices;
 
 class ListValue extends AbstractNativeValue {
 
-	protected const TYPE = "list";
+	public const TYPE = "list";
 
 	/**
 	 * @param array<AbstractValue> $items

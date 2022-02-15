@@ -12,4 +12,6 @@ abstract class MagicStrings {
 	public const NATFUN_NOSTACK = 'no-stack';
 	public const NATFUN_CALLCONV = 'call-convention';
 
+	public const TYPE_OBJECT = 'object';
+
 }

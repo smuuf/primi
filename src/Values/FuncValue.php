@@ -15,7 +15,7 @@ use \Smuuf\Primi\Structures\FnContainer;
  */
 class FuncValue extends AbstractNativeValue {
 
-	protected const TYPE = "Function";
+	public const TYPE = "Function";
 	private ?CallArgs $partialArgs = \null;
 
 	public function __construct(

@@ -5,9 +5,11 @@ namespace Smuuf\Primi\Values;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Ex\TypeError;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\ValueFriends;
 use \Smuuf\Primi\Structures\CallArgs;
@@ -19,7 +21,7 @@ use \Smuuf\Primi\Structures\FnContainer;
 abstract class AbstractValue extends ValueFriends {
 
 	/** @const string Name of Primi (object) type. */
-	protected const TYPE = '__undefined__';
+	public const TYPE = '__undefined__';
 
 	/**
 	 * Take any PHP value and convert it into a Primi value object of an
@@ -35,14 +37,16 @@ abstract class AbstractValue extends ValueFriends {
 	public static function buildAuto($value) {
 
 		switch (\true) {
+			case $value instanceof AbstractValue:
+				return $value;
 			case $value === \null:
 				return Interned::null();
 			case \is_bool($value):
 				return Interned::bool($value);
 			case \is_int($value) || \is_float($value) || \is_numeric($value):
 				return Interned::number(Func::scientific_to_decimal((string) $value));
-			case $value instanceof \Closure;
-				return new FuncValue(FnContainer::buildFromClosure($value));
+			case \is_string($value):
+				return Interned::string($value);
 			case \is_array($value):
 				if (\is_callable($value)) {
 					return new FuncValue(FnContainer::buildFromClosure($value));
@@ -53,12 +57,15 @@ abstract class AbstractValue extends ValueFriends {
 					return new DictValue(Func::array_to_couples($inner));
 				}
 				return new ListValue($inner);
-
-			case $value instanceof AbstractValue:
-				return $value;
-			default:
-				return Interned::string((string) $value);
+			case $value instanceof \Closure;
+				return new FuncValue(FnContainer::buildFromClosure($value));
 		}
+
+		// Otherwise throw an error.
+		throw new EngineError(\sprintf(
+			"Unable to auto-build Primi object from '%s'",
+			\get_debug_type($value)
+		));
 
 	}
 
@@ -270,7 +277,7 @@ abstract class AbstractValue extends ValueFriends {
 	 */
 	public function attrGet(string $name): ?AbstractValue {
 		return $this->attrs[$name]
-			?? Func::attr_lookup_type_hierarchy($this->getType(), $name, $this);
+			?? Types::attr_lookup($this->getType(), $name, $this);
 	}
 
 	/**
