@@ -313,7 +313,18 @@ abstract class AbstractValue extends ValueFriends {
 	 * @throws UnhashableTypeException
 	 */
 	public function dirItems(): ?array {
-		return \array_keys($this->attrs);
+
+		$fromParents = $this->getType()->dirItems();
+		$t = $this->getType();
+		while ($t = $t->getParentType()) {
+			$fromParents = [...$t->dirItems(), ...$fromParents];
+		}
+
+		return \array_unique([
+			...$fromParents,
+			...\array_keys($this->attrs),
+		]);
+
 	}
 
 }
