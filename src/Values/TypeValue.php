@@ -98,4 +98,19 @@ final class TypeValue extends AbstractNativeValue {
 
 	}
 
+	public function dirItems(): ?array {
+
+		$fromParents = [];
+		$t = $this;
+		while ($t = $t->getParentType()) {
+			$fromParents = [...$t->dirItems(), ...$fromParents];
+		}
+
+		return \array_unique([
+			...$fromParents,
+			...\array_keys($this->attrs),
+		]);
+
+	}
+
 }
