@@ -454,4 +454,19 @@ abstract class Func {
 
 	}
 
+	/**
+	 * Is string a "dunder" (double-underscored) name? Dunder starts and ends
+	 * with a double-underscore. For example `__init__` is a dunder.
+	 */
+	public static function is_dunder_name(string $input): bool {
+		return \str_starts_with($input, '__') && \str_ends_with($input, '__');
+	}
+
+	/**
+	 * Is string an "under" (underscored) name?
+	 */
+	public static function is_under_name(string $input): bool {
+		return \str_starts_with($input, '_');
+	}
+
 }

@@ -17,7 +17,7 @@ use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Drivers\ReadlineUserIoDriver;
 use \Smuuf\Primi\Drivers\UserIoDriverInterface;
-
+use \Smuuf\Primi\Parser\GrammarHelpers;
 use \Smuuf\StrictObject;
 
 class Repl {
@@ -134,12 +134,12 @@ class Repl {
 
 	private function loop(Context $ctx): void {
 
-		$scope = $ctx->getCurrentScope();
+		$currentScope = $ctx->getCurrentScope();
 		$cellNumber = 1;
 
-		readline_completion_function(function() use ($scope) {
-			return array_keys($scope->getVariables(true));
-		});
+		readline_completion_function(
+			fn($buffer) => self::autocomplete($buffer, $ctx)
+		);
 
 		while (true) {
 
@@ -153,7 +153,7 @@ class Repl {
 			switch (trim($input)) {
 				case '?':
 					// Print defined variables.
-					$this->printScope($scope, false);
+					$this->printScope($currentScope, false);
 					continue 2;
 				case '?tb':
 					// Print traceback
@@ -162,7 +162,7 @@ class Repl {
 				case '??':
 					// Print all variables, including the ones from parent
 					// scopes (i.e. even from extensions).
-					$this->printScope($scope, true);
+					$this->printScope($currentScope, true);
 					continue 2;
 				case '':
 					// Ignore (skip) empty input.
@@ -189,7 +189,7 @@ class Repl {
 
 				// Store the result into _ variable for quick'n'easy
 				// retrieval.
-				$scope->setVariable('_', $result);
+				$currentScope->setVariable('_', $result);
 				$this->printResult($result);
 
 			} catch (ErrorException|SystemException $e) {
@@ -407,6 +407,105 @@ class Repl {
 			$value->getTypeName(),
 			Func::object_hash($value)
 		));
+
+	}
+
+	/**
+	 * @return array<string>
+	 */
+	private static function autocomplete(
+		string $buffer,
+		Context $ctx
+	): array {
+
+		$names = [];
+
+		if (!$buffer || GrammarHelpers::isValidName($buffer)) {
+
+			// Buffer (word of input) is empty - or maybe a simple variable.
+			$names = array_keys($ctx->getVariables(true));
+
+		} elseif (GrammarHelpers::isSimpleAttrAccess(trim($buffer, '.'))) {
+
+			// Autocomplete for attr access of objects from current scope.
+			// We need to separate parts of nester attr access, so that
+			// for "obj" we complete attrs from "obj", but for
+			// "obj.attr_a.attr_b" we complete attrs from the final "attr_b".
+			$parts = array_reverse(explode('.', $buffer));
+
+			// Fetch the actual variable (always for the first part).
+			$name = array_pop($parts);
+			if (!$obj = $ctx->getVariable($name)) {
+				return [];
+			}
+			$names[] = $name;
+
+			// Now go fetch the attrs inside that variable, if there are any
+			// specified in the buffer. E.g. "some_obj.attr_a.att[TAB]" needs
+			// to fetch "some_obj", then its attr "attr_a" and get all attrs
+			// inside it, so we can suggest "some_obj.attr_a.attr_b"
+			$prefix = $name;
+			while ($name = array_pop($parts)) {
+
+				if (!$innerObj = $obj->attrGet($name)) {
+					break;
+				}
+
+				$obj = $innerObj;
+				$prefix .= ".$name";
+				$names[] = $prefix;
+
+			}
+
+			// The name is now either the rest of the string after last dot,
+			// or null (we processed all parts already).
+			// If if's not null, we're going to suggest attributes from the
+			// object we encountered last.
+			if ($name !== null) {
+
+				$underscored = \str_starts_with($name, '_');
+				foreach ($obj->dirItems() as $name) {
+
+					// Skip underscored names if not requested explicitly.
+					if (!$underscored && Func::is_under_name($name)) {
+						continue;
+					}
+
+					$addName = "$prefix.$name";
+					$names[] = $addName;
+
+				}
+			}
+
+		}
+
+		$names = array_filter(
+			$names,
+			fn($name) => \str_starts_with($name, $buffer)
+		);
+
+		// Typing "some_v[TAB]" if "some_var" exists should also
+		// suggest "some_var " with a space, so there are two options for
+		// the autocomplete. Why? Otherwise readline would just write
+		// "some_var " with a space when the TAB is pressed (it does that
+		// automatically). And that's not user friendly if our user would
+		// like to access attributes via "some_var." quickly.
+		$starting = array_filter(
+			$names,
+			fn($n) => str_starts_with($n, $buffer)
+		);
+
+		// If there's only one candidate (eg. "debugger"), but it's not yet
+		// entered completely ("debugger"), add another candidate with space at
+		// the end ("debugger "), so that readline autocomplete stops at the
+		// latest common string ("debugger|") instead of resolving into
+		// "debugger |" directly (readline adds the space automatically and
+		// we don¨t want that).
+		if (count($starting) === 1 && reset($starting) !== $buffer) {
+			$names[] = reset($starting) . " ";
+		}
+
+		return $names;
 
 	}
 
