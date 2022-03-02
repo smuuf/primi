@@ -205,7 +205,12 @@ class Context {
 	 * @return array<string, AbstractValue>
 	 */
 	public function getVariables(bool $includeParents = \false): array {
-		return $this->currentScope->getVariables($includeParents);
+
+		return array_merge(
+			$this->builtins->getVariables(),
+			$this->currentScope->getVariables($includeParents)
+		);
+
 	}
 
 	/**
