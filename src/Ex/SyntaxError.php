@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Ex;
 
 use \Smuuf\Primi\Location;
+use \Smuuf\Primi\Helpers\StringEscaping;
 
 class SyntaxError extends ErrorException {
 
@@ -14,10 +15,18 @@ class SyntaxError extends ErrorException {
 		?string $reason = \null
 	) {
 
+		$sanitizedExcerpt = $excerpt
+			? StringEscaping::escapeString($excerpt)
+			: false;
+
 		$msg = \sprintf(
 			"Syntax error%s%s",
-			$reason ? \sprintf(" (%s)", \trim($reason)) : '',
-			$excerpt ? \sprintf(" near '%s'", \trim($excerpt)) : ''
+			$reason
+				? \sprintf(" (%s)", \trim($reason))
+				: '',
+			$sanitizedExcerpt
+				? \sprintf(" near '%s'", \trim($sanitizedExcerpt))
+				: ''
 		);
 
 		parent::__construct($msg, $location);

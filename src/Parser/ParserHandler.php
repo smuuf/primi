@@ -33,7 +33,7 @@ class ParserHandler {
 	/**
 	 * Return parser stats.
 	 *
-	 * @return array<string, scalar>
+	 * @return array<string, float>
 	 */
 	public function getStats(): array {
 		return $this->stats;

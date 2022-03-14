@@ -15,8 +15,12 @@ use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Code\SourceFile;
 use \Smuuf\Primi\Code\AstProvider;
+use \Smuuf\Primi\Ex\InternalSyntaxError;
+use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\Colors;
+use \Smuuf\Primi\Location;
+use \Smuuf\Primi\Parser\ParserHandler;
 
 class Entrypoint {
 
@@ -113,11 +117,27 @@ class Entrypoint {
 
 		if ($cfg['parser_stats'] || $cfg['only_tree']) {
 
-			$astProvider = new AstProvider;
+			$sourceCode = $source->getSourceCode();
+			$ph = new ParserHandler($source->getSourceCode());
 
 			// Run parser and catch any error that may have occurred.
 			try {
-				$tree = $astProvider->getAst($source);
+
+				try {
+					$tree = $ph->run();
+				} catch (InternalSyntaxError $e) {
+
+					// Show a bit of code where the syntax error occurred.
+					$excerpt = \mb_substr($sourceCode, $e->getErrorPos(), 20);
+
+					throw new SyntaxError(
+						new Location($source->getSourceId(), $e->getErrorLine()),
+						$excerpt,
+						$e->getReason()
+					);
+
+				}
+
 			} catch (BaseException $e) {
 				self::errorExit("{$e->getMessage()}");
 			}
@@ -157,6 +177,9 @@ class Entrypoint {
 
 	}
 
+	/**
+	 * @return never
+	 */
 	private static function errorExit(string $text): void {
 		echo "$text\n";
 		die(1);
@@ -176,7 +199,6 @@ class Entrypoint {
 				case "-h":
 				case "--help":
 					self::dieWithHelp();
-				break;
 				case "-t":
 				case "--tree":
 					$cfg['only_tree'] = true;
@@ -211,6 +233,9 @@ class Entrypoint {
 
 	}
 
+	/**
+	 * @return never
+	 */
 	private static function dieWithHelp(): void {
 
 		$header = self::getHeaderString('CLI');
