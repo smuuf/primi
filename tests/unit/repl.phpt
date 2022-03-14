@@ -25,11 +25,11 @@ $commands = [
 // This is expected output. This will be compared with actual output down below.
 // Asterisk * means that the line can be whatever.
 $expected = [
-	"ERR: Undefined variable 'a' @ <module: __main__> on line 1",
+	"Error: Undefined variable 'a' @ <module: __main__> on line 1",
 	"Traceback:",
 	"[0] <repl: cli> in <module: __main__>",
 	"1",
-	"ERR: Undefined variable 'b' @ <module: __main__> on line 1",
+	"Error: Undefined variable 'b' @ <module: __main__> on line 1",
 	"Traceback:",
 	"[0] <repl: cli> in <module: __main__>",
 	"1",

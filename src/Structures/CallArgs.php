@@ -28,7 +28,7 @@ class CallArgs {
 	/** @var AbstractValue[] Positional arguments. */
 	private $args = [];
 
-	/** @var AbstractValue[] Keyword argument. */
+	/** @var array<string, AbstractValue> Keyword argument. */
 	private $kwargs = [];
 
 	/** True if there are no args and no kwargs specified. */
@@ -83,7 +83,7 @@ class CallArgs {
 	}
 
 	/**
-	 * @return AbstractValue[]
+	 * @return array<string, AbstractValue>
 	 */
 	public function getKwargs(): array {
 		return $this->kwargs;
