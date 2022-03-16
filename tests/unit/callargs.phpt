@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Structures\CallArgs;
+use \Smuuf\Primi\Values\DictValue;
 use \Tester\Assert;
+use Tester\Expect;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -53,3 +58,79 @@ Assert::same(
 	['hello_a' => 123, 'hello_b' => 456, 'something' => true],
 	$combined->getKwargs()
 );
+
+//
+// Extracting args.
+//
+
+// This is ok.
+
+$args = new CallArgs(
+	[1, 'abc', 'xyz'], // Positional args.
+	['kw_a' => 'aaa', 'kw_b' => 'bbb'] // Keyword args.
+);
+$result = $args->extract(['a', 'b', 'c', 'kw_a', 'kw_b']);
+Assert::equal([
+	'a' => 1,
+	'b' => 'abc',
+	'c' => 'xyz',
+	'kw_a' => 'aaa',
+	'kw_b' => 'bbb',
+], $result);
+
+// Here are some unexpected extra kwargs and extraction is kwargs collector
+// is not specified via some '**whatever' kwarg collector.
+
+Assert::exception(function() {
+
+	$args = new CallArgs(
+		[1, 'abc', 'xyz'], // Positional args.
+		['kw_a' => 'aaa', 'kw_b' => 'bbb', 'kw_c' => 'ccc', 'kw_d' => 'ddd'] // Keyword args.
+	);
+	$_ = $args->extract(['a', 'b', 'c', 'kw_a', 'kw_b']);
+
+}, ErrorException::class, '#unexpected.*keyword.*kw_c#i');
+
+// Here are some unexpected extra kwargs but kwargs collector is specified.
+// via some '**whatever' kwarg collector.
+
+$args = new CallArgs(
+	[1, 'abc', 'xyz'], // Positional args.
+	['kw_a' => 'aaa', 'kw_b' => 'bbb', 'kw_c' => 'ccc', 'kw_d' => 'ddd'] // Keyword args.
+);
+$result = $args->extract(['a', 'b', 'c', 'kw_a', 'kw_b', '**rest']);
+Assert::equal([
+	'a' => 1,
+	'b' => 'abc',
+	'c' => 'xyz',
+	'kw_a' => 'aaa',
+	'kw_b' => 'bbb',
+	'rest' => Expect::type(DictValue::class),
+], $result);
+
+// Here some arguments are missing and that's not ok.
+Assert::exception(function() {
+
+	$args = new CallArgs(
+		[1, 2, 3], // Positional args.
+		['kw_a' => 'aaa', 'kw_b' => 'bbb'] // Keyword args.
+	);
+	$_ = $args->extract(['a', 'b', 'c', 'kw_a', 'kw_b', 'kw_c']);
+
+}, ErrorException::class, '#missing.*required.*argument.*kw_c#i');
+
+// Here some arguments are missing, but it's ok, because we specify an
+// optional list of optional arguments.
+
+$args = new CallArgs(
+	[1, 2, 3], // Positional args.
+	['kw_a' => 'aaa', 'kw_b' => 'bbb'] // Keyword args.
+);
+$result = $args->extract(['a', 'b', 'c', 'kw_a', 'kw_b', 'kw_c'], ['kw_c']);
+Assert::equal([
+	'a' => 1,
+	'b' => 2,
+	'c' => 3,
+	'kw_a' => 'aaa',
+	'kw_b' => 'bbb',
+], $result);

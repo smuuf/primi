@@ -34,7 +34,17 @@ Assert::exception(function() use ($i, $src) {
 }, SyntaxError::class, "#Duplicate parameter name 'X'#i");
 
 //
-// Error "Duplicate parameter name '$paramName'" #2
+// SyntaxError "Duplicate parameter '$paramName' in function" #2
+//
+
+$src = "function f(a, X, *X, d) { }";
+
+Assert::exception(function() use ($i, $src) {
+	$i->run($src);
+}, SyntaxError::class, "#Duplicate parameter name 'X'#i");
+
+//
+// Error "Duplicate parameter name '$paramName'" #3
 // Even though there are more duplicated parameters, X is found first.
 //
 

@@ -19,6 +19,7 @@ use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\CallConventions\PhpCallConvention;
 use \Smuuf\Primi\Helpers\CallConventions\ArgsObjectCallConvention;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Helpers\Func;
 
 /**
  * @internal
@@ -78,29 +79,39 @@ class FnContainer {
 				$scope->setParent($defScope);
 			}
 
-			if ($defParams) {
-				self::prepareArgs(
-					$ctx,
-					$defParams,
-					$args ?? CallArgs::getEmpty(),
-					$scope
-				);
-			}
-
 			$frame = new StackFrame(
 				$definitionName,
 				$definitionModule,
 				$callsite
 			);
 
-			// For performance reasons (function calls are frequent) push and
-			// pop stack frame and scope manually, without the overhead
-			// of using ContextPushPopWrapper.
-			$ctx->pushCall($frame);
-			$ctx->pushScope($scope);
-
 			try {
+
+				// Push call first for more precise traceback for errors when
+				// resolving arguments (expected args may be missing, for
+				// example) below.
+				// For performance reasons (function calls are frequent) push and
+				// pop stack frame and scope manually, without the overhead
+				// of using ContextPushPopWrapper.
+				$ctx->pushCall($frame);
+				$ctx->pushScope($scope);
+
+				if ($defParams) {
+					$callArgs = $args ?? CallArgs::getEmpty();
+					$scope->setVariables(
+						Func::resolve_default_args(
+							$callArgs->extract(
+								$defParams['names'],
+								\array_keys($defParams['defaults'])
+							),
+							$defParams['defaults'],
+							$ctx
+						)
+					);
+				}
+
 				HandlerFactory::runNode($entryNode, $ctx);
+
 			} catch (ReturnException $e) {
 
 				// This is the return value of the function call.
@@ -213,152 +224,6 @@ class FnContainer {
 
 	public function isPhpFunction(): bool {
 		return $this->isPhpFunction;
-	}
-
-	// Helpers.
-
-	/**
-	 * NOTE: Only docblock type-hinting for performance reasons.
-	 *
-	 * @param Context $ctx
-	 * @param array{names: array<string, string>, defaults: array<string, TypeDef_AstNode>} $defParams
-	 * @param CallArgs $callArgs
-	 * @param Scope $scope
-	 */
-	private static function prepareArgs(
-		$ctx,
-		$defParams,
-		$callArgs,
-		$scope
-	): void {
-
-		$defParamNames = $defParams['names'];
-		$defParamDefaults = $defParams['defaults'];
-
-		// Determine - if there are such things specified:
-		// 1) Which argument will collect remaining positional arguments.
-		// Such argument's name is prefixed with "*".
-		// 2) Which argument will collect remaining keyword arguments.
-		// Such argument's name is prefixed with "**".
-		$posArgsCollector = \false;
-		$kwArgsCollector = \false;
-		foreach ($defParamNames as $defArgName => $_) {
-			if ($defArgName[0] === '*') {
-
-				if ($defArgName[1] === '*') {
-					$kwArgsCollector = \substr($defArgName, 2);
-				} else {
-					$posArgsCollector = \substr($defArgName, 1);
-				}
-
-				// Remove these asterisk-prefixed parameters from definition
-				// parameters, so they're not strictly expected.
-				// (We check if all strictly-expected parameters have assigned
-				// arguments at the end).
-				unset($defParamNames[$defArgName]);
-
-			}
-		}
-
-		// Final args dict will be based on the definition args dict,
-		// which has the form ['arg_a': null, 'arg_b': null, ...], to which
-		// we will add actual Primi objects to replace the nulls.
-		// If there are any nulls remaining after preparing the args, we know
-		// some were omitted by the caller.
-		$finalArgs = $defParamNames;
-
-		// If there is a keyword args collector, prepare a dict value for it and
-		// place it into the final args dict array.
-		// The called function still expects a dictionary, if "**kwargs" were
-		// defined in the function parameters, even if it will be empty.
-		if ($kwArgsCollector) {
-			$kwArgsCollector = $finalArgs[$kwArgsCollector] = new DictValue;
-		}
-
-		// Process positional arguments first. array_slice() is used so - while
-		// iterating over definition args dict is easier for us here - we don't
-		// want to process more positional args than how many there actually
-		// were passed by the caller.
-		$i = -1;
-		$args = $callArgs->getArgs();
-		foreach (
-			\array_slice($defParamNames, 0, \count($args)) as $defArgName => $_
-		) {
-
-			// For each definition arg that has a corresponding positional arg,
-			// replace the "null" in the final args list with the actual
-			// passed value from the positional args list.
-			$finalArgs[$defArgName] = $args[++$i];
-
-		}
-
-		// Decide what to do with any remaining positional arguments.
-		$remainingPosArgs = \array_slice($args, $i + 1);
-		if ($remainingPosArgs) {
-			if ($posArgsCollector) {
-				$finalArgs[$posArgsCollector] = new TupleValue($remainingPosArgs);
-			} else {
-				$count = \count($remainingPosArgs);
-				throw new TypeError(
-					"Passed $count unexpected positional arguments");
-			}
-		}
-
-		// If there is a positional args collector, but no positional arguments
-		// remained, the function still expects an empty list as the "*args".
-		if ($posArgsCollector && !isset($finalArgs[$posArgsCollector])) {
-			$finalArgs[$posArgsCollector] = new TupleValue([]);
-		}
-
-		// Now let's process keyword arguments. At this point it's easier for us
-		// to iterate over passed kwargs (instead of determining what is still
-		// "left unprocessed" by the previous positional-args-processing).
-		foreach ($callArgs->getKwargs() as $key => $value) {
-
-			// If this kwarg key is not at all present in known definition
-			// args, we don't expect this kwarg, so we throw an error.
-			if (\array_key_exists($key, $defParamNames)) {
-
-				// If this kwarg overwrites already specified final arg
-				// (unspecified are false, so isset() works here), throw an
-				// error.
-				if (!empty($finalArgs[$key])) {
-					throw new TypeError("Argument '$key' passed multiple times");
-				}
-
-				$finalArgs[$key] = $value;
-
-			} elseif ($kwArgsCollector) {
-
-				// If there was an unexpected kwarg, but there is a kwarg
-				// collector defined, add this unexpected kwarg to it.
-				$kwArgsCollector->itemSet(Interned::string($key), $value);
-
-			} else {
-				throw new TypeError("Unexpected keyword argument '$key'");
-			}
-
-		}
-
-		// Go through each of the known "defaults" for parameters and if its
-		// corresponding argument is not yet defined, use that default's value
-		// definition (here presented as a AST node which we can execute - which
-		// is done at call-time) to fetch the argument's value.
-		foreach ($defParamDefaults as $paramName => $defaultNode) {
-			if (empty($finalArgs[$paramName])) {
-				$finalArgs[$paramName] = HandlerFactory::runNode($defaultNode, $ctx);
-			}
-		}
-
-		// If there are any "null" values left in the final args dict,
-		// some arguments were left out and that is an error.
-		$missingKey = \array_search(\false, $finalArgs, \true);
-		if ($missingKey !== \false) {
-			throw new TypeError("Missing required argument '$missingKey'");
-		}
-
-		$scope->setVariables($finalArgs);
-
 	}
 
 }

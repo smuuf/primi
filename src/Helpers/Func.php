@@ -8,6 +8,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Parser\GrammarHelpers;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
@@ -300,6 +301,27 @@ abstract class Func {
 			$arg->getTypeName(),
 			$index
 		));
+
+	}
+
+	public static function resolve_default_args(
+		array $current,
+		array $defaults,
+		Context $ctx
+	): array {
+
+		// Go through each of the known "defaults" for parameters and if its
+		// corresponding current argument is not yet defined, use that
+		// default's value definition (here presented as a AST node which we
+		// can execute - which
+		// is done at call-time) to fetch the argument's value.
+		foreach ($defaults as $name => $astNode) {
+			if (empty($current[$name])) {
+				$current[$name] = HandlerFactory::runNode($astNode, $ctx);
+			}
+		}
+
+		return $current;
 
 	}
 
