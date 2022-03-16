@@ -159,6 +159,7 @@ class Entrypoint {
 
 		// Create interpreter.
 		$config = Config::buildDefault();
+		$config->addImportPath(getcwd());
 		$interpreter = new Interpreter($config);
 
 		// Run interpreter and catch any error that may have occurred.
