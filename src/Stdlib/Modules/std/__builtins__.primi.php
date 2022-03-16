@@ -66,12 +66,14 @@ class extends NativeModule {
 			return Interned::null();
 		}
 
-		$end = $callArgs->safeGetKwarg('end', Interned::string("\n"));
-		$sep = $callArgs->safeGetKwarg('sep', Interned::string(", "));
+		$args = $callArgs->extract(['*args', 'end', 'sep'], ['end', 'sep']);
+
+		$end = $args['end'] ?? Interned::string("\n");
+		$sep = $args['sep'] ?? Interned::string(" ");
 
 		$pieces = \array_map(
 			fn($v) => $v->getStringValue(),
-			$callArgs->getArgs()
+			$args['args']->getInternalValue()
 		);
 
 		echo \implode($sep->getStringValue(), $pieces);
@@ -154,20 +156,18 @@ class extends NativeModule {
 	 */
 	public static function range(CallArgs $callArgs): GeneratorValue {
 
-		$arg1 = $callArgs->safeGetArg(0);
-		$arg2 = $callArgs->safeGetArg(1);
-		$arg3 = $callArgs->safeGetArg(2);
+		$args = $callArgs->extract(['start', 'end', 'step'], ['end', 'step']);
 
 		// No explicit 'end' argument? That means 'start' actually means 'end'.
-		if ($arg2 === \null) {
-			$end = $arg1->getInternalValue();
+		if (!isset($args['end'])) {
+			$end = $args['start']->getInternalValue();
 			$start = '0';
 		} else {
-			$start = $arg1->getInternalValue();
-			$end = $arg2->getInternalValue();
+			$start = $args['start']->getInternalValue();
+			$end = $args['end']->getInternalValue();
 		}
 
-		$step = $arg3 ? $arg3->getInternalValue() : '1';
+		$step = isset($args['step']) ? $args['step']->getInternalValue() : '1';
 
 		if (
 			!Func::is_round_int($start)
@@ -307,15 +307,16 @@ class extends NativeModule {
 		CallArgs $args
 	): AbstractValue {
 
-		$obj = $args->getArg(0);
-		$name = $args->safeGetArg(1) ?? $args->getKwarg('name');
+		$args = $args->extract(['o', 'name', 'default'], ['default']);
+		$obj = $args['o'];
+		$name = $args['name'];
 
 		$attrName = $name->getStringValue();
 		if (isset($obj->attrs[$attrName])) {
 			return $obj->attrs[$attrName];
 		}
 
-		$default = $args->safeGetArg(2) ?? $args->safeGetKwarg('default');
+		$default = $args['default'] ?? \null;
 		if ($default !== \null) {
 			return $default;
 		}

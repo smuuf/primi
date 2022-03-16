@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\StrictObject;
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\EngineError;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Values\DictValue;
+use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Interned;
 
 /**
  * Container for passing arguments - positional and keyword arguments - to the
@@ -142,6 +147,116 @@ class CallArgs {
 
 		return $this->kwargs[$name]
 			?? $default;
+
+	}
+
+	/**
+	 * NOTE: Only docblock type-hinting for performance reasons.
+	 *
+	 * @param array<string> $names
+	 * @param array<string> $optional
+	 * @return array<string, AbstractValue>
+	 */
+	public function extract($names, $optional = []) {
+
+		// Find names for variadic *args and **kwargs parameters.
+		$varArgsName = \false;
+		$varKwargsName = \false;
+		$varArgs = [];
+		$varKwargs = [];
+		$final = [];
+		$i = 0;
+
+		foreach ($this->getArgs() as $value) {
+
+			$name = $names[$i] ?? \null;
+			if ($name === \null) {
+				throw new TypeError("Too many positional arguments A");
+			}
+
+			if ($name[0] === '*') {
+
+				// If we encountered variadic kwarg parameter during assigning
+				// positional arguments, it is obvious the caller sent us
+				// too many positional arguments.
+				if ($name[1] === '*') {
+					throw new TypeError("Too many positional arguments B");
+				}
+
+				if (!$varArgsName) {
+					$varArgsName = \substr($name, 1);
+				}
+
+				$varArgs[] = $value;
+
+			} else {
+				$final[$name] = $value;
+				$i++;
+			}
+
+		}
+
+		// Go through the rest of names to find any potentially specified
+		// *args and **kwargs parameters.
+		while ($name = $names[$i++] ?? \null) {
+			if ($name[0] === '*') {
+				if ($name[1] === '*' && !$varKwargsName) {
+					$varKwargsName = \substr($name, 2);
+				} elseif (!$varArgsName) {
+					$varArgsName = \substr($name, 1);
+				}
+			}
+		}
+
+		if ($varArgsName) {
+			$final[$varArgsName] = new TupleValue($varArgs);
+		}
+
+		// Now let's process keyword arguments.
+		foreach ($this->getKwargs() as $key => $value) {
+
+			// If this kwarg key is not at all present in known definition
+			// args, we don't expect this kwarg, so we throw an error.
+			if (\in_array($key, $names, \true)) {
+
+				// If this kwarg overwrites already specified final arg
+				// (unspecified are false, so isset() works here), throw an
+				// error.
+				if (!empty($final[$key])) {
+					throw new TypeError("Argument '$key' passed multiple times");
+				}
+
+				$final[$key] = $value;
+
+			} elseif ($varKwargsName) {
+
+				// If there was an unexpected kwarg, but there is a kwarg
+				// collector defined, add this unexpected kwarg to it.
+				$varKwargs[$key] = $value;
+
+			} else {
+				throw new TypeError("Unexpected keyword argument '$key'");
+			}
+
+		}
+
+		if ($varKwargsName) {
+			$final[$varKwargsName] = new DictValue(Func::array_to_couples($varKwargs));
+		}
+
+		// If there are any "null" values left in the final args dict,
+		// some arguments were left out and that is an error.
+		foreach ($names as $name) {
+			if (
+				$name[0] !== '*'
+				&& !isset($final[$name])
+				&& !\in_array($name, $optional, \true)
+			) {
+				throw new TypeError("Missing required argument '$name'");
+			}
+		}
+
+		return $final;
 
 	}
 

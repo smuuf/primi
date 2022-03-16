@@ -1,7 +1,8 @@
 <?php
 
-use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Interpreter;
+use \Smuuf\Primi\Ex\SyntaxError;
+use \Smuuf\Primi\Ex\ErrorException;
 
 use \Tester\Assert;
 
@@ -34,21 +35,28 @@ Assert::noError(function() use ($i, $src) {
 	Assert::same('1, 2, args: (3, 4), kwargs: {"kw1": "hi", "kw2": "hello"}', $result);
 });
 
-//
-// Now, let's test some cases that should throw specific errors.
-//
+$src = <<<SRC
+function f(a, *b, c) { return f"a:{a}, b:{b}, c:{c}"; }
+result = f(1, 2, 3, 4, c:5)
+SRC;
 
-//
-// SyntaxError "Syntax error"
-// Variadic "*args" or "**kwargs" parameters must be placed after all other
-// non-variadic parameters.
-//
+Assert::noError(function() use ($i, $src) {
+	$result = $i->run($src)->getVariable('result')->getStringValue();
+	Assert::same('a:1, b:(2, 3, 4), c:5', $result);
+});
 
-$src = "function f(a, *b, c) { }";
+$src = <<<SRC
+function f(a, *b, c) { return f"a:{a}, b:{b}, c:{c}"; }
+result = f(1, 2, 3, 4)
+SRC;
 
 Assert::exception(function() use ($i, $src) {
 	$i->run($src);
-}, SyntaxError::class);
+}, ErrorException::class, "#missing required argument 'c'#i");
+
+//
+// Now, let's test some cases that should throw specific errors.
+//
 
 //
 // SyntaxError "Syntax error"

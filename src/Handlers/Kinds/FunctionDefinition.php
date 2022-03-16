@@ -21,7 +21,7 @@ class FunctionDefinition extends SimpleHandler {
 		// first-level function definition in the class definition), we do not
 		// want the function to have direct access to its class's scope.
 		// (All access to class' attributes should be done by accessing class
-		// reference inside the function).
+		// self-reference inside the function).
 		// So, in that case, instead of current scope we'll pass null as
 		// the $currentScope as the definition scope.
 		$parentScope = $currentScope->getType() === Scope::TYPE_CLASS
@@ -73,6 +73,9 @@ class FunctionDefinition extends SimpleHandler {
 		// Make sure this is always list, even with one item.
 		$paramsNodes = Func::ensure_indexed($paramsNode);
 
+		// For checking duplicate param names (without stars).
+		$paramNames = [];
+
 		$foundStarred = \false;
 		$foundDoubleStarred = \false;
 
@@ -88,7 +91,7 @@ class FunctionDefinition extends SimpleHandler {
 			// This happens if defining function parameters like:
 			// > function f(a, b, b) { ... }
 
-			if (isset($paramNames[$paramName])) {
+			if (\in_array($paramName, $paramNames, \true)) {
 				throw new InternalPostProcessSyntaxError(
 					"Duplicate parameter name '$paramName'"
 				);
@@ -96,26 +99,29 @@ class FunctionDefinition extends SimpleHandler {
 
 			// We track stripped param names as array keys so we can just
 			// use isset().
-			$paramNames[$paramName] = \false;
+			$paramNames[] = $paramName;
 
-			// Detect wrongly positioned arguments. Non-variadics must be before
-			// variadics.
-			if (
-				$node['stars'] === StarredExpression::STARS_NONE
-				&& ($foundStarred || $foundDoubleStarred)
-			) {
+			// Detect wrongly positioned parameters.
+			if ($foundDoubleStarred) {
+
+				if ($node['stars'] !== StarredExpression::STARS_TWO) {
+					throw new InternalPostProcessSyntaxError(
+						"Variadic keyword parameters must be placed after all others"
+					);
+				}
+
 				throw new InternalPostProcessSyntaxError(
-					"Non-variadic parameter found after variadic parameters"
+					"Variadic keyword parameters must be present only once"
 				);
+
 			}
 
-			if (
-				$node['stars'] === StarredExpression::STARS_ONE
-				&& $foundDoubleStarred
-			) {
-				throw new InternalPostProcessSyntaxError(
-					"Non-variadic positional parameter found after variadic keyword parameters"
-				);
+			if ($foundStarred) {
+				if ($node['stars'] === StarredExpression::STARS_ONE) {
+					throw new InternalPostProcessSyntaxError(
+						"Variadic positional parameters must be present only once"
+					);
+				}
 			}
 
 			$foundStarred |= $node['stars'] === StarredExpression::STARS_ONE;
@@ -123,20 +129,21 @@ class FunctionDefinition extends SimpleHandler {
 
 			// FnContainer expects list of arguments WITH stars - so it can
 			// know which parameters actually are variadic.
-			$withStars = str_repeat('*', $node['stars']) . $paramName;
-			$params['names'][$withStars] = \false;
+			$withStars = \str_repeat('*', $node['stars']) . $paramName;
+			$params['names'][] = $withStars;
 
 			// If this parameter has a specified default value (internally
 			// an AST node), place its AST node in the storage for defaults -
 			// for later use when invoking the function.
 			if (!empty($node['default'])) {
 				$params['defaults'][$paramName] = $node['default'];
-			} elseif ($params['defaults']) {
-				// Current parameter has no default value, but we already
-				// encountered some parameter with default value.
+			} elseif ($params['defaults'] && !$foundStarred && !$foundDoubleStarred) {
+				// Current parameter has no default value and is not
+				// variadic (starred), but we already encountered some parameter
+				// with default value.
 				// This will not stand! Throw a syntax error.
 				throw new InternalPostProcessSyntaxError(
-					"Non-default parameter is after default parameter"
+					"Non-default non-variadic parameter placed after default parameter"
 				);
 			}
 
