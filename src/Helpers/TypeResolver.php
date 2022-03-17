@@ -4,35 +4,36 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Values;
 use \Smuuf\Primi\Ex\EngineInternalError;
 
 abstract class TypeResolver {
 
-	private const BASIC_TYPES = [
-		Values\AbstractValue::class => 'object',
-		Values\InstanceValue::class => 'object',
-		Values\NullValue::class => 'null',
-		Values\BoolValue::class => 'bool',
-		Values\NumberValue::class => 'number',
-		Values\StringValue::class => 'string',
-		Values\ListValue::class => 'list',
-		Values\DictValue::class => 'dict',
-		Values\TypeValue::class => 'type',
-		Values\FuncValue::class => 'function',
+	/**
+	 * Some classes used for representing Primi objects have "unfriendly"
+	 * values of their "TYPE" class constants.
+	 *
+	 * If we, for example, want to display error message about wrong type
+	 * of argument passed into a native PHP function (called from Primi) when
+	 * a basic "AbstractValue" class is typehinted (because that PHP class
+	 * is a base class for other PHP classes representing Primi objects), we
+	 * want to display "object" instead of AbstractValue's "__undefined__" TYPE.
+	 */
+	private const OVERRIDE_TYPES = [
+		\Smuuf\Primi\Values\AbstractValue::class => 'object',
+		\Smuuf\Primi\Values\InstanceValue::class => 'object',
 	];
 
 	public static function resolve(string $class): string {
 
-		// We have types stored in dict array without prefix backslash, so
-		// remove it from the argument's start.
-		$absolute = ltrim($class, '\\');
-
-		if (!isset(self::BASIC_TYPES[$absolute])) {
-			throw new EngineInternalError("Unable to resolve basic type name for class '$class'");
+		if ($overridden = (self::OVERRIDE_TYPES[$class] ?? \null)) {
+			return $overridden;
 		}
 
-		return self::BASIC_TYPES[$absolute];
+		if (\is_subclass_of($class, \Smuuf\Primi\Values\AbstractValue::class, \true)) {
+			return $class::TYPE;
+		}
+
+		throw new EngineInternalError("Unable to resolve basic type name for class '$class'");
 
 	}
 
