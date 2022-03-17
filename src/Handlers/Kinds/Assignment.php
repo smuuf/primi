@@ -6,6 +6,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Structures\AssignmentTargets;
 use \Smuuf\Primi\Structures\InsertionProxyInterface;
 
 class Assignment extends SimpleHandler {
@@ -27,6 +28,11 @@ class Assignment extends SimpleHandler {
 			// pre-configured. Commit the value to that key into the correct
 			// value object.
 			$target->commit($return);
+			return $return;
+		}
+
+		if ($target instanceof AssignmentTargets) {
+			$target->assign($return, $context);
 			return $return;
 		}
 

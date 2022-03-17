@@ -146,7 +146,7 @@ Assignment: left:Mutable __ AssignmentOperator __ right:Expression
 # Accessing variables and their items or attributes - for writing.
 #
 
-Mutable: skip:VariableVector | skip:VariableName
+Mutable: skip:VariableVector | skip:VariableName !( __ ',') | skip:Targets
 VariableVector: core:Variable ( ( vector:VectorAttr | vector:VectorItem )+ vector:VectorItemNoIndex? | vector:VectorItemNoIndex )
 VectorItem: "[" __ index:Expression __ "]"
 VectorItemNoIndex: "[" __ "]"
