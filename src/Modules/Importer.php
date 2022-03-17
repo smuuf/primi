@@ -98,7 +98,7 @@ class Importer {
 			$originPackage = $currentModule->getPackage();
 		}
 
-		Logger::debug("Getting module '$dotpath'");
+		Logger::debug("Getting module '$dotpath' (with origin '$originPackage')");
 
 		try {
 			$dp = new Dotpath($dotpath, $originPackage);

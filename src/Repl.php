@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Cli\Term;
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Ex\EngineException;
@@ -193,10 +194,7 @@ class Repl {
 				$this->printResult($result);
 
 			} catch (ErrorException|SystemException $e) {
-
-				$this->driver->output(Colors::get("{red}ERR: "));
-				$this->driver->output($e->getMessage());
-
+				$this->driver->output(Term::error($e->getMessage()));
 			} catch (EngineException|\Throwable $e) {
 
 				// All exceptions other than ErrorException are likely to be a

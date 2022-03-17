@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use Smuuf\Primi\Cli\Term;
 use \Smuuf\StrictObject;
 
 abstract class Logger {
@@ -19,7 +20,7 @@ abstract class Logger {
 	public static function debug(string $msg): void {
 
 		if (self::$enabled) {
-			\fwrite(\STDERR, "DEBUG: $msg\n");
+			\fwrite(\STDERR, Term::debug($msg));
 		}
 
 	}
