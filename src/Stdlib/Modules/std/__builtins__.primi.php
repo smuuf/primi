@@ -238,7 +238,7 @@ class extends NativeModule {
 	 * list(enumerate(a_list)) == [(0, 'a'), (1, 'b'), (2, 123), (3, false)]
 	 *
 	 * b_list = ['a', 'b', 123, false]
-	 * list(enumerate(b_list, start: -5)) == [(-5, 'a'), (-4, 'b'), (-3, 123), (-2, false)]
+	 * list(enumerate(b_list, -5)) == [(-5, 'a'), (-4, 'b'), (-3, 123), (-2, false)]
 	 * ```
 	 *
 	 * @primi.function(no-stack, call-convention: object)
@@ -247,15 +247,8 @@ class extends NativeModule {
 	 */
 	public static function enumerate(CallArgs $callArgs): GeneratorValue {
 
-		if ($callArgs->getTotalCount() > 2) {
-			throw new RuntimeError("enumerate() takes max 2 arguments");
-		}
-
-		$iterable = $callArgs->safeGetArg(0)
-			?? $callArgs->getKwarg('iterable');
-
-		$start = $callArgs->safeGetArg(1)
-			?? $callArgs->safeGetKwarg('start', Interned::number('0'));
+		[$iterable, $start] = $callArgs->extractPositional(2, 1);
+		$start ??= Interned::number('0');
 
 		if (!$start instanceof NumberValue) {
 			throw new RuntimeError("Argument 'start' is not a number");
@@ -307,16 +300,13 @@ class extends NativeModule {
 		CallArgs $args
 	): AbstractValue {
 
-		$args = $args->extract(['o', 'name', 'default'], ['default']);
-		$obj = $args['o'];
-		$name = $args['name'];
+		[$obj, $name, $default] = $args->extractPositional(3, 1);
 
 		$attrName = $name->getStringValue();
-		if (isset($obj->attrs[$attrName])) {
-			return $obj->attrs[$attrName];
+		if ($attrValue = $obj->attrGet($attrName)) {
+			return $attrValue;
 		}
 
-		$default = $args['default'] ?? \null;
 		if ($default !== \null) {
 			return $default;
 		}

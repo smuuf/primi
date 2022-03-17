@@ -95,58 +95,31 @@ class CallArgs {
 	}
 
 	/**
-	 * Returns Primi object stored as positional argument. If not found,
-	 * `TypeError` is thrown.
+	 * NOTE: Only docblock type-hinting for performance reasons.
+	 *
+	 * @param int $count Number of expected arguments.
+	 * @return array<string, AbstractValue|null>
 	 */
-	public function getArg(int $index): AbstractValue {
+	public function extractPositional(int $count, int $optional = 0) {
 
-		if (isset($this->args[$index])) {
-			return $this->args[$index];
+		if ($this->kwargs) {
+			$first = \array_key_first($this->kwargs);
+			throw new TypeError("Unexpected keyword argument '$first'");
 		}
 
-		throw new TypeError("Positional argument $index not found");
-
-	}
-
-	/**
-	 * Returns Primi object stored as positional argument. If not found,
-	 * `TypeError` is thrown.
-	 */
-	public function getKwarg(string $name): AbstractValue {
-
-		if (isset($this->kwargs[$name])) {
-			return $this->kwargs[$name];
+		$argCount = \count($this->args);
+		if ($argCount > $count) {
+			throw new TypeError("Expected maximum of $count arguments");
 		}
 
-		throw new TypeError("Keyword argument '$name' not found");
+		$mandatoryCount = $count - $optional;
+		if ($argCount < $mandatoryCount) {
+			throw new TypeError("Expected at least $mandatoryCount arguments");
+		}
 
-	}
-
-	/**
-	 * Returns Primi object stored as positional argument. If not found, Primi
-	 * null object is returned.
-	 */
-	public function safeGetArg(
-		int $index,
-		?AbstractValue $default = null
-	): ?AbstractValue {
-
-		return $this->args[$index]
-			?? $default;
-
-	}
-
-	/**
-	 * Returns Primi object stored as keyword argument. If not found, Primi
-	 * null object is returned.
-	 */
-	public function safeGetKwarg(
-		string $name,
-		?AbstractValue $default = null
-	): ?AbstractValue {
-
-		return $this->kwargs[$name]
-			?? $default;
+		// Return exactly expected number of arguments. Any non-specified
+		// optional arguments will be returned as null.
+		return \array_pad($this->args, $count, \null);
 
 	}
 
@@ -155,7 +128,7 @@ class CallArgs {
 	 *
 	 * @param array<string> $names
 	 * @param array<string> $optional
-	 * @return array<string, AbstractValue>
+	 * @return array<string, AbstractValue|null>
 	 */
 	public function extract($names, $optional = []) {
 
@@ -171,7 +144,7 @@ class CallArgs {
 
 			$name = $names[$i] ?? \null;
 			if ($name === \null) {
-				throw new TypeError("Too many positional arguments A");
+				throw new TypeError("Too many positional arguments");
 			}
 
 			if ($name[0] === '*') {
@@ -180,7 +153,7 @@ class CallArgs {
 				// positional arguments, it is obvious the caller sent us
 				// too many positional arguments.
 				if ($name[1] === '*') {
-					throw new TypeError("Too many positional arguments B");
+					throw new TypeError("Too many positional arguments");
 				}
 
 				if (!$varArgsName) {
