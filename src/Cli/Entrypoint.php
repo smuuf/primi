@@ -148,10 +148,10 @@ class Entrypoint {
 				die;
 			}
 
-			echo "Parser stats:\n";
+			echo Term::line(Colors::get("{green}Parser stats:{_}"));
 			foreach ($ph->getStats() as $name => $value) {
 				$value = round($value, 4);
-				echo "- {$name}: {$value} s\n";
+				echo Term::line(Colors::get("- $name: {yellow}{$value} s{_}"));
 			}
 			die;
 
@@ -182,7 +182,7 @@ class Entrypoint {
 	 * @return never
 	 */
 	private static function errorExit(string $text): void {
-		echo "$text\n";
+		echo Term::error($text);
 		die(1);
 	}
 

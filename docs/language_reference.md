@@ -33,7 +33,7 @@ Example usage:
 a = true;
 b = 1 == 2; // false
 c = b == false; // true
-d = c == "hello"; // ERR: Cannot compare 'bool' and 'string'
+d = c == "hello"; // Error: Cannot compare 'bool' and 'string'
 e = "hello" == r"[0-9]"; // false
 f = "hello" == r"l{2}"; // true
 ```
@@ -225,8 +225,8 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
         e = "a word" + " and one more"; // (string) "a word and one more"
         f = "a word" - "or"; // (string) "a wd"
         g = "regular expressions" - r"regul[ar]+\s*"; // (string) "expressions"
-        _x = 5 + "4" // ERR: Cannot use operator '+' with 'number' and 'string'
-        _x = "a word and number " + 5; // ERR: Cannot use operator '+' with 'number' and 'string'
+        _x = 5 + "4" // Error: Cannot use operator '+' with 'number' and 'string'
+        _x = "a word and number " + 5; // Error: Cannot use operator '+' with 'number' and 'string'
         ```
 - `*`, `/`
     - Performs multiplication (division) of two values.
@@ -241,9 +241,9 @@ Precedence of various operators is defined as follows *(from highest to lowest)*
         d = "3" * 4; // (string) "3333"
         e = 5 / 4; // (number) 1.25
         g = 5 / 5; // (number) 1
-        _x = "2" * "3"; // ERR: Cannot use operator '*' with 'string' and 'string'
-        _x = 5 / "4"; // ERR: Cannot use operator '/' with 'number' and 'string'
-        _x = "20" / 4; // ERR: Cannot use operator '/' with 'string' and 'number'
+        _x = "2" * "3"; // Error: Cannot use operator '*' with 'string' and 'string'
+        _x = 5 / "4"; // Error: Cannot use operator '/' with 'number' and 'string'
+        _x = "20" / 4; // Error: Cannot use operator '/' with 'string' and 'number'
         ```
 
 ## Control structures
