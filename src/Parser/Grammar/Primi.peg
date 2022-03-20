@@ -169,7 +169,7 @@ LogicalAnd: operands:Comparison ( ] ops:AndOperator ] operands:Comparison )*
 Comparison: operands:Addition ( ( __ ops:ComparisonOperator __ | ops: ] ComparisonOperatorWithWhitespace ] ) operands:Addition )*
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication )*
 Multiplication: operands:Exponentiation ( __ ops:MultiplyOperator __ operands:Exponentiation )*
-Exponentiation: operands:Negation ( __ ops:PowerOperator __ operands:Negation )*
+Exponentiation: operand:Negation ( __ PowerOperator __ factor:Exponentiation )?
 Negation: ( nots:NegationOperator )* core:Operand
 Operand: ( ( "(" __ core:Expression __ ")" | core:AbstractValue ) chain:Chain? ) | skip:AbstractValue
 
