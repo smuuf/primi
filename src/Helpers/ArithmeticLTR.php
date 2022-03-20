@@ -75,9 +75,6 @@ class ArithmeticLTR {
 					break;
 				case $op === "/":
 					$result = $a->doDivision($b);
-					break;
-				case $op === "**":
-					$result = $a->doPower($b);
 					// No need for break here.
 			}
 
