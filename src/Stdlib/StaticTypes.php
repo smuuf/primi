@@ -25,7 +25,7 @@ use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\GeneratorValue;
+use \Smuuf\Primi\Values\IteratorFactoryValue;
 
 /**
  * Global provider for static (immutable) native types.
@@ -45,7 +45,7 @@ abstract class StaticTypes {
 	private static TypeValue $dictType;
 	private static TypeValue $tupleType;
 	private static TypeValue $functionType;
-	private static TypeValue $generatorType;
+	private static TypeValue $iteratorFactoryType;
 	private static TypeValue $moduleType;
 
 	public static function getObjectType(): TypeValue {
@@ -103,9 +103,9 @@ abstract class StaticTypes {
 			??= new TypeValue(FuncValue::TYPE, self::getObjectType(), []);
 	}
 
-	public static function getGeneratorType(): TypeValue {
-		return self::$generatorType
-			??= new TypeValue(GeneratorValue::TYPE, self::getObjectType(), []);
+	public static function getIteratorFactoryType(): TypeValue {
+		return self::$iteratorFactoryType
+			??= new TypeValue(IteratorFactoryValue::TYPE, self::getObjectType(), []);
 	}
 
 	public static function getModuleType(): TypeValue {
