@@ -10,7 +10,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
  * Class for representing dynamically created Primi iterables.
  *
  * For example, we want "range()" function (implemented in PHP) to return
- * not only a one-time iterator, but a iterable that allows multiple uses
+ * not only a one-time iterator, but an iterable that allows multiple uses
  * as an iterator. Thus, PHP code handling the "range()" builtin Primi function
  * will return this "iteratorfactory" with a callable acting as a factory
  * function embedded within it.
