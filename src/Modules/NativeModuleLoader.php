@@ -15,11 +15,7 @@ class NativeModuleLoader {
 
 		// Closure to block access of the file's code to this PHP scope.
 		$loader = fn($modulePath) => require $modulePath;
-
-		$dict = NativeModuleExecutor::execute(
-			$ctx,
-			$loader($filepath)
-		);
+		$dict = NativeModuleExecutor::execute($ctx, $loader($filepath));
 
 		$ctx->getCurrentScope()->setVariables($dict);
 

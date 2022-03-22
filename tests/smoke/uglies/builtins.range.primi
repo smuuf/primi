@@ -63,3 +63,20 @@ list(range(1.0000000000000000000000000000000000000000000000000000000000000000000
 _ = 'Integers with decimal point are a-okay'
 x = list(range(1.0, -3.0, 2.0))
 assert(x == [1, -1], _)
+
+//
+// Iterating multiple times over a single range()
+//
+
+indices = []
+r = range(5, 1, 1)
+for (v in r) {
+    indices.push(v)
+}
+
+for (v in r) {
+    indices.push(v)
+}
+
+_ = 'Multiple iterations over a single result of range() should behave the same'
+assert(indices == [5, 4, 3, 2, 5, 4, 3, 2])

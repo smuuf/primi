@@ -10,7 +10,7 @@ use \Smuuf\Primi\Tools\BuildDocs\Entities\Module;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Values\GeneratorValue;
+use \Smuuf\Primi\Values\IteratorFactoryValue;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\NullValue;
@@ -44,7 +44,7 @@ class extends NativeModule {
 
 			// Other basic types (basic == they're implemented in PHP).
 			FuncValue::TYPE => StaticTypes::getFunctionType(),
-			GeneratorValue::TYPE => StaticTypes::getGeneratorType(),
+			IteratorFactoryValue::TYPE => StaticTypes::getIteratorFactoryType(),
 			ModuleValue::TYPE => StaticTypes::getModuleType(),
 
 		];

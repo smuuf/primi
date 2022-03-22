@@ -15,7 +15,7 @@ use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\GeneratorValue;
+use \Smuuf\Primi\Values\IteratorFactoryValue;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
@@ -154,7 +154,7 @@ class extends NativeModule {
 	 *
 	 * @primi.function(no-stack, call-convention: object)
 	 */
-	public static function range(CallArgs $callArgs): GeneratorValue {
+	public static function range(CallArgs $callArgs): IteratorFactoryValue {
 
 		$args = $callArgs->extract(['start', 'end', 'step'], ['end', 'step']);
 
@@ -212,7 +212,10 @@ class extends NativeModule {
 
 		};
 
-		return new GeneratorValue($gen((int) $start, (int) $end, (int) $step));
+		return new IteratorFactoryValue(
+			fn() => $gen((int) $start, (int) $end, (int) $step),
+			'range'
+		);
 
 	}
 
@@ -245,23 +248,23 @@ class extends NativeModule {
 	 * @primi.function.arg(name: iterable, type: iterable)
 	 * @primi.function.arg(name: start, type: number, default: 0)
 	 */
-	public static function enumerate(CallArgs $callArgs): GeneratorValue {
+	public static function enumerate(CallArgs $callArgs): IteratorFactoryValue {
 
 		[$iterable, $start] = $callArgs->extractPositional(2, 1);
 		$start ??= Interned::number('0');
 
 		if (!$start instanceof NumberValue) {
-			throw new RuntimeError("Argument 'start' is not a number");
-		}
-
-		$iter = $iterable->getIterator();
-
-		if ($iter === \null) {
-			throw new RuntimeError("Argument 'iterable' is not iterable");
+			throw new RuntimeError("Start must be a number");
 		}
 
 		$counter = $start->getStringValue();
-		$it = function() use ($iter, $counter) {
+		$it = function($iterable, $counter) {
+
+			$iter = $iterable->getIterator();
+			if ($iter === \null) {
+				throw new RuntimeError("Passed iterable is not iterable");
+			}
+
 			foreach ($iter as $item) {
 				yield new TupleValue([
 					Interned::number((string) $counter),
@@ -269,9 +272,13 @@ class extends NativeModule {
 				]);
 				$counter++;
 			}
+
 		};
 
-		return new GeneratorValue($it());
+		return new IteratorFactoryValue(
+			fn() => $it($iterable, $counter),
+			'enumerate'
+		);
 
 	}
 

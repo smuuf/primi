@@ -1,0 +1,86 @@
+l = [1, 4, 'aaa', 7, true, type, type]
+
+//
+// enumerate() with default start.
+//
+
+counter = 0
+for (index, value in enumerate(l)) {
+    assert(index == counter, 'enumerate() should return correct index')
+    assert(index > -1 and index < 7, 'enumerate() should never return more items')
+
+    if (index == 0) {
+        assert(value == 1)
+    }
+    if (index == 1) {
+        assert(value == 4)
+    }
+    if (index == 2) {
+        assert(value == 'aaa')
+    }
+    if (index == 3) {
+        assert(value == 7)
+    }
+    if (index == 4) {
+        assert(value == true)
+    }
+    if (index == 5) {
+        assert(value == type)
+    }
+    if (index == 7) {
+        assert(value == type)
+    }
+
+    counter = counter + 1
+}
+
+//
+// enumerate() with specified start.
+//
+
+counter = -234
+for (index, value in enumerate(l, -234)) {
+    assert(index == counter, 'enumerate() should return correct index')
+    assert(index > -235 and index < -227, 'enumerate() should never return more items')
+
+    if (index == -234) {
+        assert(value == 1)
+    }
+    if (index == -233) {
+        assert(value == 4)
+    }
+    if (index == -232) {
+        assert(value == 'aaa')
+    }
+    if (index == -231) {
+        assert(value == 7)
+    }
+    if (index == -230) {
+        assert(value == true)
+    }
+    if (index == -229) {
+        assert(value == type)
+    }
+    if (index == -228) {
+        assert(value == type)
+    }
+
+    counter = counter + 1
+}
+
+//
+// Iterating multiple times over a single enumerate()
+//
+
+indices = []
+e = enumerate(l)
+for (index, value in e) {
+    indices.push(index)
+}
+
+for (index, value in e) {
+    indices.push(index)
+}
+
+_ = 'Multiple iterations over a single result of enumerate() should behave the same'
+assert(indices == [0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6], _)
