@@ -14,6 +14,7 @@ use \Smuuf\Primi\Stdlib\TypeExtensions\TupleTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\NumberTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\ObjectTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\StringTypeExtension;
+use \Smuuf\Primi\Stdlib\TypeExtensions\ForbiddenTypeExtension;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
@@ -100,17 +101,17 @@ abstract class StaticTypes {
 
 	public static function getFunctionType(): TypeValue {
 		return self::$functionType
-			??= new TypeValue(FuncValue::TYPE, self::getObjectType(), []);
+			??= new TypeValue(FuncValue::TYPE, self::getObjectType(), ForbiddenTypeExtension::execute());
 	}
 
 	public static function getIteratorFactoryType(): TypeValue {
 		return self::$iteratorFactoryType
-			??= new TypeValue(IteratorFactoryValue::TYPE, self::getObjectType(), []);
+			??= new TypeValue(IteratorFactoryValue::TYPE, self::getObjectType(), ForbiddenTypeExtension::execute());
 	}
 
 	public static function getModuleType(): TypeValue {
 		return self::$moduleType
-			??= new TypeValue(ModuleValue::TYPE, self::getObjectType(), []);
+			??= new TypeValue(ModuleValue::TYPE, self::getObjectType(), ForbiddenTypeExtension::execute());
 	}
 
 }
