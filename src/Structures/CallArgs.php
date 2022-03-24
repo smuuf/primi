@@ -98,7 +98,7 @@ class CallArgs {
 	 * NOTE: Only docblock type-hinting for performance reasons.
 	 *
 	 * @param int $count Number of expected arguments.
-	 * @return array<string, AbstractValue|null>
+	 * @return array<int, AbstractValue|null>
 	 */
 	public function extractPositional(int $count, int $optional = 0) {
 

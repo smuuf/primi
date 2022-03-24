@@ -56,7 +56,7 @@ class FunctionDefinition extends SimpleHandler {
 
 	/**
 	 * @param TypeDef_AstNode $paramsNode
-	 * @return array{names: array<string, bool>, defaults: array<string, TypeDef_AstNode>}
+	 * @return array{names: array<string>, defaults: array<string, TypeDef_AstNode>}
 	 */
 	public static function prepareParameters(array $paramsNode): array {
 
@@ -81,6 +81,7 @@ class FunctionDefinition extends SimpleHandler {
 
 		foreach ($paramsNodes as $node) {
 
+			/** @var string */
 			$paramName = $node['param']['text'];
 
 			// Detect duplicate param names - they are forbidden.

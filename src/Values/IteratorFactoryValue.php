@@ -25,7 +25,7 @@ class IteratorFactoryValue extends AbstractNativeValue {
 	protected string $name;
 
 	/**
-	 * @param callable(): AbstractValue $factory
+	 * @param callable(mixed ...$args): \Iterator<AbstractValue> $factory
 	 */
 	public function __construct(callable $factory, string $name) {
 		$this->value = $factory;
@@ -41,7 +41,7 @@ class IteratorFactoryValue extends AbstractNativeValue {
 	}
 
 	/**
-	 * @return \Iterator<int, AbstractValue>
+	 * @return \Iterator<AbstractValue>
 	 */
 	public function getIterator(): \Iterator {
 		yield from ($this->value)();
