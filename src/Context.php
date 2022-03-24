@@ -30,6 +30,14 @@ class Context {
 	/** @var StackFrame[] Call stack list. */
 	private $callStack = [];
 
+	/**
+	 * Current call stack size.
+	 * Instead of count()ing $callStack property every time.
+	 *
+	 * @var int
+	 */
+	private $callStackSize = 0;
+
 	//
 	// Scope stack.
 	//
@@ -137,14 +145,19 @@ class Context {
 		return $this->callStack;
 	}
 
-	public function pushCall(StackFrame $call): void {
+	/**
+	 * @param StackFrame $call
+	 * @return void
+	 */
+	public function pushCall($call) {
 
+		// Increment current stack size.
+		$this->callStackSize++;
 		$this->callStack[] = $call;
 
-		if (
-			$this->maxCallStackSize
-			&& \count($this->callStack) === $this->maxCallStackSize
-		) {
+		// We can check this every time. Even if 'maxCallStackSize' is zero,
+		// the 'callStackSize' will never be.
+		if ($this->callStackSize === $this->maxCallStackSize) {
 
 			throw new RuntimeError(\sprintf(
 				"Maximum call stack size (%d) reached",
@@ -155,9 +168,13 @@ class Context {
 
 	}
 
-	public function popCall(): void {
+	/**
+	 * @return void
+	 */
+	public function popCall() {
 
 		\array_pop($this->callStack);
+		$this->callStackSize--;
 		$this->taskQueue->tick();
 
 	}
@@ -176,19 +193,67 @@ class Context {
 
 	// Scope management.
 
-	public function getCurrentScope(): Scope {
+	/**
+	 * @return Scope
+	 */
+	public function getCurrentScope() {
 		return $this->currentScope;
 	}
 
-	public function pushScope(Scope $scope): void {
-		$this->scopeStack[] = $scope;
-		$this->currentScope = $scope;
+	// Call + Scope management.
+
+	/**
+	 * @param ?StackFrame $call
+	 * @param ?Scope $scope
+	 * @return void
+	 */
+	public function pushCallScopePair($call, $scope) {
+
+		// Push call, if there's any.
+		if ($call) {
+
+			// Increment current stack size.
+			$this->callStackSize++;
+			// Call stack.
+			$this->callStack[] = $call;
+
+			// We can check this every time. Even if 'maxCallStackSize' is zero,
+			// the 'callStackSize' will never be.
+			if ($this->callStackSize === $this->maxCallStackSize) {
+				throw new RuntimeError(\sprintf(
+					"Maximum call stack size (%d) reached",
+					$this->maxCallStackSize
+				));
+			}
+
+		}
+
+		// Push scope, if there's any.
+		if ($scope) {
+			$this->scopeStack[] = $scope;
+			$this->currentScope = $scope;
+		}
+
 	}
 
-	public function popScope(): void {
+	/**
+	 * @param bool $popCall
+	 * @param bool $popScope
+	 * @return void
+	 */
+	public function popCallScopePair($popCall = \true, $popScope = \true) {
 
-		\array_pop($this->scopeStack);
-		$this->currentScope = \end($this->scopeStack) ?: \null;
+		if ($popCall) {
+			\array_pop($this->callStack);
+			$this->callStackSize--;
+		}
+
+		if ($popScope) {
+			\array_pop($this->scopeStack);
+			$this->currentScope = \end($this->scopeStack) ?: \null;
+		}
+
+		$this->taskQueue->tick();
 
 	}
 

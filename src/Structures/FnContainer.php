@@ -90,11 +90,10 @@ class FnContainer {
 				// Push call first for more precise traceback for errors when
 				// resolving arguments (expected args may be missing, for
 				// example) below.
-				// For performance reasons (function calls are frequent) push and
-				// pop stack frame and scope manually, without the overhead
+				// For performance reasons (function calls are frequent) push
+				// and pop stack frame and scope manually, without the overhead
 				// of using ContextPushPopWrapper.
-				$ctx->pushCall($frame);
-				$ctx->pushScope($scope);
+				$ctx->pushCallScopePair($frame, $scope);
 
 				if ($defParams) {
 					$callArgs = $args ?? CallArgs::getEmpty();
@@ -118,8 +117,7 @@ class FnContainer {
 				return $e->getValue();
 
 			} finally {
-				$ctx->popScope();
-				$ctx->popCall();
+				$ctx->popCallScopePair();
 			}
 
 			// Return null if no "return" was present (i.e. no
