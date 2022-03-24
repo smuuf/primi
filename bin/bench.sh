@@ -45,7 +45,7 @@ function timeit_php {
 }
 
 function timeit_primi {
-	echo `measure_time "./primi $1"`
+	echo `measure_time "$INTERPRETER ./primi $1"`
 }
 
 header "Measuring perf standard (PHP code) ... "
