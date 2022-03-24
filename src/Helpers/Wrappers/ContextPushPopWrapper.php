@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers\Wrappers;
 
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Scope;
-use \Smuuf\StrictObject;
 
 class ContextPushPopWrapper extends AbstractWrapper {
 
@@ -38,13 +38,10 @@ class ContextPushPopWrapper extends AbstractWrapper {
 	 */
 	public function executeBefore() {
 
-		if ($this->call) {
-			$this->ctx->pushCall($this->call);
-		}
-
-		if ($this->scope) {
-			$this->ctx->pushScope($this->scope);
-		}
+		$this->ctx->pushCallScopePair(
+			$this->call,
+			$this->scope,
+		);
 
 		return $this->ctx;
 
@@ -55,15 +52,12 @@ class ContextPushPopWrapper extends AbstractWrapper {
 	 */
 	public function executeAfter(): void {
 
-		if ($this->call) {
-			$this->ctx->popCall();
-			unset($this->call);
-		}
+		$this->ctx->popCallScopePair(
+			(bool) $this->call,
+			(bool) $this->scope,
+		);
 
-		if ($this->scope) {
-			$this->ctx->popScope();
-			unset($this->scope);
-		}
+		unset($this->call, $this->scope);
 
 	}
 
