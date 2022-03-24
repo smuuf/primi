@@ -32,7 +32,7 @@
 	},
 	"require-dev": {
 		"nette/tester": "^2.0",
-		"phpstan/phpstan": "^1.4",
+		"phpstan/phpstan": "^1.5",
 		"smuuf/phpcb": "^0.5",
 		"nikic/php-parser": "^4.13"
 	}

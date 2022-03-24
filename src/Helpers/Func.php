@@ -304,6 +304,11 @@ abstract class Func {
 
 	}
 
+	/**
+	 * @param array<string, AbstractValue|null> $current
+	 * @param array<string, TypeDef_AstNode> $defaults
+	 * @return array<string, AbstractValue>
+	 */
 	public static function resolve_default_args(
 		array $current,
 		array $defaults,

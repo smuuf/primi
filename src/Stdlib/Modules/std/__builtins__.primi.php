@@ -213,7 +213,12 @@ class extends NativeModule {
 		};
 
 		return new IteratorFactoryValue(
-			fn() => $gen((int) $start, (int) $end, (int) $step),
+			// Short closure syntax gives latest PHPStan a headache and
+			// reports some nonsense about the function "should not return
+			// anything".
+			function() use ($gen, $start, $end, $step): \Generator {
+				return $gen((int) $start, (int) $end, (int) $step);
+			},
 			'range'
 		);
 
@@ -258,7 +263,7 @@ class extends NativeModule {
 		}
 
 		$counter = $start->getStringValue();
-		$it = function($iterable, $counter) {
+		$it = function($iterable, $counter): \Generator {
 
 			$iter = $iterable->getIterator();
 			if ($iter === \null) {
@@ -276,7 +281,12 @@ class extends NativeModule {
 		};
 
 		return new IteratorFactoryValue(
-			fn() => $it($iterable, $counter),
+			// Short closure syntax gives latest PHPStan a headache and
+			// reports some nonsense about the function "should not return
+			// anything".
+			function() use ($it, $iterable, $counter): \Generator {
+				return $it($iterable, $counter);
+			},
 			'enumerate'
 		);
 
