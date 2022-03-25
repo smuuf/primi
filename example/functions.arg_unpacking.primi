@@ -1,0 +1,78 @@
+//
+// Calling functions with named arguments.
+//
+
+import ._helpers: assert_error
+
+args_list = (777, 888, 999)
+args_tuple = (777, 888, 999)
+args_iterator = range(start: 777, end: 1000, step: 111)
+kwargs = {'c': 'C', 'b': 'B', 'a': 'A'}
+
+//
+// Function with three simple parameters.
+//
+
+function something_a(a, b, c) {
+	return [a, b, c]
+}
+
+_ = 'Positional args can be unpacked from a list'
+assert(something_a(*args_list) == [777, 888, 999], _)
+_ = 'Positional args can be unpacked from a tuple'
+assert(something_a(*args_tuple) == [777, 888, 999], _)
+_ = 'Positional args can be unpacked from an iterator'
+assert(something_a(*args_iterator) == [777, 888, 999], _)
+
+_ = 'Single-starred unpacking of dict will simply use its keys as arguments.'
+assert(something_a(*kwargs) == ['c', 'b', 'a'], _)
+_ = 'Unpacked kwargs from a dict (mapping) are stored into target parameters by their key.'
+assert(something_a(**kwargs) == ['A', 'B', 'C'], _)
+
+_ = 'Unpacking a non-mapping iterable via double-starred unpacking will result in an error.'
+assert_error(() => { something_a(**args_list); }, _)
+
+//
+// 1. one positional parameter,
+// 2. one optional "args" parameter, which will catch all unknown positional
+// arguments, and
+// 3. one required keyword-only parameter.
+//
+
+function something_b(a, *b, c) {
+	return [a, b, c]
+}
+
+_ = 'Single-starred parameter will catch all positional parameters into a tuple.'
+assert(something_b(1, 2, 3, 4, 5, c: 'X') == [1, (2, 3, 4, 5), 'X'], _)
+
+//
+// Function with:
+// 1. one positional parameter,
+// 2. one optional "args" parameter, which will catch all unknown positional
+// arguments,
+// 3. one required keyword-only parameter, and
+// 4. one optional "kwargs" parameter, which will catch all unknown keyword
+// arguments.
+//
+
+function something_c(a, *b, c, **d) {
+	return [a, b, c, d]
+}
+
+_ = 'Single-starred parameter will catch all positional parameters into a tuple.'
+result = something_c(1, 2, 3, 4, 5, c: 'X', what: 'yes', the: 'oh yes', hell: 'you bet')
+assert(result == [1, (2, 3, 4, 5), 'X', {'what': 'yes', 'the': 'oh yes', 'hell': 'you bet'}], _)
+
+_ = 'Unpacking arguments when calling functions works with this, too.'
+args_list = [11, 22, 33]
+kwargs_dict = {'unknown_a': 'AAA', 'unknown_truth': true}
+result = something_c(*args_list, **kwargs_dict, c: "I'm here too!")
+expected = [
+    11,
+    (22, 33),
+    "I'm here too!",
+    {'unknown_a': 'AAA', 'unknown_truth': true},
+]
+assert(result == expected, _)
+
