@@ -120,30 +120,6 @@ class TupleValue extends AbstractNativeValue {
 
 	}
 
-	public function itemSet(?AbstractValue $index, AbstractValue $value): bool {
-
-		if ($index === \null) {
-			$this->value[] = $value;
-			return \true;
-		}
-
-		if (
-			!$index instanceof NumberValue
-			|| !Func::is_round_int($index->value)
-		) {
-			throw new RuntimeError("Tuple index must be integer");
-		}
-
-		$actualIndex = Indices::resolveIndexOrError(
-			(int) $index->value,
-			$this->value
-		);
-
-		$this->value[$actualIndex] = $value;
-		return \true;
-
-	}
-
 	public function isEqualTo(AbstractValue $right): ?bool {
 
 		if (!$right instanceof self) {

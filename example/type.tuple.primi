@@ -1,3 +1,5 @@
+import ._helpers: assert_error
+
 //
 // Using tuples.
 //
@@ -5,6 +7,16 @@
 _ = "Default value for tuple is ()"
 default = tuple()
 assert(default == (), _)
+
+//
+// Tuples are immutable.
+//
+
+this_is_a_tuple = tuple([1, 'b', true])
+assert_error(() => { this_is_a_tuple[] = 'forbidden'; })
+assert_error(() => { this_is_a_tuple[1] = 'also forbidden'; })
+assert_error(() => { this_is_a_tuple[999] = 'also forbidden'; })
+assert_error(() => { this_is_a_tuple['what'] = 'also forbidden'; })
 
 //
 // Tuple literals.
