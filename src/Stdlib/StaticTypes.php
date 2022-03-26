@@ -45,7 +45,7 @@ abstract class StaticTypes {
 	private static TypeValue $listType;
 	private static TypeValue $dictType;
 	private static TypeValue $tupleType;
-	private static TypeValue $functionType;
+	private static TypeValue $funcType;
 	private static TypeValue $iteratorFactoryType;
 	private static TypeValue $moduleType;
 
@@ -99,8 +99,8 @@ abstract class StaticTypes {
 			??= new TypeValue(TupleValue::TYPE, self::getObjectType(), TupleTypeExtension::execute());
 	}
 
-	public static function getFunctionType(): TypeValue {
-		return self::$functionType
+	public static function getFuncType(): TypeValue {
+		return self::$funcType
 			??= new TypeValue(FuncValue::TYPE, self::getObjectType(), ForbiddenTypeExtension::execute());
 	}
 

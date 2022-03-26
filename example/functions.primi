@@ -11,7 +11,7 @@ function add(x, y) {
 	assert(c == 100, 'Declaring variable inside function block overwrites the variable from outer scope')
 	return x + y
 }
-assert(type(add) == types.Function, 'Declaring ordinary function')
+assert(type(add) == types.func, 'Declaring ordinary function')
 
 _ = "Function with parameters cannot be called without parameters"
 assert_error(() => {
@@ -21,14 +21,14 @@ assert_error(() => {
 function sub(x, y) {
 	return x - y
 }
-assert(type(sub) == types.Function, 'Declaring ordinary function')
+assert(type(sub) == types.func, 'Declaring ordinary function')
 
 a = 1 + add(sub(4, 3), 5)
 assert(a == 7, 'Passing result of function as argument into another function yields correct result')
 
 function nested(a) {
-	assert(type(add) == types.Function, 'Function block inherits functions from outer scope')
-	assert(type(sub) == types.Function, 'Function block inherits functions from outer scope')
+	assert(type(add) == types.func, 'Function block inherits functions from outer scope')
+	assert(type(sub) == types.func, 'Function block inherits functions from outer scope')
 	return add(a, sub(5, 2))
 }
 
@@ -48,7 +48,7 @@ double_nested = (input, fn) => {
 	return [a, counter]
 
 }
-assert(type(double_nested) == types.Function)
+assert(type(double_nested) == types.func)
 
 result = double_nested(4, nested)
 assert(result[0] == -5, "'a' variable")
@@ -60,7 +60,7 @@ decorator = (fn) => {
 		return "<prefix>" + fn(arg) + "<suffix>"
 	}
 }
-assert(type(decorator) == types.Function)
+assert(type(decorator) == types.func)
 
 function reverser(text) {
 	result = ""
@@ -69,7 +69,7 @@ function reverser(text) {
 	}
 	return result
 }
-assert(type(reverser) == types.Function)
+assert(type(reverser) == types.func)
 
 reversed = reverser('JELEN')
 assert(reversed == 'NELEJ')

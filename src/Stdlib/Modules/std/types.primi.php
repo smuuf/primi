@@ -43,7 +43,7 @@ class extends NativeModule {
 			TupleValue::TYPE => StaticTypes::getTupleType(),
 
 			// Other basic types (basic == they're implemented in PHP).
-			FuncValue::TYPE => StaticTypes::getFunctionType(),
+			FuncValue::TYPE => StaticTypes::getFuncType(),
 			IteratorFactoryValue::TYPE => StaticTypes::getIteratorFactoryType(),
 			ModuleValue::TYPE => StaticTypes::getModuleType(),
 

@@ -15,7 +15,7 @@ use \Smuuf\Primi\Structures\FnContainer;
  */
 class FuncValue extends AbstractNativeValue {
 
-	public const TYPE = "Function";
+	public const TYPE = "func";
 	private ?CallArgs $partialArgs = \null;
 
 	public function __construct(
@@ -27,7 +27,7 @@ class FuncValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getFunctionType();
+		return StaticTypes::getFuncType();
 	}
 
 	public function isTruthy(): bool {
