@@ -25,6 +25,7 @@ abstract class TypeResolver {
 
 	public static function resolve(string $class): string {
 
+		$class = \ltrim($class, '\\');
 		if ($overridden = (self::OVERRIDE_TYPES[$class] ?? \null)) {
 			return $overridden;
 		}
