@@ -19,7 +19,7 @@ abstract class Term {
 	 * @return string
 	 */
 	public static function error($text) {
-		return Colors::get("{red}Error:{_} $text\n");
+		return Colors::get("{red}Error:{_} ") . "$text\n";
 	}
 
 	/**
@@ -27,7 +27,7 @@ abstract class Term {
 	 * @return string
 	 */
 	public static function debug($text) {
-		return Colors::get("{yellow}Debug:{_} $text\n");
+		return Colors::get("{yellow}Debug:{_} ") . "$text\n";
 	}
 
 }
