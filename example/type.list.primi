@@ -269,7 +269,7 @@ for (item in shuffled) {
 //
 
 assert([-1, 0, 2].map(bool) == [true, false, true])
-assert([len, type, 1, true].map(type) == [types.Function, type, number, bool])
+assert([len, type, 1, true].map(type) == [types.func, type, number, bool])
 
 //
 // list.contains()

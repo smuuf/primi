@@ -8,4 +8,4 @@ assert(random_number_result == 4)
 import std.math
 import std.types
 
-assert(type(math.sin) == types.Function)
+assert(type(math.sin) == types.func)

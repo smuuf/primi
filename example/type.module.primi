@@ -2,7 +2,7 @@ import std.math
 import std.types
 import ._helpers: assert_not
 
-assert(type(types) == types.Module)
+assert(type(types) == types.module)
 
 _ = "Getting length of module (number of variables in its global scope) doesn't throw error"
 len(types, _)

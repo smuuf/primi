@@ -15,7 +15,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
  */
 class ModuleValue extends AbstractNativeValue {
 
-	public const TYPE = "Module";
+	public const TYPE = "module";
 
 	/** Name of the module */
 	protected string $name;
