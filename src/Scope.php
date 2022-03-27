@@ -70,6 +70,10 @@ class Scope {
 
 	}
 
+	public function getParent(): ?Scope {
+		return $this->parent;
+	}
+
 	/**
 	 * Get a variable by its name.
 	 *

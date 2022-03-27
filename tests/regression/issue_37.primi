@@ -1,0 +1,25 @@
+import std.math
+import _helpers: assert_error
+
+class Something {
+
+    some_attr = 777
+    function should_work(self) {
+        return math.round(123.456)
+    }
+
+    function should_also_work(self) {
+        return self.some_attr
+    }
+
+    function should_raise_error(self) {
+        return some_attr
+    }
+
+}
+
+instance = Something()
+
+assert(instance.should_work() == 123)
+assert(instance.should_also_work() == 777)
+assert_error(() => { _ = instance.should_raise_error(); })
