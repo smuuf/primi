@@ -55,11 +55,16 @@ class extends NativeModule {
 	 *
 	 * Prints value to standard output.
 	 *
-	 * @primi.function(no-stack, call-convention: object)
+	 * @primi.function(no-stack, inject-context, call-convention: object)
 	 */
 	public static function print(
+		Context $ctx,
 		CallArgs $callArgs
 	): NullValue {
+
+		if ($ctx->getConfig()->getSandboxMode()) {
+			throw new RuntimeError("Function 'print' disabled in sandbox");
+		}
 
 		if ($callArgs->isEmpty()) {
 			echo "\n";
@@ -92,6 +97,10 @@ class extends NativeModule {
 	 * @primi.function(inject-context, no-stack)
 	 */
 	public static function debugger(Context $ctx): AbstractValue {
+
+		if ($ctx->getConfig()->getSandboxMode()) {
+			throw new RuntimeError("Function 'debugger' disabled in sandbox");
+		}
 
 		$repl = new Repl('debugger');
 		$repl->start($ctx);

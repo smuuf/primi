@@ -10,6 +10,7 @@ namespace Smuuf\Primi;
 abstract class EnvInfo {
 
 	private static ?bool $runningInPhar = \null;
+	private static ?bool $runningInCli = \null;
 	private static ?string $homeDir = \null;
 	private static ?string $currentUser = \null;
 	private static ?string $bestTempDir = \null;
@@ -31,6 +32,14 @@ abstract class EnvInfo {
 	public static function isRunningInPhar(): bool {
 		return self::$runningInPhar
 			?? (self::$runningInPhar = self::determineIsRunningInPhar());
+	}
+
+	/**
+	 * Is current runtime being executed within Phar?
+	 */
+	public static function isRunningInCli(): bool {
+		return self::$runningInCli
+			?? (self::$runningInCli = \PHP_SAPI === 'cli');
 	}
 
 	/**

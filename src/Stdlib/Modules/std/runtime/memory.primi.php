@@ -7,11 +7,14 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
+use \Smuuf\Primi\Modules\DeniedInSandboxTrait;
 
 /**
  * Native 'std.runtime.memory' module.
  */
 return new class extends NativeModule {
+
+	use DeniedInSandboxTrait;
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
