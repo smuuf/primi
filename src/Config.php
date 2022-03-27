@@ -12,8 +12,36 @@ class Config {
 
 	use StrictObject;
 
+	private bool $sandboxMode = true;
+
+	/**
+	 * Return default config for current environment.
+	 *
+	 * If Primi is running in CLI (terminal) the sandbox mode is disabled by
+	 * default.
+	 *
+	 * If Primi is running anywhere else, sandbox mode is enabled by default.
+	 */
 	final public static function buildDefault(): Config {
-		return new self;
+
+		if (!EnvInfo::isRunningInCli()) {
+			return new self;
+		}
+
+		$config = new self;
+		$config->setSandboxMode(false);
+		return $config;
+
+	}
+
+	// Sandbox mode.
+
+	public function setSandboxMode(bool $mode): void {
+		$this->sandboxMode = $mode;
+	}
+
+	public function getSandboxMode(): bool {
+		return $this->sandboxMode;
 	}
 
 	//
@@ -48,7 +76,7 @@ class Config {
 	public function getTempDir(): ?string {
 
 		return $this->tempDir === ''
-			? self::getDefaultTempDir()
+			? EnvInfo::getBestTempDir()
 			: null;
 
 	}
@@ -167,7 +195,7 @@ class Config {
 		}
 
 		// Automatic detection - handle POSIX signals only in CLI.
-		return \PHP_SAPI === 'cli';
+		return EnvInfo::isRunningInCli();
 
 	}
 
@@ -193,14 +221,6 @@ class Config {
 	 */
 	public function getSigQuitDebugging(): bool {
 		return $this->sigQuitDebugging;
-	}
-
-	//
-	// Internal helpers.
-	//
-
-	private static function getDefaultTempDir(): ?string {
-		return EnvInfo::getBestTempDir();
 	}
 
 }
