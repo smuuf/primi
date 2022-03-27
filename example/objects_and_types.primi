@@ -1,4 +1,4 @@
-import std.types: Function
+import std.types: func
 import ._helpers: assert_error
 
 //
