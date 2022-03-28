@@ -15,6 +15,7 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Structures\MapContainer;
+use Smuuf\Primi\Values\TypeValue;
 
 abstract class Func {
 
@@ -279,20 +280,28 @@ abstract class Func {
 	 * TypeError exception with a user-friendly message or doesn't do
 	 * anything.
 	 *
+	 * @param class-string|AbstractValue
 	 * @throws TypeError
 	 */
 	public static function allow_argument_types(
 		int $index,
 		AbstractValue $arg,
-		string ...$allowedTypes
+		...$allowedTypes
 	): void {
 
 		// If any of the "instanceof" checks is true,
 		// the type is allowed - return without throwing exception.
 		foreach ($allowedTypes as $type) {
-			if ($arg instanceof $type) {
+
+			if (\is_string($type) && $arg instanceof $type) {
+				return;
+			} elseif (
+				$type instanceof TypeValue
+				&& $arg->getType() === $type
+			) {
 				return;
 			}
+
 		}
 
 		throw new TypeError(\sprintf(

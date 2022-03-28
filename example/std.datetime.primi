@@ -1,0 +1,33 @@
+import std.time
+import std.datetime: Datetime, Duration
+
+print(f'Current UNIX time: {time.now()}')
+
+d1 = Datetime('1989-11-17');
+d2 = Datetime('2022-02-24');
+d2_2 = Datetime('2022-02-24');
+
+_ = "Datetime objects can be formatted"
+assert(d1.format('H:i:s Y-m-d') == '00:00:00 1989-11-17')
+assert(d2.format('d.m.Y at ') == '00:00:00 1989-11-17')
+
+// _ = "Datetime objects can be compared"
+// assert(d1 != d2, _)
+// assert(d1 != d2_2, _)
+// assert(d2 == d2_2, _)
+// assert(!(d2 > d2_2), _)
+// assert(!(d2 < d2_2), _)
+// assert(d1 < d2, _)
+// assert(d1 <= d2, _)
+// assert(d2 > d2, _)
+// assert(d2 >= d2, _)
+
+delta = d2.subtract(d1)
+
+assert(type(delta) == Duration)
+assert(delta.days == 11787)
+assert(delta.seconds == 0)
+assert(delta.total_seconds == 1018396800)
+
+d3 = d1.add(delta)
+assert(d2 == d3)

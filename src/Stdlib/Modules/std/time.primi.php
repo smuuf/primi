@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\StringValue;
@@ -10,27 +9,13 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Stdlib\StaticTypes;
-use \Smuuf\Primi\Stdlib\TypeExtensions\DateTypeExtension;
-use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Structures\CallArgs;
 
 return new
 /**
- * Functions and tools for time-related operations.
+ * Functions and tools for basic time-related operations.
  */
 class extends NativeModule {
-
-	public function execute(Context $ctx): array {
-
-		return [
-			'Date' => new TypeValue(
-				'Date',
-				StaticTypes::getObjectType(),
-				DateTypeExtension::execute(),
-			),
-		];
-
-	}
 
 	/**
 	 * Returns high-resolution monotonic time. It is an arbitrary number that
@@ -43,11 +28,11 @@ class extends NativeModule {
 	}
 
 	/**
-	 * Returns high-resolution UNIX time.
+	 * Returns current high-resolution UNIX time.
 	 *
 	 * @primi.function(no-stack)
 	 */
-	public static function unix(): NumberValue {
+	public static function now(): NumberValue {
 		return new NumberValue((string) \microtime(\true));
 	}
 
@@ -89,6 +74,30 @@ class extends NativeModule {
 		}
 
 		return new NumberValue((string) $ts);
+
+	}
+
+	/**
+	 * Return string UNIX timestamp to a string representation specified by
+	 * format. If timestamp is provided, current time will be used.
+	 *
+	 * @primi.function(no-stack, call-convention: object)
+	 */
+	public static function format(CallArgs $args): StringValue {
+
+		[$format, $now] = $args->extractPositional(2, 1);
+
+		if ($now) {
+			Func::allow_argument_types(1, $now, NumberValue::class);
+			$now = (int) $now->getStringValue();
+		} else {
+			$now = \time();
+		}
+
+		Func::allow_argument_types(2, $format, StringValue::class);
+		$format = $format->getStringValue();
+
+		return Interned::string(\date($format, $now));
 
 	}
 

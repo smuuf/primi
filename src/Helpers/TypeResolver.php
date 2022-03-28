@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Values\InstanceValue;
 
 abstract class TypeResolver {
 
@@ -19,22 +22,47 @@ abstract class TypeResolver {
 	 * want to display "object" instead of AbstractValue's "__undefined__" TYPE.
 	 */
 	private const OVERRIDE_TYPES = [
-		\Smuuf\Primi\Values\AbstractValue::class => 'object',
-		\Smuuf\Primi\Values\InstanceValue::class => 'object',
+		AbstractValue::class => 'object',
+		InstanceValue::class => 'object',
 	];
 
-	public static function resolve(string $class): string {
+	/**
+	 * Return type name for a Primi object or for PHP class which represents
+	 * object of a basic native type (e.g. `StringValue`).
+	 *
+	 * @param class-string|AbstractValue $type
+	 */
+	public static function resolve($type): string {
 
-		$class = \ltrim($class, '\\');
-		if ($overridden = (self::OVERRIDE_TYPES[$class] ?? \null)) {
-			return $overridden;
+		if (\is_string($type)) {
+
+			// Return Primi type name based on passed PHP class name
+			// representing a basic native Primi object.
+
+			// Normalize PHP class name to a form without leading backslash.
+			$type = \ltrim($type, '\\');
+			if (isset(self::OVERRIDE_TYPES[$type])) {
+				return self::OVERRIDE_TYPES[$type];
+			}
+
+			if (!\is_subclass_of($type, AbstractValue::class, \true)) {
+				throw new EngineInternalError(
+					"Unable to resolve Primi type name for PHP class '$type'");
+			}
+
+			return $type::TYPE;
+
+		} elseif ($type instanceof TypeValue) {
+
+			// Return Primi type name based on an actual Primi object (passed
+			// as PHP object representing a Primi object).
+			return $type->getName();
+
 		}
 
-		if (\is_subclass_of($class, \Smuuf\Primi\Values\AbstractValue::class, \true)) {
-			return $class::TYPE;
-		}
-
-		throw new EngineInternalError("Unable to resolve basic type name for class '$class'");
+		$type = \get_debug_type($type);
+		throw new EngineInternalError(
+			"Unable to resolve Primi type name from PHP value '$type'");
 
 	}
 

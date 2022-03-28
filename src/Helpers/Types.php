@@ -67,14 +67,14 @@ abstract class Types {
 	 * Converts PHP class names to Primi type names represented as string.
 	 * Throws an exception if any PHP class name doesn't represent a Primi type.
 	 *
-	 * @param array<string> $types
+	 * @param array<class-string|AbstractValue> $types
 	 */
 	public static function php_classes_to_primi_types(array $types): string {
 
 		$primiTypes = \array_map(function($class) {
 
 			// Resolve PHP nulls as Primi nulls.
-			if (strtolower($class) === 'null') {
+			if (\is_string($class) && \strtolower($class) === 'null') {
 				return NullValue::TYPE;
 			}
 
