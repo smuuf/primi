@@ -5,20 +5,20 @@ namespace Smuuf\Primi\Stdlib\Modules;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Stdlib\StaticTypes;
-use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Tools\BuildDocs\Entities\Module;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Values\IteratorFactoryValue;
 use \Smuuf\Primi\Values\ListValue;
-use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\RegexValue;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Values\RegexValue;
+use \Smuuf\Primi\Values\TupleValue;
+use \Smuuf\Primi\Values\ModuleValue;
+use \Smuuf\Primi\Values\NumberValue;
+use \Smuuf\Primi\Values\StringValue;
+use \Smuuf\Primi\Values\NotImplementedValue;
+use \Smuuf\Primi\Values\IteratorFactoryValue;
+use \Smuuf\Primi\Modules\NativeModule;
 
 return new
 /**
@@ -46,6 +46,9 @@ class extends NativeModule {
 			FuncValue::TYPE => StaticTypes::getFuncType(),
 			IteratorFactoryValue::TYPE => StaticTypes::getIteratorFactoryType(),
 			ModuleValue::TYPE => StaticTypes::getModuleType(),
+
+			// Other types.
+			NotImplementedValue::TYPE => StaticTypes::getNotImplementedType(),
 
 		];
 

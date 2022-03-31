@@ -9,18 +9,12 @@ d2_2 = Datetime('2022-02-24');
 
 _ = "Datetime objects can be formatted"
 assert(d1.format('H:i:s Y-m-d') == '00:00:00 1989-11-17')
-assert(d2.format('d.m.Y at ') == '00:00:00 1989-11-17')
+assert(d2.format('d.m.Y H:i:s') == '24.02.2022 00:00:00')
 
-// _ = "Datetime objects can be compared"
-// assert(d1 != d2, _)
-// assert(d1 != d2_2, _)
-// assert(d2 == d2_2, _)
-// assert(!(d2 > d2_2), _)
-// assert(!(d2 < d2_2), _)
-// assert(d1 < d2, _)
-// assert(d1 <= d2, _)
-// assert(d2 > d2, _)
-// assert(d2 >= d2, _)
+_ = "Datetime objects can be compared for equality"
+assert(d1 != d2, _)
+assert(d1 != d2_2, _)
+assert(d2 == d2_2, _)
 
 delta = d2.subtract(d1)
 

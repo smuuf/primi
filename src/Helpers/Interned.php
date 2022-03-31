@@ -9,11 +9,13 @@ use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
+use \Smuuf\Primi\Values\NotImplementedValue;
 
 use \Smuuf\StrictObject;
 
 /**
- * Helper factory for building and interning primitive types.
+ * Helper factory for building and interning primitive types and additional
+ * special constant singletons.
  *
  * Primitive types are:
  * - null
@@ -21,6 +23,9 @@ use \Smuuf\StrictObject;
  * - number
  * - string
  * - regex
+ *
+ * Special constants:
+ * - NotImplemented
  *
  * NOTE: Most typehints are in docstrings and not in PHP code for better
  * performance.
@@ -75,6 +80,15 @@ abstract class Interned {
 	 */
 	private static $internedRegex = [];
 
+	// Special constants.
+
+	/**
+	 * Storage for NotImplemented object singleton.
+	 *
+	 * @var NotImplementedValue
+	 */
+	private static $internedNotImplemented;
+
 	/**
 	 * Initialize several known possible objects.
 	 *
@@ -86,6 +100,7 @@ abstract class Interned {
 		self::$internedNull = new NullValue;
 		self::$internedBoolFalse = new BoolValue(\false);
 		self::$internedBoolTrue = new BoolValue(\true);
+		self::$internedNotImplemented = new NotImplementedValue;
 
 	}
 
@@ -152,6 +167,13 @@ abstract class Interned {
 
 		return new RegexValue($regex);
 
+	}
+
+	/**
+	 * @return NotImplementedValue
+	 */
+	public static function constNotImplemented() {
+		return self::$internedNotImplemented;
 	}
 
 }

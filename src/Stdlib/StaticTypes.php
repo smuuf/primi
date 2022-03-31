@@ -26,6 +26,7 @@ use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
+use \Smuuf\Primi\Values\NotImplementedValue;
 use \Smuuf\Primi\Values\IteratorFactoryValue;
 
 /**
@@ -48,6 +49,9 @@ abstract class StaticTypes {
 	private static TypeValue $funcType;
 	private static TypeValue $iteratorFactoryType;
 	private static TypeValue $moduleType;
+
+	// Specials.
+	private static TypeValue $notImplementedType;
 
 	public static function getObjectType(): TypeValue {
 		return self::$objectType
@@ -112,6 +116,11 @@ abstract class StaticTypes {
 	public static function getModuleType(): TypeValue {
 		return self::$moduleType
 			??= new TypeValue(ModuleValue::TYPE, self::getObjectType(), ForbiddenTypeExtension::execute());
+	}
+
+	public static function getNotImplementedType(): TypeValue {
+		return self::$moduleType
+			??= new TypeValue(NotImplementedValue::TYPE, self::getObjectType(), ForbiddenTypeExtension::execute());
 	}
 
 }

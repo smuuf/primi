@@ -43,7 +43,7 @@ class DatetimeTypeExtension extends TypeExtension {
 	/**
 	 * @primi.function(no-stack, inject-context, call-convention: object)
 	 */
-	public static function subtract(
+	public static function __op_sub__(
 		Context $ctx,
 		CallArgs $args
 	): AbstractValue {
@@ -72,7 +72,7 @@ class DatetimeTypeExtension extends TypeExtension {
 		$newTimestamp = $self->attrGet(self::ATTR_TS)
 			->doSubtraction($other->attrGet('total_seconds'));
 
-		$newDatetime = new InstanceValue($selfType);
+		$newDatetime = new InstanceValue($selfType, $ctx);
 		$newDatetime->attrSet(self::ATTR_TS, $newTimestamp);
 
 		return $newDatetime;
@@ -82,7 +82,7 @@ class DatetimeTypeExtension extends TypeExtension {
 	/**
 	 * @primi.function(no-stack, inject-context, call-convention: object)
 	 */
-	public static function add(
+	public static function __op_add__(
 		Context $ctx,
 		CallArgs $args
 	): AbstractValue {
@@ -99,7 +99,7 @@ class DatetimeTypeExtension extends TypeExtension {
 		$newTimestamp = $self->attrGet(self::ATTR_TS)
 			->doAddition($other->attrGet('total_seconds'));
 
-		$newDatetime = new InstanceValue($self->getType());
+		$newDatetime = new InstanceValue($self->getType(), $ctx);
 		$newDatetime->attrSet(self::ATTR_TS, $newTimestamp);
 
 		return $newDatetime;
@@ -116,6 +116,24 @@ class DatetimeTypeExtension extends TypeExtension {
 
 		$timestamp = (int) $self->attrGet(self::ATTR_TS)->getStringValue();
 		return Interned::string(\date($format->getStringValue(), $timestamp));
+
+	}
+
+	/**
+	 * @primi.function(call-convention: object)
+	 */
+	public static function __op_eq__(CallArgs $args): AbstractValue {
+
+		[$self, $other] = $args->extractPositional(2);
+
+		if ($other->getType() !== $self->getType()) {
+			return Interned::constNotImplemented();
+		}
+
+		$equal = $self->attrGet(self::ATTR_TS)
+			->isEqualTo($other->attrGet(self::ATTR_TS));
+
+		return Interned::bool($equal);
 
 	}
 

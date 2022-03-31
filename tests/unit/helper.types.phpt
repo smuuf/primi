@@ -33,5 +33,5 @@ Assert::same('string|null|object|object', $tmp);
 Assert::exception(
 	fn() => Types::php_classes_to_primi_types(['THIS-IS-NONSENSE']),
 	EngineInternalError::class,
-	'#Unable to resolve basic type name for class.*THIS-IS-NONSENSE#',
+	'#Unable to resolve Primi type name for PHP class.*THIS-IS-NONSENSE#',
 );

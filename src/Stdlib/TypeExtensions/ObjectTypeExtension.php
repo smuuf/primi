@@ -20,7 +20,7 @@ class ObjectTypeExtension extends TypeExtension {
 		AbstractValue ...$args
 	): AbstractValue {
 
-		$object = new InstanceValue($type);
+		$object = new InstanceValue($type, $ctx);
 		if ($init = $object->attrGet('__init__')) {
 			$init->invoke($ctx, new CallArgs($args));
 		}

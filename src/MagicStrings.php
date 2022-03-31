@@ -14,4 +14,8 @@ abstract class MagicStrings {
 
 	public const TYPE_OBJECT = 'object';
 
+	public const MAGICMETHOD_OP_EQ = '__op_eq__';
+	public const MAGICMETHOD_OP_ADD = '__op_add__';
+	public const MAGICMETHOD_OP_SUB = '__op_sub__';
+
 }

@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Context;
+use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use \Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Class for representing instances of userland classes/types.
  */
 class InstanceValue extends AbstractValue {
 
+	protected Context $ctx;
 	protected TypeValue $type;
 
-	public function __construct(TypeValue $type) {
+	public function __construct(TypeValue $type, Context $ctx) {
 		$this->type = $type;
+		$this->ctx = $ctx;
 	}
 
 	public function getStringRepr(): string {
@@ -34,6 +40,59 @@ class InstanceValue extends AbstractValue {
 	public function attrSet(string $key, AbstractValue $value): bool {
 		$this->attrs[$key] = $value;
 		return \true;
+	}
+
+	public function isEqualTo(
+		AbstractValue $right
+	): ?bool {
+
+		if ($magic = $this->attrGet(MagicStrings::MAGICMETHOD_OP_EQ)) {
+
+			$result = $magic->invoke($this->ctx, new CallArgs([$right]));
+			if ($result === Interned::constNotImplemented()) {
+				return null;
+			}
+
+			return $result->isTruthy();
+
+		}
+
+		return parent::isEqualTo($right);
+
+	}
+
+	public function doAddition(AbstractValue $right): ?AbstractValue {
+
+		if ($magic = $this->attrGet(MagicStrings::MAGICMETHOD_OP_ADD)) {
+
+			$result = $magic->invoke($this->ctx, new CallArgs([$right]));
+			if ($result === Interned::constNotImplemented()) {
+				return null;
+			}
+
+			return $result;
+
+		}
+
+		return parent::isEqualTo($right);
+
+	}
+
+	public function doSubtraction(AbstractValue $right): ?AbstractValue {
+
+		if ($magic = $this->attrGet(MagicStrings::MAGICMETHOD_OP_SUB)) {
+
+			$result = $magic->invoke($this->ctx, new CallArgs([$right]));
+			if ($result === Interned::constNotImplemented()) {
+				return null;
+			}
+
+			return $result;
+
+		}
+
+		return parent::isEqualTo($right);
+
 	}
 
 	public function dirItems(): ?array {

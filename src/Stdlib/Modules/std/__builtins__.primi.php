@@ -46,6 +46,7 @@ class extends NativeModule {
 			'number' => $types->getVariable('number'),
 			'regex' => $types->getVariable('regex'),
 			'string' => $types->getVariable('string'),
+			'NotImplemented' => Interned::constNotImplemented(),
 		];
 
 	}
