@@ -21,7 +21,7 @@ class extends NativeModule {
 	 * crc32('123') == 2286445522
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function crc32(StringValue $data): NumberValue {
 		return Interned::number((string) \crc32($data->value));
@@ -36,7 +36,7 @@ class extends NativeModule {
 	 * md5('123') == '202cb962ac59075b964b07152d234b70'
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function md5(StringValue $data): StringValue {
 		return Interned::string(\md5($data->value));
@@ -51,7 +51,7 @@ class extends NativeModule {
 	 * sha256('123') == 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function sha256(StringValue $data): StringValue {
 		return Interned::string(\hash('sha256', $data->value));

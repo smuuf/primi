@@ -18,9 +18,11 @@ class DatetimeTypeExtension extends TypeExtension {
 	private const ATTR_TS = '_ts';
 
 	/**
-	 * @primi.function(call-convention: object)
+	 * @primi.func(call-conv: callargs)
 	 */
-	public static function __init__(CallArgs $args): void {
+	public static function __init__(
+		CallArgs $args
+	): void {
 
 		[$self, $dateString] = $args->extractPositional(2, 1);
 
@@ -41,11 +43,11 @@ class DatetimeTypeExtension extends TypeExtension {
 	}
 
 	/**
-	 * @primi.function(no-stack, inject-context, call-convention: object)
+	 * @primi.func(no-stack, call-conv: callargs)
 	 */
 	public static function __op_sub__(
-		Context $ctx,
-		CallArgs $args
+		CallArgs $args,
+		Context $ctx
 	): AbstractValue {
 
 		[$self, $other] = $args->extractPositional(2);
@@ -80,11 +82,11 @@ class DatetimeTypeExtension extends TypeExtension {
 	}
 
 	/**
-	 * @primi.function(no-stack, inject-context, call-convention: object)
+	 * @primi.func(no-stack, call-conv: callargs)
 	 */
 	public static function __op_add__(
-		Context $ctx,
-		CallArgs $args
+		CallArgs $args,
+		Context $ctx
 	): AbstractValue {
 
 		[$self, $other] = $args->extractPositional(2);
@@ -107,7 +109,7 @@ class DatetimeTypeExtension extends TypeExtension {
 	}
 
 	/**
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function format(
 		AbstractValue $self,
@@ -120,9 +122,11 @@ class DatetimeTypeExtension extends TypeExtension {
 	}
 
 	/**
-	 * @primi.function(call-convention: object)
+	 * @primi.func(call-conv: callargs)
 	 */
-	public static function __op_eq__(CallArgs $args): AbstractValue {
+	public static function __op_eq__(
+		CallArgs $args
+	): AbstractValue {
 
 		[$self, $other] = $args->extractPositional(2);
 

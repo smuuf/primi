@@ -12,20 +12,19 @@ use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Ex\ReturnException;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\ModuleValue;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\CallConventions\PhpCallConvention;
-use \Smuuf\Primi\Helpers\CallConventions\ArgsObjectCallConvention;
+use \Smuuf\Primi\Helpers\CallConventions\CallArgsCallConvention;
 use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Helpers\Func;
 
 /**
  * @internal
  */
 class FnContainer {
 
-	public const FLAG_INJECT_CONTEXT = 1;
-	public const FLAG_NO_STACK = 2;
-	public const FLAG_CALLCONVENTION_ARGSOBJECT = 3;
+	public const FLAG_NO_STACK = 1;
+	public const FLAG_CALLCONV_CALLARGS = 2;
 
 	use StrictObject;
 
@@ -72,9 +71,7 @@ class FnContainer {
 		) {
 
 			$scope = new Scope;
-			if ($defScope !== \null) {
-				$scope->setParent($defScope);
-			}
+			$scope->setParent($defScope);
 
 			$frame = new StackFrame(
 				$definitionName,
@@ -138,13 +135,12 @@ class FnContainer {
 		$rf = new \ReflectionFunction($closure);
 		$callName = "{$rf->getName()} in <native>";
 
-		$flagInjectContext = in_array(self::FLAG_INJECT_CONTEXT, $flags, \true);
 		$flagToStack = !in_array(self::FLAG_NO_STACK, $flags, \true);
 		$flagCallConventionArgsObject =
-			in_array(self::FLAG_CALLCONVENTION_ARGSOBJECT, $flags, \true);
+			in_array(self::FLAG_CALLCONV_CALLARGS, $flags, \true);
 
 		$callConvention = $flagCallConventionArgsObject
-			? new ArgsObjectCallConvention($closure)
+			? new CallArgsCallConvention($closure)
 			: new PhpCallConvention($closure, $rf);
 
 		$wrapper = function(
@@ -154,7 +150,6 @@ class FnContainer {
 		) use (
 			$callConvention,
 			$callName,
-			$flagInjectContext,
 			$flagToStack
 		) {
 
@@ -176,7 +171,7 @@ class FnContainer {
 
 				$result = $callConvention->call(
 					$args ?? CallArgs::getEmpty(),
-					$flagInjectContext ? $ctx : \null
+					$ctx
 				);
 
 			} finally {

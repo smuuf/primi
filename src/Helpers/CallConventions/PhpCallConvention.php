@@ -45,18 +45,14 @@ class PhpCallConvention implements CallConventionInterface {
 	}
 
 	public function call(
-		CallArgs $callArgs,
-		?Context $ctx
+		CallArgs $args,
+		Context $ctx
 	): ?AbstractValue {
 
-		$finalArgs = $callArgs->getArgs();
-		if ($callArgs->getKwargs()) {
+		$finalArgs = $args->getArgs();
+		if ($args->getKwargs()) {
 			throw new RuntimeError(
 				"Calling native functions with kwargs is not allowed");
-		}
-
-		if ($ctx) {
-			\array_unshift($finalArgs, $ctx);
 		}
 
 		try {
@@ -93,8 +89,9 @@ class PhpCallConvention implements CallConventionInterface {
 				// thus we subtract 1 from the number of arguments we report
 				// here.
 				throw new ArgumentCountError(
-					$better->getActual() - ($ctx ? 1 : 0),
-					$better->getExpected() - ($ctx ? 1 : 0));
+					$better->getActual(),
+					$better->getExpected()
+				);
 
 			}
 

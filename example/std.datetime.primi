@@ -16,12 +16,12 @@ assert(d1 != d2, _)
 assert(d1 != d2_2, _)
 assert(d2 == d2_2, _)
 
-delta = d2.subtract(d1)
+delta = d2 - d1
 
 assert(type(delta) == Duration)
 assert(delta.days == 11787)
 assert(delta.seconds == 0)
 assert(delta.total_seconds == 1018396800)
 
-d3 = d1.add(delta)
+d3 = d1 + delta
 assert(d2 == d3)

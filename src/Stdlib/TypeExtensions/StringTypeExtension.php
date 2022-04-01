@@ -20,7 +20,7 @@ use \Smuuf\Primi\Extensions\TypeExtension;
 class StringTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
 		TypeValue $_,
@@ -42,7 +42,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "hello".shuffle() // "leohl" or something similar.
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function shuffle(StringValue $str): StringValue {
 
@@ -74,7 +74,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "x{1}x, y{0}y".format(111, 222) == "x222x, y111y"
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function format(
 		StringValue $str,
@@ -166,7 +166,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "přítmí ve městě za dvě stě".replace(rx"\wt\w", "lol") == "přlolí ve mělol za dvě lol"
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function replace(
 		StringValue $string,
@@ -215,7 +215,7 @@ class StringTypeExtension extends TypeExtension {
 	 * its new value will not be searched again. This behavior is identical
 	 * to PHP function [`strtr()`](https://www.php.net/manual/en/function.strtr.php).
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function translate(
 		StringValue $string,
@@ -254,7 +254,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "hello! tady čaj".reverse() == "jač ydat !olleh"
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function reverse(StringValue $string): StringValue {
 
@@ -282,7 +282,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "a,b,c,d".split(',') == ['a', 'b', 'c', 'd']
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function split(
 		StringValue $string,
@@ -323,7 +323,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".contains("yay") == false
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function contains(
 		StringValue $haystack,
@@ -340,7 +340,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".number_of("x") == 0
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function number_of(
 		StringValue $haystack,
@@ -369,7 +369,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".find_first("x") == null
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function find_first(StringValue $haystack, AbstractValue $needle): AbstractValue {
 
@@ -395,7 +395,7 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".find_first("x") == null
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function find_last(StringValue $haystack, AbstractValue $needle): AbstractValue {
 
@@ -421,7 +421,7 @@ class StringTypeExtension extends TypeExtension {
 	 * '-PADDING-'.join("abc") == "a-PADDING-b-PADDING-c" // String is also iterable.
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function join(
 		StringValue $string,

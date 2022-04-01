@@ -43,17 +43,13 @@ abstract class MethodExtractor {
 			$fnFlags = [];
 			if ($fnTag = $db->getTags(MagicStrings::NATFUN_TAG_FUNCTION)->getFirst()) {
 
-				if ($fnTag->hasArg(MagicStrings::NATFUN_INJECT_CTX)) {
-					$fnFlags[] = FnContainer::FLAG_INJECT_CONTEXT;
-				}
-
 				if ($fnTag->hasArg(MagicStrings::NATFUN_NOSTACK)) {
 					$fnFlags[] = FnContainer::FLAG_NO_STACK;
 				}
 
 				if ($arg = $fnTag->getArg(MagicStrings::NATFUN_CALLCONV)) {
-					if ($arg->getValue() === 'object') {
-						$fnFlags[] = FnContainer::FLAG_CALLCONVENTION_ARGSOBJECT;
+					if ($arg->getValue() === MagicStrings::CALLCONV_CALLARGS) {
+						$fnFlags[] = FnContainer::FLAG_CALLCONV_CALLARGS;
 					} else {
 						throw new EngineError(sprintf(
 							"Invalid value for argument '%s'",

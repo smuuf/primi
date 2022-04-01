@@ -56,23 +56,26 @@ class extends NativeModule {
 	 *
 	 * Prints value to standard output.
 	 *
-	 * @primi.function(no-stack, inject-context, call-convention: object)
+	 * @primi.func(no-stack, call-conv: callargs)
+	 * @primi.func.arg(name: *objects)
+	 * @primi.func.arg(name: sep, type: string, default:" ")
+	 * @primi.func.arg(name: end, type: string, default:"\n")
 	 */
 	public static function print(
-		Context $ctx,
-		CallArgs $callArgs
+		CallArgs $args,
+		Context $ctx
 	): NullValue {
 
 		if ($ctx->getConfig()->getSandboxMode()) {
 			throw new RuntimeError("Function 'print' disabled in sandbox");
 		}
 
-		if ($callArgs->isEmpty()) {
+		if ($args->isEmpty()) {
 			echo "\n";
 			return Interned::null();
 		}
 
-		$args = $callArgs->extract(['*args', 'end', 'sep'], ['end', 'sep']);
+		$args = $args->extract(['*args', 'end', 'sep'], ['end', 'sep']);
 
 		$end = $args['end'] ?? Interned::string("\n");
 		$sep = $args['sep'] ?? Interned::string(" ");
@@ -95,10 +98,14 @@ class extends NativeModule {
 	 * Injects a [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)
 	 * session for debugging at the specified line.
 	 *
-	 * @primi.function(inject-context, no-stack)
+	 * @primi.func(no-stack, call-conv: callargs)
 	 */
-	public static function debugger(Context $ctx): AbstractValue {
+	public static function debugger(
+		CallArgs $args,
+		Context $ctx
+	): AbstractValue {
 
+		$args->extractPositional(0);
 		if ($ctx->getConfig()->getSandboxMode()) {
 			throw new RuntimeError("Function 'debugger' disabled in sandbox");
 		}
@@ -121,7 +128,7 @@ class extends NativeModule {
 	 * len({'a': 1, 'b': 'c'}) == 2
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function len(AbstractValue $value): NumberValue {
 
@@ -140,7 +147,7 @@ class extends NativeModule {
 	 * and throws error if it's `false`. Optional `string` description can be
 	 * provided, which will be visible in the eventual error message.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function assert(
 		BoolValue $assumption,
@@ -162,11 +169,11 @@ class extends NativeModule {
 	 * and throws error if it's `false`. Optional `string` description can be
 	 * provided, which will be visible in the eventual error message.
 	 *
-	 * @primi.function(no-stack, call-convention: object)
+	 * @primi.func(no-stack, call-conv: callargs)
 	 */
-	public static function range(CallArgs $callArgs): IteratorFactoryValue {
+	public static function range(CallArgs $args): IteratorFactoryValue {
 
-		$args = $callArgs->extract(['start', 'end', 'step'], ['end', 'step']);
+		$args = $args->extract(['start', 'end', 'step'], ['end', 'step']);
 
 		// No explicit 'end' argument? That means 'start' actually means 'end'.
 		if (!isset($args['end'])) {
@@ -237,7 +244,7 @@ class extends NativeModule {
 	/**
 	 * Return list of names of attributes present in an object.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack, call-conv: callargs)
 	 */
 	public static function dir(AbstractValue $value): ListValue {
 		return new ListValue(
@@ -259,13 +266,13 @@ class extends NativeModule {
 	 * list(enumerate(b_list, -5)) == [(-5, 'a'), (-4, 'b'), (-3, 123), (-2, false)]
 	 * ```
 	 *
-	 * @primi.function(no-stack, call-convention: object)
-	 * @primi.function.arg(name: iterable, type: iterable)
-	 * @primi.function.arg(name: start, type: number, default: 0)
+	 * @primi.func(no-stack, call-conv: callargs)
+	 * @primi.func.arg(name: iterable, type: iterable)
+	 * @primi.func.arg(name: start, type: number, default: 0)
 	 */
-	public static function enumerate(CallArgs $callArgs): IteratorFactoryValue {
+	public static function enumerate(CallArgs $args): IteratorFactoryValue {
 
-		[$iterable, $start] = $callArgs->extractPositional(2, 1);
+		[$iterable, $start] = $args->extractPositional(2, 1);
 		$start ??= Interned::number('0');
 
 		if (!$start instanceof NumberValue) {
@@ -305,7 +312,7 @@ class extends NativeModule {
 	/**
 	 * Returns `true` if object has an attribute with specified name.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function hasattr(
 		AbstractValue $obj,
@@ -321,7 +328,7 @@ class extends NativeModule {
 	 * If the optional `default` argument is specified its value is returned
 	 * instead of throwing an error.
 	 *
-	 * @primi.function(no-stack, call-convention: object)
+	 * @primi.func(no-stack, call-conv: callargs)
 	 */
 	public static function getattr(
 		CallArgs $args

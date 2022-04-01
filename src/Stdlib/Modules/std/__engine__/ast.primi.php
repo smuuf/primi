@@ -20,7 +20,7 @@ return new class extends NativeModule {
 	 * tree = ast.parse('tree = ast.parse()')
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function parse(StringValue $source): AbstractValue {
 		$ast = (new ParserHandler($source->value))->run();

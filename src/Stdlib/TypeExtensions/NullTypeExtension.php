@@ -10,7 +10,7 @@ use \Smuuf\Primi\Extensions\TypeExtension;
 class NullTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __new__(TypeValue $_): NullValue {
 		return Interned::null();

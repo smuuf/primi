@@ -15,7 +15,7 @@ use \Smuuf\Primi\Values\TypeValue;
 class TypeTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __call__(
 		AbstractValue $value,

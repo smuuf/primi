@@ -15,7 +15,7 @@ use \Smuuf\Primi\Values\TypeValue;
 class RegexTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
 		TypeValue $_,
@@ -40,7 +40,7 @@ class RegexTypeExtension extends TypeExtension {
 	 * rx"[xyz]+".match("abbcxxyzzdeef") == "xxyzz"
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function match(
 		RegexValue $regex,

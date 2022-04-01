@@ -11,7 +11,7 @@ use \Smuuf\Primi\Extensions\TypeExtension;
 class BoolTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
 		TypeValue $_,
@@ -34,7 +34,7 @@ class BoolTypeExtension extends TypeExtension {
 	 * bool.not(true) == false
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function not(BoolValue $value): BoolValue {
 		return Interned::bool(!$value->value);
@@ -49,7 +49,7 @@ class BoolTypeExtension extends TypeExtension {
 	 * bool_and(true, false) == false
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function and(BoolValue $a, BoolValue $b): BoolValue {
 		return Interned::bool($a->value && $b->value);
@@ -70,7 +70,7 @@ class BoolTypeExtension extends TypeExtension {
 	 * bool_or(false, false) == false
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function or(BoolValue $a, BoolValue $b): BoolValue {
 		return Interned::bool($a->value || $b->value);
@@ -91,7 +91,7 @@ class BoolTypeExtension extends TypeExtension {
 	 * bool_xor(false, false) == false
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function xor(BoolValue $a, BoolValue $b): BoolValue {
 		return Interned::bool($a->value xor $b->value);

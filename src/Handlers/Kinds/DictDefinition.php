@@ -3,12 +3,12 @@
 namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Values\DictValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Handlers\SimpleHandler;
 
 class DictDefinition extends SimpleHandler {
 
@@ -25,7 +25,7 @@ class DictDefinition extends SimpleHandler {
 			);
 
 		} catch (UnhashableTypeException $e) {
-			throw new RuntimeError(\sprintf(
+			throw new TypeError(\sprintf(
 				"Cannot create dict with key containing unhashable type '%s'",
 				$e->getType()
 			));

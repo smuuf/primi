@@ -16,7 +16,7 @@ use \Smuuf\Primi\Extensions\TypeExtension;
 class NumberTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
 		TypeValue $_,
@@ -44,7 +44,7 @@ class NumberTypeExtension extends TypeExtension {
 	/**
 	 * Return `true` if first argument is divisible by the second argument.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function is_divisible_by(
 		NumberValue $a,

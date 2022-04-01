@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Structures;
 
 use \Smuuf\StrictObject;
-use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Interned;
 
 /**
  * Container for passing arguments - positional and keyword arguments - to the
@@ -21,6 +19,8 @@ use \Smuuf\Primi\Helpers\Interned;
  * NOTE: Instances of this class are meant to be immutable, so self::getEmpty()
  * singleton factory really can always return the same instance of empty
  * CallArgs object.
+ *
+ * NOTE: Only docblock type-hinting for performance reasons.
  *
  * @internal
  */
@@ -83,24 +83,23 @@ class CallArgs {
 	/**
 	 * @return AbstractValue[]
 	 */
-	public function getArgs(): array {
+	public function getArgs() {
 		return $this->args;
 	}
 
 	/**
 	 * @return array<string, AbstractValue>
 	 */
-	public function getKwargs(): array {
+	public function getKwargs() {
 		return $this->kwargs;
 	}
 
 	/**
-	 * NOTE: Only docblock type-hinting for performance reasons.
-	 *
 	 * @param int $count Number of expected arguments.
+	 * @param int $optional Number of optional arguments (at the end).
 	 * @return array<int, AbstractValue|null>
 	 */
-	public function extractPositional(int $count, int $optional = 0) {
+	public function extractPositional($count, $optional = 0) {
 
 		if ($this->kwargs) {
 			$first = \array_key_first($this->kwargs);
@@ -140,7 +139,7 @@ class CallArgs {
 		$final = [];
 		$i = 0;
 
-		foreach ($this->getArgs() as $value) {
+		foreach ($this->args as $value) {
 
 			$name = $names[$i] ?? \null;
 			if ($name === \null) {
@@ -186,7 +185,7 @@ class CallArgs {
 		}
 
 		// Now let's process keyword arguments.
-		foreach ($this->getKwargs() as $key => $value) {
+		foreach ($this->kwargs as $key => $value) {
 
 			// If this kwarg key is not at all present in known definition
 			// args, we don't expect this kwarg, so we throw an error.

@@ -20,7 +20,7 @@ class extends NativeModule {
 	 * base64.encode('hello there, fellow kids') == "aGVsbG8gdGhlcmUsIGZlbGxvdyBraWRz"
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function encode(StringValue $data): StringValue {
 		return Interned::string(\base64_encode($data->value));
@@ -34,7 +34,7 @@ class extends NativeModule {
 	 * base64.encode('hello there, fellow kids') == "aGVsbG8gdGhlcmUsIGZlbGxvdyBraWRz"
 	 * ```
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function decode(StringValue $data): StringValue {
 

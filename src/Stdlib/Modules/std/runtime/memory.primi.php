@@ -22,7 +22,7 @@ return new class extends NativeModule {
 	 * Returns memory peak usage used by Primi _(engine behind the scenes)_ in
 	 * bytes.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function get_peak(): NumberValue {
 		return Interned::number((string) \memory_get_peak_usage());
@@ -34,7 +34,7 @@ return new class extends NativeModule {
 	 * Returns current memory usage used by Primi _(engine behind the scenes)_
 	 * in bytes.
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function get_current(): NumberValue {
 		return Interned::number((string) \memory_get_usage());
@@ -46,7 +46,7 @@ return new class extends NativeModule {
 	 * Run PHP garbage collection. Return the number of cycles collected.
 	 * See https://www.php.net/manual/en/features.gc.collecting-cycles.php
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function gc_run(): NumberValue {
 		return Interned::number((string) \gc_collect_cycles());
@@ -58,7 +58,7 @@ return new class extends NativeModule {
 	 * Get PHP garbage collection stats.
 	 * See https://www.php.net/manual/en/function.gc-status.php
 	 *
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function gc_status(): DictValue {
 		return new DictValue(Func::array_to_couples(\gc_status()));

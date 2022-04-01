@@ -18,7 +18,7 @@ use \Smuuf\Primi\Structures\CallArgs;
  *
  * @internal
  */
-class ArgsObjectCallConvention implements CallConventionInterface {
+class CallArgsCallConvention implements CallConventionInterface {
 
 	use StrictObject;
 
@@ -29,16 +29,10 @@ class ArgsObjectCallConvention implements CallConventionInterface {
 	}
 
 	public function call(
-		CallArgs $callArgs,
-		?Context $ctx
+		CallArgs $args,
+		Context $ctx
 	): ?AbstractValue {
-
-		if ($ctx) {
-			return ($this->closure)($ctx, $callArgs);
-		} else {
-			return ($this->closure)($callArgs);
-		}
-
+		return ($this->closure)($args, $ctx);
 	}
 
 }

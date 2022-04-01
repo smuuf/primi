@@ -1,5 +1,6 @@
+import std.runtime
+
 function fun_a() {
-	import std.runtime
 	print(runtime.get_stack())
 }
 

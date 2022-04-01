@@ -11,7 +11,7 @@ use \Smuuf\Primi\Extensions\TypeExtension;
 class TupleTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
 		TypeValue $_,

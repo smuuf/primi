@@ -20,7 +20,7 @@ use \Smuuf\Primi\Values\TypeValue;
 class DictTypeExtension extends TypeExtension {
 
 	/**
-	 * @primi.function(no-stack)
+	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
 		TypeValue $_,
@@ -37,7 +37,16 @@ class DictTypeExtension extends TypeExtension {
 			throw new RuntimeError('dict() argument must be iterable');
 		}
 
-		return new DictValue(Func::mapping_to_couples($value));
+		try {
+
+			return new DictValue(Func::mapping_to_couples($value));
+
+		} catch (UnhashableTypeException $e) {
+			throw new TypeError(\sprintf(
+				"Cannot create dict with key containing unhashable type '%s'",
+				$e->getType()
+			));
+		}
 
 	}
 
@@ -54,7 +63,7 @@ class DictTypeExtension extends TypeExtension {
 	 * d.get('100', ['one', 'hundred']) == ['one', 'hundred']
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function get(
 		DictValue $dict,
@@ -81,7 +90,7 @@ class DictTypeExtension extends TypeExtension {
 	 * d.has_value(false) == false
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function has_value(
 		DictValue $dict,
@@ -101,7 +110,7 @@ class DictTypeExtension extends TypeExtension {
 	 * d.has_key('yes') == false
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function has_key(
 		DictValue $dict,
@@ -124,7 +133,7 @@ class DictTypeExtension extends TypeExtension {
 	 * {'a': 1, 100: 'yes'}.items() == [('a', 1), (100: 'yes')]
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function items(DictValue $dict): ListValue {
 
@@ -144,7 +153,7 @@ class DictTypeExtension extends TypeExtension {
 	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function values(DictValue $dict): ListValue {
 		return new ListValue(
@@ -159,7 +168,7 @@ class DictTypeExtension extends TypeExtension {
 	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function keys(DictValue $dict): ListValue {
 		return new ListValue(
@@ -179,7 +188,7 @@ class DictTypeExtension extends TypeExtension {
 	 * b_dict == {'a': 1, 100: 'nope'}
 	 * ```
 	 *
-	 * @primi.function
+	 * @primi.func
 	 */
 	public static function copy(DictValue $dict): DictValue {
 		return clone $dict;
@@ -197,16 +206,17 @@ class DictTypeExtension extends TypeExtension {
 	 * a_dict.map(fn) == {"key_a": "key_a|val_a", "key_b": "key_b|val_b"}
 	 * ```
 	 *
-	 * @primi.function(inject-context)
+	 * @primi.func(call-conv: callargs)
 	 */
 	public static function map(
-		Context $ctx,
-		DictValue $dict,
-		AbstractValue $callable
+		CallArgs $args,
+		Context $ctx
 	): DictValue {
 
+		[$self, $callable] = $args->extractPositional(2);
+
 		$result = [];
-		foreach ($dict->value->getItemsIterator() as [$k, $v]) {
+		foreach ($self->value->getItemsIterator() as [$k, $v]) {
 			$result[] = [
 				$k,
 				$callable->invoke($ctx, new CallArgs([$v, $k]))

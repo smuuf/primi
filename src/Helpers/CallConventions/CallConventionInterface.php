@@ -10,7 +10,7 @@ use \Smuuf\Primi\Structures\CallArgs;
 
 interface CallConventionInterface {
 
-	public function call(CallArgs $callArgs, ?Context $ctx): ?AbstractValue;
+	public function call(CallArgs $args, Context $ctx): ?AbstractValue;
 
 }
 
