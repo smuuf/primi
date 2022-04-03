@@ -28,16 +28,15 @@ class ArgumentList extends SimpleHandler {
 
 		foreach ($node['args'] as $arg) {
 			if (isset($arg['argKey'])) {
-				$key = HandlerFactory::runNode($arg['argKey'], $context);
-				$kwargs[$key] = HandlerFactory::runNode($arg['argVal'], $context);
+				$kwargs[$arg['argKey']['text']] = HandlerFactory::runNode($arg['argVal'], $context);
 			} else {
 
 				$result = HandlerFactory::runNode($arg['argVal'], $context);
-				if ($result instanceof CallArgs) {
-					if ($posArgs = $result->getArgs()) {
-						$args = [...$args, ...$posArgs];
+				if (\is_array($result)) {
+					if (\array_is_list($result)) {
+						$args = [...$args, ...$result];
 					} else {
-						$kwargs = \array_replace($kwargs, $result->getKwargs());
+						$kwargs = \array_replace($kwargs, $result);
 					}
 				} else {
 					$args[] = $result;
