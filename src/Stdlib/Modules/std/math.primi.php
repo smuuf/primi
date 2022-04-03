@@ -195,7 +195,11 @@ class extends NativeModule {
 		NumberValue $a,
 		NumberValue $b
 	): NumberValue {
-		return new NumberValue((string) ((int) $a->value % (int) $b->value));
+		return new NumberValue(\bcmod(
+			$a->value,
+			$b->value,
+			NumberValue::PRECISION)
+		);
 	}
 
 };
