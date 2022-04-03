@@ -44,6 +44,7 @@ class ComparisonLTR {
 
 		}
 
+		$gen->send(\true);
 		return Interned::bool((bool) $result);
 
 	}

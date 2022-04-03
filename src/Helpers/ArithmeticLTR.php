@@ -41,6 +41,7 @@ class ArithmeticLTR {
 
 		}
 
+		$gen->send(\true);
 		return $result;
 
 	}

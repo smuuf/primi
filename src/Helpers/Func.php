@@ -15,7 +15,7 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Structures\MapContainer;
-use Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Values\TypeValue;
 
 abstract class Func {
 
@@ -407,7 +407,7 @@ abstract class Func {
 	 * would yield.
 	 *
 	 * @param TypeDef_AstNode $node
-	 * @return iterable<array{string|null, AbstractValue}>
+	 * @return \Generator<array{string|null, AbstractValue}>
 	 */
 	public static function yield_left_to_right(array $node, Context $ctx) {
 
@@ -417,7 +417,9 @@ abstract class Func {
 			$operator = $node['ops'][$i - 1]['text'] ?? \null;
 			$value = HandlerFactory::runNode($operand, $ctx);
 
-			yield [$operator, $value];
+			if (yield [$operator, $value]) {
+				break;
+			}
 
 		}
 
