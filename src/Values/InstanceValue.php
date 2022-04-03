@@ -25,8 +25,17 @@ class InstanceValue extends AbstractValue {
 	}
 
 	public function getStringRepr(): string {
+
+		if ($magic = $this->attrGet(MagicStrings::MAGICMETHOD_REPR)) {
+
+			$result = $magic->invoke($this->ctx);
+			return $result->getStringValue();
+
+		}
+
 		$id = Func::object_hash($this);
 		return "<instance '{$this->type->getName()}' {$id}>";
+
 	}
 
 	public function getType(): TypeValue {

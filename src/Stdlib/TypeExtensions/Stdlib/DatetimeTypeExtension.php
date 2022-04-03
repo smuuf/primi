@@ -14,6 +14,8 @@ use \Smuuf\Primi\Structures\CallArgs;
 
 class DatetimeTypeExtension extends TypeExtension {
 
+	private const FMT_SQL = 'Y-m-d H:i:sP';
+
 	/** @const string Timestamp attr name. */
 	private const ATTR_TS = '_ts';
 
@@ -39,6 +41,23 @@ class DatetimeTypeExtension extends TypeExtension {
 		}
 
 		$self->attrSet(self::ATTR_TS, Interned::number((string) $timestamp));
+
+	}
+
+	/**
+	 * @primi.func(no-stack, call-conv: callargs)
+	 */
+	public static function __repr__(
+		CallArgs $args,
+		Context $ctx
+	): AbstractValue {
+
+		[$self] = $args->extractPositional(1);
+		$ts = (int) $self->attrGet(self::ATTR_TS)->getInternalValue();
+
+		$formatted = \date(self::FMT_SQL, $ts);
+		$repr = "Datetime('$formatted')";
+		return Interned::string($repr);
 
 	}
 
@@ -109,19 +128,6 @@ class DatetimeTypeExtension extends TypeExtension {
 	}
 
 	/**
-	 * @primi.func
-	 */
-	public static function format(
-		AbstractValue $self,
-		StringValue $format
-	): AbstractValue {
-
-		$timestamp = (int) $self->attrGet(self::ATTR_TS)->getStringValue();
-		return Interned::string(\date($format->getStringValue(), $timestamp));
-
-	}
-
-	/**
 	 * @primi.func(call-conv: callargs)
 	 */
 	public static function __op_eq__(
@@ -138,6 +144,19 @@ class DatetimeTypeExtension extends TypeExtension {
 			->isEqualTo($other->attrGet(self::ATTR_TS));
 
 		return Interned::bool($equal);
+
+	}
+
+	/**
+	 * @primi.func
+	 */
+	public static function format(
+		AbstractValue $self,
+		StringValue $format
+	): AbstractValue {
+
+		$timestamp = (int) $self->attrGet(self::ATTR_TS)->getStringValue();
+		return Interned::string(\date($format->getStringValue(), $timestamp));
 
 	}
 
