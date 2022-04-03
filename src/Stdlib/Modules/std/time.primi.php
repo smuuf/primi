@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use Smuuf\Primi\Context;
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\StringValue;

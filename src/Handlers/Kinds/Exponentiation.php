@@ -3,7 +3,7 @@
 namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Context;
-use Smuuf\Primi\Ex\BinaryOperationError;
+use \Smuuf\Primi\Ex\BinaryOperationError;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 

@@ -1,0 +1,80 @@
+function fn_a() {
+    function fn_a_a() {
+        return 'return_fn_a_a'
+        assert(false)
+    }
+    return fn_a_a()
+    assert(false)
+}
+
+function fn_b() {
+    for (i in range(10)) {
+        if (i > 3) {
+            return f'return_fn_b:{i}'
+            assert(false)
+        }
+        assert(i <= 3)
+    }
+    assert(false)
+}
+
+function fn_c() {
+    for (i in range(10)) {
+        if (i == 3) {
+            break
+            assert(false)
+        }
+        assert(i < 3)
+    }
+    assert(i == 3)
+}
+
+function fn_d(inner = false) {
+    i = 10
+    while (i > 0) {
+        i = i - 1
+        if (i == 4) {
+            if (inner) {
+                return f"return_fn_d:{i}-{fn_a()}"
+            }
+            break
+            assert(false)
+        }
+        if (i > 4) {
+            continue
+            assert(false)
+        }
+        assert(false)
+    }
+    assert(i == 4)
+    return 'return_fn_d'
+    assert(false)
+}
+
+assert(fn_a() == 'return_fn_a_a')
+assert(fn_b() == 'return_fn_b:4')
+assert(fn_c() == null)
+assert(fn_d() == 'return_fn_d')
+assert(fn_d(true) == 'return_fn_d:4-return_fn_a_a')
+
+function fn_e(cond) {
+
+    if (cond) {
+        try {
+            cond / 100 // Conditional error based on argument.
+            return "return_fn_c:in_try"
+            assert(false)
+        } catch {
+            return "return_fn_c:in_catch"
+            assert(false)
+        }
+    }
+
+    return "return_fn_c:after_try"
+    assert(false)
+
+}
+
+assert(fn_e("something") == "return_fn_c:in_catch")
+assert(fn_e(10) == "return_fn_c:in_try")
+assert(fn_e(false) == "return_fn_c:after_try")

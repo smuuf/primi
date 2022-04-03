@@ -47,7 +47,12 @@ class ForStatement extends SimpleHandler {
 			$targets->assign($i, $context);
 
 			try {
+
 				$blockHandler::run($node['right'], $context);
+				if ($context->hasRetval()) {
+					return;
+				}
+
 			} catch (ContinueException $e) {
 				continue;
 			} catch (BreakException $e) {

@@ -11,6 +11,7 @@ use \Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Wrappers\CatchPosixSignalsWrapper;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Structures\CallRetval;
 
 /**
  * Primi's direct raw abstract syntax tree interpreter.
@@ -53,7 +54,14 @@ abstract class DirectInterpreter {
 			try {
 
 				$tree = $ast->getTree();
-				return HandlerFactory::runNode($tree, $ctx);
+				$retval = HandlerFactory::runNode($tree, $ctx);
+
+				if ($ctx->hasRetval()) {
+					$ctx->popRetval();
+					throw new RuntimeError("Cannot 'return' from global scope");
+				}
+
+				return $retval;
 
 			} catch (ControlFlowException $e) {
 

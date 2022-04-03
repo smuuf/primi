@@ -26,17 +26,22 @@ class WhileStatement extends SimpleHandler {
 			$condHandler::run($node['left'], $context)->isTruthy()
 		) {
 
+			// Tick the task queue every 10 iterations.
+			if ($tickCounter++ % 10 === 0) {
+				$context->getTaskQueue()->tick();
+			}
+
 			try {
+
 				$blockHandler::run($node['right'], $context);
+				if ($context->hasRetval()) {
+					return;
+				}
+
 			} catch (ContinueException $_) {
 				continue;
 			} catch (BreakException $_) {
 				break;
-			}
-
-			// Tick the task queue every 10 iterations.
-			if ($tickCounter++ % 20 === 0) {
-				$context->getTaskQueue()->tick();
 			}
 
 		}

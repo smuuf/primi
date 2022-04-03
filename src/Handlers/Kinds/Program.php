@@ -13,7 +13,12 @@ class Program extends SimpleHandler {
 	protected static function handle(array $node, Context $context) {
 
 		foreach ($node['stmts'] as $sub) {
+
 			$returnValue = HandlerFactory::runNode($sub, $context);
+			if ($context->hasRetval()) {
+				return;
+			}
+
 		}
 
 		return $returnValue ?? Interned::null();

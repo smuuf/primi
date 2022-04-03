@@ -9,7 +9,6 @@ use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
 use \Smuuf\Primi\StackFrame;
-use \Smuuf\Primi\Ex\ReturnException;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Helpers\Func;
@@ -105,18 +104,20 @@ class FnContainer {
 
 				HandlerFactory::runNode($entryNode, $ctx);
 
-			} catch (ReturnException $e) {
-
 				// This is the return value of the function call.
-				return $e->getValue();
+				if ($ctx->hasRetval()) {
+					return $ctx->popRetval()->getValue();
+				}
+
+				// Return null if no "return" was present in the called
+				// function.
+				return Interned::null();
 
 			} finally {
 				$ctx->popCallScopePair();
 			}
 
-			// Return null if no "return" was present (i.e. no
-			// ReturnException was thrown from inside the called function).
-			return Interned::null();
+
 
 		};
 

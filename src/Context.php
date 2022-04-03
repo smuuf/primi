@@ -8,10 +8,12 @@ use \Smuuf\StrictObject;
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Code\AstProvider;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Tasks\TaskQueue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Modules\Importer;
+use \Smuuf\Primi\Structures\CallRetval;
 
 class Context {
 
@@ -60,6 +62,12 @@ class Context {
 
 	/** AstProvider instance */
 	private AstProvider $astProvider;
+
+	//
+	// Return value storage.
+	//
+
+	private ?CallRetval $retval = null;
 
 	//
 	// References to essential modules for fast and direct access.
@@ -291,6 +299,41 @@ class Context {
 	 */
 	public function setVariables(array $pairs) {
 		$this->currentScope->setVariables($pairs);
+	}
+
+	/**
+	 * Register a return value for function which is currently being executed.
+	 */
+	public function setRetval(CallRetval $retval): void {
+
+		if ($this->retval) {
+			throw new EngineInternalError("Retval already present");
+		}
+
+		$this->retval = $retval;
+
+	}
+
+	/**
+	 * Return and reset return value that came from some function.
+	 */
+	public function popRetval(): CallRetval {
+
+		if (!$this->retval) {
+			throw new EngineInternalError("Retval not present");
+		}
+
+		[$retval, $this->retval] = [$this->retval, \null];
+		return $retval;
+
+	}
+
+	/**
+	 * Returns true if a return value is currently registered from some
+	 * function.
+	 */
+	public function hasRetval(): bool {
+		return isset($this->retval);
 	}
 
 }
