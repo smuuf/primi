@@ -13,18 +13,32 @@ class Location {
 	/** Name of the location (e.g. module name or source ID). */
 	private string $name;
 
-	/** Line in the name file. */
+	/** Line in the file. */
 	private int $line;
 
-	public function __construct(string $name, int $line) {
+	/** Position on the line, if specified. */
+	private ?int $position = \null;
+
+	public function __construct(
+		string $name,
+		int $line,
+		?int $position = \null
+	) {
 
 		$this->name = $name;
 		$this->line = $line;
+		$this->position = $position;
 
 	}
 
 	public function __toString(): string{
-		return "{$this->name} on line {$this->line}";
+
+		$posInfo = $this->position !== \null
+			? " at position {$this->position}"
+			: '';
+
+		return "{$this->name} on line {$this->line}$posInfo";
+
 	}
 
 	/**
@@ -39,6 +53,13 @@ class Location {
 	 */
 	public function getLine(): int {
 		return $this->line;
+	}
+
+	/**
+	 * Position on the line, if specified.
+	 */
+	public function getPosition(): ?int {
+		return $this->position;
 	}
 
 }

@@ -91,7 +91,11 @@ class AstProvider {
 			$excerpt = \mb_substr($sourceString, $e->getErrorPos(), 20);
 
 			throw new SyntaxError(
-				new Location($source->getSourceId(), $e->getErrorLine()),
+				new Location(
+					$source->getSourceId(),
+					$e->getErrorLine(),
+					$e->getLinePos()
+				),
 				$excerpt,
 				$e->getReason()
 			);

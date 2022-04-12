@@ -131,7 +131,11 @@ class Entrypoint {
 					$excerpt = \mb_substr($sourceCode, $e->getErrorPos(), 20);
 
 					throw new SyntaxError(
-						new Location($source->getSourceId(), $e->getErrorLine()),
+						new Location(
+							$source->getSourceId(),
+							$e->getErrorLine(),
+							$e->getLinePos()
+						),
 						$excerpt,
 						$e->getReason()
 					);

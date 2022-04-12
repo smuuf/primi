@@ -67,18 +67,23 @@ class ParserHandler {
 	/**
 	 * @return never
 	 */
-	private function syntaxError(int $position) {
+	private function syntaxError(int $position, ?string $reason = \null) {
 
 		$line = \false;
 
 		if ($position !== \false) {
-			[$line, $_] = Func::get_position_estimate(
+			[$line, $linePos] = Func::get_position_estimate(
 				$this->source,
 				$position
 			);
 		}
 
-		throw new InternalSyntaxError((int) $line, (int) $position);
+		throw new InternalSyntaxError(
+			(int) $line,
+			(int) $position,
+			(int) $linePos,
+			$reason
+		);
 
 	}
 
@@ -108,7 +113,7 @@ class ParserHandler {
 		$this->stats['AST nodes adding positions'] = $t->get();
 
 		$t = (new Timer)->start();
-		self::reduceNode($ast);
+		$this->reduceNode($ast);
 		$this->stats['AST nodes reducing'] = $t->get();
 
 		return $ast;
@@ -146,11 +151,11 @@ class ParserHandler {
 	 *
 	 * @param TypeDef_AstNode $node
 	 */
-	private static function reduceNode(array &$node): void {
+	private function reduceNode(array &$node): void {
 
 		foreach ($node as &$item) {
 			if (\is_array($item)) {
-				self::reduceNode($item);
+				$this->reduceNode($item);
 			}
 		}
 
@@ -171,8 +176,7 @@ class ParserHandler {
 		try {
 			$handler::reduce($node);
 		} catch (InternalPostProcessSyntaxError $e) {
-			throw new InternalSyntaxError(
-				$node['_l'], $node['_p'], $e->getReason());
+			$this->syntaxError($node['_p'], $e->getReason());
 		}
 
 	}

@@ -21,7 +21,7 @@ class InternalSyntaxError extends EngineException {
 	private int $errorLine;
 
 	/** Position of the syntax error on specified line. */
-	private int $errorPos;
+	private int $linePos;
 
 	/** Specific reason of the syntax error, if specified. */
 	private ?string $reason;
@@ -29,11 +29,13 @@ class InternalSyntaxError extends EngineException {
 	public function __construct(
 		int $errorLine,
 		int $errorPos,
+		int $linePos,
 		?string $reason = \null
 	) {
 
 		$this->errorLine = $errorLine;
 		$this->errorPos = $errorPos;
+		$this->linePos = $linePos;
 		$this->reason = $reason;
 
 	}
@@ -46,10 +48,17 @@ class InternalSyntaxError extends EngineException {
 	}
 
 	/**
-	 * Get position of the syntax error on specified line
+	 * Get position of the syntax error in the whole source string.
 	 */
 	public function getErrorPos(): int {
 		return $this->errorPos;
+	}
+
+	/**
+	 * Get position of the syntax error on the specified error line.
+	 */
+	public function getLinePos(): int {
+		return $this->linePos;
 	}
 
 	/**

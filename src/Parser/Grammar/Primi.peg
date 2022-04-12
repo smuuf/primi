@@ -13,9 +13,6 @@ class PrimiParser extends Parser\Packrat {
 
 	// Add these properties so PHPStan doesn't complain about undefined properties.
 
-	/** @var int */
-	public $pos;
-
 	/** @var string */
 	public $string;
 
@@ -113,18 +110,18 @@ BoolLiteral: / \b(true|false)\b /
 NullLiteral: "null" !VariableName
 RegexLiteral: "rx" quote:/['"]/ core:StringInside "$quote"
 
-Literal: ( &/["']/ skip:StringLiteral ) | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral )
+Literal: ( skip:StringLiteral ) | skip:NumberLiteral | skip:BoolLiteral | ( &"n" skip:NullLiteral ) | ( &"rx" skip:RegexLiteral ) | ( &"f" skip:FStringLiteral )
 VariableName: / (?:[a-zA-Z_][a-zA-Z0-9_]*) /
 Variable: core:VariableName
 AnonymousFunction: "function" __ "(" __ params:ParameterList? __ ")" __ body:Block | "(" __ params:ParameterList? __ ")" __ "=>" __ body:Block
 
 DictItem: __ key:Expression __ ":" __ value:Expression __
-DictDefinition: "{" __ ( items:DictItem ( __ "," __ items:DictItem )* )? __ ( "," __ )? "}"
-ListDefinition: "[" __ ( items:Expression ( __ "," __ items:Expression )* )? __ ( "," __ )? "]"
+DictDefinition: "{" __ ( items:DictItem ( COMMA items:DictItem )* )? __ COMMA? "}"
+ListDefinition: "[" __ ( items:Expression ( COMMA items:Expression )* )? __ COMMA? "]"
 # Tuple literals: "()" or "(1,)" or "(1, ...)" or "(1, ..., x,)"
-TupleDefinition: ( "(" __ ")" ) | ( "(" __ items:Expression __ "," __ ")" ) | ( "(" __ items:Expression ( __ "," __ items:Expression )* __ ( "," __ )? ")" )
+TupleDefinition: ( "(" __ ")" ) | ( "(" __ items:Expression COMMA ")" ) | ( "(" __ ( items:Expression ( COMMA items:Expression )* )* __ COMMA?  ")" )
 
-AbstractLiteral: skip:Literal | skip:ListDefinition | skip:DictDefinition | skip:TupleDefinition
+AbstractLiteral: skip:Literal | &/ [\[\{\(] / ( skip:ListDefinition | skip:DictDefinition | skip:TupleDefinition )
 AbstractValue: skip:AbstractLiteral | skip:Variable
 
 AddOperator: "+" | "-"
@@ -163,10 +160,10 @@ AttrAccess: "." attr:VariableName
 
 # The order of how these rules are nested is very important, as it defines
 # their priority. We also need that they all are left-associative.
-CondExpr: true:LogicalOr ( ] "if" __ "(" __ cond:Expression __ ")" __ "else" ] false:LogicalOr )?
-LogicalOr: operands:LogicalAnd ( ] ops:OrOperator ] operands:LogicalAnd )*
-LogicalAnd: operands:Comparison ( ] ops:AndOperator ] operands:Comparison )*
-Comparison: operands:Addition ( ( __ ops:ComparisonOperator __ | ops: ] ComparisonOperatorWithWhitespace ] ) operands:Addition )*
+CondExpr: true:LogicalOr ( _ "if" _ "(" __ cond:Expression __ ")" _ "else" _ false:LogicalOr )?
+LogicalOr: operands:LogicalAnd ( _ ops:OrOperator _ operands:LogicalAnd )*
+LogicalAnd: operands:Comparison ( _ ops:AndOperator _ operands:Comparison )*
+Comparison: operands:Addition ( ( __ ops:ComparisonOperator __ | _ ops:ComparisonOperatorWithWhitespace _ ) operands:Addition )*
 Addition: operands:Multiplication ( __ ops:AddOperator __ operands:Multiplication )*
 Multiplication: operands:Exponentiation ( __ ops:MultiplyOperator __ operands:Exponentiation )*
 Exponentiation: operand:Negation ( __ PowerOperator __ factor:Exponentiation )?
@@ -176,24 +173,24 @@ Operand: ( ( "(" __ core:Expression __ ")" | core:AbstractValue ) chain:Chain? )
 # Allow argument lists
 # 1. Without named argument
 # 2. With named arguments, which must be placed after any non-named arguments (this one is handled in ArgumentList node postprocessing).
-StarredExpression: stars:/\*{1,2}/ expr:Expression
+StarredExpression: stars:"*"{1,2} expr:Expression
 Argument: ( (argKey:VariableName __ ":" )? __ argVal:Expression ) | ( argVal:StarredExpression )
-ArgumentList: args:Argument ( __ "," __ args:Argument )*
+ArgumentList: args:Argument ( COMMA args:Argument )*
 
 # Starred parameters: Either one or two asterisks.
-MaybeStarredVariableName: stars:/\*{0,2}/ param:VariableName ( __ "=" __ default:AbstractValue )?
-ParameterList: skip:MaybeStarredVariableName ( __ "," __ skip:MaybeStarredVariableName )*
+MaybeStarredVariableName: stars:"*"{0,2} param:VariableName ( __ "=" __ default:AbstractValue )?
+ParameterList: skip:MaybeStarredVariableName ( COMMA skip:MaybeStarredVariableName )*
 FunctionDefinition: "function" [ function:VariableName __ "(" __ params:ParameterList? __ ")" __ body:Block
-ClassDefinition: "class" ] cls:VariableName ( "(" parent:VariableName ")" )? ] def:Block
+ClassDefinition: "class" _ cls:VariableName ( "(" parent:VariableName ")" )? __ def:Block
 
 # Starred target
-Targets: t:VariableName ( __ "," __ t:VariableName )*
+Targets: t:VariableName ( COMMA t:VariableName )*
 
 # Import statement:
 # 'from a.b.c import d' (import specific symbol from module)
 # 'import a.b.c' (import module as a whole)
 ImportStatement:
-	"import" ] ( module: ( "."* VariableName ("." VariableName)* ) ) > ( ":" > symbols: VariableName ( > "," > symbols: VariableName )* )?
+	"import" _ ( module: ( "."* VariableName ("." VariableName)* ) ) > ( ":" > symbols: VariableName ( > "," > symbols: VariableName )* )?
 
 IfStatement:
 	"if" __ "(" __ cond:Expression __ ")" __ block:Block
@@ -203,11 +200,12 @@ IfStatement:
 ForStatement: "for" __ "(" __ targets:Targets __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
 TryStatement: "try" __ main:Block __ "catch" __ onerror:Block
+
 # &/[rbc]/ - Don't even try any of the subrules if this doesn't start with expected letters.
 CommandStatements: &/[rbc]/ ( skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement )
 # &SEP in the second branch matches a 'return' followed by separator, without consuming the
 # separator - which is needed for the Program rule to finish parsing properly.
-ReturnStatement: ( "return" [ ( subject:Expression )? ) | ( "return" &SEP )
+ReturnStatement: ( "return" [ ( subject:Expression )? ) | ( "return" &_ )
 BreakStatement: "break"
 ContinueStatement: "continue"
 
@@ -225,19 +223,24 @@ BlockStatements:
 
 # !/[\s\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
 Statement: !/[\s\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )
-Block: "{" __ ( skip:Program )? "}"
+Block: "{" __ ( skip:Program )? __ "}"
 
-# Matches any optional whitespace or newline.
-__: / [\s]*+(?:\/\/[^\n]*+(?:\s*+))? /
+# Optional whitespace.
+__: / \s* / COMMENT? / \s* /
+
+# Mandatory whitespace.
+_: / \s+ / COMMENT? / \s* /
+
+COMMA: __ "," __
+COMMENT: ( / \s* \/\/ [^\n]* / )*
 
 # Matches newline, takes care of optional // comments at EOL.
-NL: / (?:\/\/[^\n]*)?\n /
+ENDL: / \s* (?:\/\/[^\n]*)?\n /
 
 # Statement separator: Newline or semicolon.
-SEP: ";" | NL
+SEP: ( ";" | ENDL ) / $ /?
 
-# "!/$/" Ensures we won't try to find statements at EOF.
-Program: ( __ stmts:Statement? > SEP )* __
+Program: __ ( __ stmts:Statement SEP )* __? / $ /?
 
 */
 
