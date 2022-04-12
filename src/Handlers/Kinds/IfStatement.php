@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Handlers\Kinds;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 
@@ -46,15 +47,23 @@ class IfStatement extends SimpleHandler {
 	public static function reduce(array &$node): void {
 
 		$elifs = [];
-		foreach ($node['elifCond'] ?? [] as $i => $elifCond) {
-			$elifs[] = [
-				'cond' => $elifCond,
-				'block' => $node['elifBlock'][$i],
-			];
+		if (isset($node['elifCond'])) {
+
+			$node['elifCond'] = Func::ensure_indexed($node['elifCond'] ?? []);
+			$node['elifBlock'] = Func::ensure_indexed($node['elifBlock'] ?? []);
+
+			foreach ($node['elifCond'] as $i => $elifCond) {
+				$elifs[] = [
+					'cond' => $elifCond,
+					'block' => $node['elifBlock'][$i],
+				];
+			}
+
+			unset($node['elifCond']);
+			unset($node['elifBlock']);
+
 		}
 
-		unset($node['elifCond']);
-		unset($node['elifBlock']);
 		$node['elifs'] = $elifs;
 
 	}
