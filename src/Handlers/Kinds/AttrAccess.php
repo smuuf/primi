@@ -5,7 +5,6 @@ namespace Smuuf\Primi\Handlers\Kinds;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Handlers\ChainedHandler;
 
 class AttrAccess extends ChainedHandler {

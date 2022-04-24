@@ -86,20 +86,7 @@ class AstProvider {
 		try {
 			return (new ParserHandler($sourceString))->run();
 		} catch (InternalSyntaxError $e) {
-
-			// Show a bit of code where the syntax error occurred.
-			$excerpt = \mb_substr($sourceString, $e->getErrorPos(), 20);
-
-			throw new SyntaxError(
-				new Location(
-					$source->getSourceId(),
-					$e->getErrorLine(),
-					$e->getLinePos()
-				),
-				$excerpt,
-				$e->getReason()
-			);
-
+			throw SyntaxError::fromInternal($e, $source);
 		}
 
 	}

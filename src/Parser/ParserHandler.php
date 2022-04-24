@@ -52,7 +52,10 @@ class ParserHandler {
 
 			// $this->pos is an internal PEG Parser position counter and
 			// we will use it to determine the line and position in the source.
-			$this->syntaxError($this->parser->pos);
+			$farthestRuleLabel =
+				GrammarRulesLabels::getRuleLabel($this->parser->farthestRule);
+			$reason = $farthestRuleLabel ? "after $farthestRuleLabel" : \null;
+			$this->syntaxError($this->parser->farthestPos, $reason);
 
 		}
 

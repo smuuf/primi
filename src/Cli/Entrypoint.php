@@ -117,7 +117,6 @@ class Entrypoint {
 
 		if ($cfg['parser_stats'] || $cfg['only_tree']) {
 
-			$sourceCode = $source->getSourceCode();
 			$ph = new ParserHandler($source->getSourceCode());
 
 			// Run parser and catch any error that may have occurred.
@@ -126,20 +125,7 @@ class Entrypoint {
 				try {
 					$tree = $ph->run();
 				} catch (InternalSyntaxError $e) {
-
-					// Show a bit of code where the syntax error occurred.
-					$excerpt = \mb_substr($sourceCode, $e->getErrorPos(), 20);
-
-					throw new SyntaxError(
-						new Location(
-							$source->getSourceId(),
-							$e->getErrorLine(),
-							$e->getLinePos()
-						),
-						$excerpt,
-						$e->getReason()
-					);
-
+					throw SyntaxError::fromInternal($e, $source);
 				}
 
 			} catch (BaseException $e) {
