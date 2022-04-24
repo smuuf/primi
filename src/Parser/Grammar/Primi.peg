@@ -85,7 +85,7 @@ class PrimiParser extends Parser\Packrat {
 # a) backslash-followed-by-whatever,
 # b) whatever-but-not-the-used-opening-quote-char
 StringLiteral: quote:/['"]/ core:StringInside "$quote"
-StringInside: ( /\\./ | /[^{$quote}\\]/ )*
+StringInside: / ( \\. | [^{$quote}\\] )*+ /
 
 #
 # F-Strings
@@ -93,7 +93,7 @@ StringInside: ( /\\./ | /[^{$quote}\\]/ )*
 
 FStringExpr: core:CondExpr
 # Either: "backslash followed by whatever" or "{{" or "}}", or "whatever unless { or } or ending quotes"
-FStringTxt: ( / (\\.)+ / | "{{" | "}}" | / [^\{\}{$quote}] / )*
+FStringTxt: / ( \\. | \{\{ | \}\} | [^\{\}{$quote}] )*+ /
 FStringInside: parts:FStringTxt ( "{" parts:FStringExpr "}" parts:FStringTxt )*
 FStringLiteral: "f" quote:/['"]/ core:FStringInside "$quote"
 
