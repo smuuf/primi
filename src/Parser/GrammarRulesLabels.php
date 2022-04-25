@@ -28,7 +28,7 @@ abstract class GrammarRulesLabels {
 		'ComparisonOperatorWithWhitespace' => "membership operator",
 		'AndOperator' => "'and' operator",
 		'OrOperator' => "'or' operator",
-		'NegationOperator' => "!",
+		'NegationOperator' => "negation operator",
 		'CondExpr' => "conditional expr",
 		'ArgumentList' => "arguments list",
 		'ParameterList' => "parameters list",

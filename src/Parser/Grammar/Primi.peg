@@ -11,11 +11,6 @@ use \hafriedlander\Peg\Parser;
 
 class PrimiParser extends Parser\Packrat {
 
-	// Add these properties so PHPStan doesn't complain about undefined properties.
-
-	/** @var string */
-	public $string;
-
 	private const RESERVED_WORDS = [
 		'false', 'true', 'null', 'if', 'else', 'return', 'for', 'and', 'or',
 		'function', 'break', 'continue', 'while', 'try', 'catch', 'not', 'in',

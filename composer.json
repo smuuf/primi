@@ -24,7 +24,7 @@
 		"ext-bcmath" : "*",
 		"ext-mbstring" : "*",
 		"smuuf/strict-object": "^1.0",
-		"smuuf/php-peg": "^2",
+		"smuuf/php-peg": "^3",
 		"smuuf/php-docblock-parser": "^0.1",
 		"smuuf/better-php-exceptions": "^0",
 		"symfony/polyfill-php80": "^1.20",
