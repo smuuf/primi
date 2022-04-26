@@ -41,6 +41,8 @@ abstract class DirectInterpreter {
 		Context $ctx
 	): AbstractValue {
 
+		EnvInfo::bootCheck();
+
 		// Register signal handling - maybe.
 		if ($ctx->getConfig()->getEffectivePosixSignalHandling()) {
 			PosixSignalTaskEmitter::catch(SIGINT);

@@ -69,6 +69,12 @@ class Entrypoint {
 			echo $ex->getTraceAsString() . "\n";
 		});
 
+		try {
+			EnvInfo::bootCheck();
+		} catch (EngineError $e) {
+			self::errorExit($e->getMessage());
+		}
+
 	}
 
 	public function execute(): void {

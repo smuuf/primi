@@ -4,16 +4,42 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Ex\EngineError;
+
 /**
  * Static helper for providing information about current runtime environment.
  */
 abstract class EnvInfo {
 
+	private static bool $bootCheck = \false;
 	private static ?bool $runningInPhar = \null;
 	private static ?bool $runningInCli = \null;
 	private static ?string $homeDir = \null;
 	private static ?string $currentUser = \null;
 	private static ?string $bestTempDir = \null;
+
+	/**
+	 * Throws if Primi cannot run in current PHP runtime.
+	 */
+	public static function bootCheck(): void {
+
+		if (self::$bootCheck) {
+			return;
+		}
+
+		$missingExt = [];
+		$missingExt['bcmath'] = !\extension_loaded('bcmath');
+		$missingExt['mbstring'] = !\extension_loaded('mbstring');
+		$missingExt = \array_filter($missingExt);
+
+		if ($missingExt) {
+			$list = \implode(', ', \array_keys($missingExt));
+			throw new EngineError("Primi requires PHP extensions: $list");
+		}
+
+		self::$bootCheck = \true;
+
+	}
 
 	/**
 	 * Get Primi build ID (if executed within compiled Phar, else 'dev').
