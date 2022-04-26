@@ -244,7 +244,7 @@ class extends NativeModule {
 	/**
 	 * Return list of names of attributes present in an object.
 	 *
-	 * @primi.func(no-stack, call-conv: callargs)
+	 * @primi.func(no-stack)
 	 */
 	public static function dir(AbstractValue $value): ListValue {
 		return new ListValue(

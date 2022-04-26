@@ -310,7 +310,6 @@ abstract class AbstractValue extends ValueFriends {
 	 * easy inspection of contents of an object.
 	 *
 	 * @return array<string>
-	 * @throws UnhashableTypeException
 	 */
 	public function dirItems(): ?array {
 
