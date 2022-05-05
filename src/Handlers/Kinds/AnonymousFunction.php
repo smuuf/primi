@@ -11,10 +11,13 @@ class AnonymousFunction extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
+		$module = $context->getCurrentModule();
+		$name = \sprintf("%s.<anonymous>()", $module->getName());
+
 		$fn = FnContainer::build(
 			$node['body'],
-			"<anonymous>()",
-			$context->getCurrentModule(),
+			$name,
+			$module,
 			$node['params'],
 			$context->getCurrentScope(),
 		);

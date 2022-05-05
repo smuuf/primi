@@ -39,7 +39,10 @@ abstract class Types {
 		if ($value = $typeObject->rawAttrGet($attrName)) {
 			if ($bind && $value instanceof FuncValue) {
 				$args = new CallArgs([$bind]);
-				return new FuncValue($value->getInternalValue(), $args);
+				return new FuncValue(
+					$value->getInternalValue(),
+					$args
+				);
 			}
 			return $value;
 		}
@@ -53,7 +56,10 @@ abstract class Types {
 			if ($value = $typeObject->rawAttrGet($attrName)) {
 				if ($bind && $value instanceof FuncValue) {
 					$args = new CallArgs([$bind]);
-					return new FuncValue($value->getInternalValue(), $args);
+					return new FuncValue(
+						$value->getInternalValue(),
+						$args
+					);
 				}
 				return $value;
 			}

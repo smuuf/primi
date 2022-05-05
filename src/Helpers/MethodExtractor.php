@@ -59,8 +59,7 @@ abstract class MethodExtractor {
 				}
 
 				$result[$name] = new FuncValue(
-					FnContainer::buildFromClosure([$obj, $name], $fnFlags)
-				);
+					FnContainer::buildFromClosure([$obj, $name], $fnFlags));
 
 			}
 

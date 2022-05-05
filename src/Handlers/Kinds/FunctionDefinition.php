@@ -14,7 +14,9 @@ class FunctionDefinition extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
-		$name = "{$node['fnName']}()";
+		$module = $context->getCurrentModule();
+		$name = \sprintf("%s.%s()", $module->getName(), $node['fnName']);
+
 		$currentScope = $context->getCurrentScope();
 
 		// If a function is defined as a method inside a class (directly
@@ -31,7 +33,7 @@ class FunctionDefinition extends SimpleHandler {
 		$fnc = FnContainer::build(
 			$node['body'],
 			$name,
-			$context->getCurrentModule(),
+			$module,
 			$node['params'],
 			$parentScope,
 		);

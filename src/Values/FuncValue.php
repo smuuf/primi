@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Structures\CallArgs;
@@ -16,18 +17,31 @@ use \Smuuf\Primi\Structures\FnContainer;
 class FuncValue extends AbstractNativeValue {
 
 	public const TYPE = "func";
-	private ?CallArgs $partialArgs = \null;
+	private string $name;
+	private ?CallArgs $partialArgs;
 
 	public function __construct(
 		FnContainer $fn,
 		?CallArgs $partialArgs = \null
 	) {
+
 		$this->value = $fn;
 		$this->partialArgs = $partialArgs;
+
+		$this->name = $fn->getName();
+		$this->attrs['name'] = Interned::string($this->name);
+
 	}
 
 	public function getType(): TypeValue {
 		return StaticTypes::getFuncType();
+	}
+
+	/**
+	 * Get full name of the function.
+	 */
+	public function getName(): ?string {
+		return $this->name;
 	}
 
 	public function isTruthy(): bool {
@@ -37,9 +51,10 @@ class FuncValue extends AbstractNativeValue {
 	public function getStringRepr(): string {
 
 		return \sprintf(
-			"<%s: %s>",
+			"<%s%s%s>",
+			$this->value->isPhpFunction() ? 'native ' : '',
 			$this->partialArgs ? 'partial function' : 'function',
-			$this->value->isPhpFunction() ? 'native' : 'user',
+			$this->name ? ": {$this->name}" : '',
 		);
 
 	}

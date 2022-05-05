@@ -27,15 +27,17 @@ class FnContainer {
 
 	use StrictObject;
 
-	/** @var \Closure Closure wrapping the function itself. */
-	protected $closure;
+	/** Closure wrapping the function itself. */
+	private \Closure $closure;
+
+	/** Function name. */
+	private string $name;
 
 	/**
 	 * True if the function represents a native PHP function instead of Primi
 	 * function.
-	 * @var bool
 	 */
-	protected $isPhpFunction = \false;
+	private bool $isPhpFunction = \false;
 
 	/**
 	 * Build and return a closure wrapper around a Primi function (represented
@@ -121,7 +123,7 @@ class FnContainer {
 
 		};
 
-		return new self($closure, \false);
+		return new self($closure, \false, $definitionName);
 
 	}
 
@@ -134,7 +136,7 @@ class FnContainer {
 		$closure = \Closure::fromCallable($fn);
 
 		$rf = new \ReflectionFunction($closure);
-		$callName = "{$rf->getName()} in <native>";
+		$callName = $rf->getName();
 
 		$flagToStack = !in_array(self::FLAG_NO_STACK, $flags, \true);
 		$flagCallConventionArgsObject =
@@ -190,7 +192,7 @@ class FnContainer {
 
 		};
 
-		return new self($wrapper, \true);
+		return new self($wrapper, \true, $callName);
 
 	}
 
@@ -199,10 +201,12 @@ class FnContainer {
 	 */
 	private function __construct(
 		\Closure $closure,
-		bool $isPhpFunction
+		bool $isPhpFunction,
+		string $name
 	) {
 		$this->closure = $closure;
 		$this->isPhpFunction = $isPhpFunction;
+		$this->name = $name;
 	}
 
 	public function callClosure(
@@ -215,6 +219,10 @@ class FnContainer {
 
 	public function isPhpFunction(): bool {
 		return $this->isPhpFunction;
+	}
+
+	public function getName(): string {
+		return $this->name;
 	}
 
 }
