@@ -19,6 +19,25 @@ use \Smuuf\Primi\Extensions\TypeExtension;
 
 class StringTypeExtension extends TypeExtension {
 
+	private const ATTR_DIGITS  = '0123456789';
+	private const ATTR_LETTERS_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
+	private const ATTR_LETTERS_UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	private const ATTR_LETTERS_ALL =
+		self::ATTR_LETTERS_LOWERCASE . self::ATTR_LETTERS_UPPERCASE;
+
+	public static function execute(): array {
+
+		$attrs = [
+			'ascii_letters' => Interned::string(self::ATTR_LETTERS_LOWERCASE),
+			'ascii_lowercase' => Interned::string(self::ATTR_LETTERS_UPPERCASE),
+			'ascii_uppercase' => Interned::string(self::ATTR_LETTERS_ALL),
+			'digits' => Interned::string(self::ATTR_DIGITS),
+		];
+
+		return $attrs + parent::execute();
+
+	}
+
 	/**
 	 * @primi.func(no-stack)
 	 */
