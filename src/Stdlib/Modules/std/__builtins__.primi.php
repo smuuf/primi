@@ -70,13 +70,14 @@ class extends NativeModule {
 			throw new RuntimeError("Function 'print' disabled in sandbox");
 		}
 
+		$io = $ctx->getStdIoDriver();
+
 		if ($args->isEmpty()) {
-			echo "\n";
+			$io->stdout("\n");
 			return Interned::null();
 		}
 
 		$args = $args->extract(['*args', 'end', 'sep'], ['end', 'sep']);
-
 		$end = $args['end'] ?? Interned::string("\n");
 		$sep = $args['sep'] ?? Interned::string(" ");
 
@@ -85,8 +86,10 @@ class extends NativeModule {
 			$args['args']->getInternalValue()
 		);
 
-		echo \implode($sep->getStringValue(), $pieces);
-		echo $end->getStringValue();
+		$io->stdout(
+			\implode($sep->getStringValue(), $pieces),
+			$end->getStringValue()
+		);
 
 		return Interned::null();
 

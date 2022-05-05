@@ -34,7 +34,7 @@ class ErrorException extends BaseException {
 		?array $traceback = \null
 	) {
 
-		$loc = \sprintf("@ %s", (string) $location);
+		$loc = "@ {$location->asString()}";
 		$tb = $traceback
 			? "\n" . Func::get_traceback_as_string($traceback)
 			: '';

@@ -12,6 +12,7 @@ use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Tasks\TaskQueue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Drivers\StdIoDriverInterface;
 use \Smuuf\Primi\Modules\Importer;
 use \Smuuf\Primi\Structures\CallRetval;
 
@@ -57,11 +58,9 @@ class Context {
 	/** Task queue for this context. */
 	private TaskQueue $taskQueue;
 
-	/** Importer instance */
 	private Importer $importer;
-
-	/** AstProvider instance */
 	private AstProvider $astProvider;
+	private StdIoDriverInterface $stdIoDriver;
 
 	//
 	// Return value storage.
@@ -88,6 +87,7 @@ class Context {
 		// accessing them (optimization).
 		$this->config = $interpreterServices->getConfig();
 		$this->astProvider = $interpreterServices->getAstProvider();
+		$this->stdIoDriver = $this->config->getStdIoDriver();
 
 		$services = new ContextServices(
 			$this,
@@ -121,6 +121,12 @@ class Context {
 
 	public function getAstProvider(): AstProvider {
 		return $this->astProvider;
+	}
+
+	// Standard IO driver.
+
+	public function getStdIoDriver(): StdIoDriverInterface {
+		return $this->stdIoDriver;
 	}
 
 	// Task queue management.

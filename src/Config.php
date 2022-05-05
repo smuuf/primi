@@ -7,6 +7,9 @@ namespace Smuuf\Primi;
 use \Smuuf\StrictObject;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Drivers\VoidIoDriver;
+use \Smuuf\Primi\Drivers\TerminalIoDriver;
+use \Smuuf\Primi\Drivers\StdIoDriverInterface;
 
 class Config {
 
@@ -24,12 +27,14 @@ class Config {
 	 */
 	final public static function buildDefault(): Config {
 
+		// If not running in CLI, enable sandbox mode by default.
 		if (!EnvInfo::isRunningInCli()) {
 			return new self;
 		}
 
 		$config = new self;
 		$config->setSandboxMode(false);
+		$config->setStdIoDriver(new TerminalIoDriver);
 		return $config;
 
 	}
@@ -215,12 +220,26 @@ class Config {
 		$this->sigQuitDebugging = $state;
 	}
 
-
 	/**
 	 * Return current config value of "SIGQUIT debugging".
 	 */
 	public function getSigQuitDebugging(): bool {
 		return $this->sigQuitDebugging;
+	}
+
+	//
+	// Standard IO driver.
+	//
+
+	private StdIoDriverInterface $stdIoDriver;
+
+	public function setStdIoDriver(StdIoDriverInterface $stdIoDriver): void {
+		$this->stdIoDriver = $stdIoDriver;
+	}
+
+	public function getStdIoDriver(): StdIoDriverInterface {
+		return $this->stdIoDriver
+			?? ($this->stdIoDriver = new VoidIoDriver);
 	}
 
 }

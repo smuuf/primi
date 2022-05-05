@@ -17,10 +17,10 @@ use \Smuuf\Primi\Code\SourceFile;
 use \Smuuf\Primi\Code\AstProvider;
 use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Ex\SyntaxError;
+use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\Colors;
-use \Smuuf\Primi\Location;
-use \Smuuf\Primi\Parser\ParserHandler;
+use \Smuuf\Primi\Helpers\Func;
 
 class Entrypoint {
 
@@ -98,7 +98,7 @@ class Entrypoint {
 		// Determine the source. Act as REPL if no source was specified.
 		if (empty($cfg['input'])) {
 
-			echo $this->getHeaderString('REPL');
+			Term::stderr($this->getHeaderString('REPL'));
 			$repl = new Repl;
 			$repl->start();
 			die;
@@ -162,7 +162,8 @@ class Entrypoint {
 		try {
 			$mainScope = $interpreter->run($source);
 		} catch (BaseException $e) {
-			self::errorExit("{$e->getMessage()}");
+			$colorized = Func::colorize_error($e);
+			self::errorExit($colorized);
 		}
 
 		if ($cfg['print_scope']) {
@@ -178,7 +179,7 @@ class Entrypoint {
 	 * @return never
 	 */
 	private static function errorExit(string $text): void {
-		echo Term::error($text);
+		Term::stderr(Term::error($text));
 		die(1);
 	}
 

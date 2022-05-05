@@ -8,7 +8,7 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Parser\GrammarHelpers;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
@@ -442,22 +442,35 @@ abstract class Func {
 	/**
 	 * @param array<StackFrame> $callstack Callstack.
 	 */
-	public static function get_traceback_as_string(
-		array $callstack,
-		bool $withColors = false
-	): string {
+	public static function get_traceback_as_string(array $callstack): string {
 
-		$result = Colors::get("{yellow}Traceback:{_}\n", true, $withColors);
+		$result = [];
+		$result[] = "Traceback:";
 
 		foreach ($callstack as $level => $call)  {
-
-			$result .= Colors::get(
-				"{yellow}[$level]{_} {$call}\n",
-				true,
-				$withColors
-			);
-
+			$call = $call->asString();
+			$result[] = "[$level] {$call}";
 		}
+
+		return \implode("\n", $result);
+
+	}
+
+	/**
+	 * @param array<StackFrame> $callstack Callstack.
+	 */
+	public static function colorize_error(BaseException $ex): string {
+
+		$result = \preg_replace_callback_array([
+			'#^Traceback:$#m' => // "Traceback:" string.
+				fn($m) => Colors::get("{green}$m[0]"),
+			'#(@|in|from) (<.*?>)#m' => // E.g. "in <module: blahblah>"
+				fn($m) => Colors::get("{$m[1]} {yellow}{$m[2]}{_}"),
+			'#^(\[\d+\]) (.+) in #m' => // E.g. "[4] __main__.somefunc()"
+				fn($m) => Colors::get("{darkgrey}{$m[1]}{_} {lightblue}{$m[2]}{_} in "),
+			'#near (["\'])(.*?)\\1#' => // E.g. '... near "some code" @ ...'
+				fn($m) => Colors::get("near {$m[1]}{lightcyan}{$m[2]}{_}{$m[1]}"),
+		], $ex->getMessage());
 
 		return $result;
 

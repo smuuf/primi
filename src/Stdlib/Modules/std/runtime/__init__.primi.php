@@ -27,7 +27,7 @@ return new class extends NativeModule {
 	): AbstractValue {
 
 		return AbstractValue::buildAuto(\array_map(
-			fn($f) => (string) $f,
+			fn($f) => $f->asString(),
 			$ctx->getCallStack()
 		));
 

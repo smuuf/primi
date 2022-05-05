@@ -6,28 +6,20 @@ use \Smuuf\Primi\Helpers\Colors;
 
 abstract class Term {
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public static function line($text = '') {
+	public static function line(string $text = ''): string {
 		return "$text\n";
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public static function error($text) {
+	public static function error(string $text): string {
 		return Colors::get("{red}Error:{_} ") . "$text\n";
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public static function debug($text) {
+	public static function debug(string $text): string {
 		return Colors::get("{yellow}Debug:{_} ") . "$text\n";
+	}
+
+	public static function stderr(string $text) {
+		\fwrite(\STDERR, $text);
 	}
 
 }

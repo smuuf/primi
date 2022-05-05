@@ -20,7 +20,7 @@ abstract class Logger {
 	public static function debug(string $msg): void {
 
 		if (self::$enabled) {
-			\fwrite(\STDERR, Term::debug($msg));
+			Term::stderr(Term::debug($msg));
 		}
 
 	}

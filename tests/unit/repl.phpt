@@ -1,8 +1,9 @@
 <?php
 
+use \Smuuf\Primi\Drivers\ReplIoDriverInterface;
 use \Tester\Assert;
 
-use \Smuuf\Primi\Drivers\UserIoDriverInterface;
+use \Smuuf\Primi\Drivers\StdIoDriverInterface;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -13,7 +14,7 @@ $counter = 0;
 $commands = [
     'a',
     'a = 1',
-    'b',
+    'print(end: ""); b',
 	'a',
 	'?',
 	"(a, b) => { return a + b; }",
@@ -25,26 +26,25 @@ $commands = [
 // This is expected output. This will be compared with actual output down below.
 // Asterisk * means that the line can be whatever.
 $expected = [
-	"Error: Undefined variable 'a' @ <module: __main__> on line 1",
+	"Error: Undefined variable 'a' @ <module: __main__> on line 1 at position 0",
 	"Traceback:",
 	"[0] <repl: cli> in <module: __main__>",
 	"1",
-	"Error: Undefined variable 'b' @ <module: __main__> on line 1",
+	"Error: Undefined variable 'b' @ <module: __main__> on line 1 at position 16",
 	"Traceback:",
 	"[0] <repl: cli> in <module: __main__>",
 	"1",
 	"a: 1",
 	"_: 1",
-	"<function: user>",
+	"<function: __main__.<anonymous>()>",
 	"Traceback:",
 	"[0] <repl: cli> in <module: __main__>",
 	'...', // ... - skip checking the rest.
 ];
 
-$driver = new class implements UserIoDriverInterface {
+$driver = new class implements ReplIoDriverInterface {
 
-	public $lines = [];
-	public $buffer = '';
+	public string $output = '';
 
 	public function input(string $prompt): string {
 
@@ -56,23 +56,12 @@ $driver = new class implements UserIoDriverInterface {
 
 	}
 
-	public function output(string $text): void {
+	public function stdout(string ...$text): void {
+		$this->output .= implode('', $text);
+	}
 
-		// The mechanism down below ensures that any output will be correctly
-		// divided into separate lines.
-		$this->buffer .= $text;
-
-		if (strpos($this->buffer, "\n") !== false) {
-			$lines = explode("\n", trim($this->buffer));
-			while (($line = array_shift($lines)) !== null) {
-				if (trim($line) === '') {
-					continue;
-				}
-				$this->lines[] = $line;
-			}
-			$this->buffer = '';
-		}
-
+	public function stderr(string ...$text): void {
+		$this->stdout(...$text);
 	}
 
 	public function addToHistory(string $item): void {}
@@ -86,7 +75,9 @@ $repl::$noExtras = true;
 
 // Run prepared commands and catch whole output.
 $repl->start();
-$output = $driver->lines;
+$allLines = explode("\n", $driver->output);
+$nonempty = array_filter($allLines, fn($l) => trim($l) !== '');
+$output = array_values($nonempty);
 
 foreach ($expected as $index => $string) {
 

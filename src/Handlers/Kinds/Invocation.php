@@ -24,7 +24,8 @@ class Invocation extends ChainedHandler {
 		// Gather info about call location - for some quality tracebacks.
 		$callsite = new Location(
 			$context->getCurrentModule()->getStringRepr(),
-			$node['_l']
+			$node['_l'],
+			$node['_p'],
 		);
 
 		return $fn->invoke($context, $arguments, $callsite);

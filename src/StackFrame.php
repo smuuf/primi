@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\Primi\Values\ModuleValue;
 
 use \Smuuf\StrictObject;
@@ -36,10 +37,18 @@ class StackFrame {
 		$this->location = $location;
 	}
 
-	public function __toString(): string {
-		$loc = $this->location ? " called from {$this->location}" : '';
-		$mod = $this->module ? $this->module->getStringRepr() : '<unknown>';
+	public function asString(): string {
+
+		$loc = $this->location
+			? " called from {$this->location->asString()}"
+			: '';
+
+		$mod = $this->module
+			? $this->module->getStringRepr()
+			: '<unknown>';
+
 		return "{$this->name} in {$mod}{$loc}";
+
 	}
 
 	/**

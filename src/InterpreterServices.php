@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Code\AstProvider;
-
 use \Smuuf\StrictObject;
+use \Smuuf\Primi\Code\AstProvider;
+use \Smuuf\Primi\Drivers\StdIoDriverInterface;
 
 /**
  * Service provider for specific interpreter instances based on its config.

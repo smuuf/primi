@@ -4,7 +4,7 @@ namespace Smuuf\Primi\Drivers;
 
 use \Smuuf\StrictObject;
 
-class ReadlineUserIoDriver implements UserIoDriverInterface {
+class ReadlineUserIoDriver extends TerminalIoDriver implements ReplIoDriverInterface {
 
 	use StrictObject;
 
@@ -14,14 +14,6 @@ class ReadlineUserIoDriver implements UserIoDriverInterface {
 	 * @var string
 	 */
 	private $lastItem = '';
-
-	public function input(string $prompt): string {
-		return \readline($prompt);
-	}
-
-	public function output(string $text): void {
-		echo $text;
-	}
 
 	public function addToHistory(string $item): void {
 

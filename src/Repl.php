@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Cli\Term;
+use \Smuuf\StrictObject;
 use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Ex\ErrorException;
 use \Smuuf\Primi\Ex\EngineException;
 use \Smuuf\Primi\Ex\SystemException;
+use \Smuuf\Primi\Cli\Term;
 use \Smuuf\Primi\Code\Source;
+use \Smuuf\Primi\Parser\GrammarHelpers;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\ModuleValue;
@@ -17,9 +19,7 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Drivers\ReadlineUserIoDriver;
-use \Smuuf\Primi\Drivers\UserIoDriverInterface;
-use \Smuuf\Primi\Parser\GrammarHelpers;
-use \Smuuf\StrictObject;
+use \Smuuf\Primi\Drivers\ReplIoDriverInterface;
 
 class Repl {
 
@@ -39,21 +39,19 @@ class Repl {
 		"This is probably a bug in Primi or any of its components. "
 		. "Please report this to the maintainer.";
 
-	/** @var string Full path to readline history file. */
-	private static $historyFilePath;
+	/** Full path to readline history file. */
+	private static string $historyFilePath;
 
-	/** @var string REPL identifies itself in callstack with this string. */
-	protected $replName;
+	/** REPL identifies itself in callstack with this string. */
+	protected string $replName;
 
 	/**
 	 * IO driver used for user input/output.
 	 *
 	 * This is handy for our unit tests, so we can simulate user input and
 	 * gather REPL output.
-	 *
-	 * @var UserIoDriverInterface
 	 */
-	protected $driver;
+	protected ReplIoDriverInterface $driver;
 
 	/**
 	 * If `false`, extra "user-friendly info" is not printed out.
@@ -65,7 +63,7 @@ class Repl {
 
 	public function __construct(
 		?string $replName = null,
-		UserIoDriverInterface $driver = null
+		ReplIoDriverInterface $driver = null
 	) {
 
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
@@ -79,13 +77,13 @@ class Repl {
 
 	protected function printHelp(): void {
 
-		$this->driver->output(Colors::get("\n".
+		$this->driver->stderr(Colors::get("\n".
 			"{green}Use '{_}exit{green}' to exit REPL or '{_}exit!{green}' " .
 			"to terminate the process.\n" .
 			"Use '{_}?{green}' to view local variables, " .
 			"'{_}??{green}' to view all variables, " .
 			"'{_}?tb{green}' to see traceback. \n" .
-			"The latest result is stored in '{_}_{green}' variable.\n"
+			"The latest result is stored in '{_}_{green}' variable.\n\n"
 		));
 
 	}
@@ -117,7 +115,7 @@ class Repl {
 
 			// Print out level (current frame's index in call stack).
 			if (!self::$noExtras) {
-				$this->driver->output(self::getStackInfo($ctx, true));
+				$this->driver->stderr(self::getStackInfo($ctx, true));
 				$this->printHelp();
 			}
 
@@ -128,7 +126,7 @@ class Repl {
 		$this->saveHistory();
 
 		if (!self::$noExtras) {
-			$this->driver->output(Colors::get("{yellow}Exiting REPL...{_}\n"));
+			$this->driver->stderr(Colors::get("{yellow}Exiting REPL...{_}\n"));
 		}
 
 	}
@@ -144,7 +142,6 @@ class Repl {
 
 		while (true) {
 
-			$this->driver->output("\n");
 			$input = $this->gatherLines($ctx);
 
 			if (trim($input) && $input !== 'exit') {
@@ -157,7 +154,7 @@ class Repl {
 					$this->printScope($currentScope, false);
 					continue 2;
 				case '?tb':
-					// Print traceback
+					// Print traceback.
 					$this->printTraceback($ctx);
 					continue 2;
 				case '??':
@@ -194,7 +191,8 @@ class Repl {
 				$this->printResult($result);
 
 			} catch (ErrorException|SystemException $e) {
-				$this->driver->output(Term::error($e->getMessage()));
+				$colorized = Func::colorize_error($e);
+				$this->driver->stderr(Term::error($colorized));
 			} catch (EngineException|\Throwable $e) {
 
 				// All exceptions other than ErrorException are likely to be a
@@ -203,6 +201,7 @@ class Repl {
 
 			}
 
+			$this->driver->stdout("\n");
 			$cellNumber++;
 
 		}
@@ -220,20 +219,7 @@ class Repl {
 			return;
 		}
 
-		$this->printValue($result);
-
-	}
-
-	/**
-	 * Pretty-prints out a AbstractValue representation with type info.
-	 */
-	private function printValue(AbstractValue $result): void {
-
-		$this->driver->output(sprintf(
-			"%s %s\n",
-			$result->getStringRepr(),
-			!self::$noExtras ? self::formatType($result) : null
-		));
+		$this->driver->stdout(self::formatValue($result), "\n");
 
 	}
 
@@ -244,9 +230,14 @@ class Repl {
 	private function printScope(Scope $c, bool $includeParents): void {
 
 		foreach ($c->getVariables($includeParents) as $name => $value)  {
-			$this->driver->output(Colors::get("{lightblue}$name{_}: "));
-			$this->printValue($value);
+			$this->driver->stdout(
+				Colors::get("{lightblue}$name{_}: "),
+				self::formatValue($value),
+				"\n",
+			);
 		}
+
+		$this->driver->stdout("\n");
 
 	}
 
@@ -255,8 +246,8 @@ class Repl {
 	 */
 	private function printTraceback(Context $ctx): void {
 
-		$tbString = Func::get_traceback_as_string($ctx->getCallStack(), true);
-		$this->driver->output($tbString);
+		$tbString = Func::get_traceback_as_string($ctx->getCallStack(), \true);
+		$this->driver->stdout($tbString, "\n\n");
 
 	}
 
@@ -268,12 +259,13 @@ class Repl {
 		$type = get_class($e);
 		$msg = Colors::get(sprintf("\n{white}{-red}%s", self::PHP_ERROR_HEADER));
 		$msg .= " $type: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
-		$this->driver->output($msg);
+		$this->driver->stderr($msg);
 
 		// Best and easiest to get version of backtrace I can think of.
-		$this->driver->output($e->getTraceAsString());
-		$this->driver->output(
-			Colors::get(sprintf("\n{yellow}%s\n", self::ERROR_REPORT_PLEA))
+		$this->driver->stderr(
+			$e->getTraceAsString(),
+			Colors::get(sprintf("\n{yellow}%s", self::ERROR_REPORT_PLEA)),
+			"\n\n",
 		);
 
 	}
@@ -300,7 +292,7 @@ class Repl {
 
 			// Display level of nesting - number of items in current call stack.
 			if (!self::$noExtras && $stackInfo) {
-				$this->driver->output("{$stackInfo}\n");
+				$this->driver->stderr("{$stackInfo}\n");
 			}
 
 			$input = $this->driver->input($prompt);
@@ -327,6 +319,35 @@ class Repl {
 		}
 
 	}
+
+	// Static helpers.
+
+	/**
+	 * Returns a pretty string from AbstractValue representation with type info.
+	 */
+	private static function formatValue(AbstractValue $value): string {
+
+		return sprintf(
+			"%s %s",
+			$value->getStringRepr(),
+			!self::$noExtras ? self::formatType($value) : null
+		);
+
+	}
+
+	/**
+	 * Returns a pretty string representing value's type info.
+	 */
+	private static function formatType(AbstractValue $value): string {
+
+		return Colors::get(sprintf(
+			"{darkgrey}(%s %s){_}",
+			$value->getTypeName(),
+			Func::object_hash($value)
+		));
+
+	}
+
 
 	/**
 	 * @return array{bool, int}
@@ -398,16 +419,6 @@ class Repl {
 
 	}
 
-	private static function formatType(AbstractValue $value): string {
-
-		return Colors::get(sprintf(
-			"{darkgrey}(%s %s){_}",
-			$value->getTypeName(),
-			Func::object_hash($value)
-		));
-
-	}
-
 	/**
 	 * @return array<string>
 	 */
@@ -426,8 +437,8 @@ class Repl {
 		} elseif (GrammarHelpers::isSimpleAttrAccess(trim($buffer, '.'))) {
 
 			// Autocomplete for attr access of objects from current scope.
-			// We need to separate parts of nester attr access, so that
-			// for "obj" we complete attrs from "obj", but for
+			// We need to separate parts of nested attr access, so that
+			// for "obj" we suggest attrs from "obj", but for
 			// "obj.attr_a.attr_b" we complete attrs from the final "attr_b".
 			$parts = array_reverse(explode('.', $buffer));
 

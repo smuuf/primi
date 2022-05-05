@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
+use \Smuuf\Primi\Helpers\Colors;
 use \Smuuf\StrictObject;
 
 class Location {
@@ -31,7 +32,7 @@ class Location {
 
 	}
 
-	public function __toString(): string{
+	public function asString(): string {
 
 		$posInfo = $this->position !== \null
 			? " at position {$this->position}"
