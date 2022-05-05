@@ -27,12 +27,12 @@
 		"smuuf/php-peg": "^3",
 		"smuuf/php-docblock-parser": "^0.1",
 		"smuuf/better-php-exceptions": "^0",
-		"symfony/polyfill-php80": "^1.20",
-		"symfony/polyfill-php81": "^1.23"
+		"symfony/polyfill-php80": "^1",
+		"symfony/polyfill-php81": "^1"
 	},
 	"require-dev": {
-		"nette/tester": "^2.0",
-		"phpstan/phpstan": "^1.5",
+		"nette/tester": "^2",
+		"phpstan/phpstan": "^1",
 		"smuuf/phpcb": "^0.5",
 		"nikic/php-parser": "^4.13"
 	}
