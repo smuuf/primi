@@ -1,0 +1,45 @@
+import std.math
+import std.hash
+import std.time
+import std.term.colors: Fg, Style
+
+class ProgressBar {
+
+    SPINNER = (
+        '.:.     ',
+        ' .:.    ',
+        '  .:.   ',
+        '   .:.  ',
+        '    .:. ',
+        '      .:',
+        ':.     .',
+    )
+
+    last_length = 0
+    counter = 1
+
+    function print(self, text) {
+        text = f"{text} [{Fg.LIGHTCYAN}{self.get_spinner()}{Style.RESET}]"
+        print('\b' * self.last_length, end: '')
+        print(text, end: '')
+        self.last_length = len(text)
+        self.counter = self.counter + 1
+    }
+
+    function get_spinner(self) {
+        spinner_phase = math.mod(self.counter, len(self.SPINNER))
+        return self.SPINNER[spinner_phase - 1]
+    }
+
+}
+
+max = 20
+
+progress = ProgressBar()
+for (c in range(max)) {
+    md5 = hash.md5(string(c))
+    progress.print(f"Processing item {c + 1}/{max} '{Fg.GREEN}{md5}{Style.RESET}' ...")
+    time.sleep(0.04)
+}
+
+print()
