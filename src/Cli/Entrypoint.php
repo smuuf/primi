@@ -162,7 +162,7 @@ class Entrypoint {
 		try {
 			$mainScope = $interpreter->run($source);
 		} catch (BaseException $e) {
-			$colorized = Func::colorize_error($e);
+			$colorized = Func::colorize_traceback($e);
 			self::errorExit($colorized);
 		}
 

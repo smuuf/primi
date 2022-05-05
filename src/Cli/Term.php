@@ -18,7 +18,7 @@ abstract class Term {
 		return Colors::get("{yellow}Debug:{_} ") . "$text\n";
 	}
 
-	public static function stderr(string $text) {
+	public static function stderr(string $text): void {
 		\fwrite(\STDERR, $text);
 	}
 

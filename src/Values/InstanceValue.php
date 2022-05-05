@@ -83,7 +83,7 @@ class InstanceValue extends AbstractValue {
 
 		}
 
-		return parent::isEqualTo($right);
+		return parent::doAddition($right);
 
 	}
 
@@ -100,7 +100,7 @@ class InstanceValue extends AbstractValue {
 
 		}
 
-		return parent::isEqualTo($right);
+		return parent::doSubtraction($right);
 
 	}
 

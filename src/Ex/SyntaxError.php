@@ -34,7 +34,10 @@ class SyntaxError extends ErrorException {
 
 	}
 
-	public static function fromInternal(InternalSyntaxError $e, Source $source) {
+	public static function fromInternal(
+		InternalSyntaxError $e,
+		Source $source
+	): SyntaxError {
 
 		// Show a bit of code where the syntax error occurred.
 		// And don't ever have negative start index (that would take characters

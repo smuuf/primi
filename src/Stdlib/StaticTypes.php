@@ -119,7 +119,7 @@ abstract class StaticTypes {
 	}
 
 	public static function getNotImplementedType(): TypeValue {
-		return self::$moduleType
+		return self::$notImplementedType
 			??= new TypeValue(NotImplementedValue::TYPE, self::getObjectType(), ForbiddenTypeExtension::execute());
 	}
 

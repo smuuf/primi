@@ -23,6 +23,9 @@ class InternalSyntaxError extends EngineException {
 	/** Position of the syntax error on specified line. */
 	private int $linePos;
 
+	/** Position of the syntax error in the whole source string. */
+	private int $errorPos;
+
 	/** Specific reason of the syntax error, if specified. */
 	private ?string $reason;
 

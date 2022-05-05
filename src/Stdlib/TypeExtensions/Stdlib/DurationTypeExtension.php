@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions\Stdlib;
 
+use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\InstanceValue;
@@ -61,9 +62,10 @@ class DurationTypeExtension extends TypeExtension {
 	}
 
 	/**
-	 * @primi.func(call-conv: callargs)
+	 * @primi.func(inject-context, call-conv: callargs)
 	 */
 	public static function __op_add__(
+		Context $ctx,
 		CallArgs $args
 	): AbstractValue {
 
@@ -85,9 +87,10 @@ class DurationTypeExtension extends TypeExtension {
 
 
 	/**
-	 * @primi.func(call-conv: callargs)
+	 * @primi.func(inject-context, call-conv: callargs)
 	 */
 	public static function __op_sub__(
+		Context $ctx,
 		CallArgs $args
 	): AbstractValue {
 

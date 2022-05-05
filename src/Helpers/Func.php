@@ -289,7 +289,7 @@ abstract class Func {
 	 * TypeError exception with a user-friendly message or doesn't do
 	 * anything.
 	 *
-	 * @param class-string|AbstractValue
+	 * @param class-string|AbstractValue $allowedTypes
 	 * @throws TypeError
 	 */
 	public static function allow_argument_types(
@@ -465,10 +465,7 @@ abstract class Func {
 
 	}
 
-	/**
-	 * @param array<StackFrame> $callstack Callstack.
-	 */
-	public static function colorize_error(BaseException $ex): string {
+	public static function colorize_traceback(BaseException $ex): string {
 
 		$result = \preg_replace_callback_array([
 			'#^Traceback:$#m' => // "Traceback:" string.

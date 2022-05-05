@@ -191,7 +191,7 @@ class Repl {
 				$this->printResult($result);
 
 			} catch (ErrorException|SystemException $e) {
-				$colorized = Func::colorize_error($e);
+				$colorized = Func::colorize_traceback($e);
 				$this->driver->stderr(Term::error($colorized));
 			} catch (EngineException|\Throwable $e) {
 
@@ -246,7 +246,7 @@ class Repl {
 	 */
 	private function printTraceback(Context $ctx): void {
 
-		$tbString = Func::get_traceback_as_string($ctx->getCallStack(), \true);
+		$tbString = Func::get_traceback_as_string($ctx->getCallStack());
 		$this->driver->stdout($tbString, "\n\n");
 
 	}
