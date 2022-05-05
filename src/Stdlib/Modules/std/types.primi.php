@@ -19,12 +19,15 @@ use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NotImplementedValue;
 use \Smuuf\Primi\Values\IteratorFactoryValue;
 use \Smuuf\Primi\Modules\NativeModule;
+use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
  * Module housing Primi's basic data types.
  */
 class extends NativeModule {
+
+	use AllowedInSandboxTrait;
 
 	public function execute(Context $ctx): array {
 

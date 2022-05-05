@@ -16,7 +16,7 @@ $sandboxConfig->setStdIoDriver(new VoidIoDriver);
 $i = new Interpreter($sandboxConfig);
 Assert::exception(
 	fn() => $i->run('import std.runtime'),
-	ErrorException::class, '#Access to module disabled when in sandbox#'
+	ErrorException::class, '#Access.*forbidden.*sandbox#'
 );
 
 $fullConfig = new Config;

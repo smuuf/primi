@@ -9,12 +9,15 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
+use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
  * Functions and tools for common mathematical operations.
  */
 class extends NativeModule {
+
+	use AllowedInSandboxTrait;
 
 	public function execute(Context $ctx): array {
 

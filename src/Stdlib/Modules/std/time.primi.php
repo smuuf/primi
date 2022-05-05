@@ -2,7 +2,6 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\StringValue;
@@ -11,12 +10,15 @@ use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
 use \Smuuf\Primi\Structures\CallArgs;
+use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
  * Functions and tools for basic time-related operations.
  */
 class extends NativeModule {
+
+	use AllowedInSandboxTrait;
 
 	/**
 	 * Returns high-resolution monotonic time. It is an arbitrary number that

@@ -5,12 +5,15 @@ use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
+use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
  * Encoding and decoding [`base64`](https://en.wikipedia.org/wiki/Base64).
  */
 class extends NativeModule {
+
+	use AllowedInSandboxTrait;
 
 	/**
 	 * Return [`base64`](https://en.wikipedia.org/wiki/Base64)

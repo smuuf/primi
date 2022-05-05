@@ -20,6 +20,7 @@ use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
 use \Smuuf\Primi\Structures\CallArgs;
+use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
@@ -29,6 +30,8 @@ return new
  * default in every scope.
  */
 class extends NativeModule {
+
+	use AllowedInSandboxTrait;
 
 	public function execute(Context $ctx): array {
 

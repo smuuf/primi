@@ -5,15 +5,12 @@ namespace Smuuf\Primi\Stdlib\Modules;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Modules\DeniedInSandboxTrait;
 use \Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Native 'std.runtime' module.
  */
 return new class extends NativeModule {
-
-	use DeniedInSandboxTrait;
 
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.

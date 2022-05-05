@@ -5,12 +5,15 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Modules\NativeModule;
+use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
  * Hashing functions.
  */
 class extends NativeModule {
+
+	use AllowedInSandboxTrait;
 
 	/**
 	 * Return [`crc32`](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)
