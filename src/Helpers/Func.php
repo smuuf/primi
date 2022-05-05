@@ -126,7 +126,7 @@ abstract class Func {
 
 				$couple = [];
 				$i++;
-				$j = -1;
+				$j = 0;
 
 				// Second, for each of the item of the top-iterator we check
 				// if the item also supports iteration.
@@ -140,18 +140,27 @@ abstract class Func {
 
 				foreach ($subitems as $subitem) {
 
+					$j++;
+
 					// Third, since we want to build and return iterable
 					// containing couples, the item needs to contain
 					// exactly two sub-items.
-					if (++$j > 2) {
+					if ($j === 3) {
 						throw new TypeError(
 							"Unable to create mapping from iterable: "
-							. "item #$i has more than two items ($j) in it"
+							. "item #$i contains more than two items ($j)"
 						);
 					}
 
 					$couple[] = $subitem;
 
+				}
+
+				if ($j < 2) {
+					throw new TypeError(
+						"Unable to create mapping from iterable: "
+						. "item #$i contains less than two items ($j)"
+					);
 				}
 
 				$couples[] = $couple;
