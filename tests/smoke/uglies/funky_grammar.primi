@@ -1,0 +1,50 @@
+import std.types; import std.math
+
+for
+(return_something in range(
+    start: 1, end: 10,
+    // Whoa.
+    step:
+    2
+)) {
+    // This is a comment.
+    something = return_something                       // Far away.
+}
+
+function call_function_a(arg = 0) // Comment.
+{
+    if (arg == 'a') { // Comment.
+        import std.hash; return 20 // Comment
+    } elif // Comment
+    (arg == 'b') { // Comment.
+        import std.hash; return 40; // Comment
+    }
+}
+
+function call_function_b(arg       =
+0) // Comment.
+{ return 'yay'; }// Comment.
+
+if (something) // Comment.
+{
+    call_function_a(); print(end: ''); }
+
+if (something + 1) // Comment.
+{
+    call_function_a('a'); print(end: ''); } // Comment
+
+if (something + 2) // Comment.
+{
+    call_function_a('b'); print(end: ''); // Comment.
+    } // Comment
+
+while
+(call_function_b(
+    20
+)) {
+    x = 1 if (something) else 2; assert(x == // Comment
+        1
+    ) // Comment.
+    break;
+    // Comment.
+}
