@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Ex\KeyError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\MapContainer;
@@ -78,8 +80,15 @@ class DictValue extends AbstractNativeValue {
 
 	public function itemGet(AbstractValue $key): AbstractValue {
 
-		if (!$this->value->hasKey($key)) {
-			throw new KeyError($key->getStringRepr());
+		try {
+			if (!$this->value->hasKey($key)) {
+				throw new KeyError($key->getStringRepr());
+			}
+		} catch (UnhashableTypeException $e) {
+			throw new TypeError(\sprintf(
+				"Key is of unhashable type '%s'",
+				$e->getType()
+			));
 		}
 
 		return $this->value->get($key);
@@ -92,7 +101,15 @@ class DictValue extends AbstractNativeValue {
 			throw new RuntimeError("Must specify key when inserting into dict");
 		}
 
-		$this->value->set($key, $value);
+		try {
+			$this->value->set($key, $value);
+		} catch (UnhashableTypeException $e) {
+			throw new TypeError(\sprintf(
+				"Key is of unhashable type '%s'",
+				$e->getType()
+			));
+		}
+
 		return \true;
 
 	}
@@ -111,7 +128,16 @@ class DictValue extends AbstractNativeValue {
 	 * The 'in' operator for dictionaries looks for keys and not values.
 	 */
 	public function doesContain(AbstractValue $right): ?bool {
-		return $this->value->hasKey($right);
+
+		try {
+			return $this->value->hasKey($right);
+		} catch (UnhashableTypeException $e) {
+			throw new TypeError(\sprintf(
+				"Key is of unhashable type '%s'",
+				$e->getType()
+			));
+		}
+
 	}
 
 }
