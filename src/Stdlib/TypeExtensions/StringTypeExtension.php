@@ -7,7 +7,6 @@ namespace Smuuf\Primi\Stdlib\TypeExtensions;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
-use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
@@ -16,8 +15,10 @@ use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\NumberValue;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Structures\CallArgs;
 
 class StringTypeExtension extends TypeExtension {
 
@@ -307,30 +308,36 @@ class StringTypeExtension extends TypeExtension {
 	 * "a,b,c,d".split(',') == ['a', 'b', 'c', 'd']
 	 * ```
 	 *
-	 * @primi.func
+	 * @primi.func(call-conv: callargs)
 	 */
 	public static function split(
-		StringValue $string,
-		?AbstractValue $delimiter = \null
+		CallArgs $args
 	): ListValue {
 
+		$args = $args->extract(
+			['self', 'delimiter', 'limit'],
+			['delimiter', 'limit']
+		);
+
 		// Split by whitespaces by default.
-		if ($delimiter === \null) {
-			$delimiter = Interned::regex('\s+');
-		}
+		$self = $args['self'];
+		$delimiter = $args['delimiter'] ?? Interned::regex('\s+');
+		$limit = $args['limit'] ?? Interned::number('-1');
 
 		// Allow only some value types.
-		Func::allow_argument_types(1, $delimiter, StringValue::class, RegexValue::class);
+		Func::allow_argument_types(1, $self, StringValue::class);
+		Func::allow_argument_types(2, $delimiter, StringValue::class, RegexValue::class);
+		Func::allow_argument_types(3, $limit, NumberValue::class);
 
 		if ($delimiter instanceof RegexValue) {
-			$splat = \preg_split($delimiter->value, $string->value);
+			$splat = \preg_split($delimiter->value, $self->value, (int) $limit->value);
 		}
 
 		if ($delimiter instanceof StringValue) {
 			if ($delimiter->value === '') {
 				throw new RuntimeError("String delimiter must not be empty.");
 			}
-			$splat = \explode($delimiter->value, $string->value);
+			$splat = \explode($delimiter->value, $self->value, (int) $limit->value);
 		}
 
 		return new ListValue(\array_map(function($part) {
@@ -373,7 +380,7 @@ class StringTypeExtension extends TypeExtension {
 	): NumberValue {
 
 		// Allow only some value types.
-		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
+		Func::allow_argument_types(1, $needle, StringValue::class);
 
 		$count = (string) \mb_substr_count(
 			(string) $haystack->value,
@@ -477,6 +484,36 @@ class StringTypeExtension extends TypeExtension {
 
 		return Interned::string(\implode($string->value, $prepared));
 
+	}
+
+	/**
+	 * Returns `true` if the string starts with specified string.
+	 *
+	 * ```js
+	 * "this is a sentence".starts_with("tence") == true
+	 * "this is a sentence".starts_with("e") == true
+	 * "this is a sentence".starts_with("x") == false
+	 * ```
+	 *
+	 * @primi.func
+	 */
+	public static function starts_with(StringValue $haystack, StringValue $needle): BoolValue {
+		return Interned::bool(\str_starts_with($haystack->value, $needle->value));
+	}
+
+	/**
+	 * Returns `true` if the string ends with specified string suffix.
+	 *
+	 * ```js
+	 * "this is a sentence".ends_with("tence") == true
+	 * "this is a sentence".ends_with("e") == true
+	 * "this is a sentence".ends_with("x") == false
+	 * ```
+	 *
+	 * @primi.func
+	 */
+	public static function ends_with(StringValue $haystack, StringValue $needle): BoolValue {
+		return Interned::bool(\str_ends_with($haystack->value, $needle->value));
 	}
 
 }
