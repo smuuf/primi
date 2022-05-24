@@ -37,7 +37,12 @@ class TypeTypeExtension extends TypeExtension {
 			: [];
 
 		Func::allow_argument_types(1, $value, StringValue::class);
-		return new TypeValue($value->getStringValue(), $parentType, $attrs);
+		return new TypeValue(
+			$value->getStringValue(),
+			$parentType,
+			$attrs,
+			\false
+		);
 
 	}
 

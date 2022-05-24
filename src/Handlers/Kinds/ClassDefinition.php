@@ -48,7 +48,7 @@ class ClassDefinition extends SimpleHandler {
 			$className,
 			$parentType,
 			$classScope->getVariables(),
-			\true,
+			\false,
 		);
 
 		$context->getCurrentScope()->setVariable($className, $result);
