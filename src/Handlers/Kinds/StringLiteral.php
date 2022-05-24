@@ -19,14 +19,7 @@ class StringLiteral extends SimpleHandler {
 
 	public static function reduce(array &$node): void {
 
-		// Trim quotes from the start and the end using substr().
-		// Using trim("\"'", ...) would make "abc'" into abc instead of abc',
-		// so do this a little more directly.
-		$node['text'] = StringEscaping::unescapeString(
-			\mb_substr(
-				$node['text'], 1, \mb_strlen($node['text']) - 2
-			)
-		);
+		$node['text'] = StringEscaping::unescapeString($node['core']['text']);
 
 		unset($node['quote']);
 		unset($node['core']);

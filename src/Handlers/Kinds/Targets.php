@@ -10,18 +10,13 @@ use \Smuuf\Primi\Structures\AssignmentTargets;
 class Targets extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
-
-		$targetNames = \array_column($node['t'], 'text');
-		return new AssignmentTargets($targetNames);
-
+		return new AssignmentTargets($node['t']);
 	}
 
 	public static function reduce(array &$node): void {
 
 		// Make sure this is always list, even with one item.
-		if (isset($node['t'])) {
-			$node['t'] = Func::ensure_indexed($node['t']);
-		}
+		$node['t'] = \array_column(Func::ensure_indexed($node['t']), 'text');
 
 	}
 
