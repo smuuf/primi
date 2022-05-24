@@ -23,6 +23,7 @@ class StringEscaping {
 	private const ESCAPE_PAIRS = [
 		'\\\\' => "\\",
 		'\\n' => "\n",
+		'\\r' => "\r",
 		'\\t' => "\t",
 		'\\"' => '"',
 		"\\'" => "'",
