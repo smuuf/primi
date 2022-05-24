@@ -6,7 +6,7 @@ namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\IndexError;
-use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\BoolValue;
@@ -14,7 +14,9 @@ use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Indices;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TypeValue;
 
@@ -24,9 +26,13 @@ class ListTypeExtension extends TypeExtension {
 	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
-		TypeValue $_,
+		TypeValue $type,
 		?AbstractValue $value = \null
 	): ListValue {
+
+		if ($type !== StaticTypes::getListType()) {
+			throw new TypeError("Passed invalid type object");
+		}
 
 		// No argument - create empty list.
 		if ($value === \null) {
@@ -35,7 +41,7 @@ class ListTypeExtension extends TypeExtension {
 
 		$iter = $value->getIterator();
 		if ($iter === \null) {
-			throw new RuntimeError('list() argument must be iterable');
+			throw new TypeError('list() argument must be iterable');
 		}
 
 		return new ListValue(\iterator_to_array($iter));
@@ -141,6 +147,7 @@ class ListTypeExtension extends TypeExtension {
 	): ListValue {
 
 		[$self, $callable] = $args->extractPositional(2);
+		Func::allow_argument_types(1, $self, StaticTypes::getListType());
 
 		$result = [];
 		foreach ($self->value as $k => $v) {

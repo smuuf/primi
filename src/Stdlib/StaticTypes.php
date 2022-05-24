@@ -55,7 +55,7 @@ abstract class StaticTypes {
 
 	public static function getObjectType(): TypeValue {
 		return self::$objectType
-			??= new TypeValue(MagicStrings::TYPE_OBJECT, \null, ObjectTypeExtension::execute());
+			??= new TypeValue(MagicStrings::TYPE_OBJECT, \null, ObjectTypeExtension::execute(), \false);
 	}
 
 	public static function getTypeType(): TypeValue {

@@ -272,7 +272,7 @@ class extends NativeModule {
 	 * list(enumerate(b_list, -5)) == [(-5, 'a'), (-4, 'b'), (-3, 123), (-2, false)]
 	 * ```
 	 *
-	 * @primi.func(no-stack, call-conv: callargs)
+	 * @primi.func(call-conv: callargs)
 	 * @primi.func.arg(name: iterable, type: iterable)
 	 * @primi.func.arg(name: start, type: number, default: 0)
 	 */

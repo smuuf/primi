@@ -4,6 +4,7 @@ namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
+use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\AbstractNativeValue;
@@ -32,18 +33,27 @@ final class TypeValue extends AbstractNativeValue {
 	/** A parent Primi type of this type. */
 	protected ?TypeValue $parent;
 
+	/** Final type/class cannot be used as a parent type. */
+	protected bool $isFinal;
+
 	/**
 	 * @param array<string, AbstractValue> $attrs
 	 */
 	public function __construct(
 		string $name,
 		?TypeValue $parent = \null,
-		array $attrs = []
+		array $attrs = [],
+		bool $isFinal = \true
 	) {
 
 		$this->name = $name;
 		$this->parent = $parent;
 		$this->attrs = $attrs;
+		$this->isFinal = $isFinal;
+
+		if ($this->parent && $this->parent->isFinal()) {
+			throw new RuntimeError("Class '{$this->parent->getName()}' cannot be used as a parent class");
+		}
 
 	}
 
@@ -72,6 +82,13 @@ final class TypeValue extends AbstractNativeValue {
 	 */
 	public function getName(): string {
 		return $this->name;
+	}
+
+	/**
+	 * Is this Primi type/class forbidden to be a parent of another type/class?
+	 */
+	public function isFinal(): bool {
+		return $this->isFinal;
 	}
 
 	public function invoke(

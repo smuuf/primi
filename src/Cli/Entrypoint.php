@@ -14,7 +14,7 @@ use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BaseException;
 use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Code\SourceFile;
-use \Smuuf\Primi\Code\AstProvider;
+use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Parser\ParserHandler;
@@ -60,7 +60,15 @@ class Entrypoint {
 
 		error_reporting(E_ALL);
 		set_error_handler(function($severity, $message, $file, $line) {
+
+			// This error code is not included in error_reporting, so let it fall
+			// through to the standard PHP error handler
+			if (!(error_reporting() & $severity)) {
+				return false;
+			}
+
 			throw new \ErrorException($message, 0, $severity, $file, $line);
+
 		}, E_ALL);
 
 		set_exception_handler(function($ex) {
@@ -101,7 +109,7 @@ class Entrypoint {
 			Term::stderr($this->getHeaderString('REPL'));
 			$repl = new Repl;
 			$repl->start();
-			die;
+			return;
 
 		}
 
@@ -161,6 +169,8 @@ class Entrypoint {
 		// Run interpreter and catch any error that may have occurred.
 		try {
 			$mainScope = $interpreter->run($source);
+		} catch (EngineInternalError $e) {
+			throw $e;
 		} catch (BaseException $e) {
 			$colorized = Func::colorize_traceback($e);
 			self::errorExit($colorized);

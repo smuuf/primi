@@ -2,11 +2,13 @@
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 
 class BoolTypeExtension extends TypeExtension {
 
@@ -14,9 +16,13 @@ class BoolTypeExtension extends TypeExtension {
 	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
-		TypeValue $_,
+		TypeValue $type,
 		?AbstractValue $value = \null
 	): BoolValue {
+
+		if ($type !== StaticTypes::getBoolType()) {
+			throw new TypeError("Passed invalid type object");
+		}
 
 		return $value === \null
 			? Interned::bool(\false)

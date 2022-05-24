@@ -6,6 +6,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Extensions\TypeExtension;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\DictValue;
+use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\TypeValue;
 
 /**
@@ -35,6 +36,7 @@ class TypeTypeExtension extends TypeExtension {
 			)
 			: [];
 
+		Func::allow_argument_types(1, $value, StringValue::class);
 		return new TypeValue($value->getStringValue(), $parentType, $attrs);
 
 	}

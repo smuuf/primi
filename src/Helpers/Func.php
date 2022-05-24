@@ -293,7 +293,7 @@ abstract class Func {
 	 * @throws TypeError
 	 */
 	public static function allow_argument_types(
-		int $index,
+		int $pos,
 		AbstractValue $arg,
 		...$allowedTypes
 	): void {
@@ -317,7 +317,7 @@ abstract class Func {
 			"Expected '%s' but got '%s' as argument %d",
 			Types::php_classes_to_primi_types($allowedTypes),
 			$arg->getTypeName(),
-			$index
+			$pos
 		));
 
 	}
@@ -474,7 +474,7 @@ abstract class Func {
 				fn($m) => Colors::get("{$m[1]} {yellow}{$m[2]}{_}"),
 			'#^(\[\d+\]) (.+) in #m' => // E.g. "[4] __main__.somefunc()"
 				fn($m) => Colors::get("{darkgrey}{$m[1]}{_} {lightblue}{$m[2]}{_} in "),
-			'#near (["\'])(.*?)\\1#' => // E.g. '... near "some code" @ ...'
+			'#near (["\'])(.*?)\\1 @#' => // E.g. '... near "some code" @ ...'
 				fn($m) => Colors::get("near {$m[1]}{lightcyan}{$m[2]}{_}{$m[1]}"),
 		], $ex->getMessage());
 

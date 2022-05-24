@@ -6,6 +6,7 @@ use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
@@ -20,7 +21,7 @@ class ClassDefinition extends SimpleHandler {
 		if ($parentTypeName !== \false) {
 			$parentType = $context->getVariable($parentTypeName);
 		} else {
-			$parentType = $context->getTypesModule()->getVariable('object');
+			$parentType = StaticTypes::getObjectType();
 		}
 
 		if (!$parentType instanceof TypeValue) {
@@ -43,7 +44,12 @@ class ClassDefinition extends SimpleHandler {
 		$wrapper = new ContextPushPopWrapper($context, \null, $classScope);
 		$wrapper->wrap(fn($ctx) => HandlerFactory::runNode($node['def'], $ctx));
 
-		$result = new TypeValue($className, $parentType, $classScope->getVariables());
+		$result = new TypeValue(
+			$className,
+			$parentType,
+			$classScope->getVariables(),
+			\true,
+		);
 
 		$context->getCurrentScope()->setVariable($className, $result);
 

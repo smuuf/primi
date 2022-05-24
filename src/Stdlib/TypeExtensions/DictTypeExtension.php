@@ -4,7 +4,6 @@ namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\DictValue;
@@ -13,6 +12,7 @@ use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\TypeValue;
@@ -23,9 +23,13 @@ class DictTypeExtension extends TypeExtension {
 	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
-		TypeValue $_,
+		TypeValue $type,
 		?AbstractValue $value = \null
 	): DictValue {
+
+		if ($type !== StaticTypes::getDictType()) {
+			throw new TypeError("Passed invalid type object");
+		}
 
 		// Default value for a new number is 0.
 		if ($value === \null) {
@@ -34,7 +38,7 @@ class DictTypeExtension extends TypeExtension {
 
 		$iter = $value->getIterator();
 		if ($iter === \null) {
-			throw new RuntimeError('dict() argument must be iterable');
+			throw new TypeError('dict() argument must be iterable');
 		}
 
 		try {
@@ -214,6 +218,7 @@ class DictTypeExtension extends TypeExtension {
 	): DictValue {
 
 		[$self, $callable] = $args->extractPositional(2);
+		Func::allow_argument_types(1, $self, StaticTypes::getDictType());
 
 		$result = [];
 		foreach ($self->value->getItemsIterator() as [$k, $v]) {

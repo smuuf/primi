@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\NumberValue;
@@ -12,6 +13,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Extensions\TypeExtension;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 
 class NumberTypeExtension extends TypeExtension {
 
@@ -19,9 +21,13 @@ class NumberTypeExtension extends TypeExtension {
 	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
-		TypeValue $_,
+		TypeValue $type,
 		?AbstractValue $value = \null
 	): NumberValue {
+
+		if ($type !== StaticTypes::getNumberType()) {
+			throw new TypeError("Passed invalid type object");
+		}
 
 		// Default value for a new number is 0.
 		if ($value === \null) {

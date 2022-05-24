@@ -3,7 +3,7 @@
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\EngineInternalError;
+use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\InstanceValue;
@@ -25,7 +25,7 @@ class ObjectTypeExtension extends TypeExtension {
 		$callArgs = new CallArgs($posArgs, $args->getKwargs());
 
 		if (!$type instanceof TypeValue) {
-			throw new EngineInternalError("First argument for object.__new__() must be a type");
+			throw new TypeError("First argument for object.__new__() must be a type");
 		}
 
 		$object = new InstanceValue($type, $ctx);

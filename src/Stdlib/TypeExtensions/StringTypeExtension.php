@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Ex\RuntimeError;
+use \Smuuf\Primi\Ex\TypeError;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\BoolValue;
@@ -42,9 +44,13 @@ class StringTypeExtension extends TypeExtension {
 	 * @primi.func(no-stack)
 	 */
 	public static function __new__(
-		TypeValue $_,
+		TypeValue $type,
 		?AbstractValue $value = \null
 	): StringValue {
+
+		if ($type !== StaticTypes::getStringType()) {
+			throw new TypeError("Passed invalid type object");
+		}
 
 		if ($value === \null) {
 			return Interned::string('');
