@@ -29,7 +29,6 @@ class WhileStatement extends SimpleHandler {
 
 			// Tick the task queue every 4 iterations.
 			if (++$tickCounter === 4) {
-				$context->getTaskQueue()->tick();
 				$queue->tick();
 				$tickCounter = 0;
 			}

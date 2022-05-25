@@ -36,9 +36,11 @@ abstract class HandlerFactory {
 	 * NOTE: Return type is omitted for performance reasons, as this method will
 	 * be called VERY often.
 	 *
-	 * @return ?string
+	 * @param string $name
+	 * @param bool $strict
+	 * @return ?class-string
 	 */
-	public static function getFor(string $name, ?bool $strict = \true) {
+	public static function getFor($name, $strict = \true) {
 
 		// Using caching is of course faster than repeatedly building strings
 		// and checking classes and stuff.
@@ -64,9 +66,10 @@ abstract class HandlerFactory {
 	 * Shorthand function for running a AST node passed as array.
 	 *
 	 * @param TypeDef_AstNode $node
+	 * @param Context $ctx
 	 * @return mixed
 	 */
-	public static function runNode(array $node, Context $ctx) {
+	public static function runNode($node, $ctx) {
 		return self::getFor($node['name'])::run($node, $ctx);
 	}
 
