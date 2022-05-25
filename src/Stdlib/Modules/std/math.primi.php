@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\RelationError;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
@@ -54,18 +55,16 @@ class extends NativeModule {
 
 	/**
 	 * Return the highest value from iterable or from two or more arguments.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function max(AbstractValue ...$items): AbstractValue {
 		return self::minmax('>', $items);
 	}
 
 	/**
 	 * Return the highest value from iterable or from two or more arguments.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function min(AbstractValue ...$items): AbstractValue {
 		return self::minmax('<', $items);
 	}
@@ -76,9 +75,8 @@ class extends NativeModule {
 
 	/**
 	 * Returns the sine of number `n` specified in radians.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function sin(NumberValue $n): NumberValue {
 		$result = (string) \sin((float) $n->value);
 		return new NumberValue(Func::scientific_to_decimal($result));
@@ -86,9 +84,8 @@ class extends NativeModule {
 
 	/**
 	 * Returns the cosine of number `n` specified in radians.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function cos(NumberValue $n): NumberValue {
 		$result = (string) \cos((float) $n->value);
 		return new NumberValue(Func::scientific_to_decimal($result));
@@ -96,9 +93,8 @@ class extends NativeModule {
 
 	/**
 	 * Returns the tangent of number `n` specified in radians.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function tan(NumberValue $n): NumberValue {
 		$result = (string) \tan((float) $n->value);
 		return new NumberValue(Func::scientific_to_decimal($result));
@@ -106,9 +102,8 @@ class extends NativeModule {
 
 	/**
 	 * Returns the arc tangent of number `n` specified in radians.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function atan(NumberValue $n): NumberValue {
 		$result = (string) \atan((float) $n->value);
 		return new NumberValue(Func::scientific_to_decimal($result));
@@ -121,9 +116,8 @@ class extends NativeModule {
 	/**
 	 * Returns number `n` rounded to specified `precision`. If the
 	 * precision is not specified, a default `precision` of zero is used.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function round(
 		NumberValue $n,
 		NumberValue $precision = \null
@@ -136,36 +130,32 @@ class extends NativeModule {
 
 	/**
 	 * Returns number `n` rounded up.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function ceil(NumberValue $n): NumberValue {
 		return Interned::number((string) \ceil((float) $n->value));
 	}
 
 	/**
 	 * Returns number `n` rounded down.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function floor(NumberValue $n): NumberValue {
 		return Interned::number((string) \floor((float) $n->value));
 	}
 
 	/**
 	 * Returns the absolute value of number `n`.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function abs(NumberValue $n): NumberValue {
 		return Interned::number(\ltrim($n->value, '-'));
 	}
 
 	/**
 	 * Returns the square root of a number `n`.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function sqrt(NumberValue $n): NumberValue {
 		return new NumberValue((string) \bcsqrt(
 			$n->value,
@@ -175,9 +165,8 @@ class extends NativeModule {
 
 	/**
 	 * Returns number `n` squared to the power of `power`.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function pow(
 		NumberValue $n,
 		?NumberValue $power = \null
@@ -191,9 +180,8 @@ class extends NativeModule {
 
 	/**
 	 * Returns the remainder (modulo) of the division of the arguments.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function mod(
 		NumberValue $a,
 		NumberValue $b

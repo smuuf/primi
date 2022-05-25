@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Parser\ParserHandler;
@@ -19,9 +20,8 @@ return new class extends NativeModule {
 	 * ```js
 	 * tree = ast.parse('tree = ast.parse()')
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function parse(StringValue $source): AbstractValue {
 		$ast = (new ParserHandler($source->value))->run();
 		return AbstractValue::buildAuto($ast);

@@ -22,7 +22,7 @@ use \Smuuf\Primi\Handlers\HandlerFactory;
  */
 class FnContainer {
 
-	public const FLAG_NO_STACK = 1;
+	public const FLAG_TO_STACK = 1;
 	public const FLAG_CALLCONV_CALLARGS = 2;
 
 	use StrictObject;
@@ -138,7 +138,7 @@ class FnContainer {
 		$rf = new \ReflectionFunction($closure);
 		$callName = $rf->getName();
 
-		$flagToStack = !in_array(self::FLAG_NO_STACK, $flags, \true);
+		$flagToStack = \in_array(self::FLAG_TO_STACK, $flags, \true);
 		$flagCallConventionArgsObject =
 			in_array(self::FLAG_CALLCONV_CALLARGS, $flags, \true);
 

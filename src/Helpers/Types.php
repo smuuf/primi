@@ -12,6 +12,21 @@ use \Smuuf\Primi\Values\NullValue;
 
 abstract class Types {
 
+	public static function is_subclass_of(
+		TypeValue $childType,
+		TypeValue $parentType
+	): bool {
+
+		do {
+			if ($childType === $parentType) {
+				return \true;
+			}
+		} while ($childType = $childType->getParentType());
+
+		return \false;
+
+	}
+
 	/**
 	 * Lookup and return attr from a type object - or its parents.
 	 *

@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Modules\NativeModule;
 use \Smuuf\Primi\Structures\CallArgs;
@@ -15,9 +16,8 @@ return new class extends NativeModule {
 	/**
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
 	 * Return traceback as a list.
-	 *
-	 * @primi.func(no-stack, call-conv: callargs)
 	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function get_stack(
 		CallArgs $_,
 		Context $ctx

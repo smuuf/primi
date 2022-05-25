@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Stdlib\TypeExtensions\Stdlib;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\InstanceValue;
@@ -16,9 +17,7 @@ class DurationTypeExtension extends TypeExtension {
 	/** @const string Total seconds attr name. */
 	private const ATTR_TOTSEC = 'total_seconds';
 
-	/**
-	 * @primi.func(call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __init__(
 		CallArgs $args
 	): void {
@@ -41,9 +40,7 @@ class DurationTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func(call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __op_eq__(
 		CallArgs $args
 	): AbstractValue {
@@ -61,12 +58,10 @@ class DurationTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func(inject-context, call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __op_add__(
-		Context $ctx,
-		CallArgs $args
+		CallArgs $args,
+		Context $ctx
 	): AbstractValue {
 
 		[$self, $other] = $args->extractPositional(2);
@@ -85,13 +80,10 @@ class DurationTypeExtension extends TypeExtension {
 
 	}
 
-
-	/**
-	 * @primi.func(inject-context, call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __op_sub__(
-		Context $ctx,
-		CallArgs $args
+		CallArgs $args,
+		Context $ctx
 	): AbstractValue {
 
 		[$self, $other] = $args->extractPositional(2);

@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Repl;
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\LookupError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Helpers\Func;
@@ -58,12 +59,8 @@ class extends NativeModule {
 	 * _**Only in [CLI](https://w.wiki/QPE)**_.
 	 *
 	 * Prints value to standard output.
-	 *
-	 * @primi.func(no-stack, call-conv: callargs)
-	 * @primi.func.arg(name: *objects)
-	 * @primi.func.arg(name: sep, type: string, default:" ")
-	 * @primi.func.arg(name: end, type: string, default:"\n")
 	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function print(
 		CallArgs $args,
 		Context $ctx
@@ -103,9 +100,8 @@ class extends NativeModule {
 	 *
 	 * Injects a [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)
 	 * session for debugging at the specified line.
-	 *
-	 * @primi.func(no-stack, call-conv: callargs)
 	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function debugger(
 		CallArgs $args,
 		Context $ctx
@@ -133,9 +129,8 @@ class extends NativeModule {
 	 * len([1, 2, 3]) == 3
 	 * len({'a': 1, 'b': 'c'}) == 2
 	 * ```
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc (toStack: \false)]
 	public static function len(AbstractValue $value): NumberValue {
 
 		$length = $value->getLength();
@@ -152,9 +147,8 @@ class extends NativeModule {
 	 * This function returns `true` if a `bool` value passed into it is `true`
 	 * and throws error if it's `false`. Optional `string` description can be
 	 * provided, which will be visible in the eventual error message.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function assert(
 		BoolValue $assumption,
 		?StringValue $description = \null
@@ -174,9 +168,8 @@ class extends NativeModule {
 	 * This function returns `true` if a `bool` value passed into it is `true`
 	 * and throws error if it's `false`. Optional `string` description can be
 	 * provided, which will be visible in the eventual error message.
-	 *
-	 * @primi.func(no-stack, call-conv: callargs)
 	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function range(CallArgs $args): IteratorFactoryValue {
 
 		$args = $args->extract(['start', 'end', 'step'], ['end', 'step']);
@@ -249,9 +242,8 @@ class extends NativeModule {
 
 	/**
 	 * Return list of names of attributes present in an object.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function dir(AbstractValue $value): ListValue {
 		return new ListValue(
 			array_map(
@@ -271,11 +263,8 @@ class extends NativeModule {
 	 * b_list = ['a', 'b', 123, false]
 	 * list(enumerate(b_list, -5)) == [(-5, 'a'), (-4, 'b'), (-3, 123), (-2, false)]
 	 * ```
-	 *
-	 * @primi.func(call-conv: callargs)
-	 * @primi.func.arg(name: iterable, type: iterable)
-	 * @primi.func.arg(name: start, type: number, default: 0)
 	 */
+	#[PrimiFunc(toStack: \true, callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function enumerate(CallArgs $args): IteratorFactoryValue {
 
 		[$iterable, $start] = $args->extractPositional(2, 1);
@@ -317,9 +306,8 @@ class extends NativeModule {
 
 	/**
 	 * Returns `true` if object has an attribute with specified name.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function hasattr(
 		AbstractValue $obj,
 		StringValue $name
@@ -333,9 +321,8 @@ class extends NativeModule {
 	 *
 	 * If the optional `default` argument is specified its value is returned
 	 * instead of throwing an error.
-	 *
-	 * @primi.func(no-stack, call-conv: callargs)
 	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function getattr(
 		CallArgs $args
 	): AbstractValue {

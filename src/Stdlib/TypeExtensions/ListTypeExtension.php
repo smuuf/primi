@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\ListValue;
@@ -22,9 +23,7 @@ use \Smuuf\Primi\Values\TypeValue;
 
 class ListTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
 		?AbstractValue $value = \null
@@ -49,8 +48,8 @@ class ListTypeExtension extends TypeExtension {
 
 	/**
 	 * Returns a new copy of the `list`.
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function copy(ListValue $list): ListValue {
 		return clone $list;
 	}
@@ -61,8 +60,8 @@ class ListTypeExtension extends TypeExtension {
 	 * ```js
 	 * [1, 2, 3].reverse() == [3, 2, 1]
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function reverse(ListValue $list): ListValue {
 		return new ListValue(\array_reverse($list->value));
 	}
@@ -73,8 +72,8 @@ class ListTypeExtension extends TypeExtension {
 	 * ```js
 	 * [1, 2, 3].random() // Either 1, 2, or 3.
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function random(ListValue $list): AbstractValue {
 		return $list->value[\array_rand($list->value)];
 	}
@@ -93,8 +92,8 @@ class ListTypeExtension extends TypeExtension {
 	 * // NOTE: Dicts with same items with different order are the same.
 	 * [{'a': 1, 'b': 2}, {'b': 2, 'a': 1}].count({'a': 1, 'b': 2}) == 2
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function count(
 		ListValue $list,
 		AbstractValue $needle
@@ -117,8 +116,8 @@ class ListTypeExtension extends TypeExtension {
 	 * ```js
 	 * [1, 2].shuffle() // Either [1, 2] or [2, 1]
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function shuffle(ListValue $list): ListValue {
 
 		// Do NOT modify the original array (as PHP would do).
@@ -138,9 +137,8 @@ class ListTypeExtension extends TypeExtension {
 	 * ```js
 	 * [-1, 0, 2].map(to_bool) == [true, false, true]
 	 * ```
-	 *
-	 * @primi.func(call-conv: callargs)
 	 */
+	#[PrimiFunc(toStack: \true, callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function map(
 		CallArgs $args,
 		Context $ctx
@@ -172,8 +170,8 @@ class ListTypeExtension extends TypeExtension {
 	 * // NOTE: Dicts with same items with different order are the same.
 	 * [{'b': 2, 'a': 1}, 'xxx'].contains({'a': 1, 'b': 2}) == true
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function contains(
 		ListValue $list,
 		AbstractValue $needle
@@ -203,8 +201,8 @@ class ListTypeExtension extends TypeExtension {
 	 * ['a', 'b', 'c'].get(-4) == null
 	 * ['a', 'b', 'c'].get(-4, 'NOT FOUND') == 'NOT FOUND'
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function get(
 		ListValue $list,
 		NumberValue $index,
@@ -233,8 +231,8 @@ class ListTypeExtension extends TypeExtension {
 	 * a_list.push({'some_key': 'some_value'})
 	 * a_list == ['a', 'b', 'c', {'some_key': 'some_value'}]
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function push(
 		ListValue $list,
 		AbstractValue $value
@@ -251,8 +249,8 @@ class ListTypeExtension extends TypeExtension {
 	 * a_list.prepend({'some_key': 'some_value'})
 	 * a_list == [{'some_key': 'some_value'}, 'a', 'b', 'c']
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function prepend(
 		ListValue $list,
 		AbstractValue $value
@@ -277,8 +275,8 @@ class ListTypeExtension extends TypeExtension {
 	 * a_list.pop(1) == 2 // a_list == [1, 3, 4], 2 is returned.
 	 * a_list.pop(-3) == 1 // a_list == [3, 4], 1 is returned
 	 * ```
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function pop(
 		ListValue $list,
 		?NumberValue $index = \null

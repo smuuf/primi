@@ -1,13 +1,12 @@
 <?php
 
-namespace Smuuf\Primi\Helpers;
+namespace Smuuf\Primi\Extensions;
 
 use \Smuuf\StrictObject;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
 
-use \Smuuf\DocBlockParser\Parser as DocBlockParser;
-use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Ex\EngineError;
 
 abstract class MethodExtractor {
@@ -37,31 +36,32 @@ abstract class MethodExtractor {
 				continue;
 			}
 
-			$doc = $ref->getDocComment() ?: '';
-			$db = DocBlockParser::parse($doc);
-
-			$fnFlags = [];
-			if ($fnTag = $db->getTags(MagicStrings::NATFUN_TAG_FUNCTION)->getFirst()) {
-
-				if ($fnTag->hasArg(MagicStrings::NATFUN_NOSTACK)) {
-					$fnFlags[] = FnContainer::FLAG_NO_STACK;
-				}
-
-				if ($arg = $fnTag->getArg(MagicStrings::NATFUN_CALLCONV)) {
-					if ($arg->getValue() === MagicStrings::CALLCONV_CALLARGS) {
-						$fnFlags[] = FnContainer::FLAG_CALLCONV_CALLARGS;
-					} else {
-						throw new EngineError(sprintf(
-							"Invalid value for argument '%s'",
-							MagicStrings::NATFUN_CALLCONV
-						));
-					}
-				}
-
-				$result[$name] = new FuncValue(
-					FnContainer::buildFromClosure([$obj, $name], $fnFlags));
-
+			$attr = $ref->getAttributes(PrimiFunc::class);
+			if (!$attr) {
+				continue;
 			}
+
+			if (\count($attr) > 1) {
+				throw new EngineError(\sprintf(
+					"There must be only one '%s' attribute present",
+					PrimiFunc::class
+				));
+			}
+
+			/** @var PrimiFunc */
+			$attr = $attr[0]->newInstance();
+			$fnFlags = [];
+
+			if ($attr->hasCallConv(PrimiFunc::CONV_CALLARGS)) {
+				$fnFlags[] = FnContainer::FLAG_CALLCONV_CALLARGS;
+			}
+
+			if ($attr->hasToStack()) {
+				$fnFlags[] = FnContainer::FLAG_TO_STACK;
+			}
+
+			$result[$name] = new FuncValue(
+				FnContainer::buildFromClosure([$obj, $name], $fnFlags));
 
 		}
 

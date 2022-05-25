@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\BoolValue;
@@ -17,9 +18,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
 
 class NumberTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
 		?AbstractValue $value = \null
@@ -49,9 +48,8 @@ class NumberTypeExtension extends TypeExtension {
 
 	/**
 	 * Return `true` if first argument is divisible by the second argument.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function is_divisible_by(
 		NumberValue $a,
 		NumberValue $b

@@ -35,13 +35,14 @@ class ForStatement extends SimpleHandler {
 		$blockHandler = HandlerFactory::getFor($node['right']['name']);
 
 		// 1-bit value for ticking task queue once per two iterations.
-		$tickBit = 1;
+		$tickBit = 0;
+		$queue = $context->getTaskQueue();
 
 		foreach ($iter as $i) {
 
 			// Switch the bit from 1/0 or vice versa.
 			if ($tickBit ^= 1) {
-				$context->getTaskQueue()->tick();
+				$queue->tick();
 			}
 
 			$targets->assign($i, $context);

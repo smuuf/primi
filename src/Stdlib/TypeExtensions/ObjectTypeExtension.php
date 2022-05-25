@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\AbstractValue;
@@ -12,9 +13,7 @@ use \Smuuf\Primi\Structures\CallArgs;
 
 class ObjectTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack, call-conv: callargs)
-	 */
+	#[PrimiFunc(toStack: \true, callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __new__(
 		CallArgs $args,
 		Context $ctx

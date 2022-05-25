@@ -2,12 +2,13 @@
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Extensions\PrimiFunc;
+use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Values\AbstractValue;
+use \Smuuf\Primi\Helpers\Func;
+use \Smuuf\Primi\Extensions\TypeExtension;
 
 /**
  * This extension defines methods on the "type" type object - how the instance
@@ -15,9 +16,7 @@ use \Smuuf\Primi\Values\TypeValue;
  */
 class TypeTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __call__(
 		AbstractValue $value,
 		?TypeValue $parentType = \null,

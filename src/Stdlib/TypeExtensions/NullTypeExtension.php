@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\NullValue;
@@ -11,9 +12,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
 
 class NullTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __new__(TypeValue $type): NullValue {
 
 		if ($type !== StaticTypes::getNullType()) {

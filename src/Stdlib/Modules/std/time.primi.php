@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\StringValue;
@@ -23,27 +24,24 @@ class extends NativeModule {
 	/**
 	 * Returns high-resolution monotonic time. It is an arbitrary number that
 	 * keeps increasing by 1 every second.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function monotonic(): NumberValue {
 		return new NumberValue((string) Func::monotime());
 	}
 
 	/**
 	 * Returns current high-resolution UNIX time.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function now(): NumberValue {
 		return new NumberValue((string) \microtime(\true));
 	}
 
 	/**
 	 * Sleep specified number of seconds.
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function sleep(NumberValue $duration): NullValue {
 
 		$d = $duration->value;
@@ -61,9 +59,8 @@ class extends NativeModule {
 	 * Return UNIX timestamp from human readable string.
 	 *
 	 * @see https://www.php.net/manual/en/function.strtotime.php
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function from_string(StringValue $when): NumberValue {
 
 		$when = $when->value;
@@ -83,9 +80,8 @@ class extends NativeModule {
 	/**
 	 * Return string UNIX timestamp to a string representation specified by
 	 * format. If timestamp is provided, current time will be used.
-	 *
-	 * @primi.func(no-stack, call-conv: callargs)
 	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function format(
 		CallArgs $args
 	): StringValue {

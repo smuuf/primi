@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
@@ -41,9 +42,7 @@ class StringTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_NATIVE)]
 	public static function __new__(
 		TypeValue $type,
 		?AbstractValue $value = \null
@@ -67,9 +66,8 @@ class StringTypeExtension extends TypeExtension {
 	 * ```js
 	 * "hello".shuffle() // "leohl" or something similar.
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function shuffle(StringValue $str): StringValue {
 
 		// str_shuffle() doesn't work with unicode, so let's do this ourselves.
@@ -99,9 +97,8 @@ class StringTypeExtension extends TypeExtension {
 	 * "x{}x, y{}y".format(1, 2) == "x1x, y2y"
 	 * "x{1}x, y{0}y".format(111, 222) == "x222x, y111y"
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function format(
 		StringValue $str,
 		AbstractValue ...$items
@@ -192,8 +189,8 @@ class StringTypeExtension extends TypeExtension {
 	 * "přítmí ve městě za dvě stě".replace(rx"\wt\w", "lol") == "přlolí ve mělol za dvě lol"
 	 * ```
 	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function replace(
 		StringValue $string,
 		AbstractValue $search,
@@ -241,8 +238,8 @@ class StringTypeExtension extends TypeExtension {
 	 * its new value will not be searched again. This behavior is identical
 	 * to PHP function [`strtr()`](https://www.php.net/manual/en/function.strtr.php).
 	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function translate(
 		StringValue $string,
 		DictValue $pairs
@@ -280,8 +277,8 @@ class StringTypeExtension extends TypeExtension {
 	 * "hello! tady čaj".reverse() == "jač ydat !olleh"
 	 * ```
 	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function reverse(StringValue $string): StringValue {
 
 		// strrev() does not support multibyte.
@@ -307,9 +304,8 @@ class StringTypeExtension extends TypeExtension {
 	 * "a b c\nd e f".split() == ['a', 'b', 'c', 'd', 'e', 'f']
 	 * "a,b,c,d".split(',') == ['a', 'b', 'c', 'd']
 	 * ```
-	 *
-	 * @primi.func(call-conv: callargs)
 	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function split(
 		CallArgs $args
 	): ListValue {
@@ -354,9 +350,8 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".contains("sen") == true
 	 * "this is a sentence".contains("yay") == false
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function contains(
 		StringValue $haystack,
 		AbstractValue $needle
@@ -371,9 +366,8 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".number_of("s") == 3
 	 * "this is a sentence".number_of("x") == 0
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function number_of(
 		StringValue $haystack,
 		AbstractValue $needle
@@ -400,9 +394,8 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".find_first("t") == 0
 	 * "this is a sentence".find_first("x") == null
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function find_first(StringValue $haystack, AbstractValue $needle): AbstractValue {
 
 		// Allow only some value types.
@@ -426,10 +419,12 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".find_first("t") == 0
 	 * "this is a sentence".find_first("x") == null
 	 * ```
-	 *
-	 * @primi.func
 	 */
-	public static function find_last(StringValue $haystack, AbstractValue $needle): AbstractValue {
+	#[PrimiFunc]
+	public static function find_last(
+		StringValue $haystack,
+		AbstractValue $needle
+	): AbstractValue {
 
 		// Allow only some value types.
 		Func::allow_argument_types(1, $needle, StringValue::class, NumberValue::class);
@@ -452,9 +447,8 @@ class StringTypeExtension extends TypeExtension {
 	 * ':::'.join({'a': 1, 'b': 2, 'c': '3'}) == "1:::2:::3"
 	 * '-PADDING-'.join("abc") == "a-PADDING-b-PADDING-c" // String is also iterable.
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc(toStack: \true)]
 	public static function join(
 		StringValue $string,
 		AbstractValue $iterable
@@ -494,10 +488,12 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".starts_with("e") == true
 	 * "this is a sentence".starts_with("x") == false
 	 * ```
-	 *
-	 * @primi.func
 	 */
-	public static function starts_with(StringValue $haystack, StringValue $needle): BoolValue {
+	#[PrimiFunc]
+	public static function starts_with(
+		StringValue $haystack,
+		StringValue $needle
+	): BoolValue {
 		return Interned::bool(\str_starts_with($haystack->value, $needle->value));
 	}
 
@@ -509,10 +505,12 @@ class StringTypeExtension extends TypeExtension {
 	 * "this is a sentence".ends_with("e") == true
 	 * "this is a sentence".ends_with("x") == false
 	 * ```
-	 *
-	 * @primi.func
 	 */
-	public static function ends_with(StringValue $haystack, StringValue $needle): BoolValue {
+	#[PrimiFunc]
+	public static function ends_with(
+		StringValue $haystack,
+		StringValue $needle
+	): BoolValue {
 		return Interned::bool(\str_ends_with($haystack->value, $needle->value));
 	}
 

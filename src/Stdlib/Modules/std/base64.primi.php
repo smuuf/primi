@@ -1,6 +1,7 @@
 <?php
 namespace Smuuf\Primi\Stdlib\Modules;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Helpers\Interned;
@@ -22,9 +23,8 @@ class extends NativeModule {
 	 * ```js
 	 * base64.encode('hello there, fellow kids') == "aGVsbG8gdGhlcmUsIGZlbGxvdyBraWRz"
 	 * ```
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function encode(StringValue $data): StringValue {
 		return Interned::string(\base64_encode($data->value));
 	}
@@ -36,9 +36,8 @@ class extends NativeModule {
 	 * ```js
 	 * base64.encode('hello there, fellow kids') == "aGVsbG8gdGhlcmUsIGZlbGxvdyBraWRz"
 	 * ```
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function decode(StringValue $data): StringValue {
 
 		$result = \base64_decode($data->value, \true);

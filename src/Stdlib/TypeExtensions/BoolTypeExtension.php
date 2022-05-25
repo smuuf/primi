@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\BoolValue;
@@ -12,9 +13,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
 
 class BoolTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
 		?AbstractValue $value = \null
@@ -39,9 +38,8 @@ class BoolTypeExtension extends TypeExtension {
 	 * bool.not(false) == true
 	 * bool.not(true) == false
 	 * ```
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function not(BoolValue $value): BoolValue {
 		return Interned::bool(!$value->value);
 	}
@@ -54,9 +52,8 @@ class BoolTypeExtension extends TypeExtension {
 	 * true.and(true) == true
 	 * bool_and(true, false) == false
 	 * ```
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function and(BoolValue $a, BoolValue $b): BoolValue {
 		return Interned::bool($a->value && $b->value);
 	}
@@ -75,9 +72,8 @@ class BoolTypeExtension extends TypeExtension {
 	 * bool_or(false, true) == true
 	 * bool_or(false, false) == false
 	 * ```
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function or(BoolValue $a, BoolValue $b): BoolValue {
 		return Interned::bool($a->value || $b->value);
 	}
@@ -96,9 +92,8 @@ class BoolTypeExtension extends TypeExtension {
 	 * bool_xor(false, true) == true
 	 * bool_xor(false, false) == false
 	 * ```
-	 *
-	 * @primi.func(no-stack)
 	 */
+	#[PrimiFunc]
 	public static function xor(BoolValue $a, BoolValue $b): BoolValue {
 		return Interned::bool($a->value xor $b->value);
 	}

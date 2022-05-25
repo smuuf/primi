@@ -21,14 +21,17 @@ class WhileStatement extends SimpleHandler {
 
 		// Counter for determining when to tick the task queue.
 		$tickCounter = 0;
+		$queue = $context->getTaskQueue();
 
 		while (
 			$condHandler::run($node['left'], $context)->isTruthy()
 		) {
 
-			// Tick the task queue every 10 iterations.
-			if ($tickCounter++ % 10 === 0) {
+			// Tick the task queue every 4 iterations.
+			if (++$tickCounter === 4) {
 				$context->getTaskQueue()->tick();
+				$queue->tick();
+				$tickCounter = 0;
 			}
 
 			try {
@@ -46,7 +49,7 @@ class WhileStatement extends SimpleHandler {
 
 		}
 
-		$context->getTaskQueue()->tick();
+		$queue->tick();
 
 	}
 

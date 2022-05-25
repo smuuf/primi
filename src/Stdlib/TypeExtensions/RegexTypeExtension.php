@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Ex\TypeError;
+use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Helpers\Interned;
+use \Smuuf\Primi\Extensions\PrimiFunc;
+use \Smuuf\Primi\Extensions\TypeExtension;
 
 class RegexTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
 		?AbstractValue $value = \null
@@ -42,11 +41,10 @@ class RegexTypeExtension extends TypeExtension {
 	 * returns `false`.
 	 *
 	 * ```js
-	 * rx"[xyz]+".match("abbcxxyzzdeef") == "xxyzz"
+	 * rx"[xyz]+".match_first("abbcxxyzzdeef") == "xxyzz"
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function match(
 		RegexValue $regex,
 		StringValue $haystack

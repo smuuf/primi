@@ -6,7 +6,7 @@ namespace Smuuf\Primi\Modules;
 
 use \Smuuf\StrictObject;
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\MethodExtractor;
+use \Smuuf\Primi\Extensions\MethodExtractor;
 
 class NativeModuleExecutor {
 

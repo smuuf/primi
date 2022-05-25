@@ -2,18 +2,17 @@
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Extensions\TypeExtension;
 use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Extensions\TypeExtension;
 
 class TupleTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
 		?AbstractValue $value = \null

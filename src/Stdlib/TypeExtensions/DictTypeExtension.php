@@ -3,6 +3,7 @@
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
 use \Smuuf\Primi\Values\AbstractValue;
@@ -19,9 +20,7 @@ use \Smuuf\Primi\Values\TypeValue;
 
 class DictTypeExtension extends TypeExtension {
 
-	/**
-	 * @primi.func(no-stack)
-	 */
+	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
 		?AbstractValue $value = \null
@@ -42,9 +41,7 @@ class DictTypeExtension extends TypeExtension {
 		}
 
 		try {
-
 			return new DictValue(Func::mapping_to_couples($value));
-
 		} catch (UnhashableTypeException $e) {
 			throw new TypeError(\sprintf(
 				"Cannot create dict with key containing unhashable type '%s'",
@@ -66,9 +63,8 @@ class DictTypeExtension extends TypeExtension {
 	 * d.get('100') == null
 	 * d.get('100', ['one', 'hundred']) == ['one', 'hundred']
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function get(
 		DictValue $dict,
 		AbstractValue $key,
@@ -93,9 +89,8 @@ class DictTypeExtension extends TypeExtension {
 	 * d.has_value(100) == false
 	 * d.has_value(false) == false
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function has_value(
 		DictValue $dict,
 		AbstractValue $needle
@@ -113,9 +108,8 @@ class DictTypeExtension extends TypeExtension {
 	 * d.has_key('100') == false
 	 * d.has_key('yes') == false
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function has_key(
 		DictValue $dict,
 		AbstractValue $key
@@ -136,9 +130,8 @@ class DictTypeExtension extends TypeExtension {
 	 * ```js
 	 * {'a': 1, 100: 'yes'}.items() == [('a', 1), (100: 'yes')]
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function items(DictValue $dict): ListValue {
 
 		$list = [];
@@ -156,9 +149,8 @@ class DictTypeExtension extends TypeExtension {
 	 * ```js
 	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function values(DictValue $dict): ListValue {
 		return new ListValue(
 			\iterator_to_array($dict->value->getValuesIterator())
@@ -171,9 +163,8 @@ class DictTypeExtension extends TypeExtension {
 	 * ```js
 	 * {'a': 1, 100: 'yes'}.values() == [1, 'yes']
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function keys(DictValue $dict): ListValue {
 		return new ListValue(
 			\iterator_to_array($dict->value->getKeysIterator())
@@ -191,9 +182,8 @@ class DictTypeExtension extends TypeExtension {
 	 * a_dict == {'a': 1, 100: 'yes'}
 	 * b_dict == {'a': 1, 100: 'nope'}
 	 * ```
-	 *
-	 * @primi.func
 	 */
+	#[PrimiFunc]
 	public static function copy(DictValue $dict): DictValue {
 		return clone $dict;
 	}
@@ -209,9 +199,8 @@ class DictTypeExtension extends TypeExtension {
 	 * fn = (v, k) => { return k + "|" + v; }
 	 * a_dict.map(fn) == {"key_a": "key_a|val_a", "key_b": "key_b|val_b"}
 	 * ```
-	 *
-	 * @primi.func(call-conv: callargs)
 	 */
+	#[PrimiFunc(toStack: \true, callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function map(
 		CallArgs $args,
 		Context $ctx

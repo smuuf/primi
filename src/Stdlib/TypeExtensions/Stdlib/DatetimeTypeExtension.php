@@ -2,6 +2,7 @@
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions\Stdlib;
 
+use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\StringValue;
@@ -19,9 +20,7 @@ class DatetimeTypeExtension extends TypeExtension {
 	/** @const string Timestamp attr name. */
 	private const ATTR_TS = '_ts';
 
-	/**
-	 * @primi.func(call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __init__(
 		CallArgs $args
 	): void {
@@ -44,12 +43,9 @@ class DatetimeTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func(no-stack, call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __repr__(
-		CallArgs $args,
-		Context $ctx
+		CallArgs $args
 	): AbstractValue {
 
 		[$self] = $args->extractPositional(1);
@@ -61,9 +57,7 @@ class DatetimeTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func(no-stack, call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __op_sub__(
 		CallArgs $args,
 		Context $ctx
@@ -100,9 +94,7 @@ class DatetimeTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func(no-stack, call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __op_add__(
 		CallArgs $args,
 		Context $ctx
@@ -127,9 +119,7 @@ class DatetimeTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func(call-conv: callargs)
-	 */
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function __op_eq__(
 		CallArgs $args
 	): AbstractValue {
@@ -147,9 +137,7 @@ class DatetimeTypeExtension extends TypeExtension {
 
 	}
 
-	/**
-	 * @primi.func
-	 */
+	#[PrimiFunc]
 	public static function format(
 		AbstractValue $self,
 		StringValue $format
