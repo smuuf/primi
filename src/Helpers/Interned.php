@@ -144,8 +144,8 @@ abstract class Interned {
 	 */
 	public static function string(string $str) {
 
-		// Strings up to 32 characters will be interned.
-		if (\strlen($str) <= 32) {
+		// Strings up to 8 characters will be interned.
+		if (\strlen($str) <= 8) {
 			return self::$internedString[$str]
 				?? (self::$internedString[$str] = new StringValue($str));
 		}
@@ -160,7 +160,7 @@ abstract class Interned {
 	public static function regex(string $regex) {
 
 		// Regexes up to 32 characters will be interned.
-		if (\strlen($regex) <= 32) {
+		if (\strlen($regex) <= 8) {
 			return self::$internedRegex[$regex]
 				?? (self::$internedRegex[$regex] = new RegexValue($regex));
 		}
