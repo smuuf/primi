@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Parser;
 
 abstract class GrammarRulesLabels {

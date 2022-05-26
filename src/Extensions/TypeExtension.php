@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Extensions;
 
 use \Smuuf\Primi\Values\FuncValue;

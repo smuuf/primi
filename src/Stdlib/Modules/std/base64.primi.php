@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Extensions\PrimiFunc;

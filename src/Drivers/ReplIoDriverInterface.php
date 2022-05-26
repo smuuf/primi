@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smuuf\Primi\Drivers;
 
 interface ReplIoDriverInterface extends StdIoDriverInterface {
