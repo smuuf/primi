@@ -29,4 +29,12 @@ abstract class ValueFriends {
 	 */
 	protected array $attrs = [];
 
+	/**
+	 * Internal attributes of Primi object that are not directly accessible
+	 * from Primi userland.
+	 *
+	 * @var array<string, mixed>
+	 */
+	public array $internal = [];
+
 }
