@@ -19,9 +19,11 @@ abstract class Logger {
 
 	public static function debug(string $msg): void {
 
-		if (self::$enabled) {
-			Term::stderr(Term::debug($msg));
+		if (!self::$enabled) {
+			return;
 		}
+
+		Term::stderr(Term::debug($msg));
 
 	}
 

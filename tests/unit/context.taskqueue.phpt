@@ -23,8 +23,9 @@ for (num in [10, 20, 30]) {
 }
 SRC;
 
-$mainScope = $i->run($src);
-$ctx = $i->getLastContext();
+$interpreterResult = $i->run($src);
+$mainScope = $interpreterResult->getScope();
+$ctx = $interpreterResult->getContext();
 
 Assert::same('60', $mainScope->getVariable('result')->getCoreValue());
 

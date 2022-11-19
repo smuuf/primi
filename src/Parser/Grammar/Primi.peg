@@ -29,6 +29,17 @@ class PrimiParser extends Parser\Packrat {
 	}
 
 	/**
+	 * Prevent parsing variable name which has the same name as some reserved
+	 * word. Setting result to false will tell the parser that is should try
+	 * other parser rules.
+	 */
+	protected function Variable__finalise(&$result) {
+		if (GrammarHelpers::isReservedWord($result['text'])) {
+			$result = \false;
+		}
+	}
+
+	/**
 	 * Add number of stars present at a starred expression.
 	 */
 	protected function StarredExpression__finalise(&$result) {

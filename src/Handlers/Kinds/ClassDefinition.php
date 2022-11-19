@@ -44,7 +44,7 @@ class ClassDefinition extends SimpleHandler {
 		// Variables (and functions) declared inside the class will then
 		// be attributes
 		$wrapper = new ContextPushPopWrapper($context, \null, $classScope);
-		$wrapper->wrap(fn($ctx) => HandlerFactory::runNode($node['def'], $ctx));
+		$wrapper->wrap(static fn($ctx) => HandlerFactory::runNode($node['def'], $ctx));
 
 		$result = new TypeValue(
 			$className,

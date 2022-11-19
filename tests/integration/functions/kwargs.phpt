@@ -21,7 +21,7 @@ result = f(1, 2, 3, 4)
 SRC;
 
 Assert::noError(function() use ($i, $src) {
-	$result = $i->run($src)->getVariable('result')->getStringValue();
+	$result = $i->run($src)->getScope()->getVariable('result')->getStringValue();
 	Assert::same('1, 2, 3, 4', $result);
 });
 
@@ -31,7 +31,7 @@ result = f(1, 2, d: 3, c: 4)
 SRC;
 
 Assert::noError(function() use ($i, $src) {
-	$result = $i->run($src)->getVariable('result')->getStringValue();
+	$result = $i->run($src)->getScope()->getVariable('result')->getStringValue();
 	Assert::same('1, 2, 4, 3', $result);
 });
 
@@ -41,7 +41,7 @@ result = f(c: 1, d: 2, b: 3, a: 4)
 SRC;
 
 Assert::noError(function() use ($i, $src) {
-	$result = $i->run($src)->getVariable('result')->getStringValue();
+	$result = $i->run($src)->getScope()->getVariable('result')->getStringValue();
 	Assert::same('4, 3, 1, 2', $result);
 });
 

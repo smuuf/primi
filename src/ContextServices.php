@@ -16,61 +16,28 @@ class ContextServices {
 
 	use StrictObject;
 
-	private Context $ctx;
-	private InterpreterServices $interpreterServices;
-
 	private TaskQueue $taskQueue;
 	private Importer $importer;
-
-	/** Directory of the main module. */
-	private ?string $mainDirectory;
+	private AstProvider $astProvider;
 
 	public function __construct(
-		Context $ctx,
-		InterpreterServices $interpreterServices,
-		?string $mainDirectory = null
-	) {
-		$this->interpreterServices = $interpreterServices;
-		$this->mainDirectory = $mainDirectory;
-		$this->ctx = $ctx;
-	}
+		private Context $ctx,
+		private Config $config,
+	) {}
 
 	public function getTaskQueue(): TaskQueue {
-
-		if (isset($this->taskQueue)) {
-			return $this->taskQueue;
-		}
-
-		return $this->taskQueue = new TaskQueue($this->ctx);
-
+		return $this->taskQueue
+			??= new TaskQueue($this->ctx);
 	}
 
 	public function getImporter(): Importer {
-
-		if (isset($this->importer)) {
-			return $this->importer;
-		}
-
-		// Build import paths list based on interpreter config + the
-		// directory of this context's main module, if it is defined.
-		$importPaths = $this->interpreterServices
-			->getConfig()
-			->getImportPaths();
-
-		if ($this->mainDirectory) {
-			$importPaths[] = $this->mainDirectory;
-		}
-
-		return $this->importer = new Importer($this->ctx, $importPaths);
-
+		return $this->importer
+			??= new Importer($this->ctx, $this->config->getImportPaths());
 	}
 
-	//
-	// Access to parent interpreter services.
-	//
-
 	public function getAstProvider(): AstProvider {
-		return $this->interpreterServices->getAstProvider();
+		return $this->astProvider
+			??= new AstProvider($this->config->getTempDir());
 	}
 
 }

@@ -12,11 +12,11 @@ use \Smuuf\Primi\EnvInfo;
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Ex\BaseException;
-use \Smuuf\Primi\Code\Source;
-use \Smuuf\Primi\Code\SourceFile;
 use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Ex\SyntaxError;
+use \Smuuf\Primi\Code\Source;
+use \Smuuf\Primi\Code\SourceFile;
 use \Smuuf\Primi\Parser\ParserHandler;
 use \Smuuf\Primi\Helpers\Stats;
 use \Smuuf\Primi\Helpers\Colors;
@@ -108,19 +108,18 @@ class Entrypoint {
 		}
 
 		if ($cfg['input_is_code']) {
-
-			// Input is passed as a string of Primi source code.
+			// If the input is passed as a string of Primi source code, consider
+			// the current working directory as runtime's main directory.
 			$source = new Source($cfg['input']);
-
+			$mainDir = getcwd();
 		} else {
-
 			try {
 				$filepath = $cfg['input'];
 				$source = new SourceFile($filepath);
+				$mainDir = $source->getDirectory();
 			} catch (EngineError $e) {
 				self::errorExit($e->getMessage());
 			}
-
 		}
 
 		if ($cfg['parser_stats'] || $cfg['only_tree']) {
@@ -129,21 +128,19 @@ class Entrypoint {
 
 			// Run parser and catch any error that may have occurred.
 			try {
-
 				try {
 					$tree = $ph->run();
 				} catch (InternalSyntaxError $e) {
 					throw SyntaxError::fromInternal($e, $source);
 				}
-
 			} catch (BaseException $e) {
 				self::errorExit("{$e->getMessage()}");
 			}
 
-			// If requested, just print the syntax tree and die.
+			// If requested, just print the syntax tree.
 			if ($cfg['only_tree']) {
 				print_r($tree);
-				die;
+				return;
 			}
 
 			echo Term::line(Colors::get("{green}Parser stats:{_}"));
@@ -151,18 +148,24 @@ class Entrypoint {
 				$value = round($value, 4);
 				echo Term::line(Colors::get("- $name: {yellow}{$value} s{_}"));
 			}
+
 			return;
 
 		}
 
-		// Create interpreter.
 		$config = Config::buildDefault();
-		$config->addImportPath(getcwd());
-		$interpreter = new Interpreter($config);
+		$config->addImportPath($mainDir);
+
+		// Create interpreter.
+		try {
+			$interpreter = new Interpreter($config);
+		} catch (EngineError $e) {
+			self::errorExit($e->getMessage());
+		}
 
 		// Run interpreter and catch any error that may have occurred.
 		try {
-			$mainScope = $interpreter->run($source);
+			$interpreter->run($source);
 		} catch (EngineInternalError $e) {
 			throw $e;
 		} catch (BaseException $e) {

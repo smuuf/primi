@@ -16,7 +16,7 @@ class NativeModuleLoader {
 	public static function loadModule(Context $ctx, string $filepath): void {
 
 		// Closure to block access of the file's code to this PHP scope.
-		$loader = fn($modulePath) => require $modulePath;
+		$loader = static fn($modulePath) => require $modulePath;
 		$result = $loader($filepath);
 
 		if (!$result instanceof NativeModule) {

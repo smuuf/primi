@@ -21,7 +21,7 @@ result = f(1, 2, 3, 4)
 SRC;
 
 Assert::noError(function() use ($i, $src) {
-	$result = $i->run($src)->getVariable('result')->getStringValue();
+	$result = $i->run($src)->getScope()->getVariable('result')->getStringValue();
 	Assert::same('1, 2, args: (3, 4), kwargs: {}', $result);
 });
 
@@ -31,7 +31,7 @@ result = f(1, 2, 3, 4, kw1: 'hi', kw2: 'hello')
 SRC;
 
 Assert::noError(function() use ($i, $src) {
-	$result = $i->run($src)->getVariable('result')->getStringValue();
+	$result = $i->run($src)->getScope()->getVariable('result')->getStringValue();
 	Assert::same('1, 2, args: (3, 4), kwargs: {"kw1": "hi", "kw2": "hello"}', $result);
 });
 
@@ -41,7 +41,7 @@ result = f(1, 2, 3, 4, c:5)
 SRC;
 
 Assert::noError(function() use ($i, $src) {
-	$result = $i->run($src)->getVariable('result')->getStringValue();
+	$result = $i->run($src)->getScope()->getVariable('result')->getStringValue();
 	Assert::same('a:1, b:(2, 3, 4), c:5', $result);
 });
 

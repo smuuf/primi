@@ -9,6 +9,9 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\StackFrame;
 use \Smuuf\Primi\Scope;
 
+/**
+ * @internal
+ */
 class ContextPushPopWrapper extends AbstractWrapper {
 
 	use StrictObject;

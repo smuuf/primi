@@ -38,6 +38,6 @@ Assert::exception(function() use ($i, $mainScope) {
 	$src = <<<SRC
 		x = some_func(123, 456);
 	SRC;
-	$resultScope = $i->run($src, $mainScope);
+	$resultScope = $i->run($src, $mainScope)->getScope();
 	var_dump($resultScope->getVariables());
 }, ErrorException::class, "#Expected 'string' but got 'number' as argument 2#");

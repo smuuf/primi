@@ -20,13 +20,13 @@ assert(bool(1) == true, _)
 
 class Greeting {
 
-	attr_a = 'Some attribute A from class Greeting'
-	attr_b = 'Some attribute B from class Greeting'
-	variants = {"a": "Hey", "b": "Hello"}
+    attr_a = 'Some attribute A from class Greeting'
+    attr_b = 'Some attribute B from class Greeting'
+    variants = {"a": "Hey", "b": "Hello"}
 
-	function get_greeting(self, name, variant) {
-		return f"{self.variants[variant]} {name}!"
-	}
+    function get_greeting(self, name, variant) {
+        return f"{self.variants[variant]} {name}!"
+    }
 
 }
 
@@ -38,12 +38,17 @@ class Greeting {
 
 class Ahojky(Greeting) {
 
-	attr_b = 'Overridden attribute B by class Ahojky'
-	attr_c = 'Some attribute C from class Ahojky'
+    attr_b = 'Overridden attribute B by class Ahojky'
+    attr_c = 'Some attribute C from class Ahojky'
 
-	function get_greeting(self, name) {
-		return f"Ahojky {name}!"
-	}
+    class InnerAhojky {
+        sub_attr_a = string
+        sub_attr_b = Greeting
+    }
+
+    function get_greeting(self, name) {
+        return f"Ahojky {name}!"
+    }
 
 }
 
@@ -95,15 +100,15 @@ assert(ahojky.get_greeting('Padishah Emperor') == 'Ahojky Padishah Emperor!')
 //
 
 custom_type = type('CustomType', object, {
-	'some_attr_x': 'no value',
-	'__init__': (self, arg) => {
-		print(f'self: {self}, arg: {arg}')
-		print(f'setting self.some_attr_x to "{arg}"')
-		self.some_attr_x = arg
-	},
-	'try_me': (self, what) => {
-		print(f'self: {self}, what: {what}, some_attr_x: {self.some_attr_x}')
-	},
+    'some_attr_x': 'no value',
+    '__init__': (self, arg) => {
+        print(f'self: {self}, arg: {arg}')
+        print(f'setting self.some_attr_x to "{arg}"')
+        self.some_attr_x = arg
+    },
+    'try_me': (self, what) => {
+        print(f'self: {self}, what: {what}, some_attr_x: {self.some_attr_x}')
+    },
 })
 
 assert(type(custom_type) == type)
@@ -121,21 +126,21 @@ instance.try_me('anything')
 //
 
 assert_error(() => {
-	custom_type = type('CustomType', object, {
-		'123': 'this is invalid variable name'
-	})
+    custom_type = type('CustomType', object, {
+        '123': 'this is invalid variable name'
+    })
 })
 
 assert_error(() => {
-	custom_type = type('CustomType', object, {
-		123: 'this also is invalid variable name'
-	})
+    custom_type = type('CustomType', object, {
+        123: 'this also is invalid variable name'
+    })
 })
 
 assert_error(() => {
-	custom_type = type('CustomType', object, {
-		('lol', 'a', 'tuple'): 'this is completely invalid variable name'
-	})
+    custom_type = type('CustomType', object, {
+        ('lol', 'a', 'tuple'): 'this is completely invalid variable name'
+    })
 })
 
 //
@@ -170,7 +175,7 @@ class Struct {
 
         print(f"Getting tree with message: '{message}'")
 
-        while (hasattr(new, 'substruct')) {
+        while (hasattr(new, 'substruct') and new.substruct) {
             tree.push(new.substruct)
             new = new.substruct
         }

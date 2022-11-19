@@ -48,8 +48,11 @@ class Context {
 	/** @var Scope[] Scope stack list. */
 	private $scopeStack = [];
 
-	/** Direct reference to the scope on the top of the stack. */
-	private ?Scope $currentScope;
+	/**
+	 * Direct reference to the scope on the top of the stack.
+	 * @var ?Scope
+	 */
+	private $currentScope;
 
 	//
 	// Context services.
@@ -75,26 +78,16 @@ class Context {
 	/** Native 'std.__builtins__' module. */
 	private Scope $builtins;
 
-	/** Native 'std.types' module scope. */
-	private Scope $typesModule;
+	public function __construct(Config $config) {
 
-	public function __construct(
-		InterpreterServices $interpreterServices,
-		?string $mainDirectory = null
-	) {
+		$services = new ContextServices($this, $config);
+
+		$this->config = $config;
+		$this->stdIoDriver = $this->config->getStdIoDriver();
 
 		// Assign stuff to properties to avoid unnecessary indirections when
 		// accessing them (optimization).
-		$this->config = $interpreterServices->getConfig();
-		$this->astProvider = $interpreterServices->getAstProvider();
-		$this->stdIoDriver = $this->config->getStdIoDriver();
-
-		$services = new ContextServices(
-			$this,
-			$interpreterServices,
-			$mainDirectory
-		);
-
+		$this->astProvider = $services->getAstProvider();
 		$this->taskQueue = $services->getTaskQueue();
 		$this->importer = $services->getImporter();
 		$this->maxCallStackSize = $this->config->getCallStackLimit();
@@ -102,11 +95,6 @@ class Context {
 		// Import our builtins module.
 		$this->builtins = $this->importer
 			->getModule('std.__builtins__')
-			->getCoreValue();
-
-		// Import 'std.types' module for fast direct access.
-		$this->typesModule = $this->importer
-			->getModule('std.types')
 			->getCoreValue();
 
 	}
@@ -197,12 +185,6 @@ class Context {
 
 	public function getBuiltins(): Scope {
 		return $this->builtins;
-	}
-
-	// Direct access to 'std.types' module.
-
-	public function getTypesModule(): Scope {
-		return $this->typesModule;
 	}
 
 	// Scope management.

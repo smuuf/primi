@@ -6,6 +6,7 @@ namespace Smuuf\Primi;
 
 use \Smuuf\StrictObject;
 use \Smuuf\Primi\Scope;
+use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Code\Source;
 use \Smuuf\Primi\Code\SourceFile;
 use \Smuuf\Primi\Values\ModuleValue;
@@ -30,7 +31,14 @@ class Interpreter {
 	 * @param Config|null $config _(optional)_ Config for the interpreter.
 	 */
 	public function __construct(?Config $config = null) {
+
 		$this->config = $config ?? Config::buildDefault();
+		EnvInfo::bootCheck();
+
+	}
+
+	public function buildContext(): Context {
+		return new Context($this->config);
 	}
 
 	/**
@@ -46,47 +54,45 @@ class Interpreter {
 	/**
 	 * Main entrypoint for executing Primi source code.
 	 *
-	 * @param string|Source $source Source provided as string or instance of
-	 * `Source` object.
-	 * @param Scope|null $mainScope Optional scope object that is to
-	 * be used as global scope of the main module.
+	 * @param string|Source $source Primi source code provided as string or
+	 * as an instance of `Source` object.
+	 * @param Scope|null $scope Optional scope object that is to be used as
+	 * global scope of the main module.
+	 * @param Context|null $context Optional context object the interpreter
+	 * should use.
 	 */
 	public function run(
-		$source,
-		?Scope $mainScope = null
-	): Scope {
+		string|Source $source,
+		?Scope $scope = \null,
+		?Context $context = \null,
+	): InterpreterResult {
 
-		$mainDirectory = null;
-		if (\is_string($source)) {
-
-			// Convert string source to source string object, if necessary.
-			$source = new Source($source);
-
-		} elseif ($source instanceof SourceFile) {
-
-			// Extract main directory from the source file - it will be added
-			// to import paths for the Importer to use.
-			$mainDirectory = $source->getDirectory();
-
+		// This is forbidden - Context already has initialized importer
+		// with its import paths, but SourceFile would also expect its
+		// directory in the import paths.
+		if ($context && $source instanceof SourceFile) {
+			throw new EngineError(
+				"Cannot pass SourceFile and Context at the same time");
 		}
 
-		$mainScope = $mainScope ?? new Scope;
-		$mainModule = new ModuleValue('__main__', '', $mainScope);
+		$source = \is_string($source)
+			? new Source($source)
+			: $source;
 
-		$interpreterServices = new InterpreterServices($this->config);
-		$ast = $interpreterServices->getAstProvider()->getAst($source);
-
-		$frame = new StackFrame('<main>', $mainModule);
-		$context = new Context($interpreterServices, $mainDirectory);
-
+		$scope = $scope ?? new Scope;
+		$context = $context ?? $this->buildContext();
 		$this->lastContext = $context;
 
-		$wrapper = new ContextPushPopWrapper($context, $frame, $mainScope);
-		$wrapper->wrap(function($ctx) use ($ast) {
-			return DirectInterpreter::execute($ast, $ctx);
+		$mainModule = new ModuleValue(MagicStrings::MODULE_MAIN_NAME, '', $scope);
+
+		$ast = $context->getAstProvider()->getAst($source);
+		$frame = new StackFrame('<main>', $mainModule);
+		$wrapper = new ContextPushPopWrapper($context, $frame, $scope);
+		$wrapper->wrap(function($context) use ($ast) {
+			return DirectInterpreter::execute($ast, $context);
 		});
 
-		return $mainScope;
+		return new InterpreterResult($scope, $context);
 
 	}
 

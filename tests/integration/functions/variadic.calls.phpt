@@ -30,7 +30,7 @@ result = decorated(111, 222, 333, 444, kw1: 555, kw2: 666)
 SRC;
 
 Assert::noError(function() use ($i, $src) {
-	$result = $i->run($src)->getVariable('result')->getStringValue();
+	$result = $i->run($src)->getScope()->getVariable('result')->getStringValue();
 	Assert::same(
 		'BEGIN-a = 111, b = 222, args = (333, 444), kwargs = {"kw1": 555, "kw2": 666}-END',
 		$result

@@ -29,7 +29,7 @@ class PrimiFunc {
 		private int $callConv = self::CONV_NATIVE,
 	) {
 		if (!\in_array($callConv, self::VALID_CONVENTIONS)) {
-			throw new EngineError("Invalid callConv argument");
+			throw new EngineError('Invalid $callConv argument');
 		}
 	}
 
