@@ -66,10 +66,6 @@ class extends NativeModule {
 		Context $ctx
 	): NullValue {
 
-		if ($ctx->getConfig()->getSandboxMode()) {
-			throw new RuntimeError("Function 'print' disabled in sandbox");
-		}
-
 		$io = $ctx->getStdIoDriver();
 
 		if ($args->isEmpty()) {
