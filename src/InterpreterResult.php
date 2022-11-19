@@ -16,7 +16,7 @@ class InterpreterResult {
 
 	public function __construct(
 		private Scope $scope,
-		private Context $ctx,
+		private Context $context,
 	) {}
 
 	public function getScope(): Scope {
