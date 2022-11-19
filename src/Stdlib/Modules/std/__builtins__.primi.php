@@ -38,7 +38,7 @@ class extends NativeModule {
 
 		$types = $ctx->getImporter()
 			->getModule('std.types')
-			->getInternalValue();
+			->getCoreValue();
 
 		return [
 			'object' => $types->getVariable('object'),
@@ -82,8 +82,8 @@ class extends NativeModule {
 		$sep = $args['sep'] ?? Interned::string(" ");
 
 		$pieces = \array_map(
-			fn($v) => $v->getStringValue(),
-			$args['args']->getInternalValue()
+			static fn($v) => $v->getStringValue(),
+			$args['args']->getCoreValue()
 		);
 
 		$io->stdout(
@@ -176,14 +176,14 @@ class extends NativeModule {
 
 		// No explicit 'end' argument? That means 'start' actually means 'end'.
 		if (!isset($args['end'])) {
-			$end = $args['start']->getInternalValue();
+			$end = $args['start']->getCoreValue();
 			$start = '0';
 		} else {
-			$start = $args['start']->getInternalValue();
-			$end = $args['end']->getInternalValue();
+			$start = $args['start']->getCoreValue();
+			$end = $args['end']->getCoreValue();
 		}
 
-		$step = isset($args['step']) ? $args['step']->getInternalValue() : '1';
+		$step = isset($args['step']) ? $args['step']->getCoreValue() : '1';
 
 		if (
 			!Func::is_round_int($start)

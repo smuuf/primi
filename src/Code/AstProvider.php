@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Code;
 
 use \Smuuf\StrictObject;
-use \Smuuf\Primi\Location;
 use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Parser\ParserHandler;

@@ -96,7 +96,7 @@ abstract class Func {
 	 */
 	public static function mapping_to_couples(AbstractValue $value) {
 
-		$internalValue = $value->getInternalValue();
+		$internalValue = $value->getCoreValue();
 		if ($internalValue instanceof MapContainer) {
 
 			// If the internal value already is a mapping represented by
@@ -330,14 +330,14 @@ abstract class Func {
 	public static function resolve_default_args(
 		array $current,
 		array $defaults,
-		Context $ctx
+		Context $ctx,
 	): array {
 
 		// Go through each of the known "defaults" for parameters and if its
 		// corresponding current argument is not yet defined, use that
 		// default's value definition (here presented as a AST node which we
-		// can execute - which
-		// is done at call-time) to fetch the argument's value.
+		// can execute - which is done at call-time) to fetch the
+		// argument's value.
 		foreach ($defaults as $name => $astNode) {
 			if (empty($current[$name])) {
 				$current[$name] = HandlerFactory::runNode($astNode, $ctx);

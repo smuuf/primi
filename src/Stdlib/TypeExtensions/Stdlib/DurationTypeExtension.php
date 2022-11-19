@@ -29,7 +29,7 @@ class DurationTypeExtension extends TypeExtension {
 
 		$self->attrSet(self::ATTR_TOTSEC, $totalSec);
 
-		$totalSecInt = $totalSec->getInternalValue();
+		$totalSecInt = $totalSec->getCoreValue();
 		$self->attrSet(
 			'days',
 			Interned::number((string) floor((int) $totalSecInt / 86400))

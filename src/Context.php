@@ -102,12 +102,12 @@ class Context {
 		// Import our builtins module.
 		$this->builtins = $this->importer
 			->getModule('std.__builtins__')
-			->getInternalValue();
+			->getCoreValue();
 
 		// Import 'std.types' module for fast direct access.
 		$this->typesModule = $this->importer
 			->getModule('std.types')
-			->getInternalValue();
+			->getCoreValue();
 
 	}
 

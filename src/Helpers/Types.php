@@ -57,7 +57,7 @@ abstract class Types {
 			if ($bind && $value instanceof FuncValue) {
 				$args = new CallArgs([$bind]);
 				return new FuncValue(
-					$value->getInternalValue(),
+					$value->getCoreValue(),
 					$args
 				);
 			}
@@ -74,7 +74,7 @@ abstract class Types {
 				if ($bind && $value instanceof FuncValue) {
 					$args = new CallArgs([$bind]);
 					return new FuncValue(
-						$value->getInternalValue(),
+						$value->getCoreValue(),
 						$args
 					);
 				}

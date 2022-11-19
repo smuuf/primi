@@ -51,7 +51,7 @@ class DatetimeTypeExtension extends TypeExtension {
 	): AbstractValue {
 
 		[$self] = $args->extractPositional(1);
-		$ts = (int) $self->attrGet(self::ATTR_TS)->getInternalValue();
+		$ts = (int) $self->attrGet(self::ATTR_TS)->getCoreValue();
 
 		$formatted = \date(self::FMT_SQL, $ts);
 		$repr = "Datetime('$formatted')";

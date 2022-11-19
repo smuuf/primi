@@ -76,7 +76,7 @@ abstract class AbstractValue extends ValueFriends {
 	 *
 	 * @return mixed
 	 */
-	final public function getInternalValue() {
+	final public function getCoreValue() {
 		return $this->value;
 	}
 
@@ -291,7 +291,7 @@ abstract class AbstractValue extends ValueFriends {
 	 *
 	 * @internal
 	 */
-	public function rawAttrGet(string $name): ?AbstractValue {
+	final public function rawAttrGet(string $name): ?AbstractValue {
 		return $this->attrs[$name] ?? \null;
 	}
 

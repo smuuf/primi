@@ -17,7 +17,7 @@ use \Smuuf\Primi\Values\{
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(AbstractValue $v) {
-	return $v->getInternalValue();
+	return $v->getCoreValue();
 }
 
 $ctx = new Context(new InterpreterServices(Config::buildDefault()));
@@ -35,7 +35,7 @@ $five = new NumberValue(5);
 // that typehint its parameters as Primi's AbstractValue class or its descendants.
 
 $closure = function(NumberValue $a, NumberValue $b) {
-	return new NumberValue($a->getInternalValue() * $b->getInternalValue() ** 2);
+	return new NumberValue($a->getCoreValue() * $b->getCoreValue() ** 2);
 };
 
 // Create Primi function from a native PHP function.

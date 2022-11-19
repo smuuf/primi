@@ -82,7 +82,7 @@ try {
 
     // Get defined variables from primary context and print them.
     foreach ($context->getVariables() as $name => $value) {
-        printf("%s (%s) ... %s\n", $name, $value::TYPE, $value->getInternalValue());
+        printf("%s (%s) ... %s\n", $name, $value::TYPE, $value->getCoreValue());
     }
 
 } catch (\Smuuf\Primi\ErrorException $e) {

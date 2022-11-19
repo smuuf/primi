@@ -12,7 +12,7 @@ use \Smuuf\Primi\Helpers\Interned;
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(AbstractValue $v) {
-	return $v->getInternalValue();
+	return $v->getCoreValue();
 }
 
 $null = new NullValue;

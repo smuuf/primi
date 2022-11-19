@@ -73,9 +73,9 @@ Assert::type(NumberValue::class, $scope->getVariable('var_e'));
 Assert::type(StringValue::class, $scope->getVariable('var_f'));
 Assert::type(ListValue::class, $scope->getVariable('var_g'));
 Assert::type(DictValue::class, $scope->getVariable('var_h'));
-Assert::same("123", $scope->getVariable('var_e')->getInternalValue());
-Assert::same("hello there!", $scope->getVariable('var_f')->getInternalValue());
-Assert::type('array', $scope->getVariable('var_g')->getInternalValue());
+Assert::same("123", $scope->getVariable('var_e')->getCoreValue());
+Assert::same("hello there!", $scope->getVariable('var_f')->getCoreValue());
+Assert::type('array', $scope->getVariable('var_g')->getCoreValue());
 
 //
 // Functions.

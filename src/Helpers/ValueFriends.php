@@ -21,8 +21,13 @@ abstract class ValueFriends {
 
 	use StrictObject;
 
-	/** @var mixed Value itself. */
-	protected $value = \null;
+	/**
+	 * Core value of a value object.
+	 *
+	 * This is relevant primarily for Primi objects that represent primitive
+	 * values.
+	 */
+	protected mixed $value = \null;
 
 	/**
 	 * Attributes of Primi object.
@@ -37,6 +42,6 @@ abstract class ValueFriends {
 	 *
 	 * @var array<string, mixed>
 	 */
-	public array $internal = [];
+	protected array $internal = [];
 
 }

@@ -18,7 +18,7 @@ use \Smuuf\Primi\Helpers\Interned;
 require __DIR__ . '/../bootstrap.php';
 
 function get_val(AbstractValue $v) {
-	return $v->getInternalValue();
+	return $v->getCoreValue();
 }
 
 $string = new StringValue("this is a string.");
@@ -99,9 +99,9 @@ Assert::null($string->doAddition(new DictValue([])));
 //
 
 // Multiplication by an integer number.
-$result = $string->doMultiplication(new NumberValue(2))->getInternalValue();
+$result = $string->doMultiplication(new NumberValue(2))->getCoreValue();
 Assert::same("this is a string.this is a string.", $result);
-$result = $unicode->doMultiplication(new NumberValue(3))->getInternalValue();
+$result = $unicode->doMultiplication(new NumberValue(3))->getCoreValue();
 Assert::same("ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.", $result);
 
 // Multiplication with expected type but with invalid value will throw error.
