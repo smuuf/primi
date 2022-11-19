@@ -84,7 +84,7 @@ class TaskQueue {
 		// Because asynchronous events (e.g. signals) could modify (add tasks to)
 		// the $queue property while we're iterating through it, and
 		// the same (adding more tasks) could be done by any tasks we're now
-		// actually going to execute now, we need to handle these edge-case
+		// actually going to execute, we need to handle these edge-case
 		// situations.
 
 		// Create a copy of the queue and empty the main queue, so that any
