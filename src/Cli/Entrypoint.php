@@ -33,8 +33,6 @@ class Entrypoint {
 		// Parse the input (build AST), print parser stats and exit.
 		'print_runtime_stats' => false,
 		// After the script finishes, print out contents of main global scope.
-		'print_scope' => false,
-		// After the script finishes, print out contents of main global scope.
 		'parser_stats' => false,
 		// The default argument represents Primi code to run.
 		'input' => false,
@@ -62,7 +60,7 @@ class Entrypoint {
 		set_error_handler(function($severity, $message, $file, $line) {
 
 			// This error code is not included in error_reporting, so let it fall
-			// through to the standard PHP error handler
+			// through to the standard PHP error handler.
 			if (!(error_reporting() & $severity)) {
 				return false;
 			}
@@ -105,12 +103,8 @@ class Entrypoint {
 
 		// Determine the source. Act as REPL if no source was specified.
 		if (empty($cfg['input'])) {
-
-			Term::stderr($this->getHeaderString('REPL'));
-			$repl = new Repl;
-			$repl->start();
+			$this->runRepl();
 			return;
-
 		}
 
 		if ($cfg['input_is_code']) {
@@ -146,7 +140,7 @@ class Entrypoint {
 				self::errorExit("{$e->getMessage()}");
 			}
 
-			// If requested, just get the syntax tree and die.
+			// If requested, just print the syntax tree and die.
 			if ($cfg['only_tree']) {
 				print_r($tree);
 				die;
@@ -157,7 +151,7 @@ class Entrypoint {
 				$value = round($value, 4);
 				echo Term::line(Colors::get("- $name: {yellow}{$value} s{_}"));
 			}
-			die;
+			return;
 
 		}
 
@@ -176,12 +170,13 @@ class Entrypoint {
 			self::errorExit($colorized);
 		}
 
-		if ($cfg['print_scope']) {
-			foreach ($mainScope->getVariables() as $name => $value) {
-				echo "$name: {$value->getStringRepr()}\n";
-			}
-			die;
-		}
+	}
+
+	private function runRepl(): void {
+
+		Term::stderr($this->getHeaderString('REPL'));
+		$repl = new Repl;
+		$repl->start();
 
 	}
 
@@ -219,10 +214,6 @@ class Entrypoint {
 				case "--source":
 					$cfg['input_is_code'] = true;
 				break;
-				case "-ps":
-				case "--print-scope":
-					$cfg['print_scope'] = true;
-				break;
 				case "-rst":
 					case "--runtime-stats":
 						$cfg['print_runtime_stats'] = true;
@@ -253,14 +244,11 @@ class Entrypoint {
 			primi [<options>] [<input file>]
 		{green}Examples:{_}
 			primi ./some_file.primi
-			primi -ps ./some_file.primi
 			primi -s 'something = 1; print(something + 1)'
 			primi -rst -s 'something = 1; print(something + 1)'
 		{green}Options:{_}
 			{yellow}-h, --help{_}
 				Print this help.
-			{yellow}-ps, --print-scope{_}
-				Print contents of global scope after execution.
 			{yellow}-pst, --parser-stats{_}
 				Print parser stats upon exit (code is not executed).
 			{yellow}-rst, --stats{_}
