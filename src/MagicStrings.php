@@ -6,6 +6,9 @@ namespace Smuuf\Primi;
 
 abstract class MagicStrings {
 
+	public const MODULE_MAIN_NAME = '__main__';
+	public const ATTR_NAME = '__name__';
+
 	public const TYPE_OBJECT = 'object';
 
 	public const MAGICMETHOD_REPR = '__repr__';

@@ -3,7 +3,7 @@
 use \Smuuf\Primi\Drivers\ReplIoDriverInterface;
 use \Tester\Assert;
 
-use \Smuuf\Primi\Drivers\StdIoDriverInterface;
+use \Smuuf\Primi\MagicStrings;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -23,22 +23,24 @@ $commands = [
 	'exit',
 ];
 
+$mainModuleName = MagicStrings::MODULE_MAIN_NAME;
+
 // This is expected output. This will be compared with actual output down below.
 // Asterisk * means that the line can be whatever.
 $expected = [
-	"Error: Undefined variable 'a' @ <module: __main__> on line 1 at position 0",
+	"Error: Undefined variable 'a' @ <module: $mainModuleName> on line 1 at position 0",
 	"Traceback:",
-	"[0] <repl: cli> in <module: __main__>",
+	"[0] <repl: cli> in <module: $mainModuleName>",
 	"1",
-	"Error: Undefined variable 'b' @ <module: __main__> on line 1 at position 16",
+	"Error: Undefined variable 'b' @ <module: $mainModuleName> on line 1 at position 16",
 	"Traceback:",
-	"[0] <repl: cli> in <module: __main__>",
+	"[0] <repl: cli> in <module: $mainModuleName>",
 	"1",
 	"a: 1",
 	"_: 1",
-	"<function: __main__.<anonymous>()>",
+	"<function: $mainModuleName.<anonymous>()>",
 	"Traceback:",
-	"[0] <repl: cli> in <module: __main__>",
+	"[0] <repl: cli> in <module: $mainModuleName>",
 	'...', // ... - skip checking the rest.
 ];
 

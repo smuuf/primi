@@ -7,6 +7,7 @@ namespace Smuuf\Primi\Values;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Location;
+use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Stdlib\StaticTypes;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Structures\FnContainer;
@@ -22,14 +23,14 @@ class FuncValue extends AbstractNativeValue {
 
 	public function __construct(
 		FnContainer $fn,
-		?CallArgs $partialArgs = \null
+		?CallArgs $partialArgs = \null,
 	) {
 
 		$this->value = $fn;
 		$this->partialArgs = $partialArgs;
 
 		$this->name = $fn->getName();
-		$this->attrs['name'] = Interned::string($this->name);
+		$this->attrs[MagicStrings::ATTR_NAME] = Interned::string($this->name);
 
 	}
 
