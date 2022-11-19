@@ -100,9 +100,10 @@ class Repl {
 		// If context was not provided, create and use a new one.
 		if (!$ctx) {
 			$scope = new Scope;
-			$services = new InterpreterServices(Config::buildDefault());
-			$module = new ModuleValue('__main__', '', $scope);
-			$ctx = new Context($services, getcwd());
+			$config = Config::buildDefault();
+			$config->addImportPath(getcwd());
+			$ctx = new Context($config);
+			$module = new ModuleValue(MagicStrings::MODULE_MAIN_NAME, '', $scope);
 		} else {
 			$module = $ctx->getCurrentModule();
 			$scope = $ctx->getCurrentScope();
@@ -112,35 +113,36 @@ class Repl {
 
 		$wrapper = new ContextPushPopWrapper($ctx, $frame, $scope);
 		$wrapper->wrap(function($ctx) {
-
-			// Print out level (current frame's index in call stack).
-			if (!self::$noExtras) {
-				$this->driver->stderr(self::getStackInfo($ctx, true));
-				$this->printHelp();
-			}
-
 			$this->loop($ctx);
-
 		});
-
-		$this->saveHistory();
-
-		if (!self::$noExtras) {
-			$this->driver->stderr(Colors::get("{yellow}Exiting REPL...{_}\n"));
-		}
 
 	}
 
 	private function loop(Context $ctx): void {
 
+		// Print out level (current frame's index in call stack).
+		if (!self::$noExtras) {
+			$level = self::getStackLevel($ctx);
+			$this->driver->stderr(Colors::get(
+				"{darkgrey}Starting REPL at F {$level}{_}\n"
+			));
+			$this->printHelp();
+		}
+
 		$currentScope = $ctx->getCurrentScope();
 		$cellNumber = 1;
 
 		readline_completion_function(
-			fn($buffer) => self::autocomplete($buffer, $ctx)
+			static fn($buffer) => self::autocomplete($buffer, $ctx)
 		);
 
 		while (true) {
+
+			// Display frame level - based on current level of call stack.
+			$level = self::getStackLevel($ctx);
+			if (!self::$noExtras && $level) {
+				$this->driver->stderr(Colors::get("{darkgrey}F {$level}{_}\n"));
+			}
 
 			$input = $this->gatherLines($ctx);
 
@@ -168,7 +170,7 @@ class Repl {
 				case 'exit':
 					// Catch a non-command 'exit'.
 					// Return the result of last expression executed, or null.
-					return;
+					break 2;
 				case 'exit!':
 					// Catch a non-command 'exit!'.
 					// Just quit the whole thing.
@@ -204,6 +206,15 @@ class Repl {
 			$this->driver->stdout("\n");
 			$cellNumber++;
 
+		}
+
+		$this->saveHistory();
+
+		if (!self::$noExtras) {
+			$level = self::getStackLevel($ctx);
+			$this->driver->stderr(Colors::get(
+				"{yellow}Exiting REPL frame $level{_}\n"
+			));
 		}
 
 	}
@@ -280,7 +291,6 @@ class Repl {
 
 		$gathering = false;
 		$lines = '';
-		$stackInfo = self::getStackInfo($ctx);
 
 		while (true) {
 
@@ -288,11 +298,6 @@ class Repl {
 				$prompt = self::PRIMARY_PROMPT;
 			} else {
 				$prompt = self::MULTILINE_PROMPT;
-			}
-
-			// Display level of nesting - number of items in current call stack.
-			if (!self::$noExtras && $stackInfo) {
-				$this->driver->stderr("{$stackInfo}\n");
 			}
 
 			$input = $this->driver->input($prompt);
@@ -403,10 +408,10 @@ class Repl {
 		bool $full = false
 	): string {
 
-		$level = count($ctx->getCallStack());
+		$level = self::getStackLevel($ctx);
 
-		// Do not print anything for level 1 (or less, lol).
-		if ($level < 2) {
+		// Do not print anything for level 0 (or less, lol).
+		if ($level < 0) {
 			return '';
 		}
 
@@ -415,8 +420,12 @@ class Repl {
 			$out = "REPL at frame {$level}.\n";
 		}
 
-		return Colors::get("{darkgrey}{$out}{_}");
+		return Colors::get("{darkgrey}REPL at frame {$level}.\n{_}");
 
+	}
+
+	private static function getStackLevel(Context $ctx): int {
+		return \count($ctx->getCallStack()) - 1;
 	}
 
 	/**
@@ -490,7 +499,7 @@ class Repl {
 
 		$names = array_filter(
 			$names,
-			fn($name) => \str_starts_with($name, $buffer)
+			static fn($name) => \str_starts_with($name, $buffer)
 		);
 
 		// Typing "some_v[TAB]" if "some_var" exists should also
@@ -501,15 +510,15 @@ class Repl {
 		// like to access attributes via "some_var." quickly.
 		$starting = array_filter(
 			$names,
-			fn($n) => str_starts_with($n, $buffer)
+			static fn($n) => str_starts_with($n, $buffer)
 		);
 
 		// If there's only one candidate (eg. "debugger"), but it's not yet
-		// entered completely ("debugger"), add another candidate with space at
+		// entered completely ("debugge"), add another candidate with space at
 		// the end ("debugger "), so that readline autocomplete stops at the
-		// latest common string ("debugger|") instead of resolving into
+		// latest common character ("debugger|") instead of resolving into
 		// "debugger |" directly (readline adds the space automatically and
-		// we don¨t want that).
+		// we don't want that).
 		if (count($starting) === 1 && reset($starting) !== $buffer) {
 			$names[] = reset($starting) . " ";
 		}
