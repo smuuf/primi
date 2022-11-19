@@ -65,7 +65,7 @@ abstract class EnvInfo {
 	 */
 	public static function isRunningInCli(): bool {
 		return self::$runningInCli
-			?? (self::$runningInCli = \PHP_SAPI === 'cli');
+			?? (self::$runningInCli = \in_array(\PHP_SAPI, ['cli', 'phpdbg']));
 	}
 
 	/**
