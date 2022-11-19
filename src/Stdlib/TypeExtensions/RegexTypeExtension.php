@@ -6,10 +6,13 @@ namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Values\BoolValue;
+use \Smuuf\Primi\Values\DictValue;
+use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\StringValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\TypeValue;
+use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Extensions\TypeExtension;
@@ -37,18 +40,18 @@ class RegexTypeExtension extends TypeExtension {
 	}
 
 	/**
-	 * Regular expression match. Returns the first matching string. Otherwise
-	 * returns `false`.
+	 * Regular expression find. Returns the first occurence of matching string.
+	 * Otherwise returns `false`.
 	 *
 	 * ```js
-	 * rx"[xyz]+".match_first("abbcxxyzzdeef") == "xxyzz"
+	 * rx"[xyz]+".find("abbcxxyzzdeef") == "xxyzz"
 	 * ```
 	 */
 	#[PrimiFunc]
-	public static function match(
+	public static function find(
 		RegexValue $regex,
 		StringValue $haystack
-	): AbstractValue {
+	): StringValue|BoolValue {
 
 		if (!\preg_match($regex->value, $haystack->value, $matches)) {
 			return Interned::bool(\false);
