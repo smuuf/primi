@@ -19,19 +19,25 @@ class FuncValue extends AbstractNativeValue {
 
 	public const TYPE = "func";
 	private string $name;
-	private ?CallArgs $partialArgs;
 
 	public function __construct(
 		FnContainer $fn,
-		?CallArgs $partialArgs = \null,
+		protected ?CallArgs $partialArgs = \null,
+		protected bool $isStatic = \false,
 	) {
 
 		$this->value = $fn;
-		$this->partialArgs = $partialArgs;
 
 		$this->name = $fn->getName();
 		$this->attrs[MagicStrings::ATTR_NAME] = Interned::string($this->name);
 
+	}
+
+	/**
+	 * Get full name of the function.
+	 */
+	public function isStatic(): bool {
+		return $this->isStatic;
 	}
 
 	public function getType(): TypeValue {

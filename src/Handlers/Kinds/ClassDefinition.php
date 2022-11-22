@@ -9,9 +9,10 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Helpers\Types;
+use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Handlers\SimpleHandler;
 use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 
 class ClassDefinition extends SimpleHandler {
 
@@ -46,11 +47,14 @@ class ClassDefinition extends SimpleHandler {
 		$wrapper = new ContextPushPopWrapper($context, \null, $classScope);
 		$wrapper->wrap(static fn($ctx) => HandlerFactory::runNode($node['def'], $ctx));
 
+		$classAttrs = Types::prepareTypeMethods($classScope->getVariables());
+
 		$result = new TypeValue(
 			$className,
 			$parentType,
-			$classScope->getVariables(),
-			\false,
+			$classAttrs,
+			isFinal: \false,
+			isMutable: \true,
 		);
 
 		$context->getCurrentScope()->setVariable($className, $result);

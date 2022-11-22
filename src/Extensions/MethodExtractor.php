@@ -9,6 +9,7 @@ use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Structures\FnContainer;
 
+use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Ex\EngineError;
 
 abstract class MethodExtractor {
@@ -62,8 +63,12 @@ abstract class MethodExtractor {
 				$fnFlags[] = FnContainer::FLAG_TO_STACK;
 			}
 
+			$isStatic = $name === MagicStrings::MAGICMETHOD_NEW;
+
 			$result[$name] = new FuncValue(
-				FnContainer::buildFromClosure([$obj, $name], $fnFlags));
+				FnContainer::buildFromClosure([$obj, $name], $fnFlags),
+				isStatic: $isStatic,
+			);
 
 		}
 

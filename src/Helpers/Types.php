@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
+use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Ex\EngineError;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\NullValue;
+use \Smuuf\Primi\Structures\CallArgs;
 
 abstract class Types {
 
 	public static function is_subclass_of(
 		TypeValue $childType,
-		TypeValue $parentType
+		TypeValue $parentType,
 	): bool {
 
 		do {
@@ -26,6 +27,23 @@ abstract class Types {
 		} while ($childType = $childType->getParentType());
 
 		return \false;
+
+	}
+
+	/**
+	 * @param array<AbstractValue>
+	 */
+	public static function prepareTypeMethods(
+		array $methods,
+	): array {
+
+		if (isset($methods[MagicStrings::MAGICMETHOD_NEW])) {
+			$fn = $methods[MagicStrings::MAGICMETHOD_NEW];
+			$methods[MagicStrings::MAGICMETHOD_NEW] =
+				new FuncValue($fn->getCoreValue(), isStatic: true);
+		}
+
+		return $methods;
 
 	}
 
@@ -41,10 +59,14 @@ abstract class Types {
 	 * @return AbstractValue|null
 	 */
 	public static function attr_lookup(
-		TypeValue $typeObject,
+		?TypeValue $typeObject,
 		string $attrName,
 		?AbstractValue $bind = \null
 	) {
+
+		if (!$typeObject) {
+			return \null;
+		}
 
 		//
 		// Try attr access on the type object itself.
@@ -54,7 +76,7 @@ abstract class Types {
 		//
 
 		if ($value = $typeObject->rawAttrGet($attrName)) {
-			if ($bind && $value instanceof FuncValue) {
+			if ($bind && $value instanceof FuncValue && !$value->isStatic()) {
 				$args = new CallArgs([$bind]);
 				return new FuncValue(
 					$value->getCoreValue(),
@@ -71,7 +93,7 @@ abstract class Types {
 
 		while ($typeObject = $typeObject->getParentType()) {
 			if ($value = $typeObject->rawAttrGet($attrName)) {
-				if ($bind && $value instanceof FuncValue) {
+				if ($bind && $value instanceof FuncValue && !$value->isStatic()) {
 					$args = new CallArgs([$bind]);
 					return new FuncValue(
 						$value->getCoreValue(),
