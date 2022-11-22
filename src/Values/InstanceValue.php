@@ -24,13 +24,25 @@ class InstanceValue extends AbstractValue {
 		$this->ctx = $ctx;
 	}
 
+	/**
+	 * Returns a string representation of value.
+	 */
+	public function getStringValue(): string {
+
+		if ($magic = $this->attrGet(MagicStrings::MAGICMETHOD_STRING)) {
+			$result = $magic->invoke($this->ctx);
+			return $result->getStringValue();
+		}
+
+		return parent::getStringValue();
+
+	}
+
 	public function getStringRepr(): string {
 
 		if ($magic = $this->attrGet(MagicStrings::MAGICMETHOD_REPR)) {
-
 			$result = $magic->invoke($this->ctx);
 			return $result->getStringValue();
-
 		}
 
 		$id = Func::object_hash($this);
