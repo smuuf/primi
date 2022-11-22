@@ -14,7 +14,7 @@ abstract class Indices {
 
 	/**
 	 * Translate negative index to positive index that's a valid index for a
-	 * given number of items
+	 * given number of items.
 	 *
 	 * Return `null` when it's not possible to do so.
 	 *

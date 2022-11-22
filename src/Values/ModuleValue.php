@@ -83,8 +83,8 @@ class ModuleValue extends AbstractNativeValue {
 	 * Setting module attributes equals to setting variables into module's
 	 * scope.
 	 */
-	public function attrSet(string $key, AbstractValue $value): bool {
-		$this->value->setVariable($key, $value);
+	public function attrSet(string $name, AbstractValue $value): bool {
+		$this->value->setVariable($name, $value);
 		return \true;
 	}
 

@@ -23,18 +23,12 @@ class ObjectTypeExtension extends TypeExtension {
 
 		$posArgs = $args->getArgs();
 		$type = \array_shift($posArgs);
-		$callArgs = new CallArgs($posArgs, $args->getKwargs());
 
 		if (!$type instanceof TypeValue) {
 			throw new TypeError("First argument for object.__new__() must be a type");
 		}
 
-		$object = new InstanceValue($type, $ctx);
-		if ($init = $object->attrGet('__init__')) {
-			$init->invoke($ctx, $callArgs);
-		}
-
-		return $object;
+		return new InstanceValue($type, $ctx);
 
 	}
 

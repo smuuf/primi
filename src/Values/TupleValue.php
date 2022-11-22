@@ -79,11 +79,14 @@ class TupleValue extends AbstractNativeValue {
 			return $this->savedHash;
 		}
 
-		return $this->savedHash = \array_reduce(
+		$r = $this->savedHash = \array_reduce(
 			$this->value,
-			fn($c, $i) => \md5("{$c},{$i->hash()}"),
+			static fn($c, $i) => \md5("{$c},{$i->hash()}"),
 			''
 		);
+
+		return $r;
+
 	}
 
 	public function getLength(): ?int {

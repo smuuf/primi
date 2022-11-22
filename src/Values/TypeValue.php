@@ -101,7 +101,7 @@ final class TypeValue extends AbstractNativeValue {
 
 		// Special case: If this type object is _the_ "type" type object.
 		if ($this->name === self::TYPE) {
-			if ($fn = Types::attr_lookup($this, '__call__')) {
+			if ($fn = Types::attr_lookup($this, MagicStrings::MAGICMETHOD_CALL)) {
 				return $fn->invoke($context, $args, $callsite);
 			}
 		}
@@ -109,8 +109,17 @@ final class TypeValue extends AbstractNativeValue {
 		// The other possibility: This type object represents other type
 		// than the "type" type itself - and calling this object should
 		// represent instantiation of new object that will have this type.
-		if ($fn = Types::attr_lookup($this, '__new__', $this)) {
-			return $fn->invoke($context, $args, $callsite);
+		if ($fn = Types::attr_lookup($this, MagicStrings::MAGICMETHOD_NEW, $this)) {
+			$newArgs = $args
+				? new CallArgs([$this, ...$args->getArgs()], $args->getKwargs())
+				: new CallArgs([$this]);
+			$result = $fn->invoke($context, $newArgs, $callsite);
+
+			if ($init = $result->attrGet(MagicStrings::MAGICMETHOD_INIT)) {
+				$init->invoke($context, $args);
+			}
+
+			return $result;
 		}
 
 		return \null;
