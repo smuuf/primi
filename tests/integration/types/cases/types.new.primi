@@ -1,0 +1,107 @@
+// //
+// // Custom types/classes.
+// //
+
+
+// class A {
+//     function __new__(t, *a, **b) {
+//         return ('A', t, a, b)
+//     }
+// }
+
+
+// class B {
+//     function __new__(t, *a, **b) {
+//         return ('B', t, a, b)
+//     }
+// }
+
+
+// _ = "A.__new__() returns not an 'A' object, but an ordinary tuple."
+// a = A()
+// assert(a == ('A', A, tuple(), {}), _)
+
+// _ = "B.__new__() returns not an 'B' object, but an ordinary tuple."
+// b = B()
+// assert(b == ('B', B, tuple(), {}), _)
+
+// // Just passing an ordinary tuple object to A.__new__() - because why not.
+// a2 = A.__new__(a, 5, kw: 111)
+// assert(a2 == ('A', ('A', A, tuple(), {}), (5,), {'kw': 111}))
+// b2 = B.__new__(b, 6, kw: 222)
+// assert(b2 == ('B', ('B', B, tuple(), {}), (6,), {'kw': 222}))
+// ab = A.__new__(b, 7, kw: 333)
+// assert(ab == ('A', ('B', B, tuple(), {}), (7,), {'kw': 333}))
+// ba = B.__new__(a, 8, kw: 444)
+// assert(ba == ('B', ('A', A, tuple(), {}), (8,), {'kw': 444}))
+
+// class C {
+//     function __new__(t, *a, **b) {
+//         obj = object.__new__(t)
+//         obj.args = a
+//         obj.last_magic = 'new'
+//         return obj
+//     }
+
+//     function __init__(self, *a, **b) {
+//         self.kwargs = b
+//         self.last_magic = 'init'
+//     }
+// }
+
+// c = C(1, kw: 456)
+// assert(c.__new__ == C.__new__)
+// assert(type(c) == C)
+// assert(c.last_magic == 'init')
+// assert(c.args == (1,))
+// assert(c.kwargs == {'kw': 456})
+
+
+// class D(C) {
+//     function __init__(self, *a, **b) {
+//         self.kwargs = ['lol', b]
+//     }
+// }
+
+
+// assert(C.__new__ == D.__new__)
+// assert(C.__init__ != D.__init__)
+
+// d = D(1, kw: 456)
+// _ = "Access to __new__ on instance returns a function (as it's a static method)"
+// assert(d.__new__ == D.__new__, _)
+// _ = "Access to __init__ on instance returns a bound method instead of just function"
+// assert(d.__init__ != D.__init__, _)
+// assert(type(d) == D)
+// assert(d.args == (1,))
+// assert(d.kwargs == ['lol', {'kw': 456}])
+
+
+class BaseString {
+    function __init__(self, str) {
+        self._inner = str
+    }
+
+    function some_method(self) {
+        print("some method", self)
+    }
+}
+
+
+class ReverseString(BaseString) {
+    function __string__(self) {
+        return self._inner.reverse()
+    }
+
+}
+
+rs = ReverseString("ach jaj")
+print(ReverseString.some_method)
+
+assert(ReverseString.__new__ == BaseString.__new__)
+
+assert(rs._inner == 'ach jaj')
+assert(string(rs) == 'jaj hca')
+assert(rs.__new__ == BaseString.__new__)
+assert(rs.__new__ == ReverseString.__new__)
+

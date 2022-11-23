@@ -1,0 +1,86 @@
+//
+// Example of implementation of real userland singletons.
+//
+
+//
+// By overriding default object.__new__() method we take control of the object's
+// actual creation.
+//
+
+class MySingleton {
+
+    _instance = null
+
+    function __new__(t, *a, **b) {
+        return t._instance or (t._instance = object.__new__(t, *a, **b))
+    }
+
+    function __init__(self, *a, **b) {
+        self.a = a
+        self.b = b
+    }
+
+    function get_all(self) {
+        return (self.a, self.b)
+    }
+
+}
+
+class MyMultiSingleton {
+
+    _instances = {}
+
+    function __new__(t, *a, **b) {
+        key = tuple([tuple(a), tuple(b.items())])
+        return t._instances.get(key) or (t._instances[key] = object.__new__(t, *a, **b))
+    }
+
+    function __init__(self, *a, **b) {
+        self.a = a
+        self.b = b
+    }
+
+    function get_all(self) {
+        return (self.a, self.b)
+    }
+
+}
+
+//
+// Just singletons.
+//
+
+ms1 = MySingleton(123, 456, hah: '789')
+assert(ms1.a == (123, 456))
+assert(ms1.b == {'hah': '789'})
+
+ms2 = MySingleton(123, 456, hah: '789')
+assert(ms1 == ms2)
+
+// Even though it has different parameters, the singleton is already created
+// and is just returned from MySingleton.__new__.
+ms3 = MySingleton(1, 2, well: '...')
+assert(ms2 == ms3)
+
+//
+// Multi (parametrized) singletons.
+//
+
+mm1_a = MyMultiSingleton(123, 456, hah: '789')
+assert(mm1_a.a == (123, 456))
+assert(mm1_a.b == {'hah': '789'})
+
+mm1_b = MyMultiSingleton(123, 456, hah: '789')
+assert(mm1_a == mm1_b)
+
+mm2_a = MyMultiSingleton(123, 456, nope: 'XXX')
+assert(mm2_a.a == (123, 456))
+assert(mm2_a.b == {'nope': 'XXX'})
+
+mm2_b = MyMultiSingleton(123, 456, nope: 'XXX')
+assert(mm2_a == mm2_b)
+
+assert(mm1_a != mm2_a)
+assert(mm1_b != mm2_b)
+assert(mm1_a != mm2_b)
+assert(mm1_b != mm2_a)
