@@ -19,7 +19,7 @@ class TerminalIoDriver implements StdIoDriverInterface {
 
 	public function input(string $prompt): string {
 
-		\readline_callback_handler_install($prompt, $this->bufferInput(...));
+		\readline_callback_handler_install($prompt, [$this, 'bufferInput']);
 
 		while (true) {
 			\readline_callback_read_char();
