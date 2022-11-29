@@ -13,23 +13,39 @@ class TerminalIoDriver implements StdIoDriverInterface {
 
 	private ?string $buffer = null;
 
-	private function bufferInput(string $buffer) {
-		$this->buffer = $buffer;
+	private function bufferInput(?string $buffer) {
+		$this->buffer = (string) $buffer;
 	}
 
 	public function input(string $prompt): string {
 
+		// Using a bit more complex logic instead of just calling readline().
+		// That's because with readline() any multiline entries browsed for via
+		// the readline history (up arrow) wouldn't be returned in full for
+		// some reason (only its last line).
+
+		// Register callback that will be called for every entered line
+		// (that is, after the user presses enter).
 		\readline_callback_handler_install($prompt, [$this, 'bufferInput']);
 
-		while (true) {
+		while (\true) {
+
+			// Wait for a single character input.
 			\readline_callback_read_char();
-			if ($this->buffer !== null) {
-				$buffer = $this->buffer;
-				$this->buffer = null;
-				\readline_callback_handler_remove();
-				return $buffer;
+
+			// After the user presses enter, buffer will be (even empty) string,
+			// so at that point we know we got the full input we want to return.
+			if ($this->buffer !== \null) {
+				break;
 			}
+
 		}
+
+		\readline_callback_handler_remove();
+		$buffer = $this->buffer;
+		$this->buffer = \null;
+
+		return $buffer;
 
 	}
 

@@ -166,7 +166,7 @@ abstract class Interned {
 	 */
 	public static function bytes(string $b) {
 
-		// Bytes values up to 32 bytes will be interned.
+		// Bytes values up to 8 bytes will be interned.
 		if (\strlen($b) <= 8) {
 			return self::$internedBytes[$b]
 				?? (self::$internedBytes[$b] = new BytesValue($b));
@@ -181,7 +181,7 @@ abstract class Interned {
 	 */
 	public static function regex(string $regex) {
 
-		// Regexes up to 32 characters will be interned.
+		// Regexes up to 8 characters will be interned.
 		if (\strlen($regex) <= 8) {
 			return self::$internedRegex[$regex]
 				?? (self::$internedRegex[$regex] = new RegexValue($regex));
