@@ -30,9 +30,11 @@ class TypeValue extends AbstractBuiltinValue {
 
 	/**
 	 * @param string $name Name of the type.
+	 * @param ?TypeValue $parent Parent Primi type of this type.
 	 * @param array<string, AbstractValue> $attrs
 	 * @param bool $isFinal Final type/class cannot be used as a parent type.
-	 * @param ?TypeValue Parent Primi type of this type.
+	 * @param bool $isMutable IF true, it is possible to mutate type's attrs
+	 * in userland.
 	 */
 	public function __construct(
 		protected string $name,

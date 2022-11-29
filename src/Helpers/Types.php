@@ -39,8 +39,8 @@ abstract class Types {
 	 * from ordinary method to static method for the type system and object
 	 * model to work correctly.
 	 *
-	 * @param array<AbstractValue>
-	 * @return array<AbstractValue>
+	 * @param array<string, AbstractValue> $methods
+	 * @return array<string, AbstractValue>
 	 */
 	public static function prepareTypeMethods(
 		array $methods,

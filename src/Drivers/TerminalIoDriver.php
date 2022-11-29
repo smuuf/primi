@@ -13,7 +13,7 @@ class TerminalIoDriver implements StdIoDriverInterface {
 
 	private ?string $buffer = null;
 
-	private function bufferInput(?string $buffer) {
+	private function bufferInput(?string $buffer): void {
 		$this->buffer = (string) $buffer;
 	}
 

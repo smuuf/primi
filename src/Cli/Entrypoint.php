@@ -92,13 +92,9 @@ class Entrypoint {
 			Logger::enable();
 		}
 
-		// Enable stats gathering, if requested.
+		// If requested, print stats at the absolute end of runtime.
 		if ($cfg['print_runtime_stats']) {
-
-			Stats::enable();
-			// Try printing stats at the absolute end of runtime.
 			register_shutdown_function(fn() => Stats::print());
-
 		}
 
 		// Determine the source. Act as REPL if no source was specified.

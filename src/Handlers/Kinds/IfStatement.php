@@ -51,7 +51,7 @@ class IfStatement extends SimpleHandler {
 		$elifs = [];
 		if (isset($node['elifCond'])) {
 
-			$node['elifCond'] = Func::ensure_indexed($node['elifCond'] ?? []);
+			$node['elifCond'] = Func::ensure_indexed($node['elifCond']);
 			$node['elifBlock'] = Func::ensure_indexed($node['elifBlock'] ?? []);
 
 			foreach ($node['elifCond'] as $i => $elifCond) {

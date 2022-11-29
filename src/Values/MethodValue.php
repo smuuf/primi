@@ -24,7 +24,7 @@ class MethodValue extends FuncValue {
 	public function __construct(
 		FnContainer $fn,
 		private bool $isStatic = false,
-		private ?AbstractValue $bind = \null,
+		?AbstractValue $bind = \null,
 	) {
 
 		if ($isStatic && $bind) {
