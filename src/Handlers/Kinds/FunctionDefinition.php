@@ -25,7 +25,7 @@ class FunctionDefinition extends SimpleHandler {
 		// first-level function definition in the class definition), we do not
 		// want the function to have direct access to its class's scope.
 		// (All access to class' attributes should be done by accessing class
-		// self-reference inside the function).
+		// self-reference variable inside the function).
 		// So, in that case, instead of current scope we'll pass the parent
 		// scope of the current scope as the definition scope.
 		$parentScope = $currentScope->getType() === Scope::TYPE_CLASS
@@ -40,7 +40,10 @@ class FunctionDefinition extends SimpleHandler {
 			$parentScope,
 		);
 
-		$currentScope->setVariable($node['fnName'], new FuncValue($fnc));
+		$currentScope->setVariable(
+			$node['fnName'],
+			new FuncValue($fnc),
+		);
 
 	}
 

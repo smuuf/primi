@@ -42,7 +42,7 @@ class TypeTypeExtension extends TypeExtension {
 			$value->getStringValue(),
 			$parentType,
 			$attrs,
-			\false
+			isFinal: \false,
 		);
 
 	}

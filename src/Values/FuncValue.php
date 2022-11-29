@@ -8,22 +8,21 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Location;
 use \Smuuf\Primi\MagicStrings;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Structures\FnContainer;
 
 /**
  * @property FnContainer $value Internal map container.
  */
-class FuncValue extends AbstractNativeValue {
+class FuncValue extends AbstractBuiltinValue {
 
 	public const TYPE = "func";
-	private string $name;
+	protected string $name;
 
 	public function __construct(
 		FnContainer $fn,
 		protected ?CallArgs $partialArgs = \null,
-		protected bool $isStatic = \false,
 	) {
 
 		$this->value = $fn;
@@ -33,15 +32,12 @@ class FuncValue extends AbstractNativeValue {
 
 	}
 
-	/**
-	 * Get full name of the function.
-	 */
-	public function isStatic(): bool {
-		return $this->isStatic;
+	public function withBind(AbstractValue $bind): MethodValue {
+		return new MethodValue($this->value, false, $bind);
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getFuncType();
+		return BuiltinTypes::getFuncType();
 	}
 
 	/**

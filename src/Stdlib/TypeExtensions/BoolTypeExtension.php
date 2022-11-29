@@ -11,7 +11,7 @@ use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 
 class BoolTypeExtension extends TypeExtension {
 
@@ -21,7 +21,7 @@ class BoolTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): BoolValue {
 
-		if ($type !== StaticTypes::getBoolType()) {
+		if ($type !== BuiltinTypes::getBoolType()) {
 			throw new TypeError("Passed invalid type object");
 		}
 

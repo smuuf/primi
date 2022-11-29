@@ -31,7 +31,7 @@ class MyMultiSingleton {
     _instances = {}
 
     function __new__(t, *a, **b) {
-        key = tuple([tuple(a), tuple(b.items())])
+        key = (tuple(a), tuple(b.items()))
         return t._instances.get(key) or (t._instances[key] = object.__new__(t, *a, **b))
     }
 

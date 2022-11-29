@@ -6,7 +6,7 @@ namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\MagicStrings;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\FuncValue;
@@ -15,6 +15,7 @@ use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\RegexValue;
 use \Smuuf\Primi\Values\TupleValue;
+use \Smuuf\Primi\Values\MethodValue;
 use \Smuuf\Primi\Values\ModuleValue;
 use \Smuuf\Primi\Values\NumberValue;
 use \Smuuf\Primi\Values\StringValue;
@@ -36,24 +37,25 @@ class extends NativeModule {
 		return [
 
 			// Super-basic types.
-			MagicStrings::TYPE_OBJECT => StaticTypes::getObjectType(),
-			TypeValue::TYPE => StaticTypes::getTypeType(),
-			NullValue::TYPE => StaticTypes::getNullType(),
-			BoolValue::TYPE => StaticTypes::getBoolType(),
-			NumberValue::TYPE => StaticTypes::getNumberType(),
-			StringValue::TYPE => StaticTypes::getStringType(),
-			RegexValue::TYPE => StaticTypes::getRegexType(),
-			DictValue::TYPE => StaticTypes::getDictType(),
-			ListValue::TYPE => StaticTypes::getListType(),
-			TupleValue::TYPE => StaticTypes::getTupleType(),
+			MagicStrings::TYPE_OBJECT => BuiltinTypes::getObjectType(),
+			TypeValue::TYPE => BuiltinTypes::getTypeType(),
+			NullValue::TYPE => BuiltinTypes::getNullType(),
+			BoolValue::TYPE => BuiltinTypes::getBoolType(),
+			NumberValue::TYPE => BuiltinTypes::getNumberType(),
+			StringValue::TYPE => BuiltinTypes::getStringType(),
+			RegexValue::TYPE => BuiltinTypes::getRegexType(),
+			DictValue::TYPE => BuiltinTypes::getDictType(),
+			ListValue::TYPE => BuiltinTypes::getListType(),
+			TupleValue::TYPE => BuiltinTypes::getTupleType(),
 
 			// Other basic types (basic == they're implemented in PHP).
-			FuncValue::TYPE => StaticTypes::getFuncType(),
-			IteratorFactoryValue::TYPE => StaticTypes::getIteratorFactoryType(),
-			ModuleValue::TYPE => StaticTypes::getModuleType(),
+			FuncValue::TYPE => BuiltinTypes::getFuncType(),
+			MethodValue::TYPE => BuiltinTypes::getMethodType(),
+			IteratorFactoryValue::TYPE => BuiltinTypes::getIteratorFactoryType(),
+			ModuleValue::TYPE => BuiltinTypes::getModuleType(),
 
 			// Other types.
-			NotImplementedValue::TYPE => StaticTypes::getNotImplementedType(),
+			NotImplementedValue::TYPE => BuiltinTypes::getNotImplementedType(),
 
 		];
 

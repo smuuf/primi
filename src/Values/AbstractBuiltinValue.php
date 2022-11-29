@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 /**
- * Base PHP class for representing all Primi values that are native to the
+ * Base PHP class for representing all Primi values/object builtin into the
  * engine.
  */
-abstract class AbstractNativeValue extends AbstractValue {
+abstract class AbstractBuiltinValue extends AbstractValue {
 
 	public function getTypeName(): string {
 		return static::TYPE;

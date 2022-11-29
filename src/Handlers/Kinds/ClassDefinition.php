@@ -8,7 +8,7 @@ use \Smuuf\Primi\Scope;
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
 use \Smuuf\Primi\Handlers\SimpleHandler;
@@ -24,7 +24,7 @@ class ClassDefinition extends SimpleHandler {
 		if ($parentTypeName !== \false) {
 			$parentType = $context->getVariable($parentTypeName);
 		} else {
-			$parentType = StaticTypes::getObjectType();
+			$parentType = BuiltinTypes::getObjectType();
 		}
 
 		if (!$parentType instanceof TypeValue) {

@@ -17,7 +17,7 @@ use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Indices;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TypeValue;
 
@@ -29,7 +29,7 @@ class ListTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): ListValue {
 
-		if ($type !== StaticTypes::getListType()) {
+		if ($type !== BuiltinTypes::getListType()) {
 			throw new TypeError("Passed invalid type object");
 		}
 
@@ -145,7 +145,7 @@ class ListTypeExtension extends TypeExtension {
 	): ListValue {
 
 		[$self, $callable] = $args->extractPositional(2);
-		Func::allow_argument_types(1, $self, StaticTypes::getListType());
+		Func::allow_argument_types(1, $self, BuiltinTypes::getListType());
 
 		$result = [];
 		foreach ($self->value as $k => $v) {

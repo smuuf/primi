@@ -8,14 +8,14 @@ use \Smuuf\Primi\Ex\KeyError;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\RuntimeError;
 use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Structures\MapContainer;
 
 /**
  * @property MapContainer $value Internal map container.
  */
-class DictValue extends AbstractNativeValue {
+class DictValue extends AbstractBuiltinValue {
 
 	public const TYPE = "dict";
 
@@ -34,7 +34,7 @@ class DictValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getDictType();
+		return BuiltinTypes::getDictType();
 	}
 
 	public function getStringRepr(): string {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 
 /**
  * Class for representing dynamically created Primi iterables.
@@ -19,7 +19,7 @@ use \Smuuf\Primi\Stdlib\StaticTypes;
  * the factory callable will be executed and a brand-new generator is then
  * used as the actual internal iterator which then yields the expected values.
  */
-class IteratorFactoryValue extends AbstractNativeValue {
+class IteratorFactoryValue extends AbstractBuiltinValue {
 
 	public const TYPE = "iteratorfactory";
 	protected string $name;
@@ -33,7 +33,7 @@ class IteratorFactoryValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getIteratorFactoryType();
+		return BuiltinTypes::getIteratorFactoryType();
 	}
 
 	public function getStringRepr(): string {

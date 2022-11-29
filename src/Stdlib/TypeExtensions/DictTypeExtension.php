@@ -15,7 +15,7 @@ use \Smuuf\Primi\Values\ListValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Structures\CallArgs;
 use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\TypeValue;
@@ -28,7 +28,7 @@ class DictTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): DictValue {
 
-		if ($type !== StaticTypes::getDictType()) {
+		if ($type !== BuiltinTypes::getDictType()) {
 			throw new TypeError("Passed invalid type object");
 		}
 
@@ -209,7 +209,7 @@ class DictTypeExtension extends TypeExtension {
 	): DictValue {
 
 		[$self, $callable] = $args->extractPositional(2);
-		Func::allow_argument_types(1, $self, StaticTypes::getDictType());
+		Func::allow_argument_types(1, $self, BuiltinTypes::getDictType());
 
 		$result = [];
 		foreach ($self->value->getItemsIterator() as [$k, $v]) {

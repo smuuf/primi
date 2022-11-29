@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
 use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Values\BoolValue;
 use \Smuuf\Primi\Values\DictValue;
 use \Smuuf\Primi\Values\TypeValue;
@@ -25,7 +25,7 @@ class RegexTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): RegexValue {
 
-		if ($type !== StaticTypes::getRegexType()) {
+		if ($type !== BuiltinTypes::getRegexType()) {
 			throw new TypeError("Passed invalid type object");
 		}
 

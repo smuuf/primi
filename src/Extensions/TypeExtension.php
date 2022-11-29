@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Extensions;
 
+use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Values\FuncValue;
 use \Smuuf\Primi\Helpers\ValueFriends;
 
@@ -18,7 +19,9 @@ abstract class TypeExtension extends ValueFriends {
 	 * which represent class methods.
 	 */
 	public static function execute(): array {
-		return MethodExtractor::extractMethods(new static);
+		return Types::prepareTypeMethods(
+			MethodExtractor::extractMethods(new static),
+		);
 	}
 
 }

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Values\NumberValue;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
  * `Interned::bool()` factory to get these.
  */
-class BoolValue extends AbstractNativeValue {
+class BoolValue extends AbstractBuiltinValue {
 
 	public const TYPE = "bool";
 
@@ -20,7 +20,7 @@ class BoolValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getBoolType();
+		return BuiltinTypes::getBoolType();
 	}
 
 	public function getStringRepr(): string {

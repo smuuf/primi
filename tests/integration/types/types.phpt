@@ -14,13 +14,9 @@ Assert::noError(function() {
 	$cases = glob(__DIR__ . '/cases/*.primi');
 
 	foreach ($cases as $file) {
-
-		Term::stderr("$file ...");
-
 		$source = new SourceFile($file);
 		$interpreter = new \Smuuf\Primi\Interpreter;
 		$interpreter->run($source);
-
 	}
 
 });

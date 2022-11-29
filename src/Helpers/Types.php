@@ -12,6 +12,7 @@ use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\NullValue;
 use \Smuuf\Primi\Structures\CallArgs;
+use \Smuuf\Primi\Values\MethodValue;
 
 abstract class Types {
 
@@ -31,16 +32,27 @@ abstract class Types {
 	}
 
 	/**
+	 * Handles special treating of attributes that will represent attributas
+	 * of a type.
+	 *
+	 * Special treating like, for example, `__new__` method must be converted
+	 * from ordinary method to static method for the type system and object
+	 * model to work correctly.
+	 *
 	 * @param array<AbstractValue>
+	 * @return array<AbstractValue>
 	 */
 	public static function prepareTypeMethods(
 		array $methods,
 	): array {
 
-		if (isset($methods[MagicStrings::MAGICMETHOD_NEW])) {
-			$fn = $methods[MagicStrings::MAGICMETHOD_NEW];
-			$methods[MagicStrings::MAGICMETHOD_NEW] =
-				new FuncValue($fn->getCoreValue(), isStatic: true);
+		static $methodNameNew = MagicStrings::MAGICMETHOD_NEW;
+
+		if (isset($methods[$methodNameNew])) {
+			$methods[$methodNameNew] = new MethodValue(
+				$methods[$methodNameNew]->getCoreValue(),
+				isStatic: true,
+			);
 		}
 
 		return $methods;
@@ -76,14 +88,9 @@ abstract class Types {
 		//
 
 		if ($value = $typeObject->rawAttrGet($attrName)) {
-			if ($bind && $value instanceof FuncValue && !$value->isStatic()) {
-				$args = new CallArgs([$bind]);
-				return new FuncValue(
-					$value->getCoreValue(),
-					$args
-				);
-			}
-			return $value;
+			return $bind && $value instanceof FuncValue
+				? $value->withBind($bind)
+				: $value;
 		}
 
 		//
@@ -93,14 +100,9 @@ abstract class Types {
 
 		while ($typeObject = $typeObject->getParentType()) {
 			if ($value = $typeObject->rawAttrGet($attrName)) {
-				if ($bind && $value instanceof FuncValue && !$value->isStatic()) {
-					$args = new CallArgs([$bind]);
-					return new FuncValue(
-						$value->getCoreValue(),
-						$args
-					);
-				}
-				return $value;
+				return $bind && $value instanceof FuncValue
+					? $value->withBind($bind)
+					: $value;
 			}
 		}
 

@@ -14,7 +14,7 @@ use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Interned;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 
 class NumberTypeExtension extends TypeExtension {
 
@@ -24,7 +24,7 @@ class NumberTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): NumberValue {
 
-		if ($type !== StaticTypes::getNumberType()) {
+		if ($type !== BuiltinTypes::getNumberType()) {
 			throw new TypeError("Passed invalid type object");
 		}
 

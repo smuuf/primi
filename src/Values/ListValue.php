@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Indices;
 
-class ListValue extends AbstractNativeValue {
+class ListValue extends AbstractBuiltinValue {
 
 	public const TYPE = "list";
 
@@ -34,7 +34,7 @@ class ListValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getListType();
+		return BuiltinTypes::getListType();
 	}
 
 	public function getLength(): ?int {

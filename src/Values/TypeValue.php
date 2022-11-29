@@ -8,9 +8,9 @@ use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Location;
 use \Smuuf\Primi\MagicStrings;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\AbstractNativeValue;
+use \Smuuf\Primi\Values\AbstractBuiltinValue;
 use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Structures\CallArgs;
 
@@ -23,10 +23,8 @@ use \Smuuf\Primi\Structures\CallArgs;
  * represented by this `TypeValue` PHP class.
  *
  * Therefore, the type "type" is an instance of itself.
- *
- * @internal
  */
-final class TypeValue extends AbstractNativeValue {
+class TypeValue extends AbstractBuiltinValue {
 
 	public const TYPE = "type";
 
@@ -51,7 +49,7 @@ final class TypeValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getTypeType();
+		return BuiltinTypes::getTypeType();
 	}
 
 	public function attrGet(string $name): ?AbstractValue {

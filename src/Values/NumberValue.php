@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Helpers\Func;
 
 /**
@@ -15,7 +15,7 @@ use \Smuuf\Primi\Helpers\Func;
  * NOTE: You should _never_ modify the internal $value property directly,
  * as it may later lead to unpredictable results.
  */
-class NumberValue extends AbstractNativeValue {
+class NumberValue extends AbstractBuiltinValue {
 
 	/** @const int Floating point precision for bcmath operations. */
 	const PRECISION = 128;
@@ -31,7 +31,7 @@ class NumberValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getNumberType();
+		return BuiltinTypes::getNumberType();
 	}
 
 	public function isTruthy(): bool {

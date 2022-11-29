@@ -7,7 +7,7 @@ namespace Smuuf\Primi\Values;
 use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Ex\IndexError;
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Types;
 use \Smuuf\Primi\Helpers\StringEscaping;
@@ -16,7 +16,7 @@ use \Smuuf\Primi\Helpers\StringEscaping;
  * NOTE: You should not instantiate this PHP class directly - use the helper
  * `Interned::string()` factory to get these.
  */
-class StringValue extends AbstractNativeValue {
+class StringValue extends AbstractBuiltinValue {
 
 	public const TYPE = "string";
 
@@ -25,7 +25,7 @@ class StringValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getStringType();
+		return BuiltinTypes::getStringType();
 	}
 
 	public function getLength(): ?int {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\Modules;
 
 use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Stdlib\TypeExtensions\Stdlib\DatetimeTypeExtension;
 use \Smuuf\Primi\Stdlib\TypeExtensions\Stdlib\DurationTypeExtension;
 use \Smuuf\Primi\Values\TypeValue;
@@ -25,12 +25,12 @@ class extends NativeModule {
 		return [
 			'Datetime' => new TypeValue(
 				'Datetime',
-				StaticTypes::getObjectType(),
+				BuiltinTypes::getObjectType(),
 				DatetimeTypeExtension::execute(),
 			),
 			'Duration' => new TypeValue(
 				'Duration',
-				StaticTypes::getObjectType(),
+				BuiltinTypes::getObjectType(),
 				DurationTypeExtension::execute(),
 			),
 		];

@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Values;
 
 use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Indices;
 
 /**
  * @property array<AbstractValue> $value Internal tuple container.
  */
-class TupleValue extends AbstractNativeValue {
+class TupleValue extends AbstractBuiltinValue {
 
 	public const TYPE = "tuple";
 
@@ -46,7 +46,7 @@ class TupleValue extends AbstractNativeValue {
 	}
 
 	public function getType(): TypeValue {
-		return StaticTypes::getTupleType();
+		return BuiltinTypes::getTupleType();
 	}
 
 	public function getStringRepr(): string {

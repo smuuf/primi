@@ -9,7 +9,7 @@ use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\TupleValue;
 use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Stdlib\StaticTypes;
+use \Smuuf\Primi\Stdlib\BuiltinTypes;
 use \Smuuf\Primi\Extensions\TypeExtension;
 
 class TupleTypeExtension extends TypeExtension {
@@ -20,7 +20,7 @@ class TupleTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): TupleValue {
 
-		if ($type !== StaticTypes::getTupleType()) {
+		if ($type !== BuiltinTypes::getTupleType()) {
 			throw new TypeError("Passed invalid type object");
 		}
 

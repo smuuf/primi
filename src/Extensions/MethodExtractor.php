@@ -63,11 +63,8 @@ abstract class MethodExtractor {
 				$fnFlags[] = FnContainer::FLAG_TO_STACK;
 			}
 
-			$isStatic = $name === MagicStrings::MAGICMETHOD_NEW;
-
 			$result[$name] = new FuncValue(
 				FnContainer::buildFromClosure([$obj, $name], $fnFlags),
-				isStatic: $isStatic,
 			);
 
 		}
