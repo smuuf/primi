@@ -61,7 +61,7 @@ class ModuleValue extends AbstractBuiltinValue {
 	 * Return number of variables in the module's scope.
 	 */
 	public function getLength(): ?int {
-		return count($this->value->getVariables());
+		return \count($this->value->getVariables());
 	}
 
 	/**

@@ -16,7 +16,7 @@ class Operand extends SimpleHandler {
 		$value = HandlerFactory::runNode($node['core'], $context);
 
 		// If there's chain, handle it.
-		if (isset($node['chain'])) {
+		if (\array_key_exists('chain', $node)) {
 			$handler = HandlerFactory::getFor($node['chain']['name']);
 			return $handler::chain($node['chain'], $context, $value);
 		}

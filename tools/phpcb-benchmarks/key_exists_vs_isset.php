@@ -3,9 +3,9 @@
 require __DIR__ . "/../../vendor/autoload.php";
 $bench = new \Smuuf\Phpcb\PhpBenchmark;
 
-$arr =  ['x' => 1, 'y' => 2, 'z' => false, "key" => 1, 'a' => 'b', 'c' => 0];
-$arr2 = ['x' => 1, 'y' => 2, 'z' => false, "foo" => 1, 'a' => 'b', 'c' => 0];
-$arr3 = ['x' => 1, 'y' => 2, 'z' => false, "key" => null, 'a' => 'b', 'c' => 0];
+$arr =  [...range(50, 500), 'x' => 1, 'y' => 2, 'z' => false, "key" => 1, 'a' => 'b', 'c' => 0];
+$arr2 = [...range(50, 500), 'x' => 1, 'y' => 2, 'z' => false, "foo" => 1, 'a' => 'b', 'c' => 0];
+$arr3 = [...range(50, 500), 'x' => 1, 'y' => 2, 'z' => false, "key" => null, 'a' => 'b', 'c' => 0];
 
 $bench->addBench(function() use ($arr) {
 	$x = isset($arr['key']);

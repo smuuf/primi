@@ -93,7 +93,7 @@ class MapContainer implements
 	 * @throws UnhashableTypeException
 	 */
 	public function hasKey(AbstractValue $key): bool {
-		return isset($this->values[self::buildScalarKey($key)]);
+		return \array_key_exists(self::buildScalarKey($key), $this->values);
 	}
 
 	/**

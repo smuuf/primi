@@ -67,7 +67,7 @@ class AssignmentTargets {
 		$targetIndex = 0;
 		foreach ($iter as $value) {
 
-			if (isset($this->targets[$targetIndex])) {
+			if (\array_key_exists($targetIndex, $this->targets)) {
 				$buffer[$this->targets[$targetIndex]] = $value;
 			} else {
 				throw new RuntimeError(

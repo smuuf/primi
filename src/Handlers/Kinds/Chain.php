@@ -22,7 +22,7 @@ class Chain extends ChainedHandler {
 		$value = $handler::chain($node['core'], $context, $subject);
 
 		// If there's chain, handle it, too.
-		if (isset($node['chain'])) {
+		if (\array_key_exists('chain', $node)) {
 			$handler = HandlerFactory::getFor($node['chain']['name']);
 			return $handler::chain($node['chain'], $context, $value);
 		}

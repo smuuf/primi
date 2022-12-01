@@ -19,7 +19,7 @@ class Invocation extends ChainedHandler {
 	) {
 
 		$arguments = \null;
-		if (isset($node['args'])) {
+		if (\array_key_exists('args', $node)) {
 			$arguments = HandlerFactory::runNode($node['args'], $context);
 		}
 

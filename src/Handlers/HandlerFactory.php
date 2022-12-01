@@ -44,7 +44,7 @@ abstract class HandlerFactory {
 
 		// Using caching is of course faster than repeatedly building strings
 		// and checking classes and stuff.
-		if (isset(self::$handlersCache[$name])) {
+		if (\array_key_exists($name, self::$handlersCache)) {
 			return self::$handlersCache[$name];
 		}
 

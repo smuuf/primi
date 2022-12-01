@@ -140,7 +140,7 @@ class FnContainer {
 
 		$flagToStack = \in_array(self::FLAG_TO_STACK, $flags, \true);
 		$flagCallConventionArgsObject =
-			in_array(self::FLAG_CALLCONV_CALLARGS, $flags, \true);
+			\in_array(self::FLAG_CALLCONV_CALLARGS, $flags, \true);
 
 		$callConvention = $flagCallConventionArgsObject
 			? new CallArgsCallConvention($closure)

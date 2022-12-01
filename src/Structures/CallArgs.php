@@ -221,7 +221,7 @@ class CallArgs {
 		foreach ($names as $name) {
 			if (
 				$name[0] !== '*'
-				&& !isset($final[$name])
+				&& !\array_key_exists($name, $final)
 				&& !\in_array($name, $optional, \true)
 			) {
 				throw new TypeError("Missing required argument '$name'");

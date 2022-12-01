@@ -21,7 +21,7 @@ class ArgumentList extends SimpleHandler {
 
 	protected static function handle(array $node, Context $context) {
 
-		if (!isset($node['args'])) {
+		if (!\array_key_exists('args', $node)) {
 			return [];
 		}
 
@@ -29,11 +29,17 @@ class ArgumentList extends SimpleHandler {
 		$kwargs = [];
 
 		foreach ($node['args'] as $arg) {
-			if (isset($arg['argKey'])) {
+			if (\array_key_exists('argKey', $arg)) {
 				$kwargs[$arg['argKey']['text']] = HandlerFactory::runNode($arg['argVal'], $context);
 			} else {
 
 				$result = HandlerFactory::runNode($arg['argVal'], $context);
+
+				// Argument might have been a starred expression, in which case
+				// the result is an array (see StarredExpression handler) - so
+				// let's unpack it.
+				// Single-starred expression is returned as a list array.
+				// Double-starred expression is returned as a dict array.
 				if (\is_array($result)) {
 					if (\array_is_list($result)) {
 						$args = [...$args, ...$result];

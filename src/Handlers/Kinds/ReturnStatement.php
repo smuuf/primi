@@ -14,7 +14,7 @@ class ReturnStatement extends SimpleHandler {
 	protected static function handle(array $node, Context $context) {
 
 		$retval = new CallRetval(
-			isset($node['subject'])
+			\array_key_exists('subject', $node)
 				? HandlerFactory::runNode($node['subject'], $context)
 				: \null
 		);
