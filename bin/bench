@@ -1,0 +1,159 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Smuuf\Primi\Cli\Term;
+use Smuuf\Primi\Helpers\Colors;
+
+require __DIR__ . '/../vendor/autoload.php';
+chdir(__DIR__ . '/..');
+
+/**
+ * Runs a shell command, prints out the first line of output as it goes, then
+ * don't show the rest, but return the rest of the output as a string.
+ */
+function run_shell_cmd(string $cmd): string {
+
+	$output = [];
+	$firstLine = true;
+	$proc = popen($cmd, 'r');
+	while (!feof($proc)) {
+
+		$buffer = fread($proc, 4096);
+
+		if ($firstLine) {
+
+			// If were gathering the first line of output and there's a newline
+			// character in the current buffer, split it, echo the first part
+			// (which is still the first line) and gather the second part into
+			// our output buffer (which we will want to return from this
+			// function).
+			if (($newLinePos = mb_strpos($buffer, "\n")) !== false) {
+				//echo "█D";
+				echo mb_substr($buffer, 0, $newLinePos);
+				$output[] = mb_substr($buffer, $newLinePos + 1);
+				$firstLine = false;
+			} else {
+				//echo "█B";
+				echo $buffer;
+			}
+
+			@flush();
+
+		} else {
+			//echo "█O";
+			$output[] = $buffer;
+		}
+
+	}
+
+	pclose($proc);
+	return trim(implode('', $output));
+
+}
+
+
+function show_results(array $data, string $standardKey): void {
+
+	$standardAvg = array_sum($data[$standardKey]) / count($data[$standardKey]);
+	foreach ($data as $key => $times) {
+
+		$avgTime = round(array_sum($times) / count($times), 6);
+		$paddedKey = str_pad("$key:", 10);
+
+		$slowerInfo = '';
+		if ($key !== $standardKey) {
+			$slower = round($avgTime / $standardAvg, 2);
+			$slowerInfo = "({$slower}x slower)";
+		}
+
+		echo "  $paddedKey $avgTime s $slowerInfo\n";
+
+	}
+
+}
+
+function color(string $text, string $color, bool $noNewline = false): void {
+	$out = Colors::get("{{$color}}█{_} $text");
+
+	if ($noNewline) {
+		echo $out;
+		return;
+	}
+
+	echo Term::line($out);
+}
+
+function title(string $text, bool $noNewline = false): void {
+	color($text, color: 'yellow', noNewline: $noNewline);
+}
+
+function info(string $text, bool $noNewline = false): void {
+	color($text, color: 'blue', noNewline: $noNewline);
+}
+
+function shell(string $cmd, bool $print = false): string {
+
+	$result = shell_exec($cmd);
+	if ($print) {
+		echo $result;
+	}
+
+	return $result ?? '';
+
+}
+
+function run_benchmark(string $name, string $command, int $times = 1): array {
+
+	$results = [];
+	foreach (range(1, $times) as $index) {
+		$index = $times !== 1 ? "[$index] " : '';
+		info("{yellow}$name{_} {darkgrey}$index{_}... ", noNewline: true);
+
+		// Output of the bench program (except the first line) looks like this:
+		// 1. line - self-measured time.
+		// 2. line - self-measured memory peak.
+		$output = run_shell_cmd($command);
+		[$time, $mempeak] = explode("\n", $output);
+
+		echo "\n";
+		echo Term::line("  Took $time s");
+		echo Term::line("  Mempeak $mempeak MB");
+		$results[] = $time;
+
+	}
+
+	return $results;
+
+}
+
+$interpreter = $argv[1] ?? 'php';
+
+info("Using interpreter: $interpreter");
+shell("$interpreter --version | head -n1", print: true);
+
+const ITERATIONS = 3;
+
+$perfPhpPath = './tests/bench/perf_bench_php.php';
+$perfPythonPath = './tests/bench/perf_bench_python.py';
+$perfPrimiPath = './tests/bench/perf_bench_primi.primi';
+
+$results = [
+	'php' => [],
+	'python' => [],
+	'primi' => [],
+];
+
+$results['php'] = run_benchmark('PHP', "$interpreter $perfPhpPath", times: 3);
+
+if (shell("command -v python")) {
+	$results['python'] = run_benchmark('Python', "python $perfPythonPath", times: 3);
+} else {
+	info("Python not available.");
+}
+
+$results['primi'] = run_benchmark('Primi', "$interpreter ./primi $perfPrimiPath", times: 3);
+
+title("Results:");
+show_results($results, 'php');

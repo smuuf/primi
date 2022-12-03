@@ -1,4 +1,7 @@
+import std.time
 import std.runtime.memory
+
+t = time.monotonic()
 
 max_iter = 50000
 tenth_iter = max_iter / 10
@@ -82,4 +85,6 @@ function bench_dicts() {
 decor(bench_function_calls)()
 decor(bench_regex_matches)()
 decor(bench_dicts)()
-print(f" Mem peak {memory.get_peak() / 1_000_000} MB")
+
+print()
+print(f"{time.monotonic() - t}\n{memory.get_peak() / 1_000_000}")

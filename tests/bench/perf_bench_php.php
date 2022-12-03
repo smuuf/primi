@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+$t = hrtime(true);
+
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
@@ -100,4 +102,9 @@ function bench_dicts() {
 measure(decor('bench_function_calls'));
 measure(decor('bench_regex_matches'));
 measure(decor('bench_dicts'));
+
+$mempeak = memory_get_peak_usage() / 1_000_000;
+$time = (hrtime(true) - $t) / 1_000_000_000;
+
 echo "\n";
+echo "$time\n$mempeak";
