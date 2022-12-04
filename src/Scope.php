@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\AbstractValue;
 
 use \Smuuf\StrictObject;
@@ -33,41 +32,22 @@ class Scope {
 	 */
 	public const TYPE_CLASS = 1;
 
-	/** @var array<string, AbstractValue> Variable pool. */
-	private $variables = [];
-
-	/** Parent scope, if any. */
-	private ?Scope $parent = \null;
-
-	/** Scope type. */
-	private int $type = self::TYPE_STANDARD;
-
 	/**
 	 * @param array<string, AbstractValue> $variables
+	 * @param int $type Scope type.
+	 * @param ?self $parent Parent scope, if any.
 	 */
 	public function __construct(
-		array $variables = [],
-		int $type = self::TYPE_STANDARD
-	) {
-		$this->setVariables($variables);
-		$this->type = $type;
-	}
+		private array $variables = [],
+		private int $type = self::TYPE_STANDARD,
+		private ?self $parent = \null,
+	) {}
 
 	/**
 	 * Return type of the scope.
 	 */
 	public function getType(): int {
 		return $this->type;
-	}
-
-	public function setParent(self $parent): void {
-
-		if ($this === $parent) {
-			throw new EngineInternalError("Scope cannot have itself as parent");
-		}
-
-		$this->parent = $parent;
-
 	}
 
 	public function getParent(): ?Scope {

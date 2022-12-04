@@ -38,8 +38,11 @@ class ClassDefinition extends SimpleHandler {
 		// method inside a class won't have direct access to its class's scope.
 		// (All access to class' attributes should be done by accessing class
 		// reference inside the function).
-		$classScope = new Scope([], Scope::TYPE_CLASS);
-		$classScope->setParent($context->getCurrentScope());
+		$classScope = new Scope(
+			[],
+			type: Scope::TYPE_CLASS,
+			parent: $context->getCurrentScope()
+		);
 
 		// Execute the class's insides with the class scope.
 		// Variables (and functions) declared inside the class will then

@@ -12,8 +12,6 @@ require __DIR__ . '/../bootstrap.php';
 // Scopes and parents: setting and getting parents.
 //
 
-$scopeA = new Scope;
-
 /**
  * Scope does not expose the "parent" property, so let's have a helper function
  * for inspecting it when testing.
@@ -24,16 +22,18 @@ function get_scope_parent(Scope $s) {
 	return $reflectionProperty->getValue($s);
 }
 
-Assert::null(get_scope_parent($scopeA), 'New scope has no parent');
+$scopeNoParent = new Scope;
+Assert::null(get_scope_parent($scopeNoParent), 'Scope without parent has no parent');
 
 $scopeB = new Scope;
-$scopeA->setParent($scopeB);
+$scopeA = new Scope(parent: $scopeB);
 
 Assert::same($scopeB, get_scope_parent($scopeA), 'Scope A has scope B as parent');
 Assert::null(get_scope_parent(get_scope_parent($scopeA)), 'Scope B has no parent');
 
 $scopeC = new Scope;
-$scopeB->setParent($scopeC);
+$scopeB = new Scope(parent: $scopeC);
+$scopeA = new Scope(parent: $scopeB);
 
 Assert::same($scopeB, get_scope_parent($scopeA), 'Scope A has scope B as parent');
 Assert::same($scopeC, get_scope_parent(get_scope_parent($scopeA)), 'Scope B has scope C as parent');
@@ -69,12 +69,3 @@ $scopeC->setVariable('scope_c_var1', new NumberValue('5'));
 $scopeC->setVariable('scope_c_var2', new NumberValue('6'));
 Assert::count(2, $scopeA->getVariables(), 'Getting all variables from a scope - without parent scopes.');
 Assert::count(7, $scopeA->getVariables(true), 'Getting all variables from a scope - with parent scopes.');
-
-//
-// Scope cannot have itself as parent.
-//
-Assert::exception(
-	fn() => $scopeA->setParent($scopeA),
-	EngineInternalError::class,
-	'#Scope.*itself.*parent#'
-);

@@ -71,8 +71,7 @@ class FnContainer {
 			$definitionName
 		) {
 
-			$scope = new Scope;
-			$scope->setParent($defScope);
+			$scope = new Scope([], parent: $defScope);
 
 			$frame = new StackFrame(
 				$definitionName,
