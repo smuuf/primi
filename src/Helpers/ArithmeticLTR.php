@@ -6,6 +6,7 @@ namespace Smuuf\Primi\Helpers;
 
 use \Smuuf\Primi\Context;
 use \Smuuf\Primi\Ex\BinaryOperationError;
+use \Smuuf\Primi\Handlers\HandlerFactory;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Interned;
@@ -24,6 +25,15 @@ class ArithmeticLTR {
 		Context $context
 	): AbstractValue {
 
+		// Optimization for expressions with just two operands.
+		if (\count($node['ops']) === 1) {
+			return self::evaluate(
+				$node['ops'][0]['text'],
+				HandlerFactory::runNode($node['operands'][0], $context),
+				HandlerFactory::runNode($node['operands'][1], $context),
+			);
+		}
+
 		// This shouldn't be necessary, since the first operator yielded below
 		// will always be null - and the result would be set to be the first
 		// operand, but let's make static analysis happy.
@@ -37,7 +47,7 @@ class ArithmeticLTR {
 				continue;
 			}
 
-			$result = static::evaluate($operator, $result, $operand);
+			$result = self::evaluate($operator, $result, $operand);
 
 		}
 
