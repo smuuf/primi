@@ -63,7 +63,7 @@ def bench_dicts():
 		}
 
 		for name in dict_['keys']:
-			result.append(dict[name])
+			result.append(dict_[name])
 
 		c = c + 1
 		if c % tenth_iter == 0:
