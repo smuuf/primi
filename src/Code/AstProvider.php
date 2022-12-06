@@ -8,6 +8,7 @@ use \Smuuf\StrictObject;
 use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Ex\InternalSyntaxError;
 use \Smuuf\Primi\Parser\ParserHandler;
+use \Smuuf\Primi\Handlers\KnownHandlers;
 
 class AstProvider {
 
@@ -30,7 +31,11 @@ class AstProvider {
 			return new Ast(self::parseSource($source));
 		}
 
-		$key = \md5($source->getSourceCode());
+		$key = \json_encode([
+			KnownHandlers::getStateId(),
+			$source->getSourceCode(),
+		]);
+
 		if ($ast = $this->loadFromCache($key)) {
 			return new Ast($ast);
 		}
@@ -55,7 +60,7 @@ class AstProvider {
 
 		$path = self::buildCachedPath($key, $this->tempDir);
 		if (\is_file($path)) {
-			return json_decode(file_get_contents($path), \true);
+			return \json_decode(file_get_contents($path), \true);
 		}
 
 		return \null;
@@ -72,7 +77,7 @@ class AstProvider {
 		}
 
 		$path = self::buildCachedPath($key, $this->tempDir);
-		file_put_contents($path, json_encode($ast));
+		file_put_contents($path, \json_encode($ast));
 
 	}
 
@@ -93,7 +98,7 @@ class AstProvider {
 	}
 
 	private static function buildCachedPath(string $key, string $dir): string {
-		return \sprintf('%s/ast_cache_%s.json', $dir, $key);
+		return \sprintf('%s/ast_cache_%s.json', $dir, \md5($key));
 	}
 
 }

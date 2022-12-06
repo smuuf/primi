@@ -3,7 +3,6 @@
 use \Tester\Assert;
 
 use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Ex\EngineInternalError;
 use \Smuuf\Primi\Values\NumberValue;
 
 require __DIR__ . '/../bootstrap.php';

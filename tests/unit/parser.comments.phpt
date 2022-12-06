@@ -2,6 +2,8 @@
 
 use \Tester\Assert;
 
+use \Smuuf\Primi\Handlers\KnownHandlers;
+
 require __DIR__ . '/../bootstrap.php';
 
 //
@@ -48,23 +50,28 @@ function get_ast(string $source) {
 
 function get_ast_array_simple() {
 
+	$programHandlerId = KnownHandlers::fromName('Program');
+	$assignment = KnownHandlers::fromName('Assignment');
+	$variableName = KnownHandlers::fromName('VariableName');
+	$numberLiteral = KnownHandlers::fromName('NumberLiteral');
+
 	return array(
-		'name' => 'Program',
+		'name' => $programHandlerId,
 		'stmts' =>
 		array(
 			0 =>
 			array(
-				'name' => 'Assignment',
+				'name' => $assignment,
 				'left' =>
 				array(
-					'name' => 'VariableName',
+					'name' => $variableName,
 					'text' => 'a',
 					'_l' => 1,
 					'_p' => 0,
 				),
 				'right' =>
 				array(
-					'name' => 'NumberLiteral',
+					'name' => $numberLiteral,
 					'number' => '1',
 					'_l' => 1,
 					'_p' => 4,

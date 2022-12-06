@@ -28,9 +28,7 @@ abstract class ParserFactory {
 
 		// If we're running inside Phar, we assume the parser already is
 		// compiled in the newest version (also, compiling it again - within the
-		// Phar - would use file_get_contents to write the result, which locks
-		// the file for writing, and that results in "Exclusive locks may only
-		// be set for regular files" PHP error).
+		// Phar - would be nonsense).
 		if (self::$recompiled === \true || EnvInfo::isRunningInPhar()) {
 			return self::PARSER_CLASS;
 		}

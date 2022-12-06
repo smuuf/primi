@@ -10,6 +10,7 @@ use \Smuuf\Primi\Parser\Compiled\PrimiParser;
 use \Smuuf\Primi\Helpers\Func;
 use \Smuuf\Primi\Helpers\Timer;
 use \Smuuf\Primi\Handlers\HandlerFactory;
+use \Smuuf\Primi\Handlers\KnownHandlers;
 
 class ParserHandler {
 
@@ -116,12 +117,12 @@ class ParserHandler {
 		$this->stats['AST nodes preprocessing'] = $t->get();
 
 		$t = (new Timer)->start();
-		self::addPositions($ast, $source);
-		$this->stats['AST nodes adding positions'] = $t->get();
-
-		$t = (new Timer)->start();
 		$this->reduceNode($ast);
 		$this->stats['AST nodes reducing'] = $t->get();
+
+		$t = (new Timer)->start();
+		$this->convertNamesToIds($ast);
+		$this->stats['AST name conversion'] = $t->get();
 
 		return $ast;
 
@@ -133,7 +134,24 @@ class ParserHandler {
 	 *
 	 * @param TypeDef_AstNode $node
 	 */
-	private static function preprocessNode(array &$node): void {
+	private function preprocessNode(array &$node): void {
+
+		// Add information about the node's offset (line & position) for
+		// later use (e.g. for informative error messages).
+		if (isset($node['offset'])) {
+
+			[$line, $pos] = Func::get_position_estimate(
+				$this->source,
+				$node['offset'],
+			);
+
+			$node['_l'] = $line;
+			$node['_p'] = $pos;
+
+			// Offset no longer necessary.
+			unset($node['offset']);
+
+		}
 
 		// If node has "skip" node defined, replace the whole node with the
 		// "skip" subnode.
@@ -170,7 +188,7 @@ class ParserHandler {
 			return;
 		}
 
-		if (!$handler = HandlerFactory::getFor($node['name'], \false)) {
+		if (!$handler = HandlerFactory::tryGetForName($node['name'], \false)) {
 			return;
 		}
 
@@ -188,32 +206,17 @@ class ParserHandler {
 
 	}
 
-	/**
-	 * Recursively iterate the node and its children and add information about
-	 * the node's offset (line & position) for later (e.g. error messages).
-	 *
-	 * @param TypeDef_AstNode $node
-	 */
-	private static function addPositions(array &$node, string $source): void {
-
-		if (isset($node['offset'])) {
-
-			[$line, $pos] = Func::get_position_estimate(
-				$source, $node['offset']
-			);
-
-			$node['_l'] = $line;
-			$node['_p'] = $pos;
-
-			// Offset no longer necessary.
-			unset($node['offset']);
-
-		}
+	private static function convertNamesToIds(array &$node): void {
 
 		foreach ($node as &$item) {
 			if (\is_array($item)) {
-				self::addPositions($item, $source);
+				self::convertNamesToIds($item);
 			}
+		}
+
+		// Handler name to handler ID.
+		if (isset($node['name'])) {
+			$node['name'] = KnownHandlers::fromName($node['name'], \false);
 		}
 
 	}

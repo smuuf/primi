@@ -25,8 +25,24 @@ abstract class HandlerFactory {
 	/**
 	 * @return class-string|string
 	 */
-	private static function getClassName(string $nodeName) {
-		return self::PREFIX . "\\$nodeName";
+	private static function buildHandlerClassName(string $name) {
+		return self::PREFIX . "\\$name";
+	}
+
+	/**
+	 * NOTE: This is used only during parsing/compilation.
+	 *
+	 * @return class-string|string
+	 */
+	public static function tryGetForName(string $name): ?string {
+
+		$class = self::buildHandlerClassName($name);
+		if (!\class_exists($class)) {
+			return null;
+		}
+
+		return $class;
+
 	}
 
 	/**
@@ -37,28 +53,23 @@ abstract class HandlerFactory {
 	 * be called VERY often.
 	 *
 	 * @param string $name
-	 * @param bool $strict
 	 * @return ?class-string
 	 */
-	public static function getFor($name, $strict = \true) {
+	public static function getFor($id) {
 
 		// Using caching is of course faster than repeatedly building strings
 		// and checking classes and stuff.
-		if (\array_key_exists($name, self::$handlersCache)) {
-			return self::$handlersCache[$name];
+		if (\array_key_exists($id, self::$handlersCache)) {
+			return self::$handlersCache[$id];
 		}
 
-		if (!\class_exists($class = self::getClassName($name))) {
-
-			if ($strict) {
-				throw new EngineInternalError("Handler type '$name' not found");
-			}
-
-			return \null;
-
+		$class = self::buildHandlerClassName(KnownHandlers::fromId($id));
+		if (!\class_exists($class)) {
+			$msg = "Handler class '$class' for handler ID '$id' not found";
+			throw new EngineInternalError($msg);
 		}
 
-		return self::$handlersCache[$name] = $class;
+		return self::$handlersCache[$id] = $class;
 
 	}
 
