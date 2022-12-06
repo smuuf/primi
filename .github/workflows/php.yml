@@ -27,7 +27,7 @@ jobs:
     - name: Run tests
       run: chmod +x ./primi ./bin/* && ./bin/tests.sh --php php --coverage xml
     - name: Run benchmarks
-      run: export XDEBUG_MODE=off && ./bin/bench.sh
+      run: export XDEBUG_MODE=off && ./bin/bench
     - name: Run static analysis
       continue-on-error: true
       run: ./bin/phpstan.sh
