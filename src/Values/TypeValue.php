@@ -136,9 +136,13 @@ class TypeValue extends AbstractBuiltinValue {
 		// than the "type" type itself - and calling this object should
 		// represent instantiation of new object that will have this type.
 		if ($fn = Types::attr_lookup($this, MagicStrings::MAGICMETHOD_NEW, $this)) {
+
+			// The static '__new__()' will receive type object as the first
+			// argument.
 			$newArgs = $args
-				? new CallArgs([$this, ...$args->getArgs()], $args->getKwargs())
+				? (new CallArgs([$this]))->withExtra($args)
 				: new CallArgs([$this]);
+
 			$result = $fn->invoke($context, $newArgs, $callsite);
 
 			if ($init = $result->attrGet(MagicStrings::MAGICMETHOD_INIT)) {

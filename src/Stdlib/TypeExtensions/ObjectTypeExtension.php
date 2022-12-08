@@ -9,10 +9,10 @@ use \Smuuf\Primi\Ex\TypeError;
 use \Smuuf\Primi\Values\TypeValue;
 use \Smuuf\Primi\Values\AbstractValue;
 use \Smuuf\Primi\Values\InstanceValue;
-use \Smuuf\Primi\Values\StaticTypeValue;
 use \Smuuf\Primi\Extensions\PrimiFunc;
 use \Smuuf\Primi\Extensions\TypeExtension;
 use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Values\BuiltinTypeValue;
 
 class ObjectTypeExtension extends TypeExtension {
 
@@ -35,8 +35,8 @@ class ObjectTypeExtension extends TypeExtension {
 		// can be instantiated into PHP `InstanceValue` objects. Otherwise
 		// things would get messy (for example `DictValue::__construct()` would
 		// not get used in any way, etc.)
-		if ($type instanceof StaticTypeValue) {
-			throw new TypeError("First argument for object.__new__() must not be a native type");
+		if ($type instanceof BuiltinTypeValue) {
+			throw new TypeError("First argument for object.__new__() must not be a builtin type");
 		}
 
 		return new InstanceValue($type, $ctx);
