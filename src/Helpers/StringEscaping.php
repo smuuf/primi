@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\StrictObject;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\StrictObject;
 
 class StringEscaping {
 
@@ -51,8 +51,9 @@ class StringEscaping {
 
 			// The backslashed character doesn't represent any known escape
 			// sequence, therefore error.
-			throw new RuntimeError(
-				"Unrecognized string escape sequence '{$m[0]}'."
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Unrecognized string escape sequence '{$m[0]}'.",
 			);
 
 		}, $str);

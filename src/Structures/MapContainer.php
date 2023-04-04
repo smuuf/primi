@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\StrictObject;
+use Smuuf\Primi\Ex\UnhashableTypeException;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\StrictObject;
 
 /**
  * Map container structure supporting Primi value objects as keys.
@@ -39,7 +39,7 @@ class MapContainer implements
 	 * @return self
 	 * @internal
 	 */
-	public static function fromCouples(iterable $couples) {
+	public static function fromCouples(iterable $couples): self {
 		return new self($couples);
 	}
 

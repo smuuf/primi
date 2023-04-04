@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Values\AbstractValue;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
@@ -16,7 +16,7 @@ class NullValue extends AbstractBuiltinValue {
 	public const TYPE = "null";
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getNullType();
+		return StaticTypes::getNullType();
 	}
 
 	public function getStringRepr(): string {

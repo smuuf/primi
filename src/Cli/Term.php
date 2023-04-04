@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Cli;
 
-use \Smuuf\Primi\Helpers\Colors;
+use Smuuf\Primi\Helpers\Colors;
 
 abstract class Term {
 
@@ -22,6 +22,7 @@ abstract class Term {
 
 	public static function stderr(string $text): void {
 		\fwrite(\STDERR, $text);
+		\fwrite(\STDERR, "\n");
 	}
 
 }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\EngineInternalError;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Ex\EngineInternalError;
 
 /**
  * Static helper class for getting correct handler class for specific AST node.
@@ -20,7 +19,7 @@ abstract class HandlerFactory {
 	/** @var array<string, string|null> Dict of handler classes we know exist. */
 	private static $handlersCache = [];
 
-	private const PREFIX = '\Smuuf\Primi\Handlers\Kinds';
+	private const PREFIX = 'Smuuf\Primi\Handlers\Kinds';
 
 	/**
 	 * @return class-string|string
@@ -34,7 +33,7 @@ abstract class HandlerFactory {
 	 *
 	 * @return class-string|string
 	 */
-	public static function tryGetForName(string $name): ?string {
+	public static function tryGetFor(string $name): ?string {
 
 		$class = self::buildHandlerClassName($name);
 		if (!\class_exists($class)) {
@@ -55,33 +54,22 @@ abstract class HandlerFactory {
 	 * @param string $name
 	 * @return ?class-string
 	 */
-	public static function getFor($id) {
+	public static function getFor(string $name): string {
 
 		// Using caching is of course faster than repeatedly building strings
 		// and checking classes and stuff.
-		if (\array_key_exists($id, self::$handlersCache)) {
-			return self::$handlersCache[$id];
+		if (\array_key_exists($name, self::$handlersCache)) {
+			return self::$handlersCache[$name];
 		}
 
-		$class = self::buildHandlerClassName(KnownHandlers::fromId($id));
-		if (!\class_exists($class)) {
-			$msg = "Handler class '$class' for handler ID '$id' not found";
+		$class = self::tryGetFor($name);
+		if ($class === \null) {
+			$msg = "Handler class for '$name' not found";
 			throw new EngineInternalError($msg);
 		}
 
-		return self::$handlersCache[$id] = $class;
+		return self::$handlersCache[$name] = $class;
 
-	}
-
-	/**
-	 * Shorthand function for running a AST node passed as array.
-	 *
-	 * @param TypeDef_AstNode $node
-	 * @param Context $ctx
-	 * @return mixed
-	 */
-	public static function runNode($node, $ctx) {
-		return self::getFor($node['name'])::run($node, $ctx);
 	}
 
 }

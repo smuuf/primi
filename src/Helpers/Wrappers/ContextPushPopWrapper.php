@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers\Wrappers;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\StackFrame;
-use \Smuuf\Primi\Scope;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\StackFrame;
+use Smuuf\Primi\Scope;
 
 /**
  * @internal

@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Ex\ErrorException;
-use \Smuuf\Primi\Ex\EngineException;
-use \Smuuf\Primi\Ex\SystemException;
-use \Smuuf\Primi\Cli\Term;
-use \Smuuf\Primi\Code\Source;
-use \Smuuf\Primi\Parser\GrammarHelpers;
-use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\ModuleValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Colors;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
-use \Smuuf\Primi\Drivers\ReadlineUserIoDriver;
-use \Smuuf\Primi\Drivers\ReplIoDriverInterface;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Scope;
+use Smuuf\Primi\Ex\EngineException;
+use Smuuf\Primi\Code\Bytecode;
+use Smuuf\Primi\Code\Source;
+use Smuuf\Primi\Parser\GrammarHelpers;
+use Smuuf\Primi\Values\NullValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\ModuleValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Colors;
+use Smuuf\Primi\Drivers\ReadlineUserIoDriver;
+use Smuuf\Primi\Drivers\ReplIoDriverInterface;
+use Smuuf\Primi\Ex\UncaughtError;
+use Smuuf\Primi\Helpers\Exceptions;
 
 class Repl {
 
@@ -51,7 +50,7 @@ class Repl {
 	 * This is handy for our unit tests, so we can simulate user input and
 	 * gather REPL output.
 	 */
-	protected ReplIoDriverInterface $driver;
+	protected ReplIoDriverInterface $ioDriver;
 
 	/**
 	 * If `false`, extra "user-friendly info" is not printed out.
@@ -69,7 +68,7 @@ class Repl {
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
 
 		$this->replName = sprintf(self::REPL_NAME_FORMAT, $replName ?? 'cli');
-		$this->driver = $driver ?? new ReadlineUserIoDriver;
+		$this->ioDriver = $driver ?? new ReadlineUserIoDriver;
 
 		$this->loadHistory();
 
@@ -77,13 +76,13 @@ class Repl {
 
 	protected function printHelp(): void {
 
-		$this->driver->stderr(Colors::get("\n".
+		$this->ioDriver->stderr(Colors::get("\n".
 			"{green}Use '{_}exit{green}' to exit REPL or '{_}exit!{green}' " .
 			"to terminate the process.\n" .
 			"Use '{_}?{green}' to view local variables, " .
 			"'{_}??{green}' to view all variables, " .
 			"'{_}?tb{green}' to see traceback. \n" .
-			"The latest result is stored in '{_}_{green}' variable.\n\n"
+			"The latest result is stored in '{_}_{green}' variable.\n"
 		));
 
 	}
@@ -99,22 +98,12 @@ class Repl {
 
 		// If context was not provided, create and use a new one.
 		if (!$ctx) {
-			$scope = new Scope;
 			$config = Config::buildDefault();
 			$config->addImportPath(getcwd());
 			$ctx = new Context($config);
-			$module = new ModuleValue(MagicStrings::MODULE_MAIN_NAME, '', $scope);
-		} else {
-			$module = $ctx->getCurrentModule();
-			$scope = $ctx->getCurrentScope();
 		}
 
-		$frame = new StackFrame($this->replName, $module);
-
-		$wrapper = new ContextPushPopWrapper($ctx, $frame, $scope);
-		$wrapper->wrap(function($ctx) {
-			$this->loop($ctx);
-		});
+		$this->loop($ctx);
 
 	}
 
@@ -123,17 +112,30 @@ class Repl {
 		// Print out level (current frame's index in call stack).
 		if (!self::$noExtras) {
 			$level = self::getStackLevel($ctx);
-			$this->driver->stderr(Colors::get(
-				"{darkgrey}Starting REPL at F {$level}{_}\n"
+			$this->ioDriver->stderr(Colors::get(
+				"{darkgrey}Starting REPL at F {$level}{_}"
 			));
 			$this->printHelp();
 		}
 
-		$currentScope = $ctx->getCurrentScope();
-		$cellNumber = 1;
+		if (!$frame = $ctx->getCurrentFrame()) {
+
+			$scope = new Scope(parent: $ctx->getBuiltins());
+			$module = new ModuleValue(MagicStrings::MODULE_MAIN_NAME, '', $scope);
+			$frame = $ctx->buildFrame(
+				$this->replName,
+				bytecode: new Bytecode([]),
+				scope: $scope,
+				module: $module,
+			);
+
+		}
+
+		$scope = $frame->getScope();
+		$scopeComp = new ScopeComposite($scope, $ctx->getBuiltins());
 
 		readline_completion_function(
-			static fn($buffer) => self::autocomplete($buffer, $ctx)
+			static fn($buffer) => self::autocomplete($buffer, $scopeComp),
 		);
 
 		while (true) {
@@ -141,28 +143,28 @@ class Repl {
 			// Display frame level - based on current level of call stack.
 			$level = self::getStackLevel($ctx);
 			if (!self::$noExtras && $level) {
-				$this->driver->stderr(Colors::get("{darkgrey}F {$level}{_}\n"));
+				$this->ioDriver->stderr(Colors::get("{darkgrey}F {$level}{_}"));
 			}
 
 			$input = $this->gatherLines($ctx);
 
 			if (trim($input) && $input !== 'exit') {
-				$this->driver->addToHistory($input);
+				$this->ioDriver->addToHistory($input);
 			}
 
 			switch (trim($input)) {
 				case '?':
 					// Print defined variables.
-					$this->printScope($currentScope, false);
+					$this->dumpVariables($scope, includeParents: false);
+					continue 2;
+				case '??':
+					// Print all variables, including the ones from parent
+					// scopes and builtins.
+					$this->dumpVariables($scope, includeParents: true);
 					continue 2;
 				case '?tb':
 					// Print traceback.
 					$this->printTraceback($ctx);
-					continue 2;
-				case '??':
-					// Print all variables, including the ones from parent
-					// scopes (i.e. even from extensions).
-					$this->printScope($currentScope, true);
 					continue 2;
 				case '':
 					// Ignore (skip) empty input.
@@ -178,23 +180,25 @@ class Repl {
 			}
 
 			$this->saveHistory();
-			$source = new Source($input);
 
 			try {
 
-				// May throw syntax error - will be handled by the catch
-				// below.
-				$ast = $ctx->getAstProvider()->getAst($source, false);
-				$result = DirectInterpreter::execute($ast, $ctx);
+				// May throw syntax error - will be handled by the catch below.
+				$result = $ctx->runSource(
+					new Source($input),
+					$frame,
+					compilerArgs: ['keepValue' => true],
+				);
 
 				// Store the result into _ variable for quick'n'easy
 				// retrieval.
-				$currentScope->setVariable('_', $result);
+				$frame->getScope()->setVariable('_', $result);
 				$this->printResult($result);
 
-			} catch (ErrorException|SystemException $e) {
-				$colorized = Func::colorize_traceback($e);
-				$this->driver->stderr(Term::error($colorized));
+			} catch (UncaughtError $uncaught) {
+				$thrown = $uncaught->thrownException;
+				$excText = Exceptions::renderThrownExceptionToText($thrown);
+				$this->ioDriver->stderr($excText);
 			} catch (EngineException|\Throwable $e) {
 
 				// All exceptions other than ErrorException are likely to be a
@@ -203,8 +207,7 @@ class Repl {
 
 			}
 
-			$this->driver->stdout("\n");
-			$cellNumber++;
+			$this->ioDriver->stdout("\n");
 
 		}
 
@@ -212,8 +215,8 @@ class Repl {
 
 		if (!self::$noExtras) {
 			$level = self::getStackLevel($ctx);
-			$this->driver->stderr(Colors::get(
-				"{yellow}Exiting REPL frame $level{_}\n"
+			$this->ioDriver->stderr(Colors::get(
+				"{yellow}Exiting REPL frame $level{_}"
 			));
 		}
 
@@ -230,7 +233,7 @@ class Repl {
 			return;
 		}
 
-		$this->driver->stdout(self::formatValue($result), "\n");
+		$this->ioDriver->stdout(self::formatValue($result), "\n");
 
 	}
 
@@ -238,17 +241,20 @@ class Repl {
 	 * Pretty-prints out all variables of a scope (with or without variables
 	 * from parent scopes).
 	 */
-	private function printScope(Scope $c, bool $includeParents): void {
+	private function dumpVariables(
+		Scope $scope,
+		bool $includeParents = false,
+	): void {
 
-		foreach ($c->getVariables($includeParents) as $name => $value)  {
-			$this->driver->stdout(
+		foreach ($scope->getVariables($includeParents) as $name => $value) {
+			$this->ioDriver->stdout(
 				Colors::get("{lightblue}$name{_}: "),
 				self::formatValue($value),
 				"\n",
 			);
 		}
 
-		$this->driver->stdout("\n");
+		$this->ioDriver->stdout("\n");
 
 	}
 
@@ -257,8 +263,8 @@ class Repl {
 	 */
 	private function printTraceback(Context $ctx): void {
 
-		$tbString = Func::get_traceback_as_string($ctx->getCallStack());
-		$this->driver->stdout($tbString, "\n\n");
+		$tb = Exceptions::unwindStack($ctx);
+		$this->ioDriver->stdout(Exceptions::renderTracebackToText($tb), "\n");
 
 	}
 
@@ -269,14 +275,13 @@ class Repl {
 
 		$type = get_class($e);
 		$msg = Colors::get(sprintf("\n{white}{-red}%s", self::PHP_ERROR_HEADER));
-		$msg .= " $type: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}\n";
-		$this->driver->stderr($msg);
+		$msg .= " $type: {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}";
+		$this->ioDriver->stderr($msg);
 
 		// Best and easiest to get version of backtrace I can think of.
-		$this->driver->stderr(
+		$this->ioDriver->stderr(
 			$e->getTraceAsString(),
 			Colors::get(sprintf("\n{yellow}%s", self::ERROR_REPORT_PLEA)),
-			"\n\n",
 		);
 
 	}
@@ -300,7 +305,7 @@ class Repl {
 				$prompt = self::MULTILINE_PROMPT;
 			}
 
-			$input = $this->driver->input($prompt);
+			$input = $this->ioDriver->input($prompt);
 			[$incomplete, $trim] = self::isIncompleteInput($input);
 
 			if ($incomplete) {
@@ -335,7 +340,7 @@ class Repl {
 		return sprintf(
 			"%s %s",
 			$value->getStringRepr(),
-			!self::$noExtras ? self::formatType($value) : null
+			!self::$noExtras ? self::formatType($value) : null,
 		);
 
 	}
@@ -348,7 +353,7 @@ class Repl {
 		return Colors::get(sprintf(
 			"{darkgrey}(%s %s){_}",
 			$value->getTypeName(),
-			Func::object_hash($value)
+			Func::object_hash($value),
 		));
 
 	}
@@ -386,7 +391,7 @@ class Repl {
 	private function loadHistory(): void {
 
 		if (is_readable(self::$historyFilePath)) {
-			$this->driver->loadHistory(self::$historyFilePath);
+			$this->ioDriver->loadHistory(self::$historyFilePath);
 		}
 
 	}
@@ -394,38 +399,13 @@ class Repl {
 	private function saveHistory(): void {
 
 		if (is_writable(dirname(self::$historyFilePath))) {
-			$this->driver->storeHistory(self::$historyFilePath);
+			$this->ioDriver->storeHistory(self::$historyFilePath);
 		}
-
-	}
-
-	/**
-	 * Return string with human-friendly information about current level
-	 * of nested calls (that is the number of entries in the call stack).
-	 */
-	private static function getStackInfo(
-		Context $ctx,
-		bool $full = false
-	): string {
-
-		$level = self::getStackLevel($ctx);
-
-		// Do not print anything for level 0 (or less, lol).
-		if ($level < 0) {
-			return '';
-		}
-
-		$out = "F {$level}";
-		if ($full) {
-			$out = "REPL at frame {$level}.\n";
-		}
-
-		return Colors::get("{darkgrey}REPL at frame {$level}.\n{_}");
 
 	}
 
 	private static function getStackLevel(Context $ctx): int {
-		return \count($ctx->getCallStack()) - 1;
+		return (int) $ctx->getCurrentFrame()?->callStackSize;
 	}
 
 	/**
@@ -433,7 +413,7 @@ class Repl {
 	 */
 	private static function autocomplete(
 		string $buffer,
-		Context $ctx
+		ScopeComposite $scopeComp,
 	): array {
 
 		$names = [];
@@ -441,7 +421,7 @@ class Repl {
 		if (!$buffer || GrammarHelpers::isValidName($buffer)) {
 
 			// Buffer (word of input) is empty - or maybe a simple variable.
-			$names = array_keys($ctx->getVariables(true));
+			$names = array_keys($scopeComp->getVariables(true));
 
 		} elseif (GrammarHelpers::isSimpleAttrAccess(trim($buffer, '.'))) {
 
@@ -453,7 +433,7 @@ class Repl {
 
 			// Fetch the actual variable (always for the first part).
 			$name = array_pop($parts);
-			if (!$obj = $ctx->getVariable($name)) {
+			if (!$obj = $scopeComp->getVariable($name)) {
 				return [];
 			}
 			$names[] = $name;

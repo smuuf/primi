@@ -50,15 +50,13 @@ assert_error(() => {
 	list(range(1.000000000000001))
 })
 
-// This is false negative and passes without error (which is wrong).
-// Number is too small for ordinary numeric operations within PHP.
-// But using bcmath for implementation of range() should fix this.
-list(range(1.0000000000000000000000000000001))
+assert_error(() => {
+	list(range(1.0000000000000000000000000000001))
+})
 
-// This is false negative and passes without error (which is wrong).
-// Number is too small for ordinary numeric operations within PHP and even for
-// bcmath's precision we use.
-list(range(1.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001))
+assert_error(() => {
+	list(range(1.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001))
+})
 
 _ = 'Integers with decimal point are a-okay'
 x = list(range(1.0, -3.0, 2.0))

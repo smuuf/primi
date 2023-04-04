@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
+use Smuuf\Primi\Scope;
+use Smuuf\Primi\Stdlib\StaticTypes;
 
 /**
- * @property Scope|null $value Global scope of the module or null, if
- * the module has no global scope (which is handy for "anonymous" modules that
- * wrap Primi functions that are wrappers for native PHP functions which might
- * not be placed in any module).
+ * @property Scope $value Global scope of the module.
+ * @method Scope getCoreValue()
  */
 class ModuleValue extends AbstractBuiltinValue {
 
@@ -36,7 +34,7 @@ class ModuleValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getModuleType();
+		return StaticTypes::getModuleType();
 	}
 
 	/**

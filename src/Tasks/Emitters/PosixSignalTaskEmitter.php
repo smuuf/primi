@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Tasks\Emitters;
 
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Tasks\TaskQueue;
-use \Smuuf\Primi\Tasks\Types\PosixSignalTask;
+use Smuuf\Primi\Ex\EngineInternalError;
+use Smuuf\Primi\Tasks\TaskQueue;
+use Smuuf\Primi\Tasks\Types\PosixSignalTask;
 
 abstract class PosixSignalTaskEmitter {
 

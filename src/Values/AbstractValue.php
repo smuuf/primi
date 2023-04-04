@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Location;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Types;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Helpers\ValueFriends;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Structures\FnContainer;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Ex\UnhashableTypeException;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Types;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Helpers\ValueFriends;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Structures\FnContainer;
 
 /**
  * Primi value == Primi object in our case.
@@ -207,15 +207,20 @@ abstract class AbstractValue extends ValueFriends {
 	 *
 	 * @param Context $context Runtime context of the call-site.
 	 * @param ?CallArgs $args Args object with call arguments (optional).
-	 * @param ?Location $callsite Call site location (optional).
-	 * @throws TypeError
 	 */
 	public function invoke(
 		Context $context,
 		?CallArgs $args = \null,
-		?Location $callsite = \null
 	): ?AbstractValue {
-		throw new TypeError("'{$this->getTypeName()}' object is not callable");
+
+		Exceptions::set(
+			$context,
+			StaticExceptionTypes::getTypeErrorType(),
+			"'{$this->getTypeName()}' object is not callable",
+		);
+
+		return null;
+
 	}
 
 	/**
@@ -272,14 +277,14 @@ abstract class AbstractValue extends ValueFriends {
 	 * elsewhere".
 	 *
 	 * As the above is expected to be the most common thing to do, unsupported
-	 * attr access instead should throw a RuntimeError.
+	 * attr access instead should throw a Primi exception.
 	 *
 	 * NOTE: This attribute name can only be strings, so there's no need to
 	 * accept StringValue as $key.
 	 */
 	public function attrGet(string $name): ?AbstractValue {
 		return $this->attrs[$name]
-			?? Types::attr_lookup($this->getType(), $name, $this);
+			?? Types::attrLookup($this->getType(), $name, $this);
 	}
 
 	/**

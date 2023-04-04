@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Drivers\VoidIoDriver;
-use \Smuuf\Primi\Drivers\TerminalIoDriver;
-use \Smuuf\Primi\Drivers\StdIoDriverInterface;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Drivers\VoidIoDriver;
+use Smuuf\Primi\Drivers\TerminalIoDriver;
+use Smuuf\Primi\Drivers\StdIoDriverInterface;
 
 class Config {
 

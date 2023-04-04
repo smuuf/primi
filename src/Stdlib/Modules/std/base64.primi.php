@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
@@ -45,7 +44,10 @@ class extends NativeModule {
 
 		$result = \base64_decode($data->value, \true);
 		if ($result === \false) {
-			throw new RuntimeError("Failed to decode base64 string");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Failed to decode base64 string",
+			);
 		}
 
 		return Interned::string($result);

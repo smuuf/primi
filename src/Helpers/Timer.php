@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\StrictObject;
+use Smuuf\StrictObject;
 
 class Timer {
 

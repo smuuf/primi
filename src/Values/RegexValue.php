@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Helpers\Types;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Helpers\Types;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
@@ -31,7 +31,7 @@ class RegexValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getRegexType();
+		return StaticTypes::getRegexType();
 	}
 
 	public function isTruthy(): bool {

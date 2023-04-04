@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\BytesValue;
-use \Smuuf\Primi\Values\RegexValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\NotImplementedValue;
-
-use \Smuuf\StrictObject;
+use Smuuf\Primi\Values\BoolValue;
+use Smuuf\Primi\Values\NullValue;
+use Smuuf\Primi\Values\BytesValue;
+use Smuuf\Primi\Values\RegexValue;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\NotImplementedValue;
+use Smuuf\StrictObject;
 
 /**
  * Helper factory for building and interning primitive types and additional
@@ -74,12 +73,6 @@ abstract class Interned {
 	 * @var array<string, StringValue>
 	 */
 	private static $internedString = [];
-
-	/**
-	 * Storage for interned instances of bytes objects.
-	 * @var array<string, BytesValue>
-	 */
-	private static $internedBytes = [];
 
 	/**
 	 * Storage for interned instances of regex objects.
@@ -158,21 +151,6 @@ abstract class Interned {
 		}
 
 		return new StringValue($str);
-
-	}
-
-	/**
-	 * @return BytesValue
-	 */
-	public static function bytes(string $b) {
-
-		// Bytes values up to 8 bytes will be interned.
-		if (\strlen($b) <= 8) {
-			return self::$internedBytes[$b]
-				?? (self::$internedBytes[$b] = new BytesValue($b));
-		}
-
-		return new BytesValue($b);
 
 	}
 

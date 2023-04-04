@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Drivers;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Cli\Term;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Cli\Term;
 
 class TerminalIoDriver implements StdIoDriverInterface {
 

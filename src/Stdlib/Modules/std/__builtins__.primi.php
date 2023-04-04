@@ -4,24 +4,25 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Repl;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\LookupError;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Values\TupleValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\IteratorFactoryValue;
-use \Smuuf\Primi\Values\ListValue;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Repl;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Values\NullValue;
+use Smuuf\Primi\Values\BoolValue;
+use Smuuf\Primi\Values\TupleValue;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\IteratorFactoryValue;
+use Smuuf\Primi\Values\ListValue;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Stdlib\StaticTypes;
 
 return new
 /**
@@ -36,22 +37,18 @@ class extends NativeModule {
 
 	public function execute(Context $ctx): array {
 
-		$types = $ctx->getImporter()
-			->getModule('std.types')
-			->getCoreValue();
-
-		return [
-			'object' => $types->getVariable('object'),
-			'type' => $types->getVariable('type'),
-			'bool' => $types->getVariable('bool'),
-			'dict' => $types->getVariable('dict'),
-			'list' => $types->getVariable('list'),
-			'tuple' => $types->getVariable('tuple'),
-			'number' => $types->getVariable('number'),
-			'regex' => $types->getVariable('regex'),
-			'string' => $types->getVariable('string'),
-			'NotImplemented' => Interned::constNotImplemented(),
+		$all = [
+			StaticTypes::extractBuiltins(),
+			StaticExceptionTypes::extractBuiltins(),
 		];
+
+		$vars = [];
+		foreach (array_merge(...$all) as $getter) {
+			$excType = $getter();
+			$vars[$excType->getName()] = $excType;
+		}
+
+		return $vars;
 
 	}
 
@@ -105,7 +102,12 @@ class extends NativeModule {
 
 		$args->extractPositional(0);
 		if ($ctx->getConfig()->getSandboxMode()) {
-			throw new RuntimeError("Function 'debugger' disabled in sandbox");
+			Exceptions::set(
+				$ctx,
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Function 'debugger' disabled in sandbox",
+			);
+			return Interned::null();
 		}
 
 		$repl = new Repl('debugger');
@@ -126,13 +128,16 @@ class extends NativeModule {
 	 * len({'a': 1, 'b': 'c'}) == 2
 	 * ```
 	 */
-	#[PrimiFunc (toStack: \false)]
+	#[PrimiFunc]
 	public static function len(AbstractValue $value): NumberValue {
 
 		$length = $value->getLength();
 		if ($length === \null) {
 			$type = $value->getTypeName();
-			throw new RuntimeError("Type '$type' does not support length");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Type '$type' does not support length",
+			);
 		}
 
 		return Interned::number((string) $value->getLength());
@@ -144,19 +149,38 @@ class extends NativeModule {
 	 * and throws error if it's `false`. Optional `string` description can be
 	 * provided, which will be visible in the eventual error message.
 	 */
-	#[PrimiFunc]
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function assert(
-		BoolValue $assumption,
-		?StringValue $description = \null
-	): BoolValue {
+		CallArgs $cArgs,
+		Context $ctx,
+	): AbstractValue {
 
-		$desc = $description;
-		if ($assumption->value !== \true) {
-			$desc = ($desc && $desc->value !== '') ? " ($desc->value)" : '';
-			throw new RuntimeError(\sprintf("Assertion failed%s", $desc));
+		$args = $cArgs->extract(['val', 'desc'], ['desc']);
+		$val = $args['val'];
+		$desc = $args['desc'] ?? null;
+
+		if (!$val instanceof BoolValue) {
+			Exceptions::set(
+				$ctx,
+				StaticExceptionTypes::getTypeErrorType(),
+				"Expected bool object"
+			);
+			return Interned::null();
 		}
 
-		return Interned::bool(\true);
+		if ($val->value === \true) {
+			return Interned::bool(\true);
+		}
+
+		// Wrap the description string into parentheses if it's not empty.
+		$desc = ($desc && $desc->value !== '') ? " ($desc->value)" : '';
+
+		Exceptions::set(
+			$ctx,
+			StaticExceptionTypes::getAssertionErrorType(),
+			\sprintf("Assertion failed%s", $desc),
+		);
+		return Interned::null();
 
 	}
 
@@ -186,13 +210,17 @@ class extends NativeModule {
 			|| !Func::is_round_int($end)
 			|| !Func::is_round_int($step)
 		) {
-			throw new RuntimeError(
-				"All numbers passed to range() must be integers");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"All numbers passed to range() must be integers",
+			);
 		}
 
 		if ($step <= 0) {
-			throw new RuntimeError(
-				"Range must have a non-negative non-zero step");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Range must have a non-negative non-zero step",
+			);
 		}
 
 		$direction = $end >= $start ? 1 : -1;
@@ -260,14 +288,17 @@ class extends NativeModule {
 	 * list(enumerate(b_list, -5)) == [(-5, 'a'), (-4, 'b'), (-3, 123), (-2, false)]
 	 * ```
 	 */
-	#[PrimiFunc(toStack: \true, callConv: PrimiFunc::CONV_CALLARGS)]
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function enumerate(CallArgs $args): IteratorFactoryValue {
 
 		[$iterable, $start] = $args->extractPositional(2, 1);
 		$start ??= Interned::number('0');
 
 		if (!$start instanceof NumberValue) {
-			throw new RuntimeError("Start must be a number");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Start must be a number",
+			);
 		}
 
 		$counter = $start->getStringValue();
@@ -275,7 +306,10 @@ class extends NativeModule {
 
 			$iter = $iterable->getIterator();
 			if ($iter === \null) {
-				throw new RuntimeError("Passed iterable is not iterable");
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Passed value is not iterable",
+				);
 			}
 
 			foreach ($iter as $item) {
@@ -320,7 +354,8 @@ class extends NativeModule {
 	 */
 	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function getattr(
-		CallArgs $args
+		CallArgs $args,
+		Context $ctx,
 	): AbstractValue {
 
 		[$obj, $name, $default] = $args->extractPositional(3, 1);
@@ -335,9 +370,11 @@ class extends NativeModule {
 		}
 
 		$typeName = $obj->getTypeName();
-		throw new LookupError(
-			"Object of type '$typeName' has no attribute '$attrName'");
-
+		Exceptions::set(
+			$ctx,
+			StaticExceptionTypes::getAttributeErrorType(),
+			"Object of type '$typeName' has no attribute '$attrName'",
+		);
 	}
 
 };

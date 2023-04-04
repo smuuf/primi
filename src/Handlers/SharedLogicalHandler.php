@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Ex\EngineInternalError;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Compiler;
 
 /**
  * Common ancestor of LogicalAnd and LogicalOr handlers, both of which have
@@ -18,25 +16,7 @@ use \Smuuf\Primi\Helpers\Interned;
  *
  * Both "and" and "or" operators do support short-circuiting.
  */
-abstract class SharedLogicalHandler extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		$type = $node['type'];
-
-		if ($type === "and") {
-			return self::handleAnd($node, $context);
-		}
-
-		if ($type === "or") {
-			return self::handleOr($node, $context);
-		}
-
-		// Unknown operator - should not ever happen, unless there's
-		// any unexpected output of source code parting.
-		throw new EngineInternalError("Unknown operator '$type'");
-
-	}
+abstract class SharedLogicalHandler extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -60,49 +40,81 @@ abstract class SharedLogicalHandler extends SimpleHandler {
 
 	}
 
-	/**
-	 * @param TypeDef_AstNode $node
-	 */
-	private static function handleAnd(
-		array $node,
-		Context $context
-	): BoolValue {
+	public static function compile(Compiler $bc, array $node): void {
 
-		$gen = Func::yield_left_to_right($node, $context);
-		foreach ($gen as [$_, $operand]) {
+		$type = $node['type'];
 
-			// Short-circuiting OR operator: if any of the results is already
-			// true, do not do the rest.
-			if (!$operand->isTruthy()) {
-				return Interned::bool(\false);
-			}
-
+		if ($type === "and") {
+			self::compileAnd($bc, $node);
+			return;
 		}
 
-		return Interned::bool(\true);
+		if ($type === "or") {
+			self::compileOr($bc, $node);
+			return;
+		}
+
+		// Unknown operator - should not ever happen, unless there's
+		// any unexpected output of source code parting.
+		throw new EngineInternalError("Unknown operator '$type'");
 
 	}
 
 	/**
-	 * @param TypeDef_AstNode $node
+	 * @param array $node
+	 * @phpstan-phpstan-param TypeDef_AstNode $node
 	 */
-	private static function handleOr(
+	private static function compileAnd(
+		Compiler $bc,
 		array $node,
-		Context $context
-	): AbstractValue {
+	): void {
 
-		$gen = Func::yield_left_to_right($node, $context);
+		$labelFinish = $bc->createLabel();
+
+		$gen = Func::yield_nodes_left_to_right($node);
 		foreach ($gen as [$_, $operand]) {
 
-			// Short-circuiting OR operator: if any of the results is already
-			// truthy, do not do the rest and return the first truthy value.
-			if ($operand->isTruthy()) {
-				return $operand;
-			}
+			// Run opcodes for each of the operands...
+			$bc->inject($operand);
+
+			// If any of the operands returns falsey value, don't do the rest.
+			// That's our short-circuiting.
+			$bc->add(Machine::OP_JUMP_IF_F_OR_POP, $labelFinish);
 
 		}
 
-		return Interned::bool(\false);
+		// Pop the last conditional jump opcode, as it is useless.
+		$bc->pop();
+		$bc->insertLabel($labelFinish);
+
+	}
+
+	/**
+	 * @param array $node
+	 * @phpstan-phpstan-param TypeDef_AstNode $node
+	 */
+	private static function compileOr(
+		Compiler $bc,
+		array $node,
+	): void {
+
+		$labelFinish = $bc->createLabel();
+
+		$gen = Func::yield_nodes_left_to_right($node);
+		foreach ($gen as [$_, $operand]) {
+
+			// Run opcodes for each of the operands...
+			$bc->inject($operand);
+
+			// If any of the operands returns a truthy value, don't do the rest.
+			// That's our short-circuiting.
+			$bc->add(Machine::OP_JUMP_IF_T_OR_POP, $labelFinish);
+
+		}
+
+		// Pop the last conditional jump opcode, as it is Useless.
+		$bc->pop();
+		$bc->insertLabel($labelFinish);
 
 	}
 

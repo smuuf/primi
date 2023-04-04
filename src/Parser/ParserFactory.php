@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Parser;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\EnvInfo;
+use Smuuf\StrictObject;
+use Smuuf\Primi\EnvInfo;
 
 use \hafriedlander\Peg\Compiler;
 

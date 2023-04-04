@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Values\RegexValue;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Values\BoolValue;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\RegexValue;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Extensions\TypeExtension;
 
 class RegexTypeExtension extends TypeExtension {
 
@@ -25,14 +24,20 @@ class RegexTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): RegexValue {
 
-		if ($type !== BuiltinTypes::getRegexType()) {
-			throw new TypeError("Passed invalid type object");
+		if ($type !== StaticTypes::getRegexType()) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Passed invalid type object",
+			);
 		}
 
 		$value ??= Interned::string('');
 
 		if (!$value instanceof StringValue && !$value instanceof RegexValue) {
-			throw new TypeError("Invalid argument passed to regex()");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Invalid argument passed to regex()",
+			);
 		}
 
 		return Interned::regex($value->getStringValue());

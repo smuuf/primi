@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\BoolValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Extensions\PrimiFunc;
 
 class BoolTypeExtension extends TypeExtension {
 
@@ -21,8 +22,11 @@ class BoolTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): BoolValue {
 
-		if ($type !== BuiltinTypes::getBoolType()) {
-			throw new TypeError("Passed invalid type object");
+		if ($type !== StaticTypes::getBoolType()) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Passed invalid type object",
+			);
 		}
 
 		return $value === \null

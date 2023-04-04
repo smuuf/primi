@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Ex\IndexError;
-use \Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\AbstractValue;
 
 /**
  * Helpers for handling accessing PHP arrays via possibly negative indices.
@@ -48,19 +47,16 @@ abstract class Indices {
 	 *
 	 * If the negative index could not be resolved, or if the index does not
 	 * represent an existing index in the array passed as the second argument,
-	 * an IndexError exception is thrown.
+	 * an integer -1 is returned.
 	 *
 	 * @param array<int, AbstractValue>|\ArrayAccess<int, AbstractValue> $array
 	 * @return mixed
 	 */
-	public static function resolveIndexOrError(int $index, $array) {
+	public static function resolveIndex(int $index, $array): int {
 
 		$actualIndex = self::resolveNegativeIndex($index, \count($array) - 1);
 		if ($actualIndex === \null || !isset($array[$actualIndex])) {
-
-			// $index on purpose - report error with the index originally used.
-			throw new IndexError($index);
-
+			return -1;
 		}
 
 		return $actualIndex;

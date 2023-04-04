@@ -58,7 +58,7 @@ ms2 = MySingleton(123, 456, hah: '789')
 assert(ms1 == ms2)
 
 // Even though it has different parameters, the singleton is already created
-// and is just returned from MySingleton.__new__.
+// and is just returned from MySingleton.__new__().
 ms3 = MySingleton(1, 2, well: '...')
 assert(ms2 == ms3)
 

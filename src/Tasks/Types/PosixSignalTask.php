@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Tasks\Types;
 
-use \Smuuf\Primi\Repl;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Ex\SystemException;
-use \Smuuf\Primi\Tasks\TaskInterface;
-use \Smuuf\StrictObject;
+use Smuuf\Primi\Repl;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Ex\EngineInternalError;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Tasks\TaskInterface;
+use Smuuf\StrictObject;
 
 class PosixSignalTask implements TaskInterface {
 
@@ -26,13 +27,22 @@ class PosixSignalTask implements TaskInterface {
 
 		switch ($this->signum) {
 			case SIGINT:
-				throw new SystemException('Received SIGINT');
+				Exceptions::piggyback(
+					StaticExceptionTypes::getSystemExceptionType(),
+					'Received SIGINT',
+				);
 			case SIGTERM:
-				throw new SystemException('Received SIGTERM');
+				Exceptions::piggyback(
+					StaticExceptionTypes::getSystemExceptionType(),
+					'Received SIGTERM',
+				);
 			case SIGQUIT:
 
 				if (!$ctx->getConfig()->getSigQuitDebugging()) {
-					throw new SystemException('Received SIGQUIT');
+					Exceptions::piggyback(
+						StaticExceptionTypes::getSystemExceptionType(),
+						'Received SIGQUIT',
+					);
 				}
 
 				$repl = new Repl('debugger');

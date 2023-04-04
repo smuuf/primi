@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Extensions;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\EngineError;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Ex\EngineError;
 
 /**
  * PHP attribute that is to be used to mark PHP extension methods from which
@@ -25,16 +25,11 @@ class PrimiFunc {
 	];
 
 	public function __construct(
-		private bool $toStack = \false,
 		private int $callConv = self::CONV_NATIVE,
 	) {
 		if (!\in_array($callConv, self::VALID_CONVENTIONS)) {
 			throw new EngineError('Invalid $callConv argument');
 		}
-	}
-
-	public function hasToStack(): bool {
-		return $this->toStack;
 	}
 
 	public function hasCallConv(int $callConv): bool {

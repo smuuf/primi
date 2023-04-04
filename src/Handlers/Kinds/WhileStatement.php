@@ -4,53 +4,34 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Ex\BreakException;
-use \Smuuf\Primi\Ex\ContinueException;
-use \Smuuf\Primi\Handlers\SimpleHandler;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Compiler\MetaFlag;
+use Smuuf\Primi\Handlers\Handler;
 
-class WhileStatement extends SimpleHandler {
+class WhileStatement extends Handler {
 
-	protected static function handle(
-		array $node,
-		Context $context
-	) {
+	public static function compile(Compiler $bc, array $node): void {
 
-		// Execute the left-hand node and get its return value.
-		$condHandler = HandlerFactory::getFor($node['left']['name']);
-		$blockHandler = HandlerFactory::getFor($node['right']['name']);
+		$condLabel = $bc->createLabel();
+		$endLabel = $bc->createLabel();
 
-		// Counter for determining when to tick the task queue.
-		$tickCounter = 0;
-		$queue = $context->getTaskQueue();
+		$bc->insertLabel($condLabel);
+		$bc->inject($node['left']);
+		$bc->add(Machine::OP_JUMP_IF_F, $endLabel);
 
-		while (
-			$condHandler::run($node['left'], $context)->isTruthy()
-		) {
+		$bc->withMetaFrame(function() use ($bc, $node, $condLabel, $endLabel) {
 
-			// Tick the task queue every 4 iterations.
-			if (++$tickCounter === 4) {
-				$queue->tick();
-				$tickCounter = 0;
-			}
+			$bc->setMeta(MetaFlag::InLoop, true);
+			$bc->setMeta(MetaFlag::ContinueJumpTargetLabel, $condLabel);
+			$bc->setMeta(MetaFlag::BreakJumpTargetLabel, $endLabel);
 
-			try {
+			$bc->inject($node['right']);
 
-				$blockHandler::run($node['right'], $context);
-				if ($context->hasRetval()) {
-					return;
-				}
+		});
 
-			} catch (ContinueException $_) {
-				continue;
-			} catch (BreakException $_) {
-				break;
-			}
-
-		}
-
-		$queue->tick();
+		$bc->add(Machine::OP_JUMP, $condLabel);
+		$bc->insertLabel($endLabel);
 
 	}
 

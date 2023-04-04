@@ -4,30 +4,18 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Handlers\ChainedHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class Chain extends ChainedHandler {
+class Chain extends Handler {
 
-	public static function chain(
-		array $node,
-		Context $context,
-		AbstractValue $subject
-	) {
+	public static function compile(Compiler $bc, array $node): void {
 
-		// Handle the item; pass in the origin subject.
-		$handler = HandlerFactory::getFor($node['core']['name']);
-		$value = $handler::chain($node['core'], $context, $subject);
+		$bc->inject($node['core']);
 
-		// If there's chain, handle it, too.
-		if (\array_key_exists('chain', $node)) {
-			$handler = HandlerFactory::getFor($node['chain']['name']);
-			return $handler::chain($node['chain'], $context, $value);
+		if (isset($node['chain'])) {
+			$bc->inject($node['chain']);
 		}
-
-		return $value;
 
 	}
 

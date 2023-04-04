@@ -1,10 +1,9 @@
 <?php
 
-use \Tester\Assert;
+use Tester\Assert;
 
-use \Smuuf\Primi\Interpreter;
-use \Smuuf\Primi\Ex\ErrorException;
-use \Smuuf\Primi\Tasks\Types\PosixSignalTask;
+use Smuuf\Primi\Interpreter;
+use Smuuf\Primi\Tasks\Types\PosixSignalTask;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -29,14 +28,22 @@ $ctx = $interpreterResult->getContext();
 
 Assert::same('60', $mainScope->getVariable('result')->getCoreValue());
 
-Assert::exception(function() use ($i, $ctx, $src) {
-	// Add SIGINT event to event queue.
-	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGINT));
-	// Exception will be thrown based on the simulated "SIGINT" signal task job.
-	$i->run($src, context: $ctx);
-}, ErrorException::class, '#Received SIGINT#');
+assert_piggyback_exception(
+	function() use ($i, $ctx, $src) {
+		// Add SIGINT event to event queue.
+		$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGINT));
+		// Exception will be thrown based on the simulated "SIGINT" signal task job.
+		$i->run($src, context: $ctx);
+	},
+	'SystemException',
+	'#Received SIGINT#i',
+);
 
-Assert::exception(function() use ($i, $ctx, $src) {
-	$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGTERM));
-	$i->run($src, context: $ctx);
-}, ErrorException::class, '#Received SIGTERM#');
+assert_piggyback_exception(
+	function() use ($i, $ctx, $src) {
+		$ctx->getTaskQueue()->addTask(new PosixSignalTask(SIGTERM));
+		$i->run($src, context: $ctx);
+	},
+	'SystemException',
+	'#Received SIGTERM#i',
+);

@@ -4,33 +4,38 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Location;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Handlers\ChainedHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Compiler\MetaFlag;
+use Smuuf\Primi\Handlers\Handler;
 
-class Invocation extends ChainedHandler {
+class Invocation extends Handler {
 
-	public static function chain(
-		array $node,
-		Context $context,
-		AbstractValue $fn
-	) {
+	public static function compile(Compiler $bc, array $node): void {
 
-		$arguments = \null;
-		if (\array_key_exists('args', $node)) {
-			$arguments = HandlerFactory::runNode($node['args'], $context);
+		// Special case for calling without arguments.
+		if (empty($node['argList'])) {
+			$bc->add(Machine::OP_CALL_FUNCTION_N);
+			return;
 		}
 
-		// Gather info about call location - for some quality tracebacks.
-		$callsite = new Location(
-			$context->getCurrentModule()->getStringRepr(),
-			$node['_l'],
-			$node['_p'],
-		);
+		$bc->withMetaFrame(function() use ($bc, $node) {
 
-		return $fn->invoke($context, $arguments, $callsite);
+			$bc->inject($node['argList']);
+
+			$isComplex = $bc->getMeta(
+				MetaFlag::ComplexArgs,
+				false,
+			);
+
+			if ($isComplex) {
+				$bc->add(Machine::OP_CALL_FUNCTION_EX);
+			} else {
+				$argCount = count($node['argList']['args']);
+				$bc->add(Machine::OP_CALL_FUNCTION, $argCount);
+			}
+
+		});
 
 	}
 

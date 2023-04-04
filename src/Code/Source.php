@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Code;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Helpers\Func;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Helpers\Func;
 
 /**
  * Helper class for representing Primi source code.
@@ -34,7 +34,7 @@ class Source {
 		return $this->sourceId;
 	}
 
-	public function getSourceCode(): string {
+	public function getSourceString(): string {
 		return $this->sourceCode;
 	}
 

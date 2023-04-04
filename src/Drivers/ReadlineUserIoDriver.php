@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Drivers;
 
-use \Smuuf\StrictObject;
+use Smuuf\StrictObject;
 
 class ReadlineUserIoDriver extends TerminalIoDriver implements ReplIoDriverInterface {
 

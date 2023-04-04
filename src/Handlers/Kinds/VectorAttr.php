@@ -4,39 +4,18 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\LookupError;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Handlers\ChainedHandler;
-use \Smuuf\Primi\Structures\AttrInsertionProxy;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class VectorAttr extends ChainedHandler {
-
-	public static function chain(
-		array $node,
-		Context $context,
-		AbstractValue $subject
-	) {
-
-		$attrName = $node['attr'];
-
-		// If this is a leaf node, return an insertion proxy instead of value.
-		if ($node['leaf']) {
-			return new AttrInsertionProxy($attrName, $subject);
-		}
-
-		$value = $subject->attrGet($attrName);
-		if ($value === \null) {
-			$typeName = $subject->getTypeName();
-			throw new LookupError("Object of type '$typeName' has no attribute '$attrName'");
-		}
-
-		return $value;
-
-	}
+class VectorAttr extends Handler {
 
 	public static function reduce(array &$node): void {
 		$node['attr'] = $node['attr']['text'];
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+		$bc->add(Machine::OP_LOAD_ATTR, $node['attr']);
 	}
 
 }

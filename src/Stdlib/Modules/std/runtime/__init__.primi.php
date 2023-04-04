@@ -2,11 +2,12 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\VM\Frame;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Native 'std.runtime' module.
@@ -23,9 +24,15 @@ return new class extends NativeModule {
 		Context $ctx
 	): AbstractValue {
 
+		$frames = [];
+		$frame = $ctx->getCurrentFrame();
+		do {
+			$frames[] = $frame;
+		} while ($frame = $frame->getParent());
+
 		return AbstractValue::buildAuto(\array_map(
-			static fn($f) => $f->asString(),
-			$ctx->getCallStack()
+			static fn(Frame $f) => $f->getName(),
+			$frames,
 		));
 
 	}

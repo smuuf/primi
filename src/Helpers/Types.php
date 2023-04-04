@@ -4,22 +4,39 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\MagicStrings;
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Values\MethodValue;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\MagicStrings;
+use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Values\FuncValue;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\NullValue;
+use Smuuf\Primi\Values\MethodValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Structures\CallArgs;
 
 abstract class Types {
 
-	public static function is_subclass_of(
-		TypeValue $childType,
-		TypeValue $parentType,
+	public static function isSameType(
+		?TypeValue $typeA,
+		?TypeValue $typeB,
 	): bool {
+
+		if (!$typeA || !$typeB) {
+			return \false;
+		}
+
+		return $typeA === $typeB;
+
+	}
+
+	public static function isSubtypeOf(
+		?TypeValue $childType,
+		?TypeValue $parentType,
+	): bool {
+
+		if (!$childType || !$parentType) {
+			return \false;
+		}
 
 		do {
 			if ($childType === $parentType) {
@@ -31,13 +48,29 @@ abstract class Types {
 
 	}
 
+	public static function isInstanceOf(
+		AbstractValue $object,
+		TypeValue $type,
+	): bool {
+
+		$objectType = $object->getType();
+
+		do {
+			if ($objectType === $type) {
+				return \true;
+			}
+		} while ($objectType = $objectType->getParentType());
+
+		return \false;
+
+	}
+
 	/**
-	 * Handles special treating of attributes that will represent attributas
-	 * of a type.
+	 * Handles special treating of attributes that will represent attributes
+	 * of a type object.
 	 *
-	 * Special treating like, for example, `__new__` method must be converted
-	 * from ordinary method to static method for the type system and object
-	 * model to work correctly.
+	 * For example the `__new__` method must be converted from ordinary method
+	 * to static method for the type system and object model to work correctly.
 	 *
 	 * @param array<string, AbstractValue> $methods
 	 * @return array<string, AbstractValue>
@@ -70,10 +103,10 @@ abstract class Types {
 	 *
 	 * @return AbstractValue|null
 	 */
-	public static function attr_lookup(
+	public static function attrLookup(
 		?TypeValue $typeObject,
 		string $attrName,
-		?AbstractValue $bind = \null
+		?AbstractValue $bind = \null,
 	) {
 
 		if (!$typeObject) {

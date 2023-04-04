@@ -4,22 +4,32 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\InternalPostProcessSyntaxError;
-use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Structures\FnContainer;
+use Smuuf\Primi\Scope;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Code\Bytecode;
+use Smuuf\Primi\Compiler\CodeType;
+use Smuuf\Primi\Values\FuncValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Ex\InternalSyntaxError;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\Structures\FnContainer;
 
-class FunctionDefinition extends SimpleHandler {
+class FunctionDefinition extends Handler {
 
-	protected static function handle(array $node, Context $context) {
+	public static function handleCreateFunction(
+		Context $ctx,
+		string $fnName,
+		Bytecode $bytecode,
+		array $params,
+	) {
 
-		$module = $context->getCurrentModule();
-		$name = \sprintf("%s.%s()", $module->getName(), $node['fnName']);
+		$frame = $ctx->getCurrentFrame();
+		$module = $frame->getModule();
+		$name = \sprintf("%s.%s()", $module->getName(), $fnName);
 
-		$currentScope = $context->getCurrentScope();
+		$currentScope = $frame->getScope();
 
 		// If a function is defined as a method inside a class (directly
 		// first-level function definition in the class definition), we do not
@@ -33,17 +43,35 @@ class FunctionDefinition extends SimpleHandler {
 			: $currentScope;
 
 		$fnc = FnContainer::build(
-			$node['body'],
+			$bytecode,
 			$name,
 			$module,
-			$node['params'],
+			$params,
 			$parentScope,
 		);
 
-		$currentScope->setVariable(
+		return new FuncValue($fnc);
+
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		$compiler = new Compiler($node['body'], codeType: CodeType::CodeFunction);
+		$bytecode = $compiler->compile();
+
+		$params = $node['params'];
+		$params['defaults'] = !empty($params['defaults'])
+			? self::compileDefaults($params['defaults'])
+			: [];
+
+		$bc->add(
+			Machine::OP_CREATE_FUNCTION,
 			$node['fnName'],
-			new FuncValue($fnc),
+			$bytecode->toFinalBytecode(),
+			$params,
 		);
+
+		$bc->add(Machine::OP_STORE_NAME, $node['fnName']);
 
 	}
 
@@ -62,7 +90,8 @@ class FunctionDefinition extends SimpleHandler {
 	}
 
 	/**
-	 * @param TypeDef_AstNode $paramsNode
+	 * @param array $paramsNode
+	 * @phpstan-param TypeDef_AstNode $paramsNode
 	 * @return array{names: array<string>, defaults: array<string, TypeDef_AstNode>}
 	 */
 	public static function prepareParameters(array $paramsNode): array {
@@ -100,7 +129,8 @@ class FunctionDefinition extends SimpleHandler {
 			// > function f(a, b, b) { ... }
 
 			if (\in_array($paramName, $paramNames, \true)) {
-				throw new InternalPostProcessSyntaxError(
+				throw InternalSyntaxError::fromNode(
+					$node,
 					"Duplicate parameter name '$paramName'"
 				);
 			}
@@ -113,12 +143,14 @@ class FunctionDefinition extends SimpleHandler {
 			if ($foundDoubleStarred) {
 
 				if ($node['stars'] !== StarredExpression::STARS_TWO) {
-					throw new InternalPostProcessSyntaxError(
+					throw InternalSyntaxError::fromNode(
+						$node,
 						"Variadic keyword parameters must be placed after all others"
 					);
 				}
 
-				throw new InternalPostProcessSyntaxError(
+				throw InternalSyntaxError::fromNode(
+					$node,
 					"Variadic keyword parameters must be present only once"
 				);
 
@@ -126,7 +158,8 @@ class FunctionDefinition extends SimpleHandler {
 
 			if ($foundStarred) {
 				if ($node['stars'] === StarredExpression::STARS_ONE) {
-					throw new InternalPostProcessSyntaxError(
+					throw InternalSyntaxError::fromNode(
+						$node,
 						"Variadic positional parameters must be present only once"
 					);
 				}
@@ -150,7 +183,8 @@ class FunctionDefinition extends SimpleHandler {
 				// variadic (starred), but we already encountered some parameter
 				// with default value.
 				// This will not stand! Throw a syntax error.
-				throw new InternalPostProcessSyntaxError(
+				throw InternalSyntaxError::fromNode(
+					$node,
 					"Non-default non-variadic parameter placed after default parameter"
 				);
 			}
@@ -158,6 +192,29 @@ class FunctionDefinition extends SimpleHandler {
 		}
 
 		return $params;
+
+	}
+
+	/**
+	 * Compile AST nodes representing expressions acting as defaults of
+	 * parameter into bytecode objects.
+	 *
+	 * These will later be used when evaluating defaults during the function's
+	 * call.
+	 *
+	 * @param array<string, TypeDef_AstNode>
+	 * @return array<string, Bytecode>
+	 */
+	private static function compileDefaults(array $defaults): array {
+
+		return array_map(function(array $node) {
+
+			$compiler = new Compiler($node);
+			$dll = $compiler->compile(keepValue: true);
+
+			return $dll->toFinalBytecode();
+
+		}, $defaults);
 
 	}
 

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Exceptions;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
@@ -17,8 +18,8 @@ use \Smuuf\Primi\Helpers\Func;
  */
 class NumberValue extends AbstractBuiltinValue {
 
-	/** @const int Floating point precision for bcmath operations. */
-	const PRECISION = 128;
+	/** @var int Floating point precision for bcmath operations. */
+	public const PRECISION = 128;
 
 	public const TYPE = "number";
 
@@ -27,11 +28,25 @@ class NumberValue extends AbstractBuiltinValue {
 	 * these.
 	 */
 	public function __construct(string $number) {
-		$this->value = Func::normalize_decimal($number);
+
+		// Exclude "0" from the regex, so we allow "00" and "0" to become
+		// just "0" via normalizing.
+		if (\preg_match('#^[1-9]+$#S', $number)) {
+			$this->value = $number;
+		} else {
+			$this->value = Func::normalize_decimal($number);
+		}
+
+	}
+
+	public function __debugInfo(): array {
+		return [
+			'value' => $this->value,
+		];
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getNumberType();
+		return StaticTypes::getNumberType();
 	}
 
 	public function isTruthy(): bool {
@@ -42,10 +57,6 @@ class NumberValue extends AbstractBuiltinValue {
 
 		return $this->value != 0;
 
-	}
-
-	public function getLength(): ?int {
-		return \strlen($this->value);
 	}
 
 	public function getStringRepr(): string {
@@ -83,6 +94,11 @@ class NumberValue extends AbstractBuiltinValue {
 
 	public function doMultiplication(AbstractValue $right): ?AbstractValue {
 
+		// Strings can be multiplied.
+		if ($right instanceof StringValue) {
+			return $right->doMultiplication($this);
+		}
+
 		if (!$right instanceof NumberValue) {
 			return \null;
 		}
@@ -99,7 +115,10 @@ class NumberValue extends AbstractBuiltinValue {
 
 		// Avoid division by zero.
 		if (\bccomp($right->value, "0") === 0) {
-			throw new RuntimeError("Division by zero");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Division by zero",
+			);
 		}
 
 		return new self(\bcdiv($this->value, $right->value, self::PRECISION));
@@ -119,7 +138,10 @@ class NumberValue extends AbstractBuiltinValue {
 				self::PRECISION
 			) !== 0
 		) {
-			throw new RuntimeError("Exponent must be integer");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Exponent must be integer",
+			);
 		}
 
 		return new self(\bcpow($this->value, $right->value, self::PRECISION));
@@ -128,14 +150,22 @@ class NumberValue extends AbstractBuiltinValue {
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 
+		if ($this === $right) {
+			return \true;
+		}
+
 		if ($right instanceof BoolValue) {
+
 			// Comparison with numbers: The only truths:
 			// a) 1 == true
 			// b) 0 == false
 			// Anything else is false.
-			// Number is normalized upon construction, so for example '01.00' is
-			// stored as '1', or '0.00' is '0', so the mechanism below works.
-			return $this->value === ($right->value ? '1' : '0');
+			return !\bccomp(
+				(string) (int) $right->value, // Create "0" or "1" from bool.
+				$this->value,
+				self::PRECISION,
+			);
+
 		}
 
 		if ($right instanceof NumberValue) {

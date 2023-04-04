@@ -4,47 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Handlers\SimpleHandler;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
 /**
  * Node fields:
  * left: A comparison expression node.
  * right: Node representing contents of code to execute if left-hand result is truthy.
  */
-class IfStatement extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		// Execute the left-hand node and get its return value.
-		$result = HandlerFactory::runNode($node['cond'], $context);
-
-		// If the result of the left hand equals to truthy value,
-		// execute the code branch stored in the right-hand node.
-		if ($result->isTruthy()) {
-			HandlerFactory::runNode($node['block'], $context);
-			return;
-		}
-
-		// If there are any elifs, go through each one of them and if condition
-		// of any them evaluates as truthy, run their block (but only the first
-		// elif with the truthy condition).
-		foreach ($node['elifs'] as $elif) {
-			$result = HandlerFactory::runNode($elif['cond'], $context);
-			if ($result->isTruthy()) {
-				HandlerFactory::runNode($elif['block'], $context);
-				return;
-			}
-		}
-
-		// Check existence of "else" block and execute it, if it's present.
-		if (isset($node['elseBlock'])) {
-			HandlerFactory::runNode($node['elseBlock'], $context);
-		}
-
-	}
+class IfStatement extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -67,6 +37,37 @@ class IfStatement extends SimpleHandler {
 		}
 
 		$node['elifs'] = $elifs;
+
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		$endLabel = $bc->createLabel();
+		$nextLabel = $bc->createLabel();
+
+		$cond = $node['cond'];
+		$block = $node['block'];
+
+		$bc->inject($cond);
+		$bc->add(Machine::OP_JUMP_IF_F, $nextLabel);
+		$bc->inject($block);
+		$bc->add(Machine::OP_JUMP, $endLabel);
+		$bc->insertLabel($nextLabel);
+
+		$elifs = $node['elifs'] ?? [];
+		foreach ($elifs as ['cond' => $cond, 'block' => $block]) {
+			$nextLabel = $bc->createLabel();
+			$bc->inject($cond);
+			$bc->add(Machine::OP_JUMP_IF_F, $nextLabel);
+			$bc->inject($block);
+			$bc->add(Machine::OP_JUMP, $endLabel);
+			$bc->insertLabel($nextLabel);
+		}
+
+		if (isset($node['elseBlock'])) {
+			$bc->inject($node['elseBlock']);
+		}
+		$bc->insertLabel($endLabel);
 
 	}
 

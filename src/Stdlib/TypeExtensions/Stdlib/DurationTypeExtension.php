@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions\Stdlib;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\InstanceValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\InstanceValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Structures\CallArgs;
 
 class DurationTypeExtension extends TypeExtension {
 

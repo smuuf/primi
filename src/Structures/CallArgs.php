@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Structures;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\TupleValue;
-use \Smuuf\Primi\Values\AbstractValue;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Values\DictValue;
+use Smuuf\Primi\Values\TupleValue;
+use Smuuf\Primi\Values\AbstractValue;
 
 /**
  * Container for passing arguments - positional and keyword arguments - to the
@@ -75,11 +76,6 @@ class CallArgs {
 			?? ($this->isEmpty = !($this->args || $this->kwargs));
 	}
 
-	public function getTotalCount(): int {
-		return $this->totalCount
-			?? ($this->totalCount = \count($this->args) + \count($this->kwargs));
-	}
-
 	/**
 	 * @return AbstractValue[]
 	 */
@@ -103,17 +99,26 @@ class CallArgs {
 
 		if ($this->kwargs) {
 			$first = \array_key_first($this->kwargs);
-			throw new TypeError("Unexpected keyword argument '$first'");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Unexpected keyword argument '$first'",
+			);
 		}
 
 		$argCount = \count($this->args);
 		if ($argCount > $count) {
-			throw new TypeError("Expected maximum of $count arguments");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Expected maximum of $count arguments",
+			);
 		}
 
 		$mandatoryCount = $count - $optional;
 		if ($argCount < $mandatoryCount) {
-			throw new TypeError("Expected at least $mandatoryCount arguments");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Expected at least $mandatoryCount arguments",
+			);
 		}
 
 		// Return exactly expected number of arguments. Any non-specified
@@ -143,7 +148,10 @@ class CallArgs {
 
 			$name = $names[$i] ?? \null;
 			if ($name === \null) {
-				throw new TypeError("Too many positional arguments");
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Too many positional arguments",
+				);
 			}
 
 			if ($name[0] === '*') {
@@ -152,7 +160,10 @@ class CallArgs {
 				// positional arguments, it is obvious the caller sent us
 				// too many positional arguments.
 				if ($name[1] === '*') {
-					throw new TypeError("Too many positional arguments");
+					Exceptions::piggyback(
+						StaticExceptionTypes::getTypeErrorType(),
+						"Too many positional arguments",
+					);
 				}
 
 				if (!$varArgsName) {
@@ -195,7 +206,10 @@ class CallArgs {
 				// (unspecified are false, so isset() works here), throw an
 				// error.
 				if (!empty($final[$key])) {
-					throw new TypeError("Argument '$key' passed multiple times");
+					Exceptions::piggyback(
+						StaticExceptionTypes::getTypeErrorType(),
+						"Argument '$key' passed multiple times",
+					);
 				}
 
 				$final[$key] = $value;
@@ -207,7 +221,10 @@ class CallArgs {
 				$varKwargs[$key] = $value;
 
 			} else {
-				throw new TypeError("Unexpected keyword argument '$key'");
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Unexpected keyword argument '$key'",
+				);
 			}
 
 		}
@@ -224,7 +241,10 @@ class CallArgs {
 				&& !\array_key_exists($name, $final)
 				&& !\in_array($name, $optional, \true)
 			) {
-				throw new TypeError("Missing required argument '$name'");
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Missing required argument '$name'",
+				);
 			}
 		}
 
@@ -236,11 +256,25 @@ class CallArgs {
 	 * Return new `CallArgs` object with original args and kwargs being
 	 * added (positional args) or overwritten (keyword args) by the args
 	 * from the "extra" `CallArgs` object passed as the argument.
+	 *
+	 * @param list<AbstractValue> $args
+	 */
+	public function withPrefixed(array $args): self {
+		return new self(
+			[...$args, ...$this->args],
+			$this->kwargs,
+		);
+	}
+
+	/**
+	 * Return new `CallArgs` object with original args and kwargs being
+	 * added (positional args) or overwritten (keyword args) by the args
+	 * from the "extra" `CallArgs` object passed as the argument.
 	 */
 	public function withExtra(CallArgs $extra): self {
 		return new self(
-			[...$this->args, ...$extra->getArgs()],
-			\array_merge($this->kwargs, $extra->getKwargs())
+			[...$this->args, ...$extra->args],
+			\array_merge($this->kwargs, $extra->kwargs),
 		);
 	}
 

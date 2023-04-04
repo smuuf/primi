@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\SimpleHandler;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class VariableName extends SimpleHandler {
+class VariableName extends Handler {
 
-	const NODE_NEEDS_TEXT = \true;
-
-	protected static function handle(array $node, Context $context) {
-		return $node['text'];
+	public static function compile(Compiler $bc, array $node): void {
+		$bc->add(Machine::OP_NOOP, $node['text']);
 	}
 
 }

@@ -4,25 +4,28 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\UndefinedVariableError;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\ScopeComposite;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\Compiler\Compiler;
 
-class Variable extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-		return self::fetch($node['var'], $context);
-	}
+class Variable extends Handler {
 
 	public static function fetch(
 		string $name,
-		Context $context
+		ScopeComposite $scopeComp,
 	): AbstractValue {
 
-		$value = $context->getVariable($name);
+		$value = $scopeComp->getVariable($name);
+
 		if ($value === \null) {
-			throw new UndefinedVariableError($name);
+			Exceptions::piggyback(
+				StaticExceptionTypes::getNameErrorType(),
+				"Undefined variable '$name'",
+			);
 		}
 
 		return $value;
@@ -32,6 +35,10 @@ class Variable extends SimpleHandler {
 	public static function reduce(array &$node): void {
 		$node['var'] = $node['core']['text'];
 		unset($node['core']);
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+		$bc->add(Machine::OP_LOAD_NAME, $node['var']);
 	}
 
 }

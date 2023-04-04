@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Structures\FnContainer;
+use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Structures\FnContainer;
 
 /**
  * NOTE: Although this PHP class extends from `FuncValue`, in Primi runtime
@@ -23,7 +22,7 @@ class MethodValue extends FuncValue {
 
 	public function __construct(
 		FnContainer $fn,
-		private bool $isStatic = false,
+		private bool $isStatic = \false,
 		?AbstractValue $bind = \null,
 	) {
 
@@ -33,7 +32,7 @@ class MethodValue extends FuncValue {
 
 		parent::__construct(
 			$fn,
-			$bind ? new CallArgs([$bind]) : null,
+			$bind ? [$bind] : \null,
 		);
 
 	}
@@ -49,7 +48,7 @@ class MethodValue extends FuncValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getMethodType();
+		return StaticTypes::getMethodType();
 	}
 
 	public function getStringRepr(): string {
@@ -57,7 +56,7 @@ class MethodValue extends FuncValue {
 		$adjectives = \array_filter([
 			$this->value->isPhpFunction() ? 'native' : '',
 			$this->isStatic ? 'static' : '',
-			$this->partialArgs ? 'bound' : '',
+			$this->prefixArgs ? 'bound' : '',
 		]);
 
 		return \sprintf(

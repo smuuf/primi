@@ -4,59 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Handlers\SimpleHandler;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class DictDefinition extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		if (!$node['items']) {
-			return new DictValue;
-		}
-
-		try {
-
-			return new DictValue(
-				self::buildPairs($node['items'], $context)
-			);
-
-		} catch (UnhashableTypeException $e) {
-			throw new TypeError(\sprintf(
-				"Cannot create dict with key containing unhashable type '%s'",
-				$e->getType()
-			));
-		}
-
-	}
-
-	/**
-	 * @param array<TypeDef_AstNode> $itemNodes
-	 * @return TypeDef_PrimiObjectCouples
-	 */
-	private static function buildPairs(
-		array $itemNodes,
-		Context $context
-	): iterable {
-
-		$result = [];
-		foreach ($itemNodes as $node) {
-
-			$result[] = [
-				HandlerFactory::runNode($node['key'], $context),
-				HandlerFactory::runNode($node['value'], $context),
-			];
-
-		}
-
-		return $result;
-
-	}
+class DictDefinition extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -66,6 +19,17 @@ class DictDefinition extends SimpleHandler {
 		} else {
 			$node['items'] = [];
 		}
+
+	}
+
+	public static function compile(Compiler $bc, array $node) {
+
+		foreach ($node['items'] as $sub) {
+			$bc->inject($sub['key']);
+			$bc->inject($sub['value']);
+		}
+
+		$bc->add(Machine::OP_BUILD_DICT, count($node['items']));
 
 	}
 

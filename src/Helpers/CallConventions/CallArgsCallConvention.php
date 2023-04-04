@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers\CallConventions;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Call convention for invoking PHP callables from within Primi code/engine.

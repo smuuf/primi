@@ -1,13 +1,12 @@
 <?php
 
-use \Tester\Assert;
+use Tester\Assert;
 
-use \Smuuf\Primi\Config;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\ArgumentCountError;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Structures\FnContainer;
-use \Smuuf\Primi\Values\{
+use Smuuf\Primi\Config;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Structures\FnContainer;
+use Smuuf\Primi\Values\{
 	FuncValue,
 	NumberValue,
 	AbstractValue,
@@ -49,9 +48,11 @@ Assert::same("45", get_val($fn->invoke($ctx, new CallArgs([$five, $three]))));
 //
 
 // No arguments (but expected some).
-Assert::exception(function() use ($fn, $ctx) {
-	$fn->invoke($ctx);
-}, ArgumentCountError::class);
+assert_piggyback_exception(
+	fn() => $fn->invoke($ctx),
+	'TypeError',
+	'#Expected \d arguments but got \d#i',
+);
 
 // Too many arguments (expected less) - valid. Allow it.
 Assert::noError(function() use ($fn, $ctx, $one, $two, $three) {

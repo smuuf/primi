@@ -4,22 +4,26 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Structures\CallRetval;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Ex\InternalSyntaxError;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Compiler\CodeType;
+use Smuuf\Primi\Handlers\Handler;
 
-class ReturnStatement extends SimpleHandler {
+class ReturnStatement extends Handler {
 
-	protected static function handle(array $node, Context $context) {
+	public static function compile(Compiler $bc, array $node): void {
 
-		$retval = new CallRetval(
-			\array_key_exists('subject', $node)
-				? HandlerFactory::runNode($node['subject'], $context)
-				: \null
-		);
+		if ($bc->getCodeType() !== CodeType::CodeFunction) {
+			throw InternalSyntaxError::fromNode($node, "'return' used outside function");
+		}
 
-		$context->setRetval($retval);
+		if (isset($node['retval'])) {
+			$bc->inject($node['retval']);
+			$bc->add(Machine::OP_RETURN);
+		} else {
+			$bc->add(Machine::OP_RETURN);
+		}
 
 	}
 

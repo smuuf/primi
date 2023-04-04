@@ -4,28 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class Program extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		foreach ($node['stmts'] as $sub) {
-
-			$returnValue = HandlerFactory::runNode($sub, $context);
-			if ($context->hasRetval()) {
-				return;
-			}
-
-		}
-
-		return $returnValue ?? Interned::null();
-
-	}
+class Program extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -35,6 +18,14 @@ class Program extends SimpleHandler {
 		} else {
 			// ... even if there are no statements at all.
 			$node['stmts'] = [];
+		}
+
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		foreach ($node['stmts'] as $sub) {
+			$bc->inject($sub);
 		}
 
 	}

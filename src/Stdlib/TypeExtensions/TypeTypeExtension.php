@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\DictValue;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Helpers\Iteration;
 
 /**
  * This extension defines methods on the "type" type object - how the instance
@@ -31,8 +32,8 @@ class TypeTypeExtension extends TypeExtension {
 		}
 
 		$attrs = $attrs
-			? Func::couples_to_variables_array(
-				Func::mapping_to_couples($attrs),
+			? Iteration::fromCouplesToVariables(
+				Iteration::fromMappingToCouples($attrs),
 				'Attribute name'
 			)
 			: [];

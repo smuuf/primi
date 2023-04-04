@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
+use Smuuf\Primi\Stdlib\StaticTypes;
 
 /**
  * Class for representing dynamically created Primi iterables.
@@ -33,7 +33,7 @@ class IteratorFactoryValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getIteratorFactoryType();
+		return StaticTypes::getIteratorFactoryType();
 	}
 
 	public function getStringRepr(): string {

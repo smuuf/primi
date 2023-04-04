@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Location;
-use \Smuuf\Primi\MagicStrings;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\AbstractBuiltinValue;
-use \Smuuf\Primi\Helpers\Types;
-use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\MagicStrings;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\AbstractBuiltinValue;
+use Smuuf\Primi\Helpers\Types;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Instance of this PHP class represents a Primi object which acts as type/class
@@ -45,13 +46,18 @@ class TypeValue extends AbstractBuiltinValue {
 	) {
 
 		if ($this->parent?->isFinal()) {
-			throw new RuntimeError("Class '{$this->parent->getName()}' cannot be used as a parent class");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Class '{$this->parent->getName()}' cannot be used as a parent class",
+			);
 		}
+
+		$this->attrs['__parent__'] = $parent ?? Interned::null();
 
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getTypeType();
+		return StaticTypes::getTypeType();
 	}
 
 	public function attrGet(string $name): ?AbstractValue {
@@ -62,7 +68,7 @@ class TypeValue extends AbstractBuiltinValue {
 		// This means "SomeType.some_method()" won't get "SomeType" as
 		// first argument - which is what we want - we're accessing the function
 		// through a type, not from an instance.
-		if ($attr = Types::attr_lookup($this, $name)) {
+		if ($attr = Types::attrLookup($this, $name)) {
 			return $attr;
 		}
 
@@ -71,7 +77,7 @@ class TypeValue extends AbstractBuiltinValue {
 		// If we find a function, we'll bind it to this type object instance -
 		// that's because in this case this type object really acts as an
 		// instance of its type (metatype).
-		return Types::attr_lookup($this->getType(), $name, $this);
+		return Types::attrLookup($this->getType(), $name, $this);
 
 	}
 
@@ -122,34 +128,34 @@ class TypeValue extends AbstractBuiltinValue {
 	public function invoke(
 		Context $context,
 		?CallArgs $args = \null,
-		?Location $callsite = \null
 	): ?AbstractValue {
 
 		// Special case: If this type object is _the_ "type" type object.
-		if ($this->name === self::TYPE) {
-			if ($fn = Types::attr_lookup($this, MagicStrings::MAGICMETHOD_CALL)) {
-				return $fn->invoke($context, $args, $callsite);
+		if ($this === StaticTypes::getTypeType()) {
+			if ($fn = Types::attrLookup($this, MagicStrings::MAGICMETHOD_CALL)) {
+				return $fn->invoke($context, $args);
 			}
 		}
 
 		// The other possibility: This type object represents other type
 		// than the "type" type itself - and calling this object should
 		// represent instantiation of new object that will have this type.
-		if ($fn = Types::attr_lookup($this, MagicStrings::MAGICMETHOD_NEW, $this)) {
+		if ($fn = Types::attrLookup($this, MagicStrings::MAGICMETHOD_NEW, $this)) {
 
 			// The static '__new__()' will receive type object as the first
 			// argument.
 			$newArgs = $args
-				? (new CallArgs([$this]))->withExtra($args)
+				? $args->withPrefixed([$this])
 				: new CallArgs([$this]);
 
-			$result = $fn->invoke($context, $newArgs, $callsite);
+			$result = $fn->invoke($context, $newArgs);
 
 			if ($init = $result->attrGet(MagicStrings::MAGICMETHOD_INIT)) {
 				$init->invoke($context, $args);
 			}
 
 			return $result;
+
 		}
 
 		return \null;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Ex\EngineError;
 
 /**
  * Static helper for providing information about current runtime environment.

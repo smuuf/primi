@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Values\NumberValue;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
@@ -20,7 +20,7 @@ class BoolValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getBoolType();
+		return StaticTypes::getBoolType();
 	}
 
 	public function getStringRepr(): string {
@@ -37,6 +37,10 @@ class BoolValue extends AbstractBuiltinValue {
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 
+		if ($right instanceof BoolValue) {
+			return $this->value === $right->value;
+		}
+
 		if ($right instanceof NumberValue) {
 			// Comparison with numbers - the only rules:
 			// a) 1 == true
@@ -47,11 +51,7 @@ class BoolValue extends AbstractBuiltinValue {
 			return $right->value === ($this->value ? '1' : '0');
 		}
 
-		if (!$right instanceof BoolValue) {
-			return \null;
-		}
-
-		return $this->value === $right->isTruthy();
+		return \null;
 
 	}
 

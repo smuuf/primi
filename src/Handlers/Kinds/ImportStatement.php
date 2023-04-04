@@ -4,20 +4,25 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\VariableImportError;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Handlers\SimpleHandler;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class ImportStatement extends SimpleHandler {
+class ImportStatement extends Handler {
 
-	protected static function handle(array $node, Context $context) {
+	public static function handleImport(
+		Context $ctx,
+		string $dotpath,
+		array $symbols = [],
+	): void {
 
-		$dotpath = $node['module'];
-		$symbols = $node['symbols'] ?? [];
-
-		$moduleValue = $context->getImporter()->getModule($dotpath);
-		$currentScope = $context->getCurrentScope();
+		$frame = $ctx->getCurrentFrame();
+		$currentScope = $frame->getScope();
+		$moduleValue = $ctx->getImporter()->getModule($dotpath);
 
 		// Import only a specific symbol (variable) from the module.
 		if ($symbols) {
@@ -26,7 +31,12 @@ class ImportStatement extends SimpleHandler {
 
 				$value = $moduleValue->attrGet($symbol);
 				if ($value === \null) {
-					throw new VariableImportError($symbol, $dotpath);
+					Exceptions::set(
+						$ctx,
+						StaticExceptionTypes::getImportErrorType(),
+						"Cannot find '{$symbol}' in module '{$dotpath}'",
+					);
+					return;
 				}
 
 				$currentScope->setVariable($symbol, $value);
@@ -60,6 +70,15 @@ class ImportStatement extends SimpleHandler {
 			$node['symbols'] = $symbols;
 
 		}
+
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		$dotpath = $node['module'];
+		$symbols = $node['symbols'] ?? [];
+
+		$bc->add(Machine::OP_IMPORT, $dotpath, $symbols);
 
 	}
 

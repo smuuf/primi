@@ -12,7 +12,7 @@ require __DIR__ . '/../../bootstrap.php';
 $i = new Interpreter;
 
 //
-// First, test some valid cases - to see if Variadic args basically work.
+// First, test some valid cases - to see if variadic args basically work.
 //
 
 $src = <<<SRC
@@ -50,9 +50,11 @@ function f(a, *b, c) { return f"a:{a}, b:{b}, c:{c}"; }
 result = f(1, 2, 3, 4)
 SRC;
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, ErrorException::class, "#missing required argument 'c'#i");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'TypeError',
+	"#missing required argument 'c'#i",
+);
 
 //
 // Now, let's test some cases that should throw specific errors.
@@ -65,6 +67,8 @@ Assert::exception(function() use ($i, $src) {
 
 $src = "function f(a, **b, *c) { }";
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class);
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	"#Variadic keyword parameters must be placed after all others#i",
+);

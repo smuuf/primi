@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers\Wrappers;
 
-use \Smuuf\Primi\Tasks\TaskQueue;
-use \Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
+use Smuuf\Primi\Tasks\TaskQueue;
+use Smuuf\Primi\Tasks\Emitters\PosixSignalTaskEmitter;
 
 class CatchPosixSignalsWrapper extends AbstractWrapper {
 

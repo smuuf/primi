@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Values\AbstractValue;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Values\AbstractValue;
 
 /**
  * Emulate friend visibility - extending classes can access internal `$value`

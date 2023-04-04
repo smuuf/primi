@@ -2,7 +2,7 @@
 
 use \Smuuf\Primi\Interpreter;
 use \Smuuf\Primi\Ex\SyntaxError;
-use \Smuuf\Primi\Ex\ErrorException;
+use \Smuuf\Primi\Ex\UncaughtError;
 
 use \Tester\Assert;
 
@@ -12,7 +12,7 @@ require __DIR__ . '/../../bootstrap.php';
 $i = new Interpreter;
 
 //
-// First, test some valid cases - to see if Variadic args basically work.
+// First, test some valid cases - to see if keyword args basically work.
 //
 
 $src = <<<SRC
@@ -58,9 +58,11 @@ function f(a, b, c, d) { return f"{a}, {b}, {c}, {d}"; }
 result = f(a: 1, b: 2, b: 3, c: 4, d: 5)
 SRC;
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class, "#Repeated keyword argument 'b'#");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	"#Repeated keyword argument 'b'#i",
+);
 
 //
 // SyntaxError "Keyword arguments must be placed after positional arg"
@@ -72,9 +74,11 @@ function f(a, b, c, d) { return f"{a}, {b}, {c}, {d}"; }
 result = f(1, d: 4, 2)
 SRC;
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class, "#Keyword arguments must be placed after positional arg.*#");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	"#Keyword arguments must be placed after positional arg#i",
+);
 
 //
 // Error "Missing required argument" #1
@@ -86,9 +90,11 @@ function f(a, b, c, d) { return f"{a}, {b}, {c}, {d}"; }
 result = f(a: 1)
 SRC;
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, ErrorException::class, "#Missing required argument 'b'#");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'TypeError',
+	"#Missing required argument 'b'#i",
+);
 
 //
 // Error "Missing required argument" #2
@@ -99,9 +105,11 @@ function f(a, b, c, d) { return f"{a}, {b}, {c}, {d}"; }
 result = f(a: 1, d: 4, b: 2)
 SRC;
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, ErrorException::class, "#Missing required argument 'c'#");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'TypeError',
+	"#Missing required argument 'c'#i",
+);
 
 //
 // Error "Unexpected keyword argument"
@@ -112,9 +120,11 @@ function f(a, b, c, d) { return f"{a}, {b}, {c}, {d}"; }
 result = f(1, 2, 3, 4, xxx: 123, yyy: 456)
 SRC;
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, ErrorException::class, "#Unexpected keyword argument 'xxx'#");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'TypeError',
+	"#Unexpected keyword argument 'xxx'#i",
+);
 
 //
 // Error "Argument ... passed multiple times"
@@ -125,6 +135,8 @@ function f(a, b, c, d) { return f"{a}, {b}, {c}, {d}"; }
 result = f(1, 2, 3, 4, a: 123, b: 456)
 SRC;
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, ErrorException::class, "#Argument 'a' passed multiple times#");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'TypeError',
+	"#Argument 'a' passed multiple times#i",
+);

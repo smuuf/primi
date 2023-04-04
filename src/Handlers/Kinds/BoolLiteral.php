@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Handlers\SimpleHandler;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class BoolLiteral extends SimpleHandler {
+class BoolLiteral extends Handler {
 
-	const NODE_NEEDS_TEXT = \true;
-
-	protected static function handle(array $node, Context $context) {
-		return Interned::bool($node['text'] === "true");
+	public static function compile(Compiler $bc, array $node): void {
+		$bc->add(Machine::OP_LOAD_CONST, Interned::bool($node['text'] === "true"));
 	}
 
 }

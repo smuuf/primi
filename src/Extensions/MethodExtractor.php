@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Extensions;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Structures\FnContainer;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Values\FuncValue;
+use Smuuf\Primi\Structures\FnContainer;
 
-use \Smuuf\Primi\MagicStrings;
-use \Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\MagicStrings;
+use Smuuf\Primi\Ex\EngineError;
 
 abstract class MethodExtractor {
 
@@ -57,10 +57,6 @@ abstract class MethodExtractor {
 
 			if ($attr->hasCallConv(PrimiFunc::CONV_CALLARGS)) {
 				$fnFlags[] = FnContainer::FLAG_CALLCONV_CALLARGS;
-			}
-
-			if ($attr->hasToStack()) {
-				$fnFlags[] = FnContainer::FLAG_TO_STACK;
 			}
 
 			$result[$name] = new FuncValue(

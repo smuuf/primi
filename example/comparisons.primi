@@ -223,19 +223,19 @@ assert((false == -1) == false, _)
 // Comparing booleans with nulls.
 
 x = null and true
-assert(x == false)
+assert(x == null)
 
 x = null and false
-assert(x == false)
+assert(x == null)
 
 x = true and null
-assert(x == false)
+assert(x == null)
 
 x = false and null
 assert(x == false)
 
 x = null and null
-assert(x == false)
+assert(x == null)
 
 x = null or true
 assert(x == true)
@@ -247,10 +247,10 @@ x = true or null
 assert(x == true)
 
 x = false or null
-assert(x == false)
+assert(x == null)
 
 x = null or null
-assert(x == false)
+assert(x == null)
 
 //
 // Short-circuiting AND and OR operators.

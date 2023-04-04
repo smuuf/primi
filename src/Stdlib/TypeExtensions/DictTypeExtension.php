@@ -4,32 +4,38 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Values\ListValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Values\TupleValue;
-use \Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Ex\TypeError;
+use Smuuf\Primi\Ex\UnhashableTypeException;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\DictValue;
+use Smuuf\Primi\Values\BoolValue;
+use Smuuf\Primi\Values\ListValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Helpers\Iteration;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Values\TupleValue;
+use Smuuf\Primi\Values\TypeValue;
 
 class DictTypeExtension extends TypeExtension {
 
 	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
-		?AbstractValue $value = \null
+		?AbstractValue $value = \null,
 	): DictValue {
 
-		if ($type !== BuiltinTypes::getDictType()) {
-			throw new TypeError("Passed invalid type object");
+		if ($type !== StaticTypes::getDictType()) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Passed invalid type object",
+			);
 		}
 
 		// Default value for a new number is 0.
@@ -39,16 +45,19 @@ class DictTypeExtension extends TypeExtension {
 
 		$iter = $value->getIterator();
 		if ($iter === \null) {
-			throw new TypeError('dict() argument must be iterable');
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"dict() argument must be iterable",
+			);
 		}
 
 		try {
-			return new DictValue(Func::mapping_to_couples($value));
+			return new DictValue(Iteration::fromMappingToCouples($value));
 		} catch (UnhashableTypeException $e) {
-			throw new TypeError(\sprintf(
-				"Cannot create dict with key containing unhashable type '%s'",
-				$e->getType()
-			));
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Cannot create dict with key containing unhashable type '{$e->type}'",
+			);
 		}
 
 	}
@@ -76,7 +85,10 @@ class DictTypeExtension extends TypeExtension {
 		try {
 			return $dict->value->get($key) ?? $default ?? Interned::null();
 		} catch (UnhashableTypeException $e) {
-			throw new TypeError($e->getMessage());
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Key is of unhashable type '{$e->type}'",
+			);
 		}
 
 	}
@@ -120,7 +132,10 @@ class DictTypeExtension extends TypeExtension {
 		try {
 			return Interned::bool($dict->doesContain($key));
 		} catch (UnhashableTypeException $e) {
-			throw new TypeError($e->getMessage());
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				$e->getMessage(),
+			);
 		}
 
 	}
@@ -202,14 +217,14 @@ class DictTypeExtension extends TypeExtension {
 	 * a_dict.map(fn) == {"key_a": "key_a|val_a", "key_b": "key_b|val_b"}
 	 * ```
 	 */
-	#[PrimiFunc(toStack: \true, callConv: PrimiFunc::CONV_CALLARGS)]
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function map(
 		CallArgs $args,
 		Context $ctx
 	): DictValue {
 
 		[$self, $callable] = $args->extractPositional(2);
-		Func::allow_argument_types(1, $self, BuiltinTypes::getDictType());
+		Func::allow_argument_types(1, $self, StaticTypes::getDictType());
 
 		$result = [];
 		foreach ($self->value->getItemsIterator() as [$k, $v]) {

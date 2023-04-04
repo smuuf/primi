@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\MagicStrings;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\MagicStrings;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Structures\CallArgs;
 
 /**
  * Class for representing instances of userland classes/types.

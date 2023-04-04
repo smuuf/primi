@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Indices;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Indices;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 class ListValue extends AbstractBuiltinValue {
 
@@ -34,7 +35,7 @@ class ListValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getListType();
+		return StaticTypes::getListType();
 	}
 
 	public function getLength(): ?int {
@@ -82,13 +83,23 @@ class ListValue extends AbstractBuiltinValue {
 			!$index instanceof NumberValue
 			|| !Func::is_round_int($index->value)
 		) {
-			throw new RuntimeError("List index must be integer");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"List index must be integer",
+			);
 		}
 
-		$actualIndex = Indices::resolveIndexOrError(
+		$actualIndex = Indices::resolveIndex(
 			(int) $index->value,
 			$this->value
 		);
+
+		if ($actualIndex === -1) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getIndexErrorType(),
+				"Undefined index $index->value",
+			);
+		}
 
 		// Numbers are internally stored as strings, so get it as PHP integer.
 		return $this->value[$actualIndex];
@@ -106,13 +117,23 @@ class ListValue extends AbstractBuiltinValue {
 			!$index instanceof NumberValue
 			|| !Func::is_round_int($index->value)
 		) {
-			throw new RuntimeError("List index must be integer");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"List index must be integer",
+			);
 		}
 
-		$actualIndex = Indices::resolveIndexOrError(
+		$actualIndex = Indices::resolveIndex(
 			(int) $index->value,
 			$this->value
 		);
+
+		if ($actualIndex === -1) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getIndexErrorType(),
+				"Undefined index $index->value",
+			);
+		}
 
 		$this->value[$actualIndex] = $value;
 		return \true;
@@ -139,7 +160,10 @@ class ListValue extends AbstractBuiltinValue {
 
 		// ... and that number must be an integer.
 		if (!Func::is_round_int((string) $right->value)) {
-			throw new RuntimeError("List can be only multiplied by an integer");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"List can be only multiplied by an integer",
+			);
 		}
 
 		// Helper contains at least one empty array, so array_merge doesn't

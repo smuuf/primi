@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Extensions;
 
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Types;
-use \Smuuf\Primi\Helpers\ValueFriends;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Helpers\Types;
+use Smuuf\Primi\Helpers\ValueFriends;
 
 abstract class TypeExtension extends ValueFriends {
 

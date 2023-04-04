@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions\Stdlib;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\InstanceValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\InstanceValue;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Extensions\TypeExtension;
 
 class DatetimeTypeExtension extends TypeExtension {
 
@@ -38,7 +39,10 @@ class DatetimeTypeExtension extends TypeExtension {
 
 		$timestamp = \strtotime($str);
 		if ($timestamp === \false) {
-			throw new RuntimeError("Unable to parse date from string '$str'");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Unable to parse date from string '$str'",
+			);
 		}
 
 		$self->attrSet(self::ATTR_TS, Interned::number((string) $timestamp));

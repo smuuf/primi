@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Parser;
 
-use \Smuuf\StrictObject;
+use Smuuf\StrictObject;
 
 abstract class GrammarHelpers {
 
@@ -24,15 +24,15 @@ abstract class GrammarHelpers {
 
 	public static function isValidName(string $name): bool {
 		return (bool) \preg_match(
-			sprintf('#^(?:%s)$#S', self::VALID_NAME_REGEX),
-			$name
+			\sprintf('#^(?:%s)$#S', self::VALID_NAME_REGEX),
+			$name,
 		);
 	}
 
 	public static function isSimpleAttrAccess(string $name): bool {
 		return (bool) \preg_match(
-			sprintf('#^(?:%1$s)(?:\.%1$s)*$#S', self::VALID_NAME_REGEX),
-			$name
+			\sprintf('#^(?:%1$s)(?:\.%1$s)*$#S', self::VALID_NAME_REGEX),
+			$name,
 		);
 	}
 

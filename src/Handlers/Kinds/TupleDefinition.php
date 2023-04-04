@@ -4,42 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Values\TupleValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class TupleDefinition extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		if (empty($node['items'])) {
-			return new TupleValue;
-		}
-
-		return new TupleValue(self::buildValues($node['items'], $context));
-
-	}
-
-	/**
-	 * @param array<TypeDef_AstNode> $itemNodes
-	 * @return array<AbstractValue>
-	 */
-	protected static function buildValues(
-		array $itemNodes,
-		Context $context
-	): array {
-
-		$result = [];
-		foreach ($itemNodes as $itemNode) {
-			$result[] = HandlerFactory::runNode($itemNode, $context);
-		}
-
-		return $result;
-
-	}
+class TupleDefinition extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -47,6 +17,17 @@ class TupleDefinition extends SimpleHandler {
 		if (isset($node['items'])) {
 			$node['items'] = Func::ensure_indexed($node['items']);
 		}
+
+	}
+
+	public static function compile(Compiler $bc, array $node) {
+
+		$itemNodes = ($node['items'] ?? []);
+		foreach ($itemNodes as $itemNode) {
+			$bc->inject($itemNode);
+		}
+
+		$bc->add(Machine::OP_BUILD_TUPLE, count($itemNodes));
 
 	}
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\InstanceValue;
+use Smuuf\Primi\Ex\EngineInternalError;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\InstanceValue;
 
 abstract class TypeResolver {
 

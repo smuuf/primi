@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Values\NullValue;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 return new
 /**
@@ -67,12 +68,18 @@ class extends NativeModule {
 
 		$when = $when->value;
 		if (!\trim($when)) {
-			throw new RuntimeError("Cannot convert empty string into UNIX timestamp");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Cannot convert empty string into UNIX timestamp",
+			);
 		}
 
 		$ts = \strtotime($when);
 		if ($ts === \false) {
-			throw new RuntimeError("Cannot convert '$when' into UNIX timestamp");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Cannot convert '$when' into UNIX timestamp",
+			);
 		}
 
 		return new NumberValue((string) $ts);

@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\RelationError;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 return new
 /**
@@ -44,7 +45,11 @@ class extends NativeModule {
 			$rel = $item->hasRelationTo($op, $minmax);
 
 			if ($rel === \null) {
-				throw new RelationError($op, $item, $minmax);
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Undefined relation '$op' between '{$item->getTypeName()}'"
+					. " and '{$minmax->getTypeName()}'",
+				);
 			} elseif ($rel) {
 				$minmax = $item;
 			}
@@ -72,7 +77,7 @@ class extends NativeModule {
 	}
 
 	//
-	// Trigonometry functions..
+	// Trigonometry functions.
 	//
 
 	/**
@@ -188,10 +193,8 @@ class extends NativeModule {
 		NumberValue $a,
 		NumberValue $b
 	): NumberValue {
-		return new NumberValue(\bcmod(
-			$a->value,
-			$b->value,
-			NumberValue::PRECISION)
+		return new NumberValue(
+			\bcmod($a->value, $b->value, NumberValue::PRECISION)
 		);
 	}
 

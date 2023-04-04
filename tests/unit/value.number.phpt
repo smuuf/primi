@@ -1,9 +1,8 @@
 <?php
 
-use \Tester\Assert;
+use Tester\Assert;
 
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\{
+use Smuuf\Primi\Values\{
 	AbstractValue,
 	StringValue,
 	NumberValue,
@@ -11,7 +10,7 @@ use \Smuuf\Primi\Values\{
 	DictValue,
 	ListValue
 };
-use \Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Helpers\Interned;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -149,18 +148,29 @@ Assert::same(
 );
 
 // Multiplication by a string.
-// Number X String is not supported by Number, but
-// String X Number is supported.
+// Number * String is not supported by Number, but
+// String * Number is supported.
 $string = new StringValue(" _ěšč");
-$result = $biggerInteger->doMultiplication($string);
-Assert::null($result);
+$result = get_val($biggerInteger->doMultiplication($string));
+Assert::same(" _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč", $result);
 $result = get_val($string->doMultiplication($biggerInteger));
 Assert::same(" _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč _ěšč", $result);
 
 // Multiplication with unsupported formats will result in null - unhandled case.
-Assert::null($integer->doMultiplication(new StringValue(" b")));
-Assert::null($posFloat->doMultiplication(new StringValue(" a")));
-Assert::null($negFloat->doMultiplication(new StringValue(" b")));
+//Assert::null($integer->doMultiplication(new StringValue(" b")));
+
+assert_piggyback_exception(
+	fn() => $posFloat->doMultiplication(new StringValue(" a")),
+	'TypeError',
+	'#String multiplier must be a positive integer#i'
+);
+
+assert_piggyback_exception(
+	fn() => $negFloat->doMultiplication(new StringValue(" b")),
+	'TypeError',
+	'#String multiplier must be a positive integer#i'
+);
+
 Assert::null($integer->doMultiplication(new DictValue([])));
 Assert::null($integer->doMultiplication(Interned::bool(false)));
 Assert::null($integer->doMultiplication(new RegexValue("/[abc]/")));
@@ -182,15 +192,17 @@ Assert::same(
 	'0.18903591682419659735349716446124763705103969754253308128544423440453686200378071833648393194706994328922495274102079395085066162',
 	get_val($posFloat->doPower(new NumberValue('-2')))
 );
-Assert::exception(
+
+assert_piggyback_exception(
 	fn() => $posFloat->doPower(new NumberValue('4.1')),
-	RuntimeError::class,
-	'#Exponent must be integer#'
+	'TypeError',
+	'#Exponent must be integer#i',
 );
-Assert::exception(
+
+assert_piggyback_exception(
 	fn() => $posFloat->doPower(new NumberValue('-4.1')),
-	RuntimeError::class,
-	'#Exponent must be integer#'
+	'TypeError',
+	'#Exponent must be integer#i',
 );
 
 //
@@ -210,14 +222,17 @@ Assert::same(
 	get_val($float->doDivision(new NumberValue(-2)))
 );
 
-// Division by zero is handled.
-Assert::exception(function() use ($float) {
-	$float->doDivision(new NumberValue("-0"));
-}, \Smuuf\Primi\Ex\RuntimeError::class, '#Division.*zero#');
-Assert::exception(function() use ($integer) {
-	$integer->doDivision(new NumberValue(0));
-}, \Smuuf\Primi\Ex\RuntimeError::class, '#Division.*zero#');
+assert_piggyback_exception(
+	fn() => $float->doDivision(new NumberValue("-0")),
+	'RuntimeError',
+	'#Division.*zero#i',
+);
 
+assert_piggyback_exception(
+	fn() => $integer->doDivision(new NumberValue(0)),
+	'RuntimeError',
+	'#Division.*zero#i',
+);
 
 // Subtraction with unsupported formats will result in null - unhandled case.
 Assert::null($integer->doDivision(new StringValue("1")));

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\KeyError;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Ex\UnhashableTypeException;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Structures\MapContainer;
+use Smuuf\Primi\Ex\UnhashableTypeException;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Structures\MapContainer;
 
 /**
  * @property MapContainer $value Internal map container.
@@ -34,7 +33,7 @@ class DictValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getDictType();
+		return StaticTypes::getDictType();
 	}
 
 	public function getStringRepr(): string {
@@ -81,33 +80,42 @@ class DictValue extends AbstractBuiltinValue {
 	public function itemGet(AbstractValue $key): AbstractValue {
 
 		try {
-			if (!$this->value->hasKey($key)) {
-				throw new KeyError($key->getStringRepr());
-			}
-		} catch (UnhashableTypeException $e) {
-			throw new TypeError(\sprintf(
-				"Key is of unhashable type '%s'",
-				$e->getType()
-			));
-		}
 
-		return $this->value->get($key);
+			$value = $this->value->get($key);
+			if ($value === \null) {
+				Exceptions::piggyback(
+					StaticExceptionTypes::getKeyErrorType(),
+					"Undefined key {$key->getStringRepr()}",
+				);
+			}
+
+			return $value;
+
+		} catch (UnhashableTypeException $e) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Key is of unhashable type '{$e->type}'",
+			);
+		}
 
 	}
 
 	public function itemSet(?AbstractValue $key, AbstractValue $value): bool {
 
 		if ($key === \null) {
-			throw new RuntimeError("Must specify key when inserting into dict");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
+				"Must specify key when inserting into dict",
+			);
 		}
 
 		try {
 			$this->value->set($key, $value);
 		} catch (UnhashableTypeException $e) {
-			throw new TypeError(\sprintf(
-				"Key is of unhashable type '%s'",
-				$e->getType()
-			));
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Key is of unhashable type '{$e->type}'",
+			);
 		}
 
 		return \true;
@@ -132,10 +140,10 @@ class DictValue extends AbstractBuiltinValue {
 		try {
 			return $this->value->hasKey($right);
 		} catch (UnhashableTypeException $e) {
-			throw new TypeError(\sprintf(
-				"Key is of unhashable type '%s'",
-				$e->getType()
-			));
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Key is of unhashable type '{$e->type}'",
+			);
 		}
 
 	}

@@ -1,0 +1,73 @@
+caught = {
+    'a': false,
+    'b': false,
+    'c': false,
+    'd': false,
+    'e': false,
+    'f': false,
+    'g': false,
+}
+after_throws = 0
+
+try {
+	print("A")
+    throw RuntimeError("Error A")
+    after_throws = after_throws + 1
+} catch {
+    caught['a'] = true
+}
+
+try {
+	print("B")
+    throw RuntimeError("Error B")
+    after_throws = after_throws + 1
+} catch {
+    caught['b'] = true
+}
+
+try {
+	print("C")
+
+    try {
+        print("D")
+        throw RuntimeError("Error D")
+        after_throws = after_throws + 1
+    } catch (RuntimeError) {
+        caught['d'] = true
+    }
+
+    after_throws = after_throws + 1
+} catch (RuntimeError) {
+    caught['c'] = true
+}
+
+assert(caught['a'] == true)
+assert(caught['b'] == true)
+assert(caught['c'] == false)
+assert(caught['d'] == true)
+
+function will_throw() {
+    exc = RuntimeError("Error will_throw")
+    print(f"Throwing: {exc}")
+    throw exc
+}
+
+try {
+    try {
+        try {
+            will_throw()
+        } catch (TypeError) {
+            caught['e'] = true
+        }
+    } catch (RuntimeError as caught_ex) {
+        caught['f'] = true
+    }
+} catch (RuntimeError as caught_ex) {
+    caught['g'] = true
+}
+
+assert(caught['e'] == false)
+assert(caught['f'] == true)
+assert(caught['g'] == false)
+assert(type(caught_ex) == RuntimeError)
+assert(caught_ex.args[0] == "Error will_throw")

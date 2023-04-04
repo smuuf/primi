@@ -1,0 +1,5 @@
+function partial(fn, *_args, **_kwargs) {
+	return (*args, **kwargs) => {
+		return fn(*_args, *args, **_kwargs, **kwargs)
+	}
+}

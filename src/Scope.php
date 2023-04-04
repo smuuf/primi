@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\AbstractValue;
 
-use \Smuuf\StrictObject;
+use Smuuf\StrictObject;
 
 /**
  * A structure for representing a variable scope - storage for variables.
@@ -64,11 +64,7 @@ class Scope {
 
 		return $this->variables[$name]
 			// Recursively up, if there's a parent scope.
-			?? (
-				$this->parent !== \null
-				? $this->parent->getVariable($name)
-				: \null
-			);
+			?? $this->parent?->getVariable($name);
 
 	}
 
@@ -84,19 +80,16 @@ class Scope {
 	 */
 	public function getVariables(bool $includeParents = \false): array {
 
-		$fromParents = ($includeParents && $this->parent !== \null)
+		$fromParents = $includeParents
 			// Recursively up, if there's a parent scope.
-			? $this->parent->getVariables($includeParents)
+			? ($this->parent?->getVariables($includeParents) ?? [])
 			: [];
 
 		return $this->variables + $fromParents;
 
 	}
 
-	/**
-	 * @return void
-	 */
-	public function setVariable(string $name, AbstractValue $value) {
+	public function setVariable(string $name, AbstractValue $value): void {
 		$this->variables[$name] = $value;
 	}
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Values\AbstractValue;
 
 /**
  * Special constant object representing a "not implemented" information usable
@@ -16,7 +16,7 @@ class NotImplementedValue extends AbstractBuiltinValue {
 	public const TYPE = "NotImplementedType";
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getNotImplementedType();
+		return StaticTypes::getNotImplementedType();
 	}
 
 	public function getStringRepr(): string {

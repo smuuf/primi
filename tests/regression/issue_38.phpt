@@ -15,10 +15,26 @@ require __DIR__ . "/../bootstrap.php";
 
 $i = new Interpreter;
 
-Assert::exception(fn() => $i->run('dict("ahoj")'), ErrorException::class, '#less than two#');
-Assert::exception(fn() => $i->run('dict([[]])'), ErrorException::class, '#less than two#');
-Assert::exception(fn() => $i->run('dict([[1]])'), ErrorException::class, '#less than two#');
-Assert::exception(fn() => $i->run('dict([[1, 2, 3]])'), ErrorException::class, '#more than two#');
+assert_uncaught_error(
+	fn() => $i->run('dict("ahoj")'),
+	'TypeError',
+	'#less than two#',
+);
+assert_uncaught_error(
+	fn() => $i->run('dict([[]])'),
+	'TypeError',
+	'#less than two#',
+);
+assert_uncaught_error(
+	fn() => $i->run('dict([[1]])'),
+	'TypeError',
+	'#less than two#',
+);
+assert_uncaught_error(
+	fn() => $i->run('dict([[1, 2, 3]])'),
+	'TypeError',
+	'#more than two#',
+);
 
 Assert::noError(fn() => $i->run('dict([[1, 2]])'));
 Assert::noError(fn() => $i->run('dict([[1, 2], (3, 4)])'));

@@ -50,9 +50,11 @@ function fun_is_fun(a, b, *c, **d) {}
 fun_is_fun(1, **{}, *['a', 'b', 'c'])
 ";
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class, '#Keyword arguments must be placed after positional arguments#i');
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	'#Keyword arguments must be placed after positional arguments#i',
+);
 
 // This is ok.
 $src = "
@@ -91,6 +93,21 @@ function fun_is_fun(a, b, *c, **d) {}
 fun_is_fun(1, *['a', 'b', 'c'], **{}, *[])
 ";
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class, '#Keyword arguments must be placed after positional arguments#i');
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	'#Keyword arguments must be placed after positional arguments#i',
+);
+
+// This is NOT ok.
+// (Repeated keyword argument)
+$src = "
+f = (a, b, c) => {}
+result = f(1, b: 2, b: 3, c: 4)
+";
+
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	"#Repeated keyword argument 'b'#i",
+);

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Modules;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Ex\ImportBeyondTopException;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Ex\EngineInternalError;
+use Smuuf\Primi\Ex\ImportBeyondTopException;
 
 class Dotpath {
 

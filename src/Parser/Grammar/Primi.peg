@@ -4,25 +4,19 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Parser\Compiled;
 
-use \Smuuf\Primi\Parser\GrammarHelpers;
-use \Smuuf\Primi\Handlers\Kinds\StarredExpression;
+use Smuuf\Primi\Parser\GrammarHelpers;
+use Smuuf\Primi\Handlers\Kinds\StarredExpression;
 
 use \hafriedlander\Peg\Parser;
 
 class PrimiParser extends Parser\Packrat {
-
-	private const RESERVED_WORDS = [
-		'false', 'true', 'null', 'if', 'else', 'return', 'for', 'and', 'or',
-		'function', 'break', 'continue', 'while', 'try', 'catch', 'not', 'in',
-		'import'
-	];
 
 	/**
 	 * Prevent parsing variable name which has the same name as some reserved
 	 * word. Setting result to false will tell the parser that is should try
 	 * other parser rules.
 	 */
-	protected function Mutable__finalise(&$result) {
+	protected function Mutable__finalise(&$result): void {
 		if (GrammarHelpers::isReservedWord($result['text'])) {
 			$result = \false;
 		}
@@ -33,7 +27,7 @@ class PrimiParser extends Parser\Packrat {
 	 * word. Setting result to false will tell the parser that is should try
 	 * other parser rules.
 	 */
-	protected function Variable__finalise(&$result) {
+	protected function Variable__finalise(&$result): void {
 		if (GrammarHelpers::isReservedWord($result['text'])) {
 			$result = \false;
 		}
@@ -42,7 +36,7 @@ class PrimiParser extends Parser\Packrat {
 	/**
 	 * Add number of stars present at a starred expression.
 	 */
-	protected function StarredExpression__finalise(&$result) {
+	protected function StarredExpression__finalise(&$result): void {
 
 		$starCount = \strlen($result['stars']['text'] ?? '');
 		switch ($starCount) {
@@ -63,7 +57,7 @@ class PrimiParser extends Parser\Packrat {
 	/**
 	 * Add number of stars present at a starred expression.
 	 */
-	protected function MaybeStarredVariableName__finalise(&$result) {
+	protected function MaybeStarredVariableName__finalise(&$result): void {
 
 		$starCount = \strlen($result['stars']['text'] ?? '');
 		switch ($starCount) {
@@ -146,7 +140,7 @@ AndOperator: "and"
 OrOperator: "or"
 NegationOperator: "!"
 
-Expression: skip:AnonymousFunction | skip:Assignment | skip:CondExpr
+Expression: core:AnonymousFunction | core:Assignment | core:CondExpr
 Assignment: left:Mutable __ AssignmentOperator __ right:Expression
 
 #
@@ -165,7 +159,7 @@ VectorAttr: "." attr:VariableName
 
 Chain: &/[\[\(\.]/ ( core: AttrAccess | core:Dereference | core:Invocation ) chain:Chain?
 Dereference: "[" __ key:Expression __ "]"
-Invocation: "(" __ args:ArgumentList? __ ")"
+Invocation: "(" __ argList:ArgumentList? __ ")"
 AttrAccess: "." attr:VariableName
 
 # The order of how these rules are nested is very important, as it defines
@@ -185,7 +179,7 @@ Operand: ( ( "(" __ core:Expression __ ")" | core:AbstractValue ) chain:Chain? )
 # 1. Without named argument
 # 2. With named arguments, which must be placed after any non-named arguments (this one is handled in ArgumentList node postprocessing).
 StarredExpression: stars:"*"{1,2} expr:Expression
-Argument: ( (argKey:VariableName __ ":" )? __ argVal:Expression ) | ( argVal:StarredExpression )
+Argument: ( (argKey:VariableName __ ":" )? __ argVal:Expression ) | ( skip:StarredExpression )
 ArgumentList: args:Argument ( COMMA args:Argument )*
 
 # Starred parameters: Either one or two asterisks.
@@ -210,15 +204,18 @@ IfStatement:
 
 ForStatement: "for" __ "(" __ targets:Targets __ "in" __ left:Expression __ ")" __ ( right:Block )
 WhileStatement: "while" __ "(" __ left:Expression __ ")" __ ( right:Block )
-TryStatement: "try" __ main:Block __ "catch" __ onerror:Block
+TryStatement:
+	"try" __ main:Block
+	(catches:( __ "catch" __ ( __ "(" __ type:VariableName __ ( "as" __ as:VariableName __ )? ")" __ )? block:Block ))*
 
 # &/[rbc]/ - Don't even try any of the subrules if this doesn't start with expected letters.
-CommandStatements: &/[rbc]/ ( skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement )
+CommandStatements: &/[rbct]/ ( skip:ReturnStatement | skip:BreakStatement | skip:ContinueStatement | skip:ThrowStatement )
 # &SEP in the second branch matches a 'return' followed by separator, without consuming the
 # separator - which is needed for the Program rule to finish parsing properly.
-ReturnStatement: ( "return" [ ( subject:Expression )? ) | ( "return" &SEP )
+ReturnStatement: ( "return" [ ( retval:Expression )? ) | ( "return" &SEP )
 BreakStatement: "break"
 ContinueStatement: "continue"
+ThrowStatement: "throw" [ exc:Expression
 
 # &/[iwft]/ - No sub-rules will be even tried if the string does not start with a expected letter.
 BlockStatements:
@@ -233,7 +230,7 @@ BlockStatements:
 	)
 
 # !/[\s\};]/ Ensures that we won't try to match further if any of those symbols are at the beginning of the substring we're matching.
-Statement: !/[\s\};]/ ( skip:BlockStatements | skip:CommandStatements | skip:Expression )
+Statement: !/[\s\};]/ ( core:BlockStatements | core:CommandStatements | core:Expression )
 Block: "{" __ ( skip:Program )? __ "}"
 
 # Optional whitespace.

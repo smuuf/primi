@@ -1,13 +1,13 @@
 <?php
 
-use \Smuuf\Primi\Ex\ErrorException;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Interpreter;
-use \Smuuf\Primi\Structures\FnContainer;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\FuncValue;
-use \Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Scope;
+use Smuuf\Primi\Interpreter;
+use Smuuf\Primi\Ex\UncaughtError;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Structures\FnContainer;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\FuncValue;
+use Smuuf\Primi\Values\StringValue;
 
 use \Tester\Assert;
 
@@ -25,14 +25,14 @@ Assert::exception(function() use ($i, $mainScope) {
 		x = some_func();
 	SRC;
 	$i->run($src, $mainScope);
-}, ErrorException::class, '#Expected 2 arguments but got 0#');
+}, UncaughtError::class, '#TypeError.*Expected 2 arguments but got 0#');
 
 Assert::exception(function() use ($i, $mainScope) {
 	$src = <<<SRC
 		x = some_func(123);
 	SRC;
 	$i->run($src, $mainScope);
-}, ErrorException::class, '#Expected 2 arguments but got 1#');
+}, UncaughtError::class, '#TypeError.*Expected 2 arguments but got 1#');
 
 Assert::exception(function() use ($i, $mainScope) {
 	$src = <<<SRC
@@ -40,4 +40,4 @@ Assert::exception(function() use ($i, $mainScope) {
 	SRC;
 	$resultScope = $i->run($src, $mainScope)->getScope();
 	var_dump($resultScope->getVariables());
-}, ErrorException::class, "#Expected 'string' but got 'number' as argument 2#");
+}, UncaughtError::class, "#TypeError.*Expected 'string' but got 'number' as argument 2#");

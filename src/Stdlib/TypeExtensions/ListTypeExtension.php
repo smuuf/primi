@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\IndexError;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Values\ListValue;
-use \Smuuf\Primi\Values\NullValue;
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Indices;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Structures\CallArgs;
-use \Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Values\ListValue;
+use Smuuf\Primi\Values\NullValue;
+use Smuuf\Primi\Values\BoolValue;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Indices;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Values\TypeValue;
 
 class ListTypeExtension extends TypeExtension {
 
@@ -29,8 +29,11 @@ class ListTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): ListValue {
 
-		if ($type !== BuiltinTypes::getListType()) {
-			throw new TypeError("Passed invalid type object");
+		if ($type !== StaticTypes::getListType()) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Passed invalid type object",
+			);
 		}
 
 		// No argument - create empty list.
@@ -40,7 +43,10 @@ class ListTypeExtension extends TypeExtension {
 
 		$iter = $value->getIterator();
 		if ($iter === \null) {
-			throw new TypeError('list() argument must be iterable');
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				'list() argument must be iterable',
+			);
 		}
 
 		return new ListValue(\iterator_to_array($iter));
@@ -138,14 +144,14 @@ class ListTypeExtension extends TypeExtension {
 	 * [-1, 0, 2].map(to_bool) == [true, false, true]
 	 * ```
 	 */
-	#[PrimiFunc(toStack: \true, callConv: PrimiFunc::CONV_CALLARGS)]
+	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]
 	public static function map(
 		CallArgs $args,
 		Context $ctx
 	): ListValue {
 
 		[$self, $callable] = $args->extractPositional(2);
-		Func::allow_argument_types(1, $self, BuiltinTypes::getListType());
+		Func::allow_argument_types(1, $self, StaticTypes::getListType());
 
 		$result = [];
 		foreach ($self->value as $k => $v) {
@@ -285,7 +291,10 @@ class ListTypeExtension extends TypeExtension {
 		if ($index === \null) {
 
 			if (!$list->value) {
-				throw new IndexError(-1);
+				Exceptions::piggyback(
+					StaticExceptionTypes::getIndexErrorType(),
+					"Undefined index -1",
+				);
 			}
 
 			// If index was not specified, pop and return the last item.
@@ -294,10 +303,15 @@ class ListTypeExtension extends TypeExtension {
 		} else {
 
 			// If the index is not found, this will throw IndexError.
-			$actualIndex = Indices::resolveIndexOrError(
-				(int) $index->value,
-				$list->value
-			);
+			$i = (int) $index->value;
+			$actualIndex = Indices::resolveIndex($i, $list->value);
+
+			if ($actualIndex === -1) {
+				Exceptions::piggyback(
+					StaticExceptionTypes::getIndexErrorType(),
+					"Undefined index $i",
+				);
+			}
 
 			$popped = $list->value[$actualIndex];
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers\Traits;
 
-use \Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Func;
 
 /**
  * Use external scope for watching life-cycles, as different classes that

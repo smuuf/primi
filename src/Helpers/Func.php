@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\StackFrame;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Ex\BaseException;
-use \Smuuf\Primi\Parser\GrammarHelpers;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Structures\MapContainer;
-use \Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Scope;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\StackFrame;
+use Smuuf\Primi\Ex\TypeError;
+use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Ex\BaseException;
+use Smuuf\Primi\Code\Bytecode;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Values\AbstractValue;
 
 abstract class Func {
 
@@ -36,7 +35,8 @@ abstract class Func {
 	 * object, it will be converted automatically to a `AbstractValue` object.
 	 *
 	 * @param array<mixed, mixed> $array
-	 * @return TypeDef_PrimiObjectCouples
+	 * @return array<mixed>
+	 * @phpstan-return TypeDef_PrimiObjectCouples
 	 */
 	public static function array_to_couples(array $array): iterable {
 
@@ -49,140 +49,8 @@ abstract class Func {
 
 	}
 
-	/**
-	 * Convert iterable of couples _(PHP 2-tuple arrays with two items
-	 * containing Primi objects, where first item must a string object
-	 * representing a valid Primi variable name)_ to PHP dict array mapping
-	 * pairs of `['variable_name' => Some Primi object]`.
-	 *
-	 * @param TypeDef_PrimiObjectCouples $couples
-	 * @return array<string, AbstractValue> PHP dict array mapping of variables.
-	 * @throws TypeError
-	 */
-	public static function couples_to_variables_array(
-		iterable $couples,
-		string $intendedTarget
-	): array {
-
-		$attrs = [];
-		foreach ($couples as [$k, $v]) {
-
-			if (!$k instanceof StringValue) {
-				throw new TypeError(
-					"$intendedTarget is not a string but '{$k->getTypeName()}'");
-			}
-
-			$varName = $k->getStringValue();
-			if (!GrammarHelpers::isValidName($varName)) {
-				throw new TypeError(
-					"$intendedTarget '$varName' is not a valid name");
-			}
-
-			$attrs[$varName] = $v;
-
-		}
-
-		return $attrs;
-
-	}
-
-	/**
-	 * Returns PHP iterable returning couples (2-tuples) of `[key, value]` from
-	 * a iterable Primi object that can be interpreted as a mapping.
-	 * Best-effort-style.
-	 *
-	 * @return TypeDef_PrimiObjectCouples
-	 * @throws TypeError
-	 */
-	public static function mapping_to_couples(AbstractValue $value) {
-
-		$internalValue = $value->getCoreValue();
-		if ($internalValue instanceof MapContainer) {
-
-			// If the internal value already is a mapping represented by
-			// MapContainer, just return its items-iterator.
-			return $internalValue->getItemsIterator();
-
-		} else {
-
-			// We can also try to extract mapping from Primi iterable objects.
-			// If the Primi object provides an iterator, we're going to iterate
-			// over its items AND if each of these items is an iterable with
-			// two items in it, we can extract mapping from it - and convert
-			// it into Primi object couples.
-
-			// First, we try if the passed Primi object supports iteration.
-			$items = $value->getIterator();
-			if ($items === \null) {
-				throw new TypeError("Unable to create mapping from non-iterable");
-			}
-
-			// We prepare the result container for couples, which will be
-			// discarded if we encounter any errors when putting results in it.
-			$couples = [];
-			$i = -1;
-
-			foreach ($items as $item) {
-
-				$couple = [];
-				$i++;
-				$j = 0;
-
-				// Second, for each of the item of the top-iterator we check
-				// if the item also supports iteration.
-				$subitems = $item->getIterator();
-				if ($subitems === \null) {
-					throw new TypeError(
-						"Unable to create mapping from iterable: "
-						. "item #$i is not iterable"
-					);
-				}
-
-				foreach ($subitems as $subitem) {
-
-					$j++;
-
-					// Third, since we want to build and return iterable
-					// containing couples, the item needs to contain
-					// exactly two sub-items.
-					if ($j === 3) {
-						throw new TypeError(
-							"Unable to create mapping from iterable: "
-							. "item #$i contains more than two items ($j)"
-						);
-					}
-
-					$couple[] = $subitem;
-
-				}
-
-				if ($j < 2) {
-					throw new TypeError(
-						"Unable to create mapping from iterable: "
-						. "item #$i contains less than two items ($j)"
-					);
-				}
-
-				$couples[] = $couple;
-
-			}
-
-			// All went well, return iterable (list array) with all gathered
-			// couples.
-			return $couples;
-
-		}
-
-	}
-
 	public static function is_round_int(string $input): bool {
-
-		if (!\is_numeric($input)) {
-			return \false;
-		}
-
-		return \round((float) $input) == $input; // Intentionally ==
-
+		return (bool) \preg_match('#^[+-]?\d+(\.0+)?$#S', $input);
 	}
 
 	public static function is_decimal(string $input): bool {
@@ -313,18 +181,21 @@ abstract class Func {
 
 		}
 
-		throw new TypeError(\sprintf(
-			"Expected '%s' but got '%s' as argument %d",
-			Types::php_classes_to_primi_types($allowedTypes),
-			$arg->getTypeName(),
-			$pos
-		));
+		Exceptions::piggyback(
+			StaticExceptionTypes::getTypeErrorType(),
+			\sprintf(
+				"Expected '%s' but got '%s' as argument %d",
+				Types::php_classes_to_primi_types($allowedTypes),
+				$arg->getTypeName(),
+				$pos
+			),
+		);
 
 	}
 
 	/**
 	 * @param array<string, AbstractValue|null> $current
-	 * @param array<string, TypeDef_AstNode> $defaults
+	 * @param array<string, Bytecode> $defaults
 	 * @return array<string, AbstractValue>
 	 */
 	public static function resolve_default_args(
@@ -338,10 +209,19 @@ abstract class Func {
 		// default's value definition (here presented as a AST node which we
 		// can execute - which is done at call-time) to fetch the
 		// argument's value.
-		foreach ($defaults as $name => $astNode) {
-			if (empty($current[$name])) {
-				$current[$name] = HandlerFactory::runNode($astNode, $ctx);
+		foreach ($defaults as $name => $code) {
+
+			if (!empty($current[$name])) {
+				continue;
 			}
+
+			$frame = $ctx->buildFrame(
+				name: "<default: $name>",
+				bytecode: $code,
+			);
+
+			$current[$name] = $ctx->runFrame($frame);
+
 		}
 
 		return $current;
@@ -354,7 +234,8 @@ abstract class Func {
 	 * to be sure that multiple AST sub-nodes (which PHP-PEG parser returns) are
 	 * universally iterable.
 	 *
-	 * @param TypeDef_AstNode $node
+	 * @param array $node
+	 * @phpstan-param TypeDef_AstNode $node
 	 * @return TypeDef_AstNode
 	 */
 	public static function ensure_indexed(array $node): array {
@@ -389,44 +270,43 @@ abstract class Func {
 	}
 
 	/**
-	 * Helper function for easier left-to-right evaluation of various abstract
+	 * Helper function for easier left-to-right compilation of various abstract
 	 * trees representing logical/mathematical operations.
 	 *
-	 * Returns a generator yielding tuples of `[operator, operand]` with the
-	 * exception of first iteration, where the tuple `[null, first operand]` is
-	 * returned.
+	 * Returns a generator yielding tuples of `[operator string, operand node]`
+	 * with the exception of first iteration, where the
+	 * couple `[null, first operand node]` is returned.
 	 *
 	 * For example when primi source code `1 and 2 and 3` is parsed and then
 	 * represented in a similar way to...
 	 *
 	 * ```php
 	 * [
-	 * 'operands' => ['Number 1', 'Number 2', 'Number 3']
 	 * 'ops' => ['Operator AND #1', 'Operator AND #2']
+	 * 'operands' => [
+	 *   <AST node for number 1',
+	 *   <AST node for number 2',
+	 *   <AST node for number 3',
+	 * ]
 	 * ]
 	 * ```
 	 *
 	 * ... the generator will yield (in this order):
-	 * - `[null, 'Number 1']`
-	 * - `['Operator AND #1', 'Number 2']`
-	 * - `['Operator AND #2', 'Number 3']`
+	 * - `[null, <AST node for number 1']`
+	 * - `['Operator AND #1', <AST node for number 2']`
+	 * - `['Operator AND #2', <AST node for number 3']`
 	 *
-	 * This way client code can, for example, implement short-circuiting by
-	 * using the result so-far and not processing the rest of what the generator
-	 * would yield.
-	 *
-	 * @param TypeDef_AstNode $node
+	 * @param array $node
+	 * @phpstan-param TypeDef_AstNode $node
 	 * @return \Generator<array{string|null, AbstractValue}>
 	 */
-	public static function yield_left_to_right(array $node, Context $ctx) {
+	public static function yield_nodes_left_to_right(array $node) {
 
 		foreach ($node['operands'] as $i => $operand) {
 
-			// First operator will be null and the last one too.
+			// First operator will be null.
 			$operator = $node['ops'][$i - 1]['text'] ?? \null;
-			$value = HandlerFactory::runNode($operand, $ctx);
-
-			if (yield [$operator, $value]) {
+			if (yield [$operator, $operand]) {
 				break;
 			}
 
@@ -446,40 +326,6 @@ abstract class Func {
 	 */
 	public static function unique_id(): string {
 		return md5(random_bytes(128));
-	}
-
-	/**
-	 * @param array<StackFrame> $callstack Callstack.
-	 */
-	public static function get_traceback_as_string(array $callstack): string {
-
-		$result = [];
-		$result[] = "Traceback:";
-
-		foreach ($callstack as $level => $call)  {
-			$call = $call->asString();
-			$result[] = "[$level] {$call}";
-		}
-
-		return \implode("\n", $result);
-
-	}
-
-	public static function colorize_traceback(BaseException $ex): string {
-
-		$result = \preg_replace_callback_array([
-			'#^Traceback:$#m' => // "Traceback:" string.
-				fn($m) => Colors::get("{green}$m[0]"),
-			'#(@|in|from) (<.*?>)#m' => // E.g. "in <module: blahblah>"
-				fn($m) => Colors::get("{$m[1]} {yellow}{$m[2]}{_}"),
-			'#^(\[\d+\]) (.+) in #m' => // E.g. "[4] __main__.somefunc()"
-				fn($m) => Colors::get("{darkgrey}{$m[1]}{_} {lightblue}{$m[2]}{_} in "),
-			'#near (["\'])(.*?)\\1 @#' => // E.g. '... near "some code" @ ...'
-				fn($m) => Colors::get("near {$m[1]}{lightcyan}{$m[2]}{_}{$m[1]}"),
-		], $ex->getMessage());
-
-		return $result;
-
 	}
 
 	/**
@@ -508,6 +354,21 @@ abstract class Func {
 		}
 
 		return $result;
+
+	}
+
+	public static function joinObjectsAsString(
+		array $objects,
+		string $sep = ''
+	): string {
+
+		return implode(
+			$sep,
+			array_map(
+				fn(AbstractValue $o) => $o->getStringValue(),
+				$objects,
+			)
+		);
 
 	}
 

@@ -2,7 +2,7 @@
 
 namespace Smuuf\Primi\Tasks;
 
-use \Smuuf\Primi\Context;
+use Smuuf\Primi\Context;
 
 interface TaskInterface {
 

@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Parser;
 
-use \Smuuf\Primi\Ex\InternalSyntaxError;
-use \Smuuf\Primi\Ex\InternalPostProcessSyntaxError;
-use \Smuuf\Primi\Parser\Compiled\PrimiParser;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Timer;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Handlers\KnownHandlers;
+use Smuuf\Primi\Ex\InternalSyntaxError;
+use Smuuf\Primi\Parser\Compiled\PrimiParser;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Timer;
+use Smuuf\Primi\Handlers\HandlerFactory;
 
 class ParserHandler {
 
@@ -43,7 +41,8 @@ class ParserHandler {
 	}
 
 	/**
-	 * @return TypeDef_AstNode
+	 * @return array
+	 * @phpstan-return TypeDef_AstNode
 	 */
 	public function run(): array {
 
@@ -53,45 +52,26 @@ class ParserHandler {
 
 		if ($result['text'] !== $this->source) {
 
-			// $this->pos is an internal PEG Parser position counter and
-			// we will use it to determine the line and position in the source.
 			$farthestRuleLabel = GrammarRulesLabels::getRuleLabel(
-				$this->parser->getFarthestRule()
+				$this->parser->getFarthestRule(),
 			);
 
-			$reason = $farthestRuleLabel ? "after $farthestRuleLabel" : \null;
-			$this->syntaxError($this->parser->getFarthestPos(), $reason);
+			$reason = $farthestRuleLabel
+				? "after $farthestRuleLabel"
+				: \null;
+
+			throw new InternalSyntaxError(
+				$this->parser->getFarthestPos(),
+				$reason,
+			);
 
 		}
 
 		$t = (new Timer)->start();
-		$processed = $this->processAST($result, $this->source);
+		$processed = $this->processAST($result);
 		$this->stats['AST postprocess total'] = $t->get();
 
 		return $processed;
-
-	}
-
-	/**
-	 * @return never
-	 */
-	private function syntaxError(int $position, ?string $reason = \null) {
-
-		$line = \false;
-
-		if ($position !== \false) {
-			[$line, $linePos] = Func::get_position_estimate(
-				$this->source,
-				$position
-			);
-		}
-
-		throw new InternalSyntaxError(
-			(int) $line,
-			(int) $position,
-			(int) $linePos,
-			$reason
-		);
 
 	}
 
@@ -107,22 +87,15 @@ class ParserHandler {
 	}
 
 	/**
-	 * @param TypeDef_AstNode $ast
+	 * @param array $ast
+	 * @phpstan-param TypeDef_AstNode $ast
 	 * @return TypeDef_AstNode $ast
 	 */
-	private function processAST(array $ast, string $source): array {
+	private function processAST(array $ast): array {
 
 		$t = (new Timer)->start();
 		self::preprocessNode($ast);
 		$this->stats['AST nodes preprocessing'] = $t->get();
-
-		$t = (new Timer)->start();
-		$this->reduceNode($ast);
-		$this->stats['AST nodes reducing'] = $t->get();
-
-		$t = (new Timer)->start();
-		$this->convertNamesToIds($ast);
-		$this->stats['AST name conversion'] = $t->get();
 
 		return $ast;
 
@@ -132,7 +105,9 @@ class ParserHandler {
 	 * Go recursively through each of the nodes and strip unnecessary data
 	 * in the abstract syntax tree.
 	 *
-	 * @param TypeDef_AstNode $node
+	 * @param array $node
+	 * @phpstan-param TypeDef_AstNode $node
+	 * @throws InternalSyntaxError
 	 */
 	private function preprocessNode(array &$node): void {
 
@@ -147,9 +122,6 @@ class ParserHandler {
 
 			$node['_l'] = $line;
 			$node['_p'] = $pos;
-
-			// Offset no longer necessary.
-			unset($node['offset']);
 
 		}
 
@@ -168,56 +140,16 @@ class ParserHandler {
 
 		}
 
-	}
-
-	/**
-	 * Go recursively through each of the nodes and strip unnecessary data
-	 * in the abstract syntax tree.
-	 *
-	 * @param TypeDef_AstNode $node
-	 */
-	private function reduceNode(array &$node): void {
-
-		foreach ($node as &$item) {
-			if (\is_array($item)) {
-				$this->reduceNode($item);
-			}
-		}
-
 		if (!isset($node['name'])) {
 			return;
 		}
 
-		if (!$handler = HandlerFactory::tryGetForName($node['name'], \false)) {
+		if (!$handler = HandlerFactory::tryGetFor($node['name'])) {
 			return;
 		}
 
-		// Remove text from nodes that don't need it.
-		if (!$handler::NODE_NEEDS_TEXT) {
-			unset($node['text']);
-		}
-
 		// If a handler knows how to reduce its node, let it.
-		try {
-			$handler::reduce($node);
-		} catch (InternalPostProcessSyntaxError $e) {
-			$this->syntaxError($node['_p'], $e->getReason());
-		}
-
-	}
-
-	private static function convertNamesToIds(array &$node): void {
-
-		foreach ($node as &$item) {
-			if (\is_array($item)) {
-				self::convertNamesToIds($item);
-			}
-		}
-
-		// Handler name to handler ID.
-		if (isset($node['name'])) {
-			$node['name'] = KnownHandlers::fromName($node['name'], \false);
-		}
+		$handler::reduce($node);
 
 	}
 

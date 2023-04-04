@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\TypeExtensions;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Values\BoolValue;
-use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\ListValue;
-use \Smuuf\Primi\Values\RegexValue;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Extensions\TypeExtension;
-use \Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Values\BoolValue;
+use Smuuf\Primi\Values\DictValue;
+use Smuuf\Primi\Values\ListValue;
+use Smuuf\Primi\Values\RegexValue;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Extensions\TypeExtension;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Structures\CallArgs;
 
 class StringTypeExtension extends TypeExtension {
 
@@ -48,8 +48,11 @@ class StringTypeExtension extends TypeExtension {
 		?AbstractValue $value = \null
 	): StringValue {
 
-		if ($type !== BuiltinTypes::getStringType()) {
-			throw new TypeError("Passed invalid type object");
+		if ($type !== StaticTypes::getStringType()) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Passed invalid type object",
+			);
 		}
 
 		if ($value === \null) {
@@ -128,18 +131,27 @@ class StringTypeExtension extends TypeExtension {
 				// A positional placeholder was used when a non-positional one
 				// is already present.
 				if ($indexedMode === \false) {
-					throw new RuntimeError("Cannot combine positional and non-positional placeholders.");
+					Exceptions::piggyback(
+						StaticExceptionTypes::getRuntimeErrorType(),
+						"Cannot combine positional and non-positional placeholders.",
+					);
 				}
 
 				$indexedMode = \true;
 				$index = (int) $m[1];
 
 				if ($index < 0) {
-					throw new RuntimeError("Position ($index) cannot be less than 0.");
+					Exceptions::piggyback(
+						StaticExceptionTypes::getRuntimeErrorType(),
+						"Position ($index) cannot be less than 0.",
+					);
 				}
 
 				if ($index > $passedCount) {
-					throw new RuntimeError("Position ($index) does not match the number of parameters ($passedCount).");
+					Exceptions::piggyback(
+						StaticExceptionTypes::getRuntimeErrorType(),
+						"Position ($index) does not match the number of parameters ($passedCount).",
+					);
 				}
 
 				$plusOne = $index + 1;
@@ -150,8 +162,9 @@ class StringTypeExtension extends TypeExtension {
 				if ($indexedMode === \true) {
 					// A non-positional placeholder was used when a positional
 					// one is already present.
-					throw new RuntimeError(
-						\sprintf("Cannot combine positional and non-positional placeholders.")
+					Exceptions::piggyback(
+						StaticExceptionTypes::getRuntimeErrorType(),
+						\sprintf("Cannot combine positional and non-positional placeholders."),
 					);
 				}
 
@@ -167,12 +180,13 @@ class StringTypeExtension extends TypeExtension {
 
 		// If there are more args expected than passed, throw error.
 		if ($expectedCount > $passedCount) {
-			throw new RuntimeError(
+			Exceptions::piggyback(
+				StaticExceptionTypes::getRuntimeErrorType(),
 				\sprintf(
 					"Not enough arguments passed (expected %s, got %s).",
 					$expectedCount,
 					$passedCount
-				)
+				),
 			);
 		}
 
@@ -219,7 +233,10 @@ class StringTypeExtension extends TypeExtension {
 		} else {
 
 			$type = $search->getTypeName();
-			throw new RuntimeError("Cannot use '$type' as needle");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Cannot use '$type' as needle",
+			);
 
 		}
 
@@ -253,12 +270,18 @@ class StringTypeExtension extends TypeExtension {
 
 			if (!$key instanceof StringValue) {
 				$type = $key->getTypeName();
-				throw new RuntimeError("Replacement dict key must be a string, '$type' given.");
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Replacement dict key must be a string, '$type' given.",
+				);
 			}
 
 			if (!$value instanceof StringValue) {
 				$type = $value->getTypeName();
-				throw new RuntimeError("Replacement dict value must be a string, '$type' given.");
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Replacement dict value must be a string, '$type' given.",
+				);
 			}
 
 			$mapping[$key->value] = $value->value;
@@ -331,7 +354,10 @@ class StringTypeExtension extends TypeExtension {
 
 		if ($delimiter instanceof StringValue) {
 			if ($delimiter->value === '') {
-				throw new RuntimeError("String delimiter must not be empty.");
+				Exceptions::piggyback(
+					StaticExceptionTypes::getRuntimeErrorType(),
+					"String delimiter must not be empty.",
+				);
 			}
 			$splat = \explode($delimiter->value, $self->value, (int) $limit->value);
 		}
@@ -448,7 +474,7 @@ class StringTypeExtension extends TypeExtension {
 	 * '-PADDING-'.join("abc") == "a-PADDING-b-PADDING-c" // String is also iterable.
 	 * ```
 	 */
-	#[PrimiFunc(toStack: \true)]
+	#[PrimiFunc]
 	public static function join(
 		StringValue $string,
 		AbstractValue $iterable
@@ -457,7 +483,10 @@ class StringTypeExtension extends TypeExtension {
 		$iter = $iterable->getIterator();
 		if ($iter === \null) {
 			$type = $iterable->getTypeName();
-			throw new RuntimeError("Cannot join unsupported type '$type'");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Cannot join unsupported type '$type'",
+			);
 		}
 
 		$prepared = [];

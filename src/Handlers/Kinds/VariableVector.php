@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\Compiler\Compiler;
 
 /**
  * This handler is used to access nested items or attributes and prepare it
@@ -27,22 +26,7 @@ use \Smuuf\Primi\Helpers\Func;
  * We need to process this chunk of AST nodes and **return an insertion proxy**,
  * which can then be used for assignment in the `Assignment` handler.
  */
-class VariableVector extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		// Retrieve the original value.
-		$value = HandlerFactory::runNode($node['core'], $context);
-
-		// And handle the nesting according to the specified vector.
-		foreach ($node['vector'] as $next) {
-			$handler = HandlerFactory::getFor($next['name']);
-			$value = $handler::chain($next, $context, $value);
-		}
-
-		return $value;
-
-	}
+class VariableVector extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -54,6 +38,17 @@ class VariableVector extends SimpleHandler {
 		for ($i = \count($node['vector']); $i !== 0; $i--) {
 			$node['vector'][$i - 1]['leaf'] = $first;
 			$first = \false;
+		}
+
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		$bc->inject($node['core']);
+
+		// And handle the nesting according to the specified vector.
+		foreach ($node['vector'] as $next) {
+			$bc->inject($next);
 		}
 
 	}

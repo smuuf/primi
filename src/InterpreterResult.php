@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Scope;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Scope;
 
 /**
  * Object wrapping a single interpreter execution result.

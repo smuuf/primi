@@ -4,33 +4,42 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Helpers\Types;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\Scope;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Code\Bytecode;
+use Smuuf\Primi\Compiler\CodeType;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Helpers\Types;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\ScopeComposite;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
-class ClassDefinition extends SimpleHandler {
+class ClassDefinition extends Handler {
 
-	protected static function handle(array $node, Context $context) {
+	public static function handleCreateClass(
+		string $className,
+		?string $parentTypeName,
+		Bytecode $classBodyCode,
+		Context $ctx,
+	): TypeValue {
 
-		$className = $node['cls'];
-		$parentTypeName = $node['parent'];
+		$scope = $ctx->getCurrentFrame()->getScope();
+		$scopeComp = new ScopeComposite($scope, $ctx->getBuiltins());
 
-		if ($parentTypeName !== \false) {
-			$parentType = $context->getVariable($parentTypeName);
+		if ($parentTypeName !== \null) {
+			$parentType = Variable::fetch($parentTypeName, $scopeComp);
+			if (!$parentType instanceof TypeValue) {
+				Exceptions::piggyback(
+					StaticExceptionTypes::getTypeErrorType(),
+					"Specified parent class '$parentTypeName' is not a type object",
+				);
+			}
 		} else {
-			$parentType = BuiltinTypes::getObjectType();
-		}
-
-		if (!$parentType instanceof TypeValue) {
-			throw new RuntimeError(
-				"Specified parent class '$parentTypeName' is not a type object"
-			);
+			$parentType = StaticTypes::getObjectType();
 		}
 
 		// Create a new scope for this class.
@@ -38,21 +47,19 @@ class ClassDefinition extends SimpleHandler {
 		// method inside a class won't have direct access to its class's scope.
 		// (All access to class' attributes should be done by accessing class
 		// reference inside the function).
-		$classScope = new Scope(
-			[],
-			type: Scope::TYPE_CLASS,
-			parent: $context->getCurrentScope()
+		$classScope = new Scope(type: Scope::TYPE_CLASS, parent: $scope);
+
+		$frame = $ctx->buildFrame(
+			name: "<class: $className>",
+			bytecode: $classBodyCode,
+			scope: $classScope,
 		);
 
-		// Execute the class's insides with the class scope.
-		// Variables (and functions) declared inside the class will then
-		// be attributes
-		$wrapper = new ContextPushPopWrapper($context, \null, $classScope);
-		$wrapper->wrap(static fn($ctx) => HandlerFactory::runNode($node['def'], $ctx));
-
+		// Execute the body of the class.
+		$ctx->runFrame($frame);
 		$classAttrs = Types::prepareTypeMethods($classScope->getVariables());
 
-		$result = new TypeValue(
+		return new TypeValue(
 			$className,
 			$parentType,
 			$classAttrs,
@@ -60,13 +67,30 @@ class ClassDefinition extends SimpleHandler {
 			isMutable: \true,
 		);
 
-		$context->getCurrentScope()->setVariable($className, $result);
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		$compiler = new Compiler($node['def'], codeType: CodeType::CodeClass);
+		$classBytecode = $compiler->compile();
+
+		$className = $node['cls'];
+		$parentName = $node['parent'] ?? \null;
+
+		$bc->add(
+			Machine::OP_CREATE_CLASS,
+			$className,
+			$parentName,
+			$classBytecode->toFinalBytecode()
+		);
+
+		$bc->add(Machine::OP_STORE_NAME, $className);
 
 	}
 
 	public static function reduce(array &$node): void {
 		$node['cls'] = $node['cls']['text'];
-		$node['parent'] = $node['parent']['text'] ?? \false;
+		$node['parent'] = $node['parent']['text'] ?? \null;
 	}
 
 }

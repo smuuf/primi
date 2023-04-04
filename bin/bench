@@ -153,7 +153,7 @@ if (shell("command -v python")) {
 	info("Python not available.");
 }
 
-$results['primi'] = run_benchmark('Primi', "$interpreter ./primi $perfPrimiPath", times: 3);
+$results['primi'] = run_benchmark('Primi', "$interpreter ./primi --no-cache $perfPrimiPath", times: 3);
 
 title("Results:");
 show_results($results, 'php');

@@ -5,70 +5,33 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Ex;
 
 /**
- * Internal syntax error exception thrown by the parser, which operates on a
- * raw string, without any knowledge about a specific source code or
- * module/file.
- *
- * This internal syntax error should be caught and converted to a proper syntax
- * error represented by the SyntaxError exception, that is aware of the
- * module/file the error occurred.
+ * Internal syntax error exception thrown during parsing/compilation of some
+ * piece of Primi source code.
  *
  * @internal
  */
 class InternalSyntaxError extends EngineException {
 
-	/** Line number of the syntax error. */
-	private int $errorLine;
-
-	/** Position of the syntax error on specified line. */
-	private int $linePos;
-
-	/** Position of the syntax error in the whole source string. */
-	private int $errorPos;
-
-	/** Specific reason of the syntax error, if specified. */
-	private ?string $reason;
-
+	/**
+	 * @param int Byte offset in the source code where the error occurred.
+	 * @param null|string $reason Specific reason of the syntax error,
+	 *     if specified.
+	 */
 	public function __construct(
-		int $errorLine,
-		int $errorPos,
-		int $linePos,
-		?string $reason = \null
-	) {
-
-		$this->errorLine = $errorLine;
-		$this->errorPos = $errorPos;
-		$this->linePos = $linePos;
-		$this->reason = $reason;
-
-	}
+		public readonly int $offset,
+		public readonly ?string $reason = \null,
+	) {}
 
 	/**
-	 * Get line number of the syntax error.
+	 * @param array $node AST node where the syntax error originates.
+	 * @param null|string $reason Specific reason of the syntax error,
+	 *     if specified.
 	 */
-	public function getErrorLine(): int {
-		return $this->errorLine;
-	}
-
-	/**
-	 * Get position of the syntax error in the whole source string.
-	 */
-	public function getErrorPos(): int {
-		return $this->errorPos;
-	}
-
-	/**
-	 * Get position of the syntax error on the specified error line.
-	 */
-	public function getLinePos(): int {
-		return $this->linePos;
-	}
-
-	/**
-	 * Get specific reason of the syntax error, if specified.
-	 */
-	public function getReason(): ?string {
-		return $this->reason;
+	public static function fromNode(
+		array $node,
+		?string $reason = null,
+	): self {
+		return new self($node['offset'], $reason);
 	}
 
 }

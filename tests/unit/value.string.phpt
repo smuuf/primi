@@ -1,10 +1,8 @@
 <?php
 
-use \Tester\Assert;
+use Tester\Assert;
 
-use \Smuuf\Primi\Ex\IndexError;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Values\{
+use Smuuf\Primi\Values\{
 	StringValue,
 	NumberValue,
 	RegexValue,
@@ -13,7 +11,7 @@ use \Smuuf\Primi\Values\{
 	ListValue,
 	AbstractValue,
 };
-use \Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Helpers\Interned;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -105,12 +103,17 @@ $result = $unicode->doMultiplication(new NumberValue(3))->getCoreValue();
 Assert::same("ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.ťhiš íš á ŠTřing.", $result);
 
 // Multiplication with expected type but with invalid value will throw error.
-Assert::exception(function() use ($string) {
-	$string->doMultiplication(new NumberValue(2.1));
-}, RuntimeError::class);
-Assert::exception(function() use ($unicode) {
-	$unicode->doMultiplication(new NumberValue("3.1459"));
-}, RuntimeError::class);
+assert_piggyback_exception(
+	fn() => $string->doMultiplication(new NumberValue(2.1)),
+	'TypeError',
+	'#String multiplier must be a positive integer#i',
+);
+
+assert_piggyback_exception(
+	fn() => $unicode->doMultiplication(new NumberValue("3.1459")),
+	'TypeError',
+	'#String multiplier must be a positive integer#i',
+);
 
 //
 // Test comparison operators...
@@ -157,10 +160,12 @@ Assert::notSame($string, $dereferenced1);
 Assert::same("t", get_val($string->itemGet(new NumberValue(0))));
 Assert::same("s", get_val($string->itemGet(new NumberValue(3))));
 
-// Test error when dereferencing from undexined index.
-Assert::exception(function() use ($string) {
-	$string->itemGet(new NumberValue(50));
-}, IndexError::class);
+// Test error when dereferencing from undefined index.
+assert_piggyback_exception(
+	fn() => $string->itemGet(new NumberValue(50)),
+	'IndexError',
+	'#Undefined index 50#i',
+);
 
 // Test that inserting does happen on the same instance of the value object.
 $copy = clone $string;

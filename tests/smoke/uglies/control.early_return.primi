@@ -78,3 +78,25 @@ function fn_e(cond) {
 assert(fn_e("something") == "return_fn_c:in_catch")
 assert(fn_e(10) == "return_fn_c:in_try")
 assert(fn_e(false) == "return_fn_c:after_try")
+
+function fn_f() {
+
+    for (x in range(5, 6)) {
+
+        function fn_f_inner() {
+            for (y in range(7, 8)) {
+                return y
+            }
+        }
+
+        try {
+            return fn_f_inner()
+        } catch {
+            return "error"
+        }
+
+    }
+
+}
+
+assert(fn_f() == 7)

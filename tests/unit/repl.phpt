@@ -28,19 +28,18 @@ $mainModuleName = MagicStrings::MODULE_MAIN_NAME;
 // This is expected output. This will be compared with actual output down below.
 // Asterisk * means that the line can be whatever.
 $expected = [
-	"Error: Undefined variable 'a' @ <module: $mainModuleName> on line 1 at position 0",
 	"Traceback:",
-	"[0] <repl: cli> in <module: $mainModuleName>",
+	"[0] <repl: cli> in <module: $mainModuleName> on line 1:0",
+	"NameError: Undefined variable 'a'",
 	"1",
-	"Error: Undefined variable 'b' @ <module: $mainModuleName> on line 1 at position 16",
 	"Traceback:",
-	"[0] <repl: cli> in <module: $mainModuleName>",
+	"[0] <repl: cli> in <module: $mainModuleName> on line 1:16",
+	"NameError: Undefined variable 'b'",
 	"1",
 	"a: 1",
 	"_: 1",
 	"<function: $mainModuleName.<anonymous>()>",
-	"Traceback:",
-	"[0] <repl: cli> in <module: $mainModuleName>",
+	"Traceback: <empty>",
 	'...', // ... - skip checking the rest.
 ];
 

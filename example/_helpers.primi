@@ -1,15 +1,8 @@
-function assert_not(truth, *args) {
-	// Assert that the first argument is false.
-	// Using *args workaround to make second argument (desc) optional,
-	// because Primi doesn't currently support having argument defaults.
-	desc = args[0] if (args) else ''
+function assert_not(truth, desc = '') {
 	assert(!truth, desc)
 }
 
-function assert_error(fn, *args) {
-	// Assert that the call to passed function resulted in an error.
-	// Using *args workaround to make second argument (desc) optional.
-	desc  = args[0] if (args) else ''
+function assert_error(fn, desc = '') {
 
 	was_error = true
 	try {

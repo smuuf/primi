@@ -4,26 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\BinaryOperationError;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
-class Exponentiation extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		$operand = HandlerFactory::runNode($node['operand'], $context);
-		$factor = HandlerFactory::runNode($node['factor'], $context);
-
-		$result = $operand->doPower($factor);
-		if ($result === \null) {
-			throw new BinaryOperationError('**', $operand, $factor);
-		}
-
-		return $result;
-
-	}
+class Exponentiation extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -32,6 +20,14 @@ class Exponentiation extends SimpleHandler {
 		if (!isset($node['factor'])) {
 			$node = $node['operand'];
 		}
+
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		$bc->inject($node['operand']);
+		$bc->inject($node['factor']);
+		$bc->add(Machine::OP_EXP);
 
 	}
 

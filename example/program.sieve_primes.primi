@@ -30,5 +30,5 @@ find_primes = (num) => {
 
 }
 
-x = find_primes(1_000)
+x = find_primes(100)
 print(x)

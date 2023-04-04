@@ -4,27 +4,12 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class Negation extends SimpleHandler {
-
-	protected static function handle(array $node, Context $context) {
-
-		$truthness = HandlerFactory::runNode($node['core'], $context)
-			->isTruthy();
-
-		// Should we even handle negation? If there's an even number of negation
-		// operators, the result would always have the same truthness as its
-		// input.
-		$isNegation = \count($node['nots'] ?? []) % 2;
-
-		return Interned::bool($isNegation ? !$truthness : $truthness);
-
-	}
+class Negation extends Handler {
 
 	public static function reduce(array &$node): void {
 
@@ -34,6 +19,19 @@ class Negation extends SimpleHandler {
 			$node = $node['core'];
 		} else {
 			$node['nots'] = Func::ensure_indexed($node['nots']);
+		}
+
+	}
+
+	public static function compile(Compiler $bc, array $node): void {
+
+		$bc->inject($node['core']);
+
+		$isNegation = \count($node['nots'] ?? []) % 2;
+		if ($isNegation) {
+			$bc->add(Machine::OP_NEGATE);
+		} else {
+			$bc->add(Machine::OP_CAST_BOOL);
 		}
 
 	}

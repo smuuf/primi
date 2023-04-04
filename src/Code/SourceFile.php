@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Code;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\EngineError;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Ex\EngineError;
 
 /**
  * Helper class for representing Primi source code provided as path to the

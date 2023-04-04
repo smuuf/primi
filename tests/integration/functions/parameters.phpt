@@ -29,9 +29,11 @@ SRC;
 
 $src = "function f(a, X, X, d) { }";
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class, "#Duplicate parameter name 'X'#i");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	"#Duplicate parameter name 'X'#i",
+);
 
 //
 // SyntaxError "Duplicate parameter '$paramName' in function" #2
@@ -39,9 +41,11 @@ Assert::exception(function() use ($i, $src) {
 
 $src = "function f(a, X, *X, d) { }";
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class, "#Duplicate parameter name 'X'#i");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	"#Duplicate parameter name 'X'#i",
+);
 
 //
 // Error "Duplicate parameter name '$paramName'" #3
@@ -50,6 +54,8 @@ Assert::exception(function() use ($i, $src) {
 
 $src = "function f(a, X, c, X, Y, Y) { }";
 
-Assert::exception(function() use ($i, $src) {
-	$i->run($src);
-}, SyntaxError::class, "#Duplicate parameter name 'X'#i");
+assert_uncaught_error(
+	fn() => $i->run($src),
+	'SyntaxError',
+	"#Duplicate parameter name 'X'#i",
+);

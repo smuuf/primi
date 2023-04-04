@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Indices;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Indices;
+use Smuuf\Primi\Helpers\Exceptions;
 
 /**
  * @property array<AbstractValue> $value Internal tuple container.
@@ -46,7 +47,7 @@ class TupleValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getTupleType();
+		return StaticTypes::getTupleType();
 	}
 
 	public function getStringRepr(): string {
@@ -79,13 +80,10 @@ class TupleValue extends AbstractBuiltinValue {
 			return $this->savedHash;
 		}
 
-		$r = $this->savedHash = \array_reduce(
-			$this->value,
-			static fn($c, $i) => \md5("{$c},{$i->hash()}"),
-			''
-		);
-
-		return $r;
+		// Doing incremental hashing.
+		$hctx = hash_init('md5');
+		array_map(fn($i) => hash_update($hctx, $i->hash()), $this->value);
+		return $this->savedHash = hash_final($hctx);
 
 	}
 
@@ -110,13 +108,23 @@ class TupleValue extends AbstractBuiltinValue {
 			!$index instanceof NumberValue
 			|| !Func::is_round_int($index->value)
 		) {
-			throw new RuntimeError("Tuple index must be integer");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"Tuple index must be integer",
+			);
 		}
 
-		$actualIndex = Indices::resolveIndexOrError(
+		$actualIndex = Indices::resolveIndex(
 			(int) $index->value,
-			$this->value
+			$this->value,
 		);
+
+		if ($actualIndex === -1) {
+			Exceptions::piggyback(
+				StaticExceptionTypes::getIndexErrorType(),
+				"Undefined index $index->value",
+			);
+		}
 
 		// Numbers are internally stored as strings, so get it as PHP integer.
 		return $this->value[$actualIndex];

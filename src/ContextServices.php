@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Code\AstProvider;
-use \Smuuf\Primi\Tasks\TaskQueue;
-use \Smuuf\Primi\Modules\Importer;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Code\BytecodeProvider;
+use Smuuf\Primi\Tasks\TaskQueue;
+use Smuuf\Primi\Modules\Importer;
 
 /**
  * Service provider for specific context instances.
@@ -18,7 +18,7 @@ class ContextServices {
 
 	private TaskQueue $taskQueue;
 	private Importer $importer;
-	private AstProvider $astProvider;
+	private BytecodeProvider $astProvider;
 
 	public function __construct(
 		private Context $ctx,
@@ -35,9 +35,9 @@ class ContextServices {
 			??= new Importer($this->ctx, $this->config->getImportPaths());
 	}
 
-	public function getAstProvider(): AstProvider {
+	public function getBytecodeProvider(): BytecodeProvider {
 		return $this->astProvider
-			??= new AstProvider($this->config->getTempDir());
+			??= new BytecodeProvider($this->config->getTempDir());
 	}
 
 }

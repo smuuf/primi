@@ -4,22 +4,14 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Handlers\ChainedHandler;
-use \Smuuf\Primi\Structures\ItemInsertionProxy;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Handlers\Handler;
 
-class VectorItemNoIndex extends ChainedHandler {
+class VectorItemNoIndex extends Handler {
 
-	public static function chain(
-		array $node,
-		Context $context,
-		AbstractValue $subject
-	) {
-
-		// This can only be a leaf node. Key is null, since it is not specified.
-		return new ItemInsertionProxy(\null, $subject);
-
+	public static function compile(Compiler $bc, array $node) {
+		$bc->add(Machine::OP_LOAD_ITEM, 1);
 	}
 
 }

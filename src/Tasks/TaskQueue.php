@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Tasks;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\StrictObject;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\StrictObject;
 
 class TaskQueue {
 

@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Cli;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Repl;
-use \Smuuf\Primi\Logger;
-use \Smuuf\Primi\Config;
-use \Smuuf\Primi\EnvInfo;
-use \Smuuf\Primi\Interpreter;
-use \Smuuf\Primi\Ex\EngineError;
-use \Smuuf\Primi\Ex\BaseException;
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Ex\InternalSyntaxError;
-use \Smuuf\Primi\Ex\SyntaxError;
-use \Smuuf\Primi\Code\Source;
-use \Smuuf\Primi\Code\SourceFile;
-use \Smuuf\Primi\Parser\ParserHandler;
-use \Smuuf\Primi\Helpers\Stats;
-use \Smuuf\Primi\Helpers\Colors;
-use \Smuuf\Primi\Helpers\Func;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Repl;
+use Smuuf\Primi\Logger;
+use Smuuf\Primi\Config;
+use Smuuf\Primi\EnvInfo;
+use Smuuf\Primi\Interpreter;
+use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Ex\UncaughtError;
+use Smuuf\Primi\Code\Source;
+use Smuuf\Primi\Code\SourceFile;
+use Smuuf\Primi\Code\BytecodeDumper;
+use Smuuf\Primi\Code\BytecodeProvider;
+use Smuuf\Primi\Helpers\Stats;
+use Smuuf\Primi\Helpers\Colors;
+use Smuuf\Primi\Helpers\Exceptions;
 
 class Entrypoint {
 
@@ -29,11 +27,11 @@ class Entrypoint {
 	/** @var array<string, mixed> */
 	private array $config = [
 		// Print only parsed AST and then exit.
-		'only_tree' => false,
-		// Parse the input (build AST), print parser stats and exit.
-		'print_runtime_stats' => false,
-		// After the script finishes, print out contents of main global scope.
-		'parser_stats' => false,
+		'only_ast' => false,
+		// Print only compiled bytecode and then exit.
+		'only_dis' => false,
+		// Only print compiled bytecode instruction stats.
+		'only_dis_stats' => false,
 		// The default argument represents Primi code to run.
 		'input' => false,
 		// Print verbose logging to stderr.
@@ -41,6 +39,8 @@ class Entrypoint {
 		// True if the input is not a Primi file to run, but just a string
 		// containing Primi source code to run.
 		'input_is_code' => false,
+		// Forces bytecode cache to be disabled.
+		'no_cache' => false,
 	];
 
 	/**
@@ -92,11 +92,6 @@ class Entrypoint {
 			Logger::enable();
 		}
 
-		// If requested, print stats at the absolute end of runtime.
-		if ($cfg['print_runtime_stats']) {
-			register_shutdown_function(fn() => Stats::print());
-		}
-
 		// Determine the source. Act as REPL if no source was specified.
 		if (empty($cfg['input'])) {
 			$this->runRepl();
@@ -118,38 +113,12 @@ class Entrypoint {
 			}
 		}
 
-		if ($cfg['parser_stats'] || $cfg['only_tree']) {
+		$config = Config::buildDefault();
 
-			$ph = new ParserHandler($source->getSourceCode());
-
-			// Run parser and catch any error that may have occurred.
-			try {
-				try {
-					$tree = $ph->run();
-				} catch (InternalSyntaxError $e) {
-					throw SyntaxError::fromInternal($e, $source);
-				}
-			} catch (BaseException $e) {
-				self::errorExit("{$e->getMessage()}");
-			}
-
-			// If requested, just print the syntax tree.
-			if ($cfg['only_tree']) {
-				print_r($tree);
-				return;
-			}
-
-			echo Term::line(Colors::get("{green}Parser stats:{_}"));
-			foreach ($ph->getStats() as $name => $value) {
-				$value = round($value, 4);
-				echo Term::line(Colors::get("- $name: {yellow}{$value} s{_}"));
-			}
-
-			return;
-
+		if ($cfg['no_cache']) {
+			$config->setTempDir(null);
 		}
 
-		$config = Config::buildDefault();
 		$config->addImportPath($mainDir);
 
 		// Create interpreter.
@@ -159,14 +128,31 @@ class Entrypoint {
 			self::errorExit($e->getMessage());
 		}
 
+		if ($cfg['only_ast']) {
+			$ast = BytecodeProvider::parse($source);
+			print_r($ast);
+			return;
+		}
+
+		if ($cfg['only_dis']) {
+			$code = BytecodeProvider::compile($source);
+			BytecodeDumper::dumpBytecode($code);
+			return;
+		}
+
+		if ($cfg['only_dis_stats']) {
+			$code = BytecodeProvider::compile($source);
+			BytecodeDumper::dumpBytecodeStats($code);
+			return;
+		}
+
 		// Run interpreter and catch any error that may have occurred.
 		try {
 			$interpreter->run($source);
-		} catch (EngineInternalError $e) {
-			throw $e;
-		} catch (BaseException $e) {
-			$colorized = Func::colorize_traceback($e);
-			self::errorExit($colorized);
+		} catch (UncaughtError $uncaught) {
+			$thrown = $uncaught->thrownException;
+			Term::stderr(Exceptions::renderThrownExceptionToText($thrown));
+			die(1);
 		}
 
 	}
@@ -201,25 +187,25 @@ class Entrypoint {
 				case "-h":
 				case "--help":
 					self::dieWithHelp();
-				case "-t":
-				case "--tree":
-					$cfg['only_tree'] = true;
-				break;
-				case "-pst":
-				case "--parser-stats":
-					$cfg['parser_stats'] = true;
-				break;
+				case "--ast":
+					$cfg['only_ast'] = true;
+					break;
+				case "--dis":
+					$cfg['only_dis'] = true;
+					break;
+				case "--dis-stats":
+					$cfg['only_dis_stats'] = true;
+					break;
+				case "--no-cache":
+					$cfg['no_cache'] = true;
+					break;
 				case "-s":
 				case "--source":
 					$cfg['input_is_code'] = true;
-				break;
-				case "-rst":
-					case "--runtime-stats":
-						$cfg['print_runtime_stats'] = true;
 					break;
 				case "-v":
-					case "--verbose":
-						$cfg['verbose'] = true;
+				case "--verbose":
+					$cfg['verbose'] = true;
 					break;
 				default:
 					$cfg['input'] = $a;
@@ -244,18 +230,20 @@ class Entrypoint {
 		{green}Examples:{_}
 			primi ./some_file.primi
 			primi -s 'something = 1; print(something + 1)'
-			primi -rst -s 'something = 1; print(something + 1)'
+			primi --dis -s 'something = 1; print(something + 1)'
 		{green}Options:{_}
 			{yellow}-h, --help{_}
 				Print this help.
-			{yellow}-pst, --parser-stats{_}
-				Print parser stats upon exit (code is not executed).
-			{yellow}-rst, --stats{_}
-				Print interpreter runtime stats upon exit.
 			{yellow}-s, --source{_}
 				Treat <input file> as string instead of a source file path.
-			{yellow}-t, --tree{_}
-				Only print syntax tree and exit.
+			{yellow}--ast{_}
+				Dump abstract syntax tree parsed from the input.
+			{yellow}--dis{_}
+				Dump opcodes from the compiled input.
+			{yellow}--dis-stats{_}
+				Dump opcodes stats from the compiled input.
+			{yellow}--no-cache{_}
+				Disable parser/compiler cache.
 			{yellow}-v, --verbose{_}
 				Enable verbose debug logging.
 

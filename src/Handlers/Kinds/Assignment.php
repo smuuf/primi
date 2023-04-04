@@ -4,41 +4,61 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\EngineInternalError;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Structures\AssignmentTargets;
-use \Smuuf\Primi\Structures\InsertionProxyInterface;
+use Smuuf\Primi\Ex\EngineInternalError;
+use Smuuf\Primi\VM\Machine;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Compiler\MetaFlag;
 
-class Assignment extends SimpleHandler {
+class Assignment extends Handler {
 
-	protected static function handle(array $node, Context $context) {
+	public static function compile(Compiler $bc, array $node): void {
 
-		// Execute the right-hand node first.
-		$return = HandlerFactory::runNode($node['right'], $context);
-		$target = HandlerFactory::runNode($node['left'], $context);
+		$bc->inject($node['right']);
 
-		if (\is_string($target)) {
-			// Store the return value into variable in current scope.
-			$context->setVariable($target, $return);
-			return $return;
+		// Duplicate the value on the stack so that assignment expression itself
+		// has a result, so that things like "a = (b = 1)", "a = b.c = 1" or
+		// "a = b[c] = 1" work.
+		$bc->add(Machine::OP_DUP_TOP);
+
+		$targetNames = [];
+		$bc->withMetaFrame(function() use ($bc, $node, &$targetNames) {
+
+			$bc->inject($node['left']);
+			$targetNames = $bc->getMeta(MetaFlag::TargetNames, []);
+
+		});
+
+		// If the left node was actually a list of assignment targets, we
+		// should unpack the (supposedly) iterable on the right side into
+		// separate variables.
+		if ($targetNames) {
+			$bc->add(Machine::OP_UNPACK_SEQUENCE, count($targetNames));
+			foreach ($targetNames as $name) {
+				$bc->add(Machine::OP_STORE_NAME, $name);
+			}
+			return;
 		}
 
-		if ($target instanceof InsertionProxyInterface) {
-			// Vector handler returns a proxy with the key being
-			// pre-configured. Commit the value to that key into the correct
-			// value object.
-			$target->commit($return);
-			return $return;
-		}
+		// By popping and inspecting the latest opcode the left AST node
+		// emitted we can determine if the assignment is supposed to be into a
+		// simple variable name, or into some object's attribute, or into some
+		// object as item (bracket[] access).
+		$last = $bc->pop();
 
-		if ($target instanceof AssignmentTargets) {
-			$target->assign($return, $context);
-			return $return;
+		switch (true) {
+			case $last->opType === Machine::OP_NOOP:
+				$bc->add(Machine::OP_STORE_NAME, $last->args[0]);
+				break;
+			case $last->opType === Machine::OP_LOAD_ATTR:
+				$bc->add(Machine::OP_STORE_ATTR, $last->args[0]);
+				break;
+			case $last->opType === Machine::OP_LOAD_ITEM:
+				$bc->add(Machine::OP_STORE_ITEM, $last->args[0] ?? 0);
+				break;
+			default:
+				throw new EngineInternalError("Invalid assignment target");
 		}
-
-		throw new EngineInternalError("Invalid assignment target");
 
 	}
 

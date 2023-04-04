@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use \Smuuf\Primi\Ex\TypeError;
-use \Smuuf\Primi\Ex\IndexError;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Types;
-use \Smuuf\Primi\Helpers\StringEscaping;
+use Smuuf\Primi\Ex\IndexError;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Types;
+use Smuuf\Primi\Helpers\StringEscaping;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 /**
  * NOTE: You should not instantiate this PHP class directly - use the helper
@@ -25,7 +25,7 @@ class StringValue extends AbstractBuiltinValue {
 	}
 
 	public function getType(): TypeValue {
-		return BuiltinTypes::getStringType();
+		return StaticTypes::getStringType();
 	}
 
 	public function getLength(): ?int {
@@ -94,21 +94,28 @@ class StringValue extends AbstractBuiltinValue {
 			return new self(\str_repeat($this->value, (int) $multiplier));
 		}
 
-		throw new RuntimeError("String multiplier must be a positive integer");
+		Exceptions::piggyback(
+			StaticExceptionTypes::getTypeErrorType(),
+			"String multiplier must be a positive integer",
+		);
 
 	}
 
 	public function isEqualTo(AbstractValue $right): ?bool {
 
-		if (!Types::is_any_of_types($right, StringValue::class, RegexValue::class)) {
-			return \null;
+		if ($this === $right) {
+			return \true;
+		}
+
+		if ($right instanceof StringValue) {
+			return $this->value === $right->value;
 		}
 
 		if ($right instanceof RegexValue) {
 			return (bool) \preg_match($right->value, $this->value);
-		} else {
-			return $this->value === $right->value;
 		}
+
+		return \null;
 
 	}
 
@@ -139,19 +146,25 @@ class StringValue extends AbstractBuiltinValue {
 	public function itemGet(AbstractValue $index): AbstractValue {
 
 		if (!Func::is_round_int($index->value)) {
-			throw new RuntimeError("String index must be integer");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"String index must be integer",
+			);
 		}
 
 		// Even though in other "container" types (eg. list, tuple) we need
 		// to manually handle negative indices via helper
-		// function Indices::resolveIndexOrError(), PHP supports negative
-		// indixes for strings  out-of-the-box since PHP 7.1, so we don't need
+		// function Indices::resolveIndex(), PHP supports negative
+		// indices for strings out-of-the-box since PHP 7.1, so we don't need
 		// to do any magic here.
 		// See https://wiki.php.net/rfc/negative-string-offsets
 
 		$index = (int) $index->value;
 		if (!isset($this->value[$index])) {
-			throw new IndexError($index);
+			Exceptions::piggyback(
+				StaticExceptionTypes::getIndexErrorType(),
+				"Undefined index $index",
+			);
 		}
 
 		return new self($this->value[$index]);
@@ -168,7 +181,10 @@ class StringValue extends AbstractBuiltinValue {
 	public function doesContain(AbstractValue $right): ?bool {
 
 		if (!Types::is_any_of_types($right, StringValue::class, RegexValue::class)) {
-			throw new TypeError("'in' for string requires 'string|regex' as left operand");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getTypeErrorType(),
+				"'in' for string requires 'string|regex' as left operand",
+			);
 		}
 
 		if ($right instanceof RegexValue) {

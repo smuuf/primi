@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Drivers;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\EngineError;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Ex\EngineError;
 
 class VoidIoDriver implements StdIoDriverInterface {
 

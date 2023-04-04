@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Modules;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Helpers\ValueFriends;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Helpers\ValueFriends;
 
 abstract class NativeModule extends ValueFriends {
 

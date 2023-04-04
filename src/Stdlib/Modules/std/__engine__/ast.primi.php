@@ -2,11 +2,11 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Values\StringValue;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Parser\ParserHandler;
-use \Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Values\StringValue;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Parser\ParserHandler;
+use Smuuf\Primi\Modules\NativeModule;
 
 /**
  * Native '__engine__.ast' module.

@@ -2,9 +2,9 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Values\AbstractValue;
-use \Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Values\AbstractValue;
+use Smuuf\Primi\Modules\NativeModule;
 
 /**
  * Native '__engine__.importing' module.

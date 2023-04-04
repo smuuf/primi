@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers\Wrappers;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Ex\CircularImportError;
-use \Smuuf\Primi\Modules\Importer;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Modules\Importer;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 class ImportStackWrapper extends AbstractWrapper {
 
@@ -38,7 +39,10 @@ class ImportStackWrapper extends AbstractWrapper {
 
 		// Detect circular imports.
 		if (!$this->importer->pushImport($this->importId)) {
-			throw new CircularImportError($this->dotpath);
+			Exceptions::piggyback(
+				StaticExceptionTypes::getImportErrorType(),
+				"Circular import when importing: {$this->dotpath}",
+			);
 		}
 
 	}

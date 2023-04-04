@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Stdlib\BuiltinTypes;
-use \Smuuf\Primi\Stdlib\TypeExtensions\Stdlib\DatetimeTypeExtension;
-use \Smuuf\Primi\Stdlib\TypeExtensions\Stdlib\DurationTypeExtension;
-use \Smuuf\Primi\Values\TypeValue;
-use \Smuuf\Primi\Modules\NativeModule;
-use \Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Stdlib\StaticTypes;
+use Smuuf\Primi\Stdlib\TypeExtensions\Stdlib\DatetimeTypeExtension;
+use Smuuf\Primi\Stdlib\TypeExtensions\Stdlib\DurationTypeExtension;
+use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Modules\AllowedInSandboxTrait;
 
 return new
 /**
@@ -25,12 +25,12 @@ class extends NativeModule {
 		return [
 			'Datetime' => new TypeValue(
 				'Datetime',
-				BuiltinTypes::getObjectType(),
+				StaticTypes::getObjectType(),
 				DatetimeTypeExtension::execute(),
 			),
 			'Duration' => new TypeValue(
 				'Duration',
-				BuiltinTypes::getObjectType(),
+				StaticTypes::getObjectType(),
 				DurationTypeExtension::execute(),
 			),
 		];

@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Modules;
 
-use \Smuuf\StrictObject;
-use \Smuuf\Primi\Scope;
-use \Smuuf\Primi\Logger;
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\ImportError;
-use \Smuuf\Primi\Ex\ModuleNotFoundError;
-use \Smuuf\Primi\Ex\ImportBeyondTopException;
-use \Smuuf\Primi\Ex\ImportRelativeWithoutParentException;
-use \Smuuf\Primi\Values\ModuleValue;
-use \Smuuf\Primi\Helpers\Wrappers\ContextPushPopWrapper;
-use \Smuuf\Primi\Helpers\Wrappers\ImportStackWrapper;
-use \Smuuf\Primi\Modules\Dotpath;
-use \Smuuf\Primi\StackFrame;
+use Smuuf\StrictObject;
+use Smuuf\Primi\Scope;
+use Smuuf\Primi\Logger;
+use Smuuf\Primi\Context;
+use Smuuf\Primi\Ex\ImportBeyondTopException;
+use Smuuf\Primi\Ex\ImportRelativeWithoutParentException;
+use Smuuf\Primi\Values\ModuleValue;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Modules\Dotpath;
+use Smuuf\Primi\Helpers\Wrappers\ImportStackWrapper;
 
 /**
  * @internal
@@ -94,7 +92,7 @@ class Importer {
 	public function getModule(string $dotpath): ModuleValue {
 
 		$originPackage = '';
-		if ($currentModule = $this->ctx->getCurrentModule()) {
+		if ($currentModule = $this->ctx->getCurrentFrame()?->getModule()) {
 			$originPackage = $currentModule->getPackage();
 		}
 
@@ -103,9 +101,15 @@ class Importer {
 		try {
 			$dp = new Dotpath($dotpath, $originPackage);
 		} catch (ImportRelativeWithoutParentException $e) {
-			throw new ImportError("Relative import without origin package");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getImportErrorType(),
+				"Relative import without origin package",
+			);
 		} catch (ImportBeyondTopException $e) {
-			throw new ImportError("Relative import {$e->getMessage()} reached beyond top-level package");
+			Exceptions::piggyback(
+				StaticExceptionTypes::getImportErrorType(),
+				"Relative import {$e->getMessage()} reached beyond top-level package",
+			);
 		}
 
 		$dotpathString = $dp->getAbsolute();
@@ -130,7 +134,10 @@ class Importer {
 		}
 
 		Logger::debug("Module '$dotpath' could not be found");
-		throw new ModuleNotFoundError($dotpath);
+		Exceptions::piggyback(
+			StaticExceptionTypes::getImportErrorType(),
+			"Module '{$dotpath}' not found",
+		);
 
 	}
 
@@ -285,51 +292,39 @@ class Importer {
 
 		$wrapper = new ImportStackWrapper($this, $filepath, $dotpath);
 		return $wrapper->wrap(function() use (
-				$loader,
-				$filepath,
-				$dotpath,
-				$packageDotpath
-			) {
+			$loader,
+			$filepath,
+			$dotpath,
+			$packageDotpath
+		) {
 
-				// Imported module will have its own global scope.
-				$scope = new Scope;
-				$module = new ModuleValue(
-					$dotpath,
-					$packageDotpath,
-					$scope
-				);
+			// Imported module will have its own global scope.
+			$scope = new Scope;
+			$module = new ModuleValue($dotpath, $packageDotpath, $scope);
 
-				// Put the newly created module immediately in the "loaded
-				// module" cache. Relative imports made from this new module
-				// might need to load this module again (because if module 'a'
-				// wants to import '.b' relatively, the resulting absolute
-				// module path is 'a.b' - and import mechanism wants to import
-				// 'a' first and then 'b'). And we don't want the new module to
-				// be imported again (that would result in circular import).
-				$this->loaded[$dotpath] = $module;
+			// Put the newly created module immediately in the "loaded
+			// module" cache. Relative imports made from this new module
+			// might need to load this module again (because if module 'a'
+			// wants to import '.b' relatively, the resulting absolute
+			// module path is 'a.b' - and import mechanism wants to import
+			// 'a' first and then 'b'). And we don't want the new module to
+			// be imported again (that would result in circular import).
+			$this->loaded[$dotpath] = $module;
 
-				$frame = new StackFrame("<module>", $module);
-				$wrapper = new ContextPushPopWrapper($this->ctx, $frame, $scope);
+			$loader::loadModule($this->ctx, $filepath, $module);
 
-				$wrapper->wrap(function() use (
-					$loader,
-					$filepath,
-					$dotpath,
-					$packageDotpath
-				) {
+			// If there's a pending exception (for example SyntaxError) after
+			// attempting to load a module (this can happen primarily when
+			// importing ".primi" modules), remove the erroneous module object
+			// from our "loaded" modules, so we don't have incomplete module
+			// objects in there..
+			if ($this->ctx->getPendingException()) {
+				unset($this->loaded[$dotpath]);
+			}
 
-					return $loader::loadModule(
-						$this->ctx,
-						$filepath,
-						$dotpath,
-						$packageDotpath
-					);
+			return $module;
 
-				});
-
-				return $module;
-
-			});
+		});
 
 	}
 

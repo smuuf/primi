@@ -13,7 +13,7 @@ abstract class GrammarRulesLabels {
 		'StringInside' => "start of string literal",
 		'FStringLiteral' => "f-string literal",
 		'FStringInside' => "start of f-string literal",
-		'FStringTxt' => "start of f-string literal",
+		'FStringTxt' => "inside f-string literal",
 		'VectorAttr' => "attribute access operator",
 		'AttrAccess' => "attribute access operator",
 		'DictDefinition' => "dict definition",

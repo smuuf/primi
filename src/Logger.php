@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi;
 
-use \Smuuf\Primi\Cli\Term;
-use \Smuuf\StrictObject;
+use Smuuf\Primi\Cli\Term;
+use Smuuf\StrictObject;
 
 abstract class Logger {
 

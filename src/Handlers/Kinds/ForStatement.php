@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
-use \Smuuf\Primi\Context;
-use \Smuuf\Primi\Ex\RuntimeError;
-use \Smuuf\Primi\Ex\BreakException;
-use \Smuuf\Primi\Ex\ContinueException;
-use \Smuuf\Primi\Handlers\SimpleHandler;
-use \Smuuf\Primi\Handlers\HandlerFactory;
-use \Smuuf\Primi\Structures\AssignmentTargets;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Compiler\MetaFlag;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\VM\Machine;
 
 /**
  * Node fields:
@@ -18,53 +15,59 @@ use \Smuuf\Primi\Structures\AssignmentTargets;
  * item: Variable name to store the single item in.
  * right: Node representing contents of code to execute while iterating the iterator structure.
  */
-class ForStatement extends SimpleHandler {
+class ForStatement extends Handler {
 
-	protected static function handle(array $node, Context $context) {
+	public static function compile(Compiler $bc, array $node) {
 
-		// Execute the left-hand node and get its return value.
-		$subject = HandlerFactory::runNode($node['left'], $context);
+		$iterLabel = $bc->createLabel();
+		$breakLabel = $bc->createLabel();
+		$finishLabel = $bc->createLabel();
 
-		$iter = $subject->getIterator();
-		if ($iter === \null) {
-			throw new RuntimeError(
-				\sprintf("Cannot iterate over '%s'", $subject->getTypeName())
-			);
-		}
+		$bc->inject($node['left']);
+		$bc->add(Machine::OP_ITER_GET);
+		$bc->insertLabel($iterLabel);
 
-		/** @var AssignmentTargets */
-		$targets = HandlerFactory::runNode($node['targets'], $context);
-		$blockHandler = HandlerFactory::getFor($node['right']['name']);
+		// This retrieves next value from the iterator on the top of the stack
+		// and if it detects the iterator is depleted, jumps to the finish.
+		$bc->add(Machine::OP_ITER_NEXT, $finishLabel);
 
-		// 1-bit value for ticking task queue once per two iterations.
-		$tickBit = 0;
-		$queue = $context->getTaskQueue();
+		$bc->withMetaFrame(function() use ($bc, $node) {
 
-		foreach ($iter as $i) {
+			$bc->inject($node['targets']);
+			$targetNames = $bc->getMeta(MetaFlag::TargetNames);
 
-			// Switch the bit from 1/0 or vice versa.
-			if ($tickBit ^= 1) {
-				$queue->tick();
+			if (count($targetNames) > 1) {
+				$bc->add(Machine::OP_UNPACK_SEQUENCE, count($targetNames));
 			}
 
-			$targets->assign($i, $context);
-
-			try {
-
-				$blockHandler::run($node['right'], $context);
-				if ($context->hasRetval()) {
-					return;
-				}
-
-			} catch (ContinueException $e) {
-				continue;
-			} catch (BreakException $e) {
-				break;
+			foreach ($targetNames as $targetName) {
+				$bc->add(Machine::OP_STORE_NAME, $targetName);
 			}
 
-		}
+		});
 
-		$context->getTaskQueue()->tick();
+		$bc->withMetaFrame(function() use ($bc, $node, $iterLabel, $breakLabel) {
+
+			$bc->setMeta(MetaFlag::InLoop, true);
+			$bc->setMeta(MetaFlag::ContinueJumpTargetLabel, $iterLabel);
+			$bc->setMeta(MetaFlag::BreakJumpTargetLabel, $breakLabel);
+
+			// Inject opcodes from the body.
+			$bc->inject($node['right']);
+
+		});
+
+		// Jump back to the OP_ITER_GET label (which expects the iterator we're
+		// just iterating on the top of the stack.)
+		$bc->add(Machine::OP_JUMP, $iterLabel);
+
+		// If the iterator ended prematurely via break - pop the iterator off
+		// the value stack (if the iterator finishes normally, the same is
+		// done by the OP_ITER_NEXT opcode in VM).
+		$bc->insertLabel($breakLabel);
+		$bc->add(Machine::OP_POP);
+
+		$bc->insertLabel($finishLabel);
 
 	}
 

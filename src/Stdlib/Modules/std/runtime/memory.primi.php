@@ -2,12 +2,12 @@
 
 namespace Smuuf\Primi\Stdlib\Modules;
 
-use \Smuuf\Primi\Extensions\PrimiFunc;
-use \Smuuf\Primi\Values\DictValue;
-use \Smuuf\Primi\Values\NumberValue;
-use \Smuuf\Primi\Helpers\Func;
-use \Smuuf\Primi\Helpers\Interned;
-use \Smuuf\Primi\Modules\NativeModule;
+use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Values\DictValue;
+use Smuuf\Primi\Values\NumberValue;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Helpers\Interned;
+use Smuuf\Primi\Modules\NativeModule;
 
 /**
  * Native 'std.runtime.memory' module.
