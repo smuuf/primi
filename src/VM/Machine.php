@@ -120,6 +120,7 @@ class Machine {
 		}
 
 		$builtins = $ctx->getBuiltins();
+		$locals = [];
 		$scope = $frame->getScope();
 		$scopeComp = new ScopeComposite($scope, $ctx->getBuiltins());
 
@@ -170,7 +171,7 @@ class Machine {
 						// Store the exception object into scope as variable.
 						// This handles "... catch (Exception [as varName]) ..."
 						if ($varName) {
-							$scope->setVariable($varName, $exc->exception);
+							$locals[$varName] = $exc->exception;
 						}
 
 						// Pop (original_stack_size - current_stack_size) items
@@ -229,14 +230,16 @@ class Machine {
 
 					case Machine::OP_LOAD_NAME:
 						// Arg #1: Variable name.
-						$vStack->push(Variable::fetch($op[1], $scopeComp));
+						$vStack->push(
+							$locals[$op[1]]
+							?? Variable::fetch($op[1], $scopeComp)
+						);
 						break;
 
 					case Machine::OP_LOAD_ATTR:
 						// Arg #1: Attr name.
 						// Pop #1: Subject.
 						$vStack->push(AttrAccess::fetch($vStack->pop(), $op[1]));
-						unset($a);
 						break;
 
 					case Machine::OP_LOAD_ITEM:
@@ -251,8 +254,8 @@ class Machine {
 					case Machine::OP_STORE_NAME:
 						// Arg #1: Variable name.
 						// Pop #1: Value.
-						$scope->setVariable($op[1], $vStack->pop());
-						unset($a);
+						$locals[$op[1]] = $vStack->pop();
+						//$scope->setVariable($op[1], $vStack->pop());
 						break;
 
 					case Machine::OP_STORE_ATTR:
@@ -342,7 +345,7 @@ class Machine {
 						// Pop #2: Left side value.
 						$a = $vStack->pop();
 						$b = $vStack->pop();
-						$vStack->push(Arithmetics::add($b, $a));
+						$vStack->push(Arithmetics::add($b, $a));;
 						unset($a, $b);
 						break;
 
@@ -387,6 +390,7 @@ class Machine {
 						// Pop N+1: Callable object.
 						$a = $vStack->popToListRev($op[1]);
 						$frame->storeOpIndex($opIndex);
+						$scope->setVariables($locals);
 						$b = $vStack->pop()->invoke($ctx, new CallArgs($a));
 						if ($ctx->getPendingException()) {
 							unset($a, $b);
@@ -400,9 +404,15 @@ class Machine {
 						// Pop 1: Kwargs dict.
 						// Pop 2: Args list.
 						// Pop 3: Callable object.
+						/**
+						 * @var AbstractValue $a
+						 * @var AbstractValue $b
+						 * @var AbstractValue $c
+						 */
 						$a = $vStack->pop();
 						$b = $vStack->pop();
 						$frame->storeOpIndex($opIndex);
+						$scope->setVariables($locals);
 						$c = $vStack->pop()->invoke(
 							$ctx,
 							new CallArgs(
@@ -420,6 +430,7 @@ class Machine {
 
 					case Machine::OP_CALL_FUNCTION_N:
 						$frame->storeOpIndex($opIndex);
+						$scope->setVariables($locals);
 						$a = $vStack->pop()->invoke($ctx);
 						if ($ctx->getPendingException()) {
 							unset($a);
@@ -602,6 +613,7 @@ class Machine {
 
 					case Machine::OP_TRYBLK_PUSH:
 						// Arg #1: Catch label.
+						$scope->setVariables($locals);
 						$frame->pushTry(TryBlock::fromPairs(
 							$op[1],
 							\count($vStack),
@@ -617,6 +629,7 @@ class Machine {
 						// Arg #1: Class name.
 						// Arg #2: Parent type name (or null).
 						// Arg #3: Class body bytecode.
+						$scope->setVariables($locals);
 						$a = ClassDefinition::handleCreateClass(
 							$op[1],
 							$op[2],
@@ -649,6 +662,7 @@ class Machine {
 					case Machine::OP_IMPORT:
 						// Arg #1: Dotpath of the module to be imported.
 						// Arg #2: List of names to import.
+						$scope->setVariables($locals);
 						ImportStatement::handleImport($ctx, $op[1], $op[2]);
 						goto vm_check_exc;
 						break;
@@ -667,8 +681,7 @@ class Machine {
 
 		} catch (PiggybackException $pex) {
 
-			// Receive piggybacking exception, set it into context and go handle
-			// it.
+			// Receive piggybacking exception, set it into context and go handle it.
 			$frame->storeOpIndex($opIndex);
 			Exceptions::set($ctx, $pex->excType, ...$pex->args);
 			unset($pex);
@@ -678,6 +691,7 @@ class Machine {
 
 		vm_loop_exit:
 
+		$scope->setVariables($locals);
 		$ctx->setCurrentFrame($frame->getParent());
 		$retval = $vStack->isEmpty()
 			? Interned::null()
