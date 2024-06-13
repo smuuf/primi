@@ -19,9 +19,7 @@ use Smuuf\StrictObject;
  *
  * @internal
  */
-class MapContainer implements
-	\Countable
-{
+class MapContainer implements \Countable {
 
 	use StrictObject;
 
@@ -35,7 +33,8 @@ class MapContainer implements
 	 * Create new instance from iterable list containing `[key, value]` Primi
 	 * value tuples.
 	 *
-	 * @param TypeDef_PrimiObjectCouples $couples
+	 * @phpstan-param TypeDef_PrimiObjectCouples $couples
+	 * @param list<list<AbstractValue>> $couples
 	 * @return self
 	 * @internal
 	 */

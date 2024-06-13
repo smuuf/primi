@@ -10,6 +10,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class CondExpr extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		if (!isset($node['cond'])) {
@@ -18,7 +21,10 @@ class CondExpr extends Handler {
 
 	}
 
-	public static function compile(Compiler $bc, array $node) {
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
+	public static function compile(Compiler $bc, array $node): void {
 
 		$cond = $node['cond'];
 		$trueBlock = $node['true'];

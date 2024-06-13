@@ -10,6 +10,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class Program extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// Make sure the list of statements has proper form.
@@ -22,6 +25,9 @@ class Program extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		foreach ($node['stmts'] as $sub) {

@@ -40,9 +40,6 @@ class CallArgs {
 	/** True if there are no args and no kwargs specified. */
 	private bool $isEmpty = \false;
 
-	/** Total number of args and kwargs combined. */
-	private ?int $totalCount = \null;
-
 	/**
 	 * @param array<int, AbstractValue> $args
 	 * @param array<string, AbstractValue> $kwargs

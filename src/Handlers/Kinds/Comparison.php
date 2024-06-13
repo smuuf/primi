@@ -16,6 +16,9 @@ use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 class Comparison extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// If there is no operator, that means there's only one operand.
@@ -28,6 +31,9 @@ class Comparison extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$finishLabel = $bc->createLabel();

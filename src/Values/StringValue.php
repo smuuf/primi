@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Values;
 
-use Smuuf\Primi\Ex\IndexError;
 use Smuuf\Primi\Helpers\Exceptions;
 use Smuuf\Primi\Stdlib\StaticTypes;
 use Smuuf\Primi\Helpers\Func;

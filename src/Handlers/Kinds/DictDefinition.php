@@ -11,6 +11,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class DictDefinition extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// Make sure this is always list, even with one item.
@@ -22,6 +25,9 @@ class DictDefinition extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node) {
 
 		foreach ($node['items'] as $sub) {

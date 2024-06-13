@@ -12,7 +12,10 @@ use Smuuf\Primi\Handlers\Handler;
 
 class ContinueStatement extends Handler {
 
-	public static function compile(Compiler $bc, array $node) {
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
+	public static function compile(Compiler $bc, array $node): void {
 
 		if (!$bc->getMeta(MetaFlag::InLoop, false)) {
 			throw InternalSyntaxError::fromNode($node, "'continue' used outside loop");

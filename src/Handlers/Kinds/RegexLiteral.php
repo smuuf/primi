@@ -11,6 +11,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class RegexLiteral extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		// The core node's text is already prepared by StringLiteral - it is

@@ -11,6 +11,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class Invocation extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		// Special case for calling without arguments.

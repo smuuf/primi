@@ -19,6 +19,9 @@ use Smuuf\Primi\Handlers\Handler;
  */
 class ArgumentList extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// Make sure this is always list, even with one item.
@@ -88,6 +91,9 @@ class ArgumentList extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		// Detect if this args list is "simple" or "complex".

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\VM;
 
 use Smuuf\StrictObject;
+use Smuuf\Primi\Values\AbstractValue;
 
 /**
  * Our wrapper for \SplStack with additional goodies.

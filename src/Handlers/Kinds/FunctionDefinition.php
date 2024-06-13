@@ -23,7 +23,7 @@ class FunctionDefinition extends Handler {
 		string $fnName,
 		Bytecode $bytecode,
 		array $params,
-	) {
+	): FuncValue {
 
 		$frame = $ctx->getCurrentFrame();
 		$module = $frame->getModule();
@@ -54,6 +54,9 @@ class FunctionDefinition extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$compiler = new Compiler($node['body'], codeType: CodeType::CodeFunction);
@@ -75,6 +78,9 @@ class FunctionDefinition extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// Prepare function name.
@@ -89,8 +95,8 @@ class FunctionDefinition extends Handler {
 
 	}
 
+
 	/**
-	 * @param array $paramsNode
 	 * @phpstan-param TypeDef_AstNode $paramsNode
 	 * @return array{names: array<string>, defaults: array<string, TypeDef_AstNode>}
 	 */

@@ -12,6 +12,9 @@ use Smuuf\Primi\Compiler\MetaFlag;
 
 class Assignment extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$bc->inject($node['right']);

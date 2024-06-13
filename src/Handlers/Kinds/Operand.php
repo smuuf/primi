@@ -9,6 +9,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class Operand extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// If this node has a value method call with it, don't reduce it.
@@ -18,6 +21,9 @@ class Operand extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$bc->inject($node['core']);

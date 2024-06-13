@@ -10,7 +10,6 @@ use Smuuf\Primi\VM\TryBlock;
 use Smuuf\Primi\Code\Bytecode;
 use Smuuf\Primi\Structures\ThrownException;
 use Smuuf\Primi\Values\ModuleValue;
-use Smuuf\Primi\Values\ExceptionValue;
 
 class Frame {
 

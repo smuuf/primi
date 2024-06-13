@@ -10,11 +10,12 @@ use Smuuf\Primi\Handlers\Handler;
 
 class ThrowStatement extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node) {
-
 		$bc->inject($node['exc']);
 		$bc->add(Machine::OP_EXC_THROW);
-
 	}
 
 }

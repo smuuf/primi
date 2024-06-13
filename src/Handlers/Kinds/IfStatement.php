@@ -16,6 +16,9 @@ use Smuuf\Primi\Handlers\Handler;
  */
 class IfStatement extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		$elifs = [];
@@ -40,6 +43,9 @@ class IfStatement extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$endLabel = $bc->createLabel();

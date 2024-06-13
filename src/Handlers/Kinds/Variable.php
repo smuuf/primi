@@ -32,11 +32,17 @@ class Variable extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 		$node['var'] = $node['core']['text'];
 		unset($node['core']);
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 		$bc->add(Machine::OP_LOAD_NAME, $node['var']);
 	}

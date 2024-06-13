@@ -14,6 +14,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class FStringLiteral extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// There can be ordinary non-expression-text nodes and FStringText
@@ -57,6 +60,9 @@ class FStringLiteral extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$parts = $node['parts'];

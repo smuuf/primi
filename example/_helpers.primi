@@ -4,13 +4,13 @@ function assert_not(truth, desc = '') {
 
 function assert_error(fn, desc = '') {
 
-	was_error = true
+	was_error = false
 	try {
 		fn()
-		was_error = false
 	} catch {
-		// Pass.
+		was_error = true
 	}
 
 	assert(was_error, desc)
+
 }

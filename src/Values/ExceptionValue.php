@@ -46,10 +46,6 @@ class ExceptionValue extends AbstractBuiltinValue {
 		return $this->excType->getName();
 	}
 
-	public function getArgs(): TupleValue {
-		return $this->attrs['args'];
-	}
-
 	public function isTruthy(): bool {
 		return true;
 	}

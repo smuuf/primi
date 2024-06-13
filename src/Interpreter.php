@@ -51,7 +51,7 @@ class Interpreter {
 	 * as an instance of `Source` object.
 	 * @param Scope|null $scope Optional scope object that is to be used as
 	 * global scope of the main module.
-	 * @param Context|null $ctx Optional context object the interpreter
+	 * @param Context|null $context Optional context object the interpreter
 	 * should use.
 	 */
 	public function run(

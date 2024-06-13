@@ -13,6 +13,9 @@ use Smuuf\Primi\Compiler\Compiler;
 
 class NumberLiteral extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// As string.
@@ -21,6 +24,9 @@ class NumberLiteral extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 		$bc->add(Machine::OP_LOAD_CONST, Interned::number($node['number']));
 	}

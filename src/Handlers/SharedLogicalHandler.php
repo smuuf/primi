@@ -18,6 +18,9 @@ use Smuuf\Primi\Compiler\Compiler;
  */
 abstract class SharedLogicalHandler extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// If there is no operator "and"/"or", reduce the node to it's only
@@ -40,6 +43,9 @@ abstract class SharedLogicalHandler extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$type = $node['type'];
@@ -62,7 +68,7 @@ abstract class SharedLogicalHandler extends Handler {
 
 	/**
 	 * @param array $node
-	 * @phpstan-phpstan-param TypeDef_AstNode $node
+	 * @phpstan-param TypeDef_AstNode $node
 	 */
 	private static function compileAnd(
 		Compiler $bc,
@@ -91,7 +97,7 @@ abstract class SharedLogicalHandler extends Handler {
 
 	/**
 	 * @param array $node
-	 * @phpstan-phpstan-param TypeDef_AstNode $node
+	 * @phpstan-param TypeDef_AstNode $node
 	 */
 	private static function compileOr(
 		Compiler $bc,

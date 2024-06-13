@@ -13,7 +13,8 @@ namespace Smuuf\Primi\Ex;
 class InternalSyntaxError extends EngineException {
 
 	/**
-	 * @param int Byte offset in the source code where the error occurred.
+	 * @param int $offset Byte offset in the source code where the error
+	 *     occurred.
 	 * @param null|string $reason Specific reason of the syntax error,
 	 *     if specified.
 	 */
@@ -23,7 +24,7 @@ class InternalSyntaxError extends EngineException {
 	) {}
 
 	/**
-	 * @param array $node AST node where the syntax error originates.
+	 * @param TypeDef_AstNode $node AST node where the syntax error originates.
 	 * @param null|string $reason Specific reason of the syntax error,
 	 *     if specified.
 	 */

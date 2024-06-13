@@ -13,6 +13,9 @@ class StarredExpression extends Handler {
 	public const STARS_ONE = 1;
 	public const STARS_TWO = 2;
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 		$bc->inject($node['expr']);
 	}

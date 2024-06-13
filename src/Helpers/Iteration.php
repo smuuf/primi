@@ -46,8 +46,12 @@ abstract class Iteration {
 
 	/**
 	 * @param \Iterator<AbstractValue> $iter
+	 * @return list<AbstractValue>
 	 */
-	public static function unpack(\Iterator $iter, int $targetCount): array {
+	public static function unpack(
+		\Iterator $iter,
+		int $targetCount,
+	): array {
 
 		$buffer = [];
 		$counter = 0;
@@ -76,6 +80,9 @@ abstract class Iteration {
 
 	}
 
+	/**
+	 * @return array<string, AbstractValue>
+	 */
 	public static function fromMapToArray(MapContainer $c): array {
 
 		$result = [];
@@ -124,9 +131,12 @@ abstract class Iteration {
 	 * a iterable Primi object that can be interpreted as a mapping.
 	 * Best-effort-style.
 	 *
-	 * @return TypeDef_PrimiObjectCouples
+	 * @phpstan-return TypeDef_PrimiObjectCouples
+	 * @return list<array{AbstractValue, AbstractValue}>
 	 */
-	public static function fromMappingToCouples(AbstractValue $value) {
+	public static function fromMappingToCouples(
+		AbstractValue $value,
+	): iterable {
 
 		$internalValue = $value->getCoreValue();
 		if ($internalValue instanceof MapContainer) {

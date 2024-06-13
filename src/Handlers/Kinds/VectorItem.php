@@ -10,11 +10,12 @@ use Smuuf\Primi\Handlers\Handler;
 
 class VectorItem extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
-
 		$bc->inject($node['index']);
 		$bc->add(Machine::OP_LOAD_ITEM);
-
 	}
 
 }

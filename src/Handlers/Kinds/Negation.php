@@ -11,6 +11,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class Negation extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// If this truly has a negation, do not reduce this node.
@@ -23,6 +26,9 @@ class Negation extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$bc->inject($node['core']);

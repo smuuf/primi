@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Ex;
 
-use Closure;
 use Smuuf\Primi\Code\Bytecode;
 use Smuuf\Primi\Location;
 use Smuuf\Primi\Code\Source;
@@ -18,8 +17,8 @@ class SyntaxError extends EngineException {
 
 	public function __construct(
 		private Location $location,
-		private ?string $excerpt = \null,
-		private ?string $reason = \null,
+		?string $excerpt = \null,
+		?string $reason = \null,
 	) {
 
 		$sanitizedExcerpt = $excerpt

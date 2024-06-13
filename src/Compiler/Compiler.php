@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Compiler;
 
-use Closure;
 use Smuuf\Primi\VM\Machine;
 use Smuuf\Primi\Ex\EngineInternalError;
 use Smuuf\Primi\Code\OpLocation;
@@ -22,7 +21,7 @@ class Compiler {
 	/** @var array<string|int, true> */
 	private array $labels = [];
 
-	/** @var \SplStack<array<mixed>> */
+	/** @var \SplStack<\ArrayObject<string, mixed>> */
 	private \SplStack $metaFrameStack;
 
 	/** @var array{?int, ?int} */
@@ -30,7 +29,7 @@ class Compiler {
 
 	/**
 	 * @param array $rootNode
-	 * @phpstan-phpstan-param TypeDef_AstNode $rootNode
+	 * @phpstan-param TypeDef_AstNode $rootNode
 	 */
 	public function __construct(
 		private array $rootNode,
@@ -76,7 +75,7 @@ class Compiler {
 
 	/**
 	 * @param array $node
-	 * @phpstan-phpstan-param TypeDef_AstNode $node
+	 * @phpstan-param TypeDef_AstNode $node
 	 * @return class-string
 	 */
 	public function inject(array $node): string {

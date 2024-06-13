@@ -39,12 +39,6 @@ class NumberValue extends AbstractBuiltinValue {
 
 	}
 
-	public function __debugInfo(): array {
-		return [
-			'value' => $this->value,
-		];
-	}
-
 	public function getType(): TypeValue {
 		return StaticTypes::getNumberType();
 	}

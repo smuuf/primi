@@ -44,7 +44,10 @@ class FnContainer {
 	 *
 	 * @param array $entryNode
 	 * @phpstan-param TypeDef_AstNode $entryNode
-	 * @param ?array{names: array<string, string>, defaults: array<string, TypeDef_AstNode>} $defParams
+	 * @param ?array{
+	 *     names: array<string, string>,
+	 *     defaults: array<string, TypeDef_AstNode>
+	 * } $defParams
 	 * @return self
 	 */
 	public static function build(
@@ -82,7 +85,7 @@ class FnContainer {
 					Func::resolve_default_args(
 						$callArgs->extract(
 							$defParams['names'] ?? [],
-							\array_keys($defParams['defaults'] ?? [])
+							\array_keys($defParams['defaults'] ?? []),
 						),
 						$defParams['defaults'],
 						$ctx,

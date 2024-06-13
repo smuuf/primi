@@ -7,6 +7,7 @@ namespace Smuuf\Primi;
 use Smuuf\StrictObject;
 use Smuuf\Primi\Scope;
 use Smuuf\Primi\Ex\EngineError;
+use Smuuf\Primi\Ex\SyntaxError;
 use Smuuf\Primi\Ex\UncaughtError;
 use Smuuf\Primi\VM\Frame;
 use Smuuf\Primi\VM\Machine;
@@ -18,12 +19,8 @@ use Smuuf\Primi\Values\ModuleValue;
 use Smuuf\Primi\Values\AbstractValue;
 use Smuuf\Primi\Values\ExceptionValue;
 use Smuuf\Primi\Drivers\StdIoDriverInterface;
-use Smuuf\Primi\Ex\RuntimeError;
-use Smuuf\Primi\Ex\SyntaxError;
-use Smuuf\Primi\Helpers\Exceptions;
-use Smuuf\Primi\Helpers\Wrappers\CatchPosixSignalsWrapper;
 use Smuuf\Primi\Modules\Importer;
-use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Wrappers\CatchPosixSignalsWrapper;
 use Smuuf\Primi\Structures\ThrownException;
 
 class Context {
@@ -164,23 +161,16 @@ class Context {
 
 		$wrapper = new CatchPosixSignalsWrapper($this->taskQueue);
 		return $wrapper->wrap(function() use ($frame) {
-			try {
-				return $this->vm->run($frame);
-			} finally {
 
-				try {
+			$retval = $this->vm->run($frame);
 
-					// This is the end of a single runtime, so run any tasks
-					// that may be still left in the task queue (this means, for
-					// example, that all callbacks in the queue will still be
-					// executed).
-					$this->taskQueue->deplete();
+			// This is the end of a single runtime, so run any tasks
+			// that may be still left in the task queue (this means, for
+			// example, that all callbacks in the queue will still be
+			// executed).
+			$this->taskQueue->deplete();
 
-				} catch (SystemException $e) {
-					throw new RuntimeError($e->getMessage());
-				}
-
-			}
+			return $retval;
 
 		});
 
@@ -189,6 +179,8 @@ class Context {
 	/**
 	 * Executes a bytecode object within a copy of the specified frame, or
 	 * within a copy of current (top) frame.
+	 *
+	 * @param array<string, mixed> $compilerArgs
 	 */
 	public function runSource(
 		Source $source,
@@ -242,10 +234,9 @@ class Context {
 	// Exceptions management.
 
 	/**
-	 * @param ExceptionValue $exc
-	 * @return void
+	 * @param ExceptionValue $excValue
 	 */
-	public function setException($excValue) {
+	public function setException($excValue): void {
 		$this->thrownExc = new ThrownException($excValue);
 	}
 

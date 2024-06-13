@@ -12,6 +12,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class ReturnStatement extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		if ($bc->getCodeType() !== CodeType::CodeFunction) {

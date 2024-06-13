@@ -11,6 +11,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class WhileStatement extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$condLabel = $bc->createLabel();

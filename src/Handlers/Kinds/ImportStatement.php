@@ -56,6 +56,9 @@ class ImportStatement extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		$node['module'] = $node['module']['text'];
@@ -73,6 +76,9 @@ class ImportStatement extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$dotpath = $node['module'];

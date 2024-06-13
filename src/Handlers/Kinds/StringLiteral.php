@@ -12,6 +12,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class StringLiteral extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		$node['text'] = StringEscaping::unescapeString($node['core']['text']);
@@ -20,6 +23,9 @@ class StringLiteral extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 		$bc->add(Machine::OP_LOAD_CONST, Interned::string($node['text']));
 	}

@@ -16,6 +16,9 @@ class PeepholePattern {
 	 */
 	private array $rules = [];
 
+	/**
+	 * @param string|list<string> $opType
+	 */
 	public function add(
 		string|array $opType = [],
 		?\Closure $filter = null,

@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Handlers\Kinds;
 
+use Smuuf\Primi\VM\Machine;
 use Smuuf\Primi\Compiler\Compiler;
 use Smuuf\Primi\Compiler\MetaFlag;
 use Smuuf\Primi\Handlers\Handler;
-use Smuuf\Primi\VM\Machine;
 
-/**
- * Node fields:
- * left: A source iterator.
- * item: Variable name to store the single item in.
- * right: Node representing contents of code to execute while iterating the iterator structure.
- */
 class ForStatement extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node) {
 
 		$iterLabel = $bc->createLabel();

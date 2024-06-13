@@ -1,9 +1,6 @@
 <?php
 
-use \Smuuf\Primi\Ex\SyntaxError;
 use \Smuuf\Primi\Interpreter;
-
-use \Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 

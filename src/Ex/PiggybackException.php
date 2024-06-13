@@ -18,7 +18,7 @@ use Smuuf\Primi\Values\TypeValue;
 class PiggybackException extends BaseException {
 
 	/**
-	 * @param list<AbstractValue>
+	 * @param list<AbstractValue> $args
 	 */
 	public function __construct(
 		public readonly TypeValue $excType,

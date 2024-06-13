@@ -52,7 +52,7 @@ abstract class HandlerFactory {
 	 * be called VERY often.
 	 *
 	 * @param string $name
-	 * @return ?class-string
+	 * @phpstan-return class-string
 	 */
 	public static function getFor(string $name): string {
 

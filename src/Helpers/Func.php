@@ -235,8 +235,9 @@ abstract class Func {
 	 * universally iterable.
 	 *
 	 * @param array $node
+	 * @return array<mixed, mixed>
 	 * @phpstan-param TypeDef_AstNode $node
-	 * @return TypeDef_AstNode
+	 * @phpstan-return TypeDef_AstNode
 	 */
 	public static function ensure_indexed(array $node): array {
 		return !isset($node[0]) ? [$node] : $node;
@@ -296,17 +297,18 @@ abstract class Func {
 	 * - `['Operator AND #1', <AST node for number 2']`
 	 * - `['Operator AND #2', <AST node for number 3']`
 	 *
-	 * @param array $node
 	 * @phpstan-param TypeDef_AstNode $node
-	 * @return \Generator<array{string|null, AbstractValue}>
+	 * @phpstan-return \Generator<list{?string, TypeDef_AstNode}}>
+	 * @param array $node
+	 * @return \Generator<list{?string, array<mixed>}}>
 	 */
 	public static function yield_nodes_left_to_right(array $node) {
 
-		foreach ($node['operands'] as $i => $operand) {
+		foreach ($node['operands'] as $i => $operandNode) {
 
 			// First operator will be null.
 			$operator = $node['ops'][$i - 1]['text'] ?? \null;
-			if (yield [$operator, $operand]) {
+			if (yield [$operator, $operandNode]) {
 				break;
 			}
 
@@ -357,6 +359,9 @@ abstract class Func {
 
 	}
 
+	/**
+	 * @param list<AbstractValue> $objects
+	 */
 	public static function joinObjectsAsString(
 		array $objects,
 		string $sep = ''

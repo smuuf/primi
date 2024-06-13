@@ -26,7 +26,7 @@ abstract class Indices {
 	 */
 	public static function resolveNegativeIndex(
 		int $index,
-		int $maxIndex
+		int $maxIndex,
 	): ?int {
 
 		$normalized = $index < 0
@@ -49,10 +49,9 @@ abstract class Indices {
 	 * represent an existing index in the array passed as the second argument,
 	 * an integer -1 is returned.
 	 *
-	 * @param array<int, AbstractValue>|\ArrayAccess<int, AbstractValue> $array
-	 * @return mixed
+	 * @param list<AbstractValue>|\ArrayAccess<int, AbstractValue> $array
 	 */
-	public static function resolveIndex(int $index, $array): int {
+	public static function resolveIndex(int $index, array $array): int {
 
 		$actualIndex = self::resolveNegativeIndex($index, \count($array) - 1);
 		if ($actualIndex === \null || !isset($array[$actualIndex])) {

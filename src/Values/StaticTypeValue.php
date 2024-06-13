@@ -12,7 +12,7 @@ namespace Smuuf\Primi\Values;
  * userland).
  *
  * Therefore all Primi type objects that represent the most basic builtin types
- * as mentioned 1) will be represented as inctances of this PHP class (instead
+ * as mentioned 1) will be represented as instances of this PHP class (instead
  * of just PHP `TypeValue` class).
  *
  * @see \Smuuf\Primi\Stdlib\StaticTypes

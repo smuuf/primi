@@ -16,6 +16,9 @@ use Smuuf\Primi\Handlers\Handler;
  */
 abstract class SharedArithmeticHandler extends Handler {
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 
 		// If there is no operator, then there's no need to keep this as
@@ -28,6 +31,9 @@ abstract class SharedArithmeticHandler extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$ltr = Func::yield_nodes_left_to_right($node);

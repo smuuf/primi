@@ -19,6 +19,9 @@ class FuncValue extends AbstractBuiltinValue {
 	public const TYPE = "func";
 	protected string $name;
 
+	/**
+	 * @param list<AbstractValue> $prefixArgs
+	 */
 	public function __construct(
 		FnContainer $fn,
 		protected ?array $prefixArgs = \null,

@@ -55,10 +55,10 @@ class BytecodeProvider {
 		// NOTE: $tempDir is taken from Config object - that means we're sure
 		// it already is an existing directory - or null.
 
-		$getter = static fn(Source $source): ?Bytecode => self::compile($source);
+		$getter = static fn(Source $source): Bytecode => self::compile($source);
 
 		if ($tempDir) {
-			$getter = function(Source $source) use ($getter, $tempDir): ?Bytecode {
+			$getter = function(Source $source) use ($getter, $tempDir): Bytecode {
 
 				$key = \json_encode([
 					KnownHandlers::getStateId(),

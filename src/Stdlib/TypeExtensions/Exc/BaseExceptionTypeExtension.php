@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\TypeExtensions\Exc;
 
 use Smuuf\Primi\Context;
-use Smuuf\Primi\Ex\TypeError;
 use Smuuf\Primi\Values\ExceptionValue;
 use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 use Smuuf\Primi\Values\AbstractValue;

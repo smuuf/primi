@@ -6,17 +6,17 @@ namespace Smuuf\Primi\Handlers\Kinds;
 
 use Smuuf\Primi\Scope;
 use Smuuf\Primi\Context;
+use Smuuf\Primi\ScopeComposite;
 use Smuuf\Primi\VM\Machine;
 use Smuuf\Primi\Code\Bytecode;
-use Smuuf\Primi\Compiler\CodeType;
 use Smuuf\Primi\Values\TypeValue;
 use Smuuf\Primi\Stdlib\StaticTypes;
-use Smuuf\Primi\Helpers\Types;
-use Smuuf\Primi\Compiler\Compiler;
-use Smuuf\Primi\Handlers\Handler;
-use Smuuf\Primi\Helpers\Exceptions;
-use Smuuf\Primi\ScopeComposite;
 use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Helpers\Types;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Handlers\Handler;
+use Smuuf\Primi\Compiler\Compiler;
+use Smuuf\Primi\Compiler\CodeType;
 
 class ClassDefinition extends Handler {
 
@@ -69,6 +69,9 @@ class ClassDefinition extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function compile(Compiler $bc, array $node): void {
 
 		$compiler = new Compiler($node['def'], codeType: CodeType::CodeClass);
@@ -88,6 +91,9 @@ class ClassDefinition extends Handler {
 
 	}
 
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
 	public static function reduce(array &$node): void {
 		$node['cls'] = $node['cls']['text'];
 		$node['parent'] = $node['parent']['text'] ?? \null;

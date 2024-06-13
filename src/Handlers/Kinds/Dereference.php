@@ -46,7 +46,10 @@ class Dereference extends Handler {
 
 	}
 
-	public static function compile(Compiler $bc, array $node) {
+	/**
+	 * @phpstan-param TypeDef_AstNode $node
+	 */
+	public static function compile(Compiler $bc, array $node): void {
 		$bc->inject($node['key']);
 		$bc->add(Machine::OP_LOAD_ITEM);
 	}
