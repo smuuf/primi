@@ -11,7 +11,7 @@ use Smuuf\Primi\Values\AbstractValue;
  * Our wrapper for \SplStack with additional goodies.
  *
  * @internal
- * @extends \SplStack<AbstractValue>
+ * @extends \SplStack<AbstractValue|\Iterator>
  */
 class ValueStack extends \SplStack {
 

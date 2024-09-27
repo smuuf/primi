@@ -13,7 +13,7 @@ class ThrowStatement extends Handler {
 	/**
 	 * @phpstan-param TypeDef_AstNode $node
 	 */
-	public static function compile(Compiler $bc, array $node) {
+	public static function compile(Compiler $bc, array $node): void {
 		$bc->inject($node['exc']);
 		$bc->add(Machine::OP_EXC_THROW);
 	}

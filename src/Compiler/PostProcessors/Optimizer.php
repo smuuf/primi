@@ -6,8 +6,8 @@ namespace Smuuf\Primi\Compiler\PostProcessors;
 
 use Smuuf\Primi\Compiler\BytecodeDLL;
 use Smuuf\Primi\Compiler\PostProcessors\Optimizers\ConstList;
-use Smuuf\Primi\Compiler\PostProcessors\Optimizers\ConstantFolding;
 use Smuuf\Primi\Compiler\PostProcessors\Optimizers\ConstDict;
+use Smuuf\Primi\Compiler\PostProcessors\Optimizers\ConstantFolding;
 use Smuuf\Primi\Compiler\PostProcessors\Optimizers\UselessCondJump;
 use Smuuf\Primi\Compiler\PostProcessors\Optimizers\UselessStoreLoad;
 use Smuuf\Primi\Compiler\PostProcessors\Optimizers\UselessDupTopPop;

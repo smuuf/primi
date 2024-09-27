@@ -49,7 +49,7 @@ abstract class Indices {
 	 * represent an existing index in the array passed as the second argument,
 	 * an integer -1 is returned.
 	 *
-	 * @param list<AbstractValue>|\ArrayAccess<int, AbstractValue> $array
+	 * @param list<AbstractValue> $array
 	 */
 	public static function resolveIndex(int $index, array $array): int {
 

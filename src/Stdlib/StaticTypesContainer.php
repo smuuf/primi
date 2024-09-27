@@ -6,6 +6,9 @@ namespace Smuuf\Primi\Stdlib;
 
 trait StaticTypesContainer {
 
+	/**
+	 * @return list<\Closure>
+	 */
 	private static function extractGetters(int $flags = 0): array {
 
 		$result = [];
@@ -36,10 +39,16 @@ trait StaticTypesContainer {
 
 	}
 
+	/**
+	 * @return list<\Closure>
+	 */
 	public static function extractBuiltins(): array {
 		return self::extractGetters(StaticTypeGetter::INJECT_AS_BUILTIN);
 	}
 
+	/**
+	 * @return list<\Closure>
+	 */
 	public static function extractAll(): array {
 		return self::extractGetters();
 	}

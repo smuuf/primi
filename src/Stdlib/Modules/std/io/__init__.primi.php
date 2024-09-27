@@ -8,7 +8,6 @@ use Smuuf\Primi\Helpers\Exceptions;
 use Smuuf\Primi\Values\TypeValue;
 use Smuuf\Primi\Values\IteratorFactoryValue;
 use Smuuf\Primi\Values\StringValue;
-use Smuuf\Primi\Stdlib\StaticTypes;
 use Smuuf\Primi\Modules\NativeModule;
 use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 use Smuuf\Primi\Structures\CallArgs;
@@ -20,15 +19,7 @@ return new
 class extends NativeModule {
 
 	public function execute(Context $ctx): array {
-
-		return [
-			'Socket' => new TypeValue(
-				'Socket',
-				StaticTypes::getObjectType(),
-				SocketTypeExtension::execute(),
-			),
-		];
-
+		return [];
 	}
 
 	#[PrimiFunc(callConv: PrimiFunc::CONV_CALLARGS)]

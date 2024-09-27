@@ -74,7 +74,6 @@ class Compiler {
 	}
 
 	/**
-	 * @param array $node
 	 * @phpstan-param TypeDef_AstNode $node
 	 * @return class-string
 	 */

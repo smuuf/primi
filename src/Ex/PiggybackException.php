@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Ex;
 
 use Smuuf\Primi\Values\TypeValue;
+use Smuuf\Primi\Values\AbstractValue;
 
 /**
  * PHP exception that can be used by any PHP code that is reached (called) by

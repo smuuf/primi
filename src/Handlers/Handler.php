@@ -19,7 +19,6 @@ abstract class Handler {
 	 * Additional node-type-specific post-process of the AST node provided by
 	 * parser. AST node array is passed by reference.
 	 *
-	 * @param array $node
 	 * @phpstan-param TypeDef_AstNode $node
 	 */
 	public static function reduce(array &$node): void {

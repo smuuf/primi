@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
-use Smuuf\Primi\Scope;
 use Smuuf\Primi\Context;
-use Smuuf\Primi\StackFrame;
-use Smuuf\Primi\Ex\TypeError;
 use Smuuf\Primi\Ex\EngineError;
-use Smuuf\Primi\Ex\BaseException;
 use Smuuf\Primi\Code\Bytecode;
 use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 use Smuuf\Primi\Values\TypeValue;
@@ -158,12 +154,11 @@ abstract class Func {
 	 * anything.
 	 *
 	 * @param class-string|AbstractValue $allowedTypes
-	 * @throws TypeError
 	 */
 	public static function allow_argument_types(
 		int $pos,
 		AbstractValue $arg,
-		...$allowedTypes
+		...$allowedTypes,
 	): void {
 
 		// If any of the "instanceof" checks is true,
@@ -234,7 +229,6 @@ abstract class Func {
 	 * to be sure that multiple AST sub-nodes (which PHP-PEG parser returns) are
 	 * universally iterable.
 	 *
-	 * @param array $node
 	 * @return array<mixed, mixed>
 	 * @phpstan-param TypeDef_AstNode $node
 	 * @phpstan-return TypeDef_AstNode
@@ -298,9 +292,7 @@ abstract class Func {
 	 * - `['Operator AND #2', <AST node for number 3']`
 	 *
 	 * @phpstan-param TypeDef_AstNode $node
-	 * @phpstan-return \Generator<list{?string, TypeDef_AstNode}}>
-	 * @param array $node
-	 * @return \Generator<list{?string, array<mixed>}}>
+	 * @return \Generator<array{string|null, array<mixed>}>
 	 */
 	public static function yield_nodes_left_to_right(array $node) {
 

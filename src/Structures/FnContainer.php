@@ -38,15 +38,13 @@ class FnContainer {
 
 	/**
 	 * Build and return a closure wrapper around a Primi function (represented
-	 * by its node tree).
+	 * by its bytecode).
 	 *
 	 * The closure returns some Primi value object as a result.
 	 *
-	 * @param array $entryNode
-	 * @phpstan-param TypeDef_AstNode $entryNode
 	 * @param ?array{
-	 *     names: array<string, string>,
-	 *     defaults: array<string, TypeDef_AstNode>
+	 *     names: list<string>,
+	 *     defaults: array<string, Bytecode>,
 	 * } $defParams
 	 * @return self
 	 */
@@ -55,11 +53,11 @@ class FnContainer {
 		string $definitionName,
 		ModuleValue $definitionModule,
 		?array $defParams = \null,
-		?Scope $defScope = \null
+		?Scope $defScope = \null,
 	) {
 
-		// Invoking this closure is equal to standard execution of the nodes
-		// that make up the body of the function.
+		// Invoking this closure is equal to standard execution of the bytecode
+		// that makes up the body of the function.
 		$closure = function(
 			Context $ctx,
 			?CallArgs $args = \null,
@@ -68,7 +66,7 @@ class FnContainer {
 			$defScope,
 			$defParams,
 			$definitionModule,
-			$definitionName
+			$definitionName,
 		) {
 
 			$scope = new Scope([], parent: $defScope);
@@ -84,8 +82,8 @@ class FnContainer {
 				$scope->setVariables(
 					Func::resolve_default_args(
 						$callArgs->extract(
-							$defParams['names'] ?? [],
-							\array_keys($defParams['defaults'] ?? []),
+							$defParams['names'],
+							\array_keys($defParams['defaults']),
 						),
 						$defParams['defaults'],
 						$ctx,

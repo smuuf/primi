@@ -142,7 +142,7 @@ class Context {
 		?ModuleValue $module = null,
 	): Frame {
 
-		$current = $this->getCurrentFrame();
+		$current = $this->currentFrame;
 		if ($scope === null) {
 			$scope = new Scope(parent: $current?->getScope());
 		}
@@ -193,7 +193,7 @@ class Context {
 			fn() => BytecodeProvider::compile($source, ...$compilerArgs),
 		);
 
-		$frame = $frame ?? $this->getCurrentFrame();
+		$frame = $frame ?? $this->currentFrame;
 
 		if (!$frame) {
 			throw new EngineError(sprintf(

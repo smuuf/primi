@@ -30,7 +30,7 @@ class Frame {
 	public readonly int $callStackSize;
 
 	public function __construct(
-		private $name,
+		private string $name,
 		private Scope $scope,
 		private ModuleValue $module,
 		private ?Bytecode $bytecode,

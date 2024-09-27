@@ -67,7 +67,6 @@ abstract class SharedLogicalHandler extends Handler {
 	}
 
 	/**
-	 * @param array $node
 	 * @phpstan-param TypeDef_AstNode $node
 	 */
 	private static function compileAnd(
@@ -96,7 +95,6 @@ abstract class SharedLogicalHandler extends Handler {
 	}
 
 	/**
-	 * @param array $node
 	 * @phpstan-param TypeDef_AstNode $node
 	 */
 	private static function compileOr(

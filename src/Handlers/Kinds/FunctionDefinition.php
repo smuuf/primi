@@ -18,6 +18,12 @@ use Smuuf\Primi\Structures\FnContainer;
 
 class FunctionDefinition extends Handler {
 
+	/**
+	 * @param array{
+	 *     names: list<string>,
+	 *     defaults: array<string, Bytecode>
+	 * } $params
+	 */
 	public static function handleCreateFunction(
 		Context $ctx,
 		string $fnName,
@@ -63,9 +69,10 @@ class FunctionDefinition extends Handler {
 		$bytecode = $compiler->compile();
 
 		$params = $node['params'];
-		$params['defaults'] = !empty($params['defaults'])
-			? self::compileDefaults($params['defaults'])
-			: [];
+
+		if (!empty($params['defaults'])) {
+			$params['defaults'] = self::compileDefaults($params['defaults']);
+		}
 
 		$bc->add(
 			Machine::OP_CREATE_FUNCTION,
@@ -208,7 +215,7 @@ class FunctionDefinition extends Handler {
 	 * These will later be used when evaluating defaults during the function's
 	 * call.
 	 *
-	 * @param array<string, TypeDef_AstNode>
+	 * @param array<string, TypeDef_AstNode> $defaults
 	 * @return array<string, Bytecode>
 	 */
 	private static function compileDefaults(array $defaults): array {

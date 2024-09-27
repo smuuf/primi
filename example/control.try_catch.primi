@@ -13,3 +13,25 @@ try {
 }
 assert(was_error, 'Raised error was caught')
 assert(!executed_after_error, 'Code after error was not executed')
+
+was_caught = false
+try {
+	1 / 0
+} catch (RuntimeError as exc) {
+	was_caught = true
+}
+assert(was_caught, 'Division-by-zero error should be caught as RuntimeError')
+
+was_caught_nameerror = false
+was_caught_runtimeerror = false
+try {
+	try {
+		1 / 0
+	} catch (NameError as exc) {
+		was_caught_nameerror = true
+	}
+} catch (RuntimeError as exc) {
+	was_caught_runtimeerror = true
+}
+assert(!was_caught_nameerror, 'Division-by-zero should not be caught as NameError')
+assert(was_caught_runtimeerror, 'Division-by-zero should be caught as RuntimeError')

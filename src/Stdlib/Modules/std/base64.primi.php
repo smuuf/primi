@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Stdlib\Modules;
 
 use Smuuf\Primi\Extensions\PrimiFunc;
+use Smuuf\Primi\Helpers\Exceptions;
 use Smuuf\Primi\Values\StringValue;
 use Smuuf\Primi\Helpers\Interned;
 use Smuuf\Primi\Modules\NativeModule;
 use Smuuf\Primi\Modules\AllowedInSandboxTrait;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 return new
 /**

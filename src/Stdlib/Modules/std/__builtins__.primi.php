@@ -329,7 +329,7 @@ class extends NativeModule {
 			function() use ($it, $iterable, $counter): \Generator {
 				return $it($iterable, $counter);
 			},
-			'enumerate'
+			'enumerate',
 		);
 
 	}
@@ -375,6 +375,9 @@ class extends NativeModule {
 			StaticExceptionTypes::getAttributeErrorType(),
 			"Object of type '$typeName' has no attribute '$attrName'",
 		);
+
+		return Interned::null();
+
 	}
 
 };

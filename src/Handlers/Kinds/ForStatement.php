@@ -14,7 +14,7 @@ class ForStatement extends Handler {
 	/**
 	 * @phpstan-param TypeDef_AstNode $node
 	 */
-	public static function compile(Compiler $bc, array $node) {
+	public static function compile(Compiler $bc, array $node): void {
 
 		$iterLabel = $bc->createLabel();
 		$breakLabel = $bc->createLabel();

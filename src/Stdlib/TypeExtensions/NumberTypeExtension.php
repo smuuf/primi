@@ -21,7 +21,7 @@ class NumberTypeExtension extends TypeExtension {
 	#[PrimiFunc]
 	public static function __new__(
 		TypeValue $type,
-		?AbstractValue $value = \null
+		?AbstractValue $value = \null,
 	): NumberValue {
 
 		if ($type !== StaticTypes::getNumberType()) {

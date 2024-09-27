@@ -91,7 +91,7 @@ class ListValue extends AbstractBuiltinValue {
 
 		$actualIndex = Indices::resolveIndex(
 			(int) $index->value,
-			$this->value
+			$this->value,
 		);
 
 		if ($actualIndex === -1) {
@@ -125,7 +125,7 @@ class ListValue extends AbstractBuiltinValue {
 
 		$actualIndex = Indices::resolveIndex(
 			(int) $index->value,
-			$this->value
+			$this->value,
 		);
 
 		if ($actualIndex === -1) {

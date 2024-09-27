@@ -105,7 +105,6 @@ class ParserHandler {
 	 * Go recursively through each of the nodes and strip unnecessary data
 	 * in the abstract syntax tree.
 	 *
-	 * @param array $node
 	 * @phpstan-param TypeDef_AstNode $node
 	 * @throws InternalSyntaxError
 	 */

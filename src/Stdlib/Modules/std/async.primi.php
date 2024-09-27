@@ -27,6 +27,7 @@ class extends NativeModule {
 		[$fn] = $args->extractPositional(1);
 		Func::allow_argument_types(1, $fn, FuncValue::class);
 
+		/** @var FuncValue $fn */
 		$ctx->getTaskQueue()->addTask(new CallbackTask($fn));
 
 		return Interned::null();

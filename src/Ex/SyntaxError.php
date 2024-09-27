@@ -10,7 +10,6 @@ use Smuuf\Primi\Code\Source;
 use Smuuf\Primi\Context;
 use Smuuf\Primi\Helpers\Exceptions;
 use Smuuf\Primi\Helpers\Func;
-use Smuuf\Primi\Helpers\StringEscaping;
 use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 
 class SyntaxError extends EngineException {
@@ -21,17 +20,13 @@ class SyntaxError extends EngineException {
 		?string $reason = \null,
 	) {
 
-		$sanitizedExcerpt = $excerpt
-			? StringEscaping::escapeString($excerpt, '"')
-			: false;
-
 		$msg = \sprintf(
 			"Invalid syntax%s%s",
 			$reason
 				? \sprintf(" (%s)", \trim($reason))
 				: '',
-			$sanitizedExcerpt
-				? \sprintf(" near \"%s\"", \trim($sanitizedExcerpt))
+			$excerpt
+				? \sprintf(" near: %s", \trim($excerpt))
 				: '',
 		);
 

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Smuuf\Primi\Handlers\Kinds;
 
 use Smuuf\Primi\VM\Machine;
-use Smuuf\Primi\Helpers\Func;
-use Smuuf\Primi\Compiler\Compiler;
 use Smuuf\Primi\Ex\InternalSyntaxError;
+use Smuuf\Primi\Helpers\Func;
+use Smuuf\Primi\Compiler\Label;
+use Smuuf\Primi\Compiler\Compiler;
 use Smuuf\Primi\Handlers\Handler;
 
 class TryStatement extends Handler {

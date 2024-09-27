@@ -28,7 +28,7 @@ class DictDefinition extends Handler {
 	/**
 	 * @phpstan-param TypeDef_AstNode $node
 	 */
-	public static function compile(Compiler $bc, array $node) {
+	public static function compile(Compiler $bc, array $node): void {
 
 		foreach ($node['items'] as $sub) {
 			$bc->inject($sub['key']);

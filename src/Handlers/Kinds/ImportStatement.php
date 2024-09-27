@@ -14,6 +14,9 @@ use Smuuf\Primi\Handlers\Handler;
 
 class ImportStatement extends Handler {
 
+	/**
+	 * @param list<string> $symbols
+	 */
 	public static function handleImport(
 		Context $ctx,
 		string $dotpath,
