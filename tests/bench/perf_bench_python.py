@@ -35,7 +35,7 @@ def bench_regex_matches():
 		"její čisté neurčenosti, neboť k určení již patří jedno nebo nějaké " + \
 		"jiné, ale na začátku ještě nemáme žádné jiné..."
 
-	regex = re.compile("^.*(zač).*(,)?.*?(\.)")
+	regex = re.compile(r"^.*(zač).*(,)?.*?(\.)")
 
 	result = 0
 	c = 0

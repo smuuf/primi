@@ -40,4 +40,11 @@ fi
 header "Primi: Unit tests"
 info "Using interpreter: "$(which $INTERPRETER)
 
-./../vendor/nette/tester/src/tester -p $INTERPRETER $COV -C ../tests $@ # --coverage-exclude 'Compiled/PrimiParser.php'
+./../vendor/nette/tester/src/tester \
+	-o console-lines \
+	-p $INTERPRETER \
+	$COV `# Maybe with coverage` \
+	-C `# Use system-wide php.ini` \
+	../tests \
+	$@ `# Extra args`
+# --coverage-exclude 'Compiled/PrimiParser.php'
