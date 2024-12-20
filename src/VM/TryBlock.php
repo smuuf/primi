@@ -9,6 +9,9 @@ use Smuuf\Primi\ScopeComposite;
 use Smuuf\Primi\Values\AbstractValue;
 use Smuuf\Primi\Helpers\Types;
 use Smuuf\Primi\Handlers\Kinds\Variable;
+use Smuuf\Primi\Helpers\Exceptions;
+use Smuuf\Primi\Stdlib\StaticExceptionTypes;
+use Smuuf\Primi\Values\TypeValue;
 
 /**
  * Data structure for representing try-catch blocks which are to be stored
@@ -22,7 +25,7 @@ class TryBlock {
 	use StrictObject;
 
 	/**
-	 * @param list<array{string, int}> $spec List of couples specifying
+	 * @param list<array{TypeValue, int}> $spec List of couples specifying
 	 *     type of exception-to-be-caught and the opcode index in current
 	 *     frame's opcodes where to jump if we catch it.
 	 * @param int $originalStackSize Remembering number of values on value stack
@@ -40,7 +43,7 @@ class TryBlock {
 	 * @param array<array{string, int, ?string}> $pairs List of tuples
 	 *     specifying type of exception-to-be-caught and the opcode index in
 	 *     current frame's opcodes where to jump if we catch it.
-	 * @param int $stackSize Remembering number of values on value stack
+	 * @param int $originalStackSize Remembering number of values on value stack
 	 *     when entering the try-catch block. When the exception is caught, the
 	 *     value stack must be restored to this length (this ensures that
 	 *     no extra intermediate values are kept on the value stack when an
@@ -58,13 +61,31 @@ class TryBlock {
 			// Convert ['SomeVariableName', 123] into [<some object>, 123].
 			// The last pair will have null (no exception type specified - the
 			// fallback "catch") - and we support that, too.
+
+			$catchType = $pair[0]
+				? Variable::fetch($pair[0], $scopeComp)
+				: null;
+
+			if ($catchType) {
+				$isValidExceptionType = Types::isSubtypeOf(
+					$catchType,
+					StaticExceptionTypes::getBaseExceptionType()
+				);
+
+				if (!$isValidExceptionType) {
+					Exceptions::piggyback(
+						StaticExceptionTypes::getTypeErrorType(),
+						"Type used in catch must derive from BaseException",
+					);
+				}
+			}
+
 			$spec[] = [
-				$pair[0]
-					? Variable::fetch($pair[0], $scopeComp)
-					: null,
+				$catchType,
 				$pair[1], // Target op index.
 				$pair[2] ?? null, // "as" variable name.
 			];
+
 		}
 
 		return new self($spec, $originalStackSize);
