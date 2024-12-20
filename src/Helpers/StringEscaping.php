@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Smuuf\Primi\Helpers;
 
+use Smuuf\Primi\Ex\InternalSyntaxError;
+use Smuuf\Primi\Ex\WrongEscapeSequenceException;
 use Smuuf\Primi\Stdlib\StaticExceptionTypes;
 use Smuuf\StrictObject;
 
@@ -51,10 +53,7 @@ class StringEscaping {
 
 			// The backslashed character doesn't represent any known escape
 			// sequence, therefore error.
-			Exceptions::piggyback(
-				StaticExceptionTypes::getRuntimeErrorType(),
-				"Unrecognized string escape sequence '{$m[0]}'.",
-			);
+			throw new WrongEscapeSequenceException($m[0]);
 
 		}, $str);
 

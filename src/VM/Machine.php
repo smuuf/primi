@@ -29,6 +29,7 @@ use Smuuf\Primi\Handlers\Kinds\Variable;
 use Smuuf\Primi\Helpers\Exceptions;
 use Smuuf\Primi\ScopeComposite;
 use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Values\ExceptionValue;
 
 class Machine {
 
@@ -396,7 +397,7 @@ class Machine {
 							unset($a, $b);
 							goto vm_check_exc;
 						}
-						$vStack->push($b);
+						$vStack->push($b); // @phpstan-ignore-line
 						unset($a, $b);
 						break;
 
@@ -404,16 +405,15 @@ class Machine {
 						// Pop 1: Kwargs dict.
 						// Pop 2: Args list.
 						// Pop 3: Callable object.
-						/**
-						 * @var AbstractValue $a
-						 * @var AbstractValue $b
-						 * @var AbstractValue $c
-						 */
+						/** @var AbstractValue */
 						$a = $vStack->pop();
+						/** @var AbstractValue */
 						$b = $vStack->pop();
+						/** @var AbstractValue */
+						$c = $vStack->pop();
 						$frame->storeOpIndex($opIndex);
 						$scope->setVariables($locals);
-						$c = $vStack->pop()->invoke(
+						$c = $c->invoke(
 							$ctx,
 							new CallArgs(
 								$b->getCoreValue(),
@@ -424,19 +424,21 @@ class Machine {
 							unset($a, $b, $c);
 							goto vm_check_exc;
 						}
-						$vStack->push($c);
+						$vStack->push($c); // @phpstan-ignore-line
 						unset($a, $b, $c);
 						break;
 
 					case Machine::OP_CALL_FUNCTION_N:
+						/** @var AbstractValue */
+						$a = $vStack->pop();
 						$frame->storeOpIndex($opIndex);
 						$scope->setVariables($locals);
-						$a = $vStack->pop()->invoke($ctx);
+						$a = $a->invoke($ctx);
 						if ($ctx->getPendingException()) {
 							unset($a);
 							goto vm_check_exc;
 						}
-						$vStack->push($a);
+						$vStack->push($a); // @phpstan-ignore-line
 						unset($a);
 						break;
 
@@ -463,7 +465,6 @@ class Machine {
 						// Arg #1: A list array of key-value pairs, for example:
 						//         [['key', 'value'], ...]
 						$vStack->push(new DictValue($op[1]));
-						unset($a, $b, $i, $pairs);
 						break;
 
 					case Machine::OP_BUILD_DICT:
@@ -635,8 +636,6 @@ class Machine {
 							$op[2],
 							$op[3],
 							$ctx,
-							$scope,
-							$builtins,
 						);
 						$vStack->push($a);
 						unset($a);
@@ -644,6 +643,7 @@ class Machine {
 
 					case Machine::OP_EXC_THROW:
 						// Pop #1: ExceptionValue.
+						/** @var ExceptionValue */
 						$a = $vStack->pop();
 						$frame->storeOpIndex($opIndex);
 						if (Types::isSubtypeOf($a->getType(), StaticExceptionTypes::getBaseExceptionType())) {
@@ -655,9 +655,8 @@ class Machine {
 								"Only exceptions can be thrown",
 							);
 						}
-						goto vm_check_exc;
 						unset($a);
-						break;
+						goto vm_check_exc;
 
 					case Machine::OP_IMPORT:
 						// Arg #1: Dotpath of the module to be imported.
@@ -665,7 +664,6 @@ class Machine {
 						$scope->setVariables($locals);
 						ImportStatement::handleImport($ctx, $op[1], $op[2]);
 						goto vm_check_exc;
-						break;
 
 					case Machine::OP_RETURN:
 						goto vm_loop_exit;
