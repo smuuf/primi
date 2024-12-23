@@ -75,9 +75,10 @@ class ExceptionValue extends AbstractBuiltinValue {
 		// single argument, or "SomeExceptionType: ('first arg', 2, false)" if
 		// there are more arguments.
 		$args = $this->attrs['args'];
-		if ($args->getLength() === 0) {
+		$argsCount = $args->getLength();
+		if ($argsCount === 0) {
 			$argsRepr = '';
-		} elseif ($args->getLength() === 1) {
+		} elseif ($argsCount === 1) {
 			$argsRepr = $args->itemGet(Interned::number('0'))->getStringValue();
 		} else {
 			$argsRepr = $args->getStringValue();

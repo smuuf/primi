@@ -12,7 +12,7 @@ namespace Smuuf\Primi\Ex;
 class WrongEscapeSequenceException extends EngineException {
 
 	/**
-	 * @param string $piece Which character was tried to be used as part of
+	 * @param string $char Which character was tried to be used as part of
 	 *     escape sequence? For example "č" in "\č".
 	 */
 	public function __construct(

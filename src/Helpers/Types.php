@@ -30,11 +30,18 @@ abstract class Types {
 	}
 
 	public static function isSubtypeOf(
-		?TypeValue $childType,
-		?TypeValue $parentType,
+		?AbstractValue $childType,
+		?AbstractValue $parentType,
 	): bool {
 
 		if (!$childType || !$parentType) {
+			return \false;
+		}
+
+		if (
+			!$childType instanceof TypeValue
+			|| !$parentType instanceof TypeValue
+		) {
 			return \false;
 		}
 

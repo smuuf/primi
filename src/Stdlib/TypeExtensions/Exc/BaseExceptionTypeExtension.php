@@ -13,6 +13,7 @@ use Smuuf\Primi\Extensions\PrimiFunc;
 use Smuuf\Primi\Extensions\TypeExtension;
 use Smuuf\Primi\Helpers\Exceptions;
 use Smuuf\Primi\Structures\CallArgs;
+use Smuuf\Primi\Values\TypeValue;
 
 class BaseExceptionTypeExtension extends TypeExtension {
 
@@ -25,7 +26,10 @@ class BaseExceptionTypeExtension extends TypeExtension {
 		$posArgs = $args->getArgs();
 		$type = \array_shift($posArgs);
 
-		if (!Types::isSubtypeOf($type, StaticExceptionTypes::getBaseExceptionType())) {
+		if (
+			!$type instanceof TypeValue
+			|| !Types::isSubtypeOf($type, StaticExceptionTypes::getBaseExceptionType())
+		) {
 			Exceptions::piggyback(
 				StaticExceptionTypes::getTypeErrorType(),
 				"Passed invalid type object",

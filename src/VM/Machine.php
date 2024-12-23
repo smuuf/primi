@@ -204,7 +204,7 @@ class Machine {
 				vm_do_index:
 				$op = $ops[$opIndex];
 
-				if (\false) {
+				if (\false) { // @phpstan-ignore-line
 
 					//usleep(50_000);
 					$args = BytecodeDumper::formatArgs(array_reverse(iterator_to_array($vStack)));

@@ -25,7 +25,7 @@ class TryBlock {
 	use StrictObject;
 
 	/**
-	 * @param list<array{TypeValue, int}> $spec List of couples specifying
+	 * @param list<array{?TypeValue, int}> $spec List of couples specifying
 	 *     type of exception-to-be-caught and the opcode index in current
 	 *     frame's opcodes where to jump if we catch it.
 	 * @param int $originalStackSize Remembering number of values on value stack
