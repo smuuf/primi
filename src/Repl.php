@@ -63,7 +63,7 @@ class Repl {
 
 	public function __construct(
 		?string $replName = null,
-		ReplIoDriverInterface $driver = null
+		?ReplIoDriverInterface $driver = null
 	) {
 
 		self::$historyFilePath = getenv("HOME") . '/' . self::HISTORY_FILE;
