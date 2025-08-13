@@ -122,7 +122,7 @@ class extends NativeModule {
 	#[PrimiFunc]
 	public static function round(
 		NumberValue $n,
-		NumberValue $precision = \null
+		?NumberValue $precision = \null
 	): NumberValue {
 		return Interned::number((string) \round(
 			(float) $n->value,

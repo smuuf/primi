@@ -79,7 +79,7 @@ class StringEscaping {
 	 */
 	public static function escapeString(
 		string $str,
-		string $quoteChar = \null
+		?string $quoteChar = \null
 	): string {
 
 		foreach (self::ESCAPE_PAIRS as $out => $in) {
