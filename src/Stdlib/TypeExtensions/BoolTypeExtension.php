@@ -52,7 +52,7 @@ class BoolTypeExtension extends TypeExtension {
 	 * ```js
 	 * true.and(false) == false
 	 * true.and(true) == true
-	 * bool_and(true, false) == false
+	 * bool.and(true, false) == false
 	 * ```
 	 */
 	#[PrimiFunc]
@@ -69,10 +69,10 @@ class BoolTypeExtension extends TypeExtension {
 	 * false.or(true) == true
 	 * false.or(false) == false
 	 *
-	 * bool_or(true, true) == true
-	 * bool_or(true, false) == true
-	 * bool_or(false, true) == true
-	 * bool_or(false, false) == false
+	 * bool.or(true, true) == true
+	 * bool.or(true, false) == true
+	 * bool.or(false, true) == true
+	 * bool.or(false, false) == false
 	 * ```
 	 */
 	#[PrimiFunc]
@@ -89,10 +89,10 @@ class BoolTypeExtension extends TypeExtension {
 	 * false.xor(true) == true
 	 * false.xor(false) == false
 	 *
-	 * bool_xor(true, true) == false
-	 * bool_xor(true, false) == true
-	 * bool_xor(false, true) == true
-	 * bool_xor(false, false) == false
+	 * bool.xor(true, true) == false
+	 * bool.xor(true, false) == true
+	 * bool.xor(false, true) == true
+	 * bool.xor(false, false) == false
 	 * ```
 	 */
 	#[PrimiFunc]

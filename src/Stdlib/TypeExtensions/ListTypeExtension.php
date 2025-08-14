@@ -206,7 +206,7 @@ class ListTypeExtension extends TypeExtension {
 	public static function get(
 		ListValue $list,
 		NumberValue $index,
-		AbstractValue $default = \null
+		?AbstractValue $default = \null
 	): AbstractValue {
 
 		// If the index is not found, this will return null.

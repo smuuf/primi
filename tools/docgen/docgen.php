@@ -64,7 +64,7 @@ if (!$extensionFiles = glob($phpFilesGlob)) {
 
 function get_relevant_methods(string $className): array {
 
-	$classRef = new \ReflectionClass("\Smuuf\Primi\Stdlib\\Extensions\\{$className}");
+	$classRef = new \ReflectionClass("\Smuuf\Primi\\{$className}");
 
 	// We want methods that are both public AND static AND non-PHP-magic.
 	return array_filter(
@@ -146,7 +146,7 @@ foreach ($extensionFiles as $filepath) {
 	line(Colors::get("- File {cyan}$filepath{_}"));
 
 	$filename = basename($filepath);
-	$className = substr($filename, 0, strrpos($filename, '.'));
+	$className = str_replace("/", "\\", substr($filepath, 6, strrpos($filepath, '.') - 6));
 
 	$methods = get_relevant_methods($className);
 	$data[$className] = [];
@@ -168,7 +168,16 @@ foreach ($extensionFiles as $filepath) {
 		$returnType = false;
 		if ($returnTypeRef = $methodRef->getReturnType()) {
 			try {
-				$returnType = ($returnTypeRef->getName())::TYPE;
+                $returnType = match (true) {
+                    $returnTypeRef instanceof ReflectionUnionType => implode(
+                        "|",
+                        array_map(
+                            fn(ReflectionNamedType $type) => $type->getName()::TYPE,
+                            $returnTypeRef->getTypes(),
+                        ),
+                    ),
+                    default => ($returnTypeRef->getName())::TYPE,
+                };
 			} catch (\Throwable $e) {
 				warn("Class '$className, method '$methodName', referencing non-existent Primi type having class " . $returnTypeRef->getName());
 			}

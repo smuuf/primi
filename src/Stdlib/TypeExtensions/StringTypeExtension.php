@@ -482,10 +482,11 @@ class StringTypeExtension extends TypeExtension {
 
 	/**
 	 * Returns `true` if the string starts with specified string.
-	 *
+	 * Returns `false` otherwise.
+     *
 	 * ```js
-	 * "this is a sentence".starts_with("tence") == true
-	 * "this is a sentence".starts_with("e") == true
+	 * "this is a sentence".starts_with("this") == true
+	 * "this is a sentence".starts_with("t") == true
 	 * "this is a sentence".starts_with("x") == false
 	 * ```
 	 */
@@ -499,7 +500,8 @@ class StringTypeExtension extends TypeExtension {
 
 	/**
 	 * Returns `true` if the string ends with specified string suffix.
-	 *
+	 * Returns `false` otherwise.
+     *
 	 * ```js
 	 * "this is a sentence".ends_with("tence") == true
 	 * "this is a sentence".ends_with("e") == true
@@ -513,5 +515,36 @@ class StringTypeExtension extends TypeExtension {
 	): BoolValue {
 		return Interned::bool(\str_ends_with($haystack->value, $needle->value));
 	}
+
+    /**
+     * Returns a substring taken from `string` starting at `offset` with length `length`.
+     * Access outside of bounds will be silently tolerated.
+     * Length can be omitted to reach up to the `string` end.
+     * Negative offset can be used.
+     *
+     * ```js
+     * "this is a sentence".substring(5, 4) == "is a"
+     * "this is a sentence".substring(5) == "is a sentence"
+     * "this is a sentence".substring(10, 100) == "sentence"
+     * "this is a sentence".substring(-8) == "sentence"
+     * "this is a sentence".substring(20, 15) == ""
+     * ```
+     */
+    #[PrimiFunc]
+    public static function substring(
+        StringValue $string,
+        NumberValue $offset,
+        ?NumberValue $length = \null,
+    ): StringValue {
+        $input = $string->value;
+        $start = $offset->value ?? 0;
+        $len = $length?->value ?? \mb_strlen($input);
+
+        if ($start < 0) {
+            $start = \mb_strlen($input) + $start;
+        }
+
+        return new StringValue(\mb_substr($input, (int)$start, (int)$len));
+    }
 
 }
